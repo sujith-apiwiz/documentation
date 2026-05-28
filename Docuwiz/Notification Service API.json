@@ -2,12 +2,12 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Notification Service API",
-    "description": "The Notification Service API allows clients to send notifications through a single endpoint. It supports various parameters to customize the notification delivery and provides structured responses for success and error scenarios. This API is designed for integration with applications needing real-time notification capabilities.",
+    "description": "This API allows users to send notifications through structured request bodies. It supports various input parameters to handle cookies, connections, content types, and span IDs. Use this service to effectively manage notification deliveries and monitor responses.",
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/base-test/v1",
+      "url": "https://stage-data-gujl.apiwiz.io/api/v1",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -15,7 +15,7 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/base-test/v1"
+      "x-basePath": "/api/v1"
     }
   ],
   "paths": {
@@ -25,39 +25,9 @@
           "Notification Management"
         ],
         "summary": "Send a notification",
-        "description": "This operation allows you to send a notification to a user or group of users. The request should include the notification details in the request body, and the expected outcome is that the notification is successfully delivered.",
+        "description": "This endpoint is used to send notifications to users. It requires the necessary notification details in the request body and will return a confirmation of the sent notification.",
         "operationId": "sendANotification",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/Referer"
-          },
-          {
-            "$ref": "#/components/parameters/sec-ch-ua"
-          },
-          {
-            "$ref": "#/components/parameters/Sec-Fetch-Dest"
-          },
-          {
-            "$ref": "#/components/parameters/Sec-Fetch-Mode"
-          },
-          {
-            "$ref": "#/components/parameters/Sec-Fetch-Site"
-          },
-          {
-            "$ref": "#/components/parameters/Accept-Language"
-          },
-          {
-            "$ref": "#/components/parameters/sec-ch-ua-mobile"
-          },
-          {
-            "$ref": "#/components/parameters/sec-ch-ua-platform"
-          },
-          {
-            "$ref": "#/components/parameters/ocp-apim-subscription-key"
-          },
-          {
-            "$ref": "#/components/parameters/test"
-          },
           {
             "$ref": "#/components/parameters/Cookie"
           },
@@ -78,36 +48,6 @@
           }
         },
         "responses": {
-          "403": {
-            "description": "Access denied for the request.",
-            "headers": {
-              "content-type": {
-                "$ref": "#/components/headers/Content-Type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/notify_post_response_403"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error occurred.",
-            "headers": {
-              "content-type": {
-                "$ref": "#/components/headers/Content-Type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/notify_post_response_500"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Notification successfully sent.",
             "headers": {
@@ -140,6 +80,39 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Notification recipient not found.",
+            "headers": {
+              "date": {
+                "$ref": "#/components/headers/date"
+              },
+              "vary": {
+                "$ref": "#/components/headers/vary"
+              },
+              "keep-alive": {
+                "$ref": "#/components/headers/keep-alive"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              },
+              "x-robots-tag": {
+                "$ref": "#/components/headers/x-robots-tag"
+              },
+              "transfer-encoding": {
+                "$ref": "#/components/headers/transfer-encoding"
+              },
+              "x-localtunnel-agent-ips": {
+                "$ref": "#/components/headers/x-localtunnel-agent-ips"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/notify_post_response_404"
+                }
+              }
+            }
           }
         },
         "callbacks": {},
@@ -152,77 +125,6 @@
   },
   "components": {
     "schemas": {
-      "notify_post_response_403": {
-        "type": "object",
-        "properties": {
-          "statusCode": {
-            "type": "integer",
-            "format": "int32",
-            "example": 403
-          },
-          "message": {
-            "type": "string",
-            "example": "Forbidden"
-          }
-        },
-        "example": {
-          "statusCode": 403,
-          "message": "Forbidden"
-        }
-      },
-      "notify_post_response_500": {
-        "type": "object",
-        "properties": {
-          "statusCode": {
-            "type": "integer",
-            "format": "int32",
-            "example": 500
-          },
-          "message": {
-            "type": "string",
-            "example": "Internal server error"
-          },
-          "activityId": {
-            "type": "string",
-            "example": "a9f8d6c1-d03c-4237-ac93-85d49a1a8587"
-          }
-        },
-        "example": {
-          "statusCode": 500,
-          "message": "Internal server error",
-          "activityId": "a9f8d6c1-d03c-4237-ac93-85d49a1a8587"
-        }
-      },
-      "notify_post_request": {
-        "type": "object",
-        "properties": {
-          "fromAccount": {
-            "type": "string",
-            "example": "4d9tyTJto6jgb1qNUaKGUkZu"
-          },
-          "toAccount": {
-            "type": "string",
-            "example": "udLJVNkr9lKzIKsM1knwoC"
-          },
-          "amount": {
-            "type": "number",
-            "example": 86.26
-          },
-          "currency": {
-            "type": "string",
-            "example": "AufqFI7AUbR2Ahp56TKyv"
-          },
-          "reference": {
-            "type": "string",
-            "example": "UKfV5XbH1bAZPUJNN2oEGh"
-          },
-          "channel": {
-            "type": "string",
-            "example": "wjQJhp4CmYpKNjsHq7Br"
-          }
-        },
-        "example": "{\n  \"fromAccount\" : \"4d9tyTJto6jgb1qNUaKGUkZu\",\n  \"toAccount\" : \"udLJVNkr9lKzIKsM1knwoC\",\n  \"amount\" : 86.26,\n  \"currency\" : \"AufqFI7AUbR2Ahp56TKyv\",\n  \"reference\" : \"UKfV5XbH1bAZPUJNN2oEGh\",\n  \"channel\" : \"wjQJhp4CmYpKNjsHq7Br\"\n}"
-      },
       "notify_post_response_200": {
         "type": "object",
         "properties": {
@@ -252,7 +154,7 @@
           },
           "createdAt": {
             "type": "string",
-            "example": "2026-05-19T11:45:09.411+00:00"
+            "example": "2026-05-18T06:55:04.166+00:00"
           }
         },
         "example": {
@@ -262,135 +164,69 @@
           "currency": "currency_0361f425f854",
           "reference": "reference_02ce1972cbfc",
           "channel": "channel_4cb5861c61b9",
-          "createdAt": "2026-05-19T11:45:09.411+00:00"
+          "createdAt": "2026-05-18T06:55:04.166+00:00"
+        }
+      },
+      "notify_post_request": {
+        "type": "object",
+        "properties": {
+          "fromAccount": {
+            "type": "string",
+            "example": "IyoXYlUrlBDHQWXRXYrQO2nl"
+          },
+          "toAccount": {
+            "type": "string",
+            "example": "NgDxbQkkMeP314qoRU0Tq9"
+          },
+          "amount": {
+            "type": "number",
+            "example": 71.91
+          },
+          "currency": {
+            "type": "string",
+            "example": "gkZHcZxfwcZ3dPTfHf1yv"
+          },
+          "reference": {
+            "type": "string",
+            "example": "TUsoU5AQ0Rurj7LZxJB6TL"
+          },
+          "channel": {
+            "type": "string",
+            "example": "jaYCgVD7WPtGkstYxKH9"
+          }
+        },
+        "example": "{\n  \"fromAccount\" : \"IyoXYlUrlBDHQWXRXYrQO2nl\",\n  \"toAccount\" : \"NgDxbQkkMeP314qoRU0Tq9\",\n  \"amount\" : 71.91,\n  \"currency\" : \"gkZHcZxfwcZ3dPTfHf1yv\",\n  \"reference\" : \"TUsoU5AQ0Rurj7LZxJB6TL\",\n  \"channel\" : \"jaYCgVD7WPtGkstYxKH9\"\n}"
+      },
+      "notify_post_response_404": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "example": "2026-05-18T06:54:18.219+00:00"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "example": 404
+          },
+          "error": {
+            "type": "string",
+            "example": "Not Found"
+          },
+          "path": {
+            "type": "string",
+            "example": "/api/v1/api/v1/notify"
+          }
+        },
+        "example": {
+          "timestamp": "2026-05-18T06:54:18.219+00:00",
+          "status": 404,
+          "error": "Not Found",
+          "path": "/api/v1/api/v1/notify"
         }
       }
     },
     "parameters": {
-      "Referer": {
-        "name": "Referer",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "https://apimanagement.hosting.portal.azure.net/"
-        },
-        "example": "https://apimanagement.hosting.portal.azure.net/"
-      },
-      "sec-ch-ua": {
-        "name": "sec-ch-ua",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "\"Google Chrome\";v=\"147\""
-        },
-        "example": "\"Google Chrome\";v=\"147\""
-      },
-      "Sec-Fetch-Dest": {
-        "name": "Sec-Fetch-Dest",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "empty"
-        },
-        "example": "empty"
-      },
-      "Sec-Fetch-Mode": {
-        "name": "Sec-Fetch-Mode",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "cors"
-        },
-        "example": "cors"
-      },
-      "Sec-Fetch-Site": {
-        "name": "Sec-Fetch-Site",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "cross-site"
-        },
-        "example": "cross-site"
-      },
-      "Accept-Language": {
-        "name": "Accept-Language",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "en-GB"
-        },
-        "example": "en-GB"
-      },
-      "sec-ch-ua-mobile": {
-        "name": "sec-ch-ua-mobile",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "?0"
-        },
-        "example": "?0"
-      },
-      "sec-ch-ua-platform": {
-        "name": "sec-ch-ua-platform",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "\"macOS\""
-        },
-        "example": "\"macOS\""
-      },
-      "ocp-apim-subscription-key": {
-        "name": "ocp-apim-subscription-key",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "74943308fdca4ac09f063d67eaf94205"
-        },
-        "example": "74943308fdca4ac09f063d67eaf94205"
-      },
-      "test": {
-        "name": "test",
-        "in": "query",
-        "required": false,
-        "style": "form",
-        "explode": true,
-        "schema": {
-          "type": "array",
-          "example": "sad",
-          "items": {
-            "type": "string",
-            "example": "ok"
-          }
-        },
-        "example": "sad"
-      },
       "Cookie": {
         "name": "Cookie",
         "in": "header",
@@ -433,23 +269,14 @@
       }
     },
     "headers": {
-      "Content-Type": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "application/json"
-        },
-        "example": "application/json"
-      },
       "date": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Tue, 19 May 2026 11:45:14 GMT"
+          "example": "Mon, 18 May 2026 06:54:18 GMT"
         },
-        "example": "Tue, 19 May 2026 11:45:14 GMT"
+        "example": "Mon, 18 May 2026 06:54:18 GMT"
       },
       "vary": {
         "style": "simple",
@@ -501,9 +328,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "[\"34.217.218.221\"]"
+          "example": "[\"27.7.8.170\"]"
         },
-        "example": "[\"34.217.218.221\"]"
+        "example": "[\"27.7.8.170\"]"
       }
     }
   }
