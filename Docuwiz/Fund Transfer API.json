@@ -2,12 +2,18 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Fund Transfer API",
-    "description": "The Fund Transfer API allows for seamless and secure transactions between accounts. This API supports various operations for transferring funds, including the submission of payment requests and retrieval of transaction statuses. Ensure to utilize the proper request format and parameters as specified in the documentation for effective integration.",
+    "description": "The Fund Transfer API allows users to securely initiate and manage fund transfers. It provides a comprehensive suite of operations for handling various aspects of transferring funds, including parameters for tracking activity and ensuring proper application contexts. This API is designed for developers looking to integrate fund transfer capabilities into their applications efficiently.",
+    "termsOfService": "https://www.example.com/terms-and-conditions",
+    "contact": {
+      "name": "Support Team",
+      "url": "https://www.example.com/support",
+      "email": "support@example.com"
+    },
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/api/v1",
+      "url": "https://stage-data-gujl.apiwiz.io/esb/v1",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -15,7 +21,7 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/api/v1"
+      "x-basePath": "/esb/v1"
     }
   ],
   "paths": {
@@ -24,27 +30,27 @@
         "tags": [
           "Transfer Management"
         ],
-        "summary": "Initiate a money transfer",
-        "description": "This operation allows you to initiate a transfer of funds from one account to another. It requires specifying the amount, source account, and destination account details.",
-        "operationId": "initiateAMoneyTransfer",
+        "summary": "Initiate a new fund transfer",
+        "description": "This operation initiates a fund transfer between accounts. It requires the necessary details such as sender, recipient, and amount to process the transfer successfully.",
+        "operationId": "initiateANewFundTransfer",
         "parameters": [
           {
-            "$ref": "#/components/parameters/x-real-ip"
+            "$ref": "#/components/parameters/activityid"
           },
           {
             "$ref": "#/components/parameters/content-type"
           },
           {
-            "$ref": "#/components/parameters/x-forwarded-host"
+            "$ref": "#/components/parameters/application-name"
           },
           {
-            "$ref": "#/components/parameters/x-forwarded-path"
+            "$ref": "#/components/parameters/application-type"
           },
           {
-            "$ref": "#/components/parameters/x-forwarded-port"
+            "$ref": "#/components/parameters/transfer-encoding"
           },
           {
-            "$ref": "#/components/parameters/x-kong-request-id"
+            "$ref": "#/components/parameters/custom-header-post"
           },
           {
             "$ref": "#/components/parameters/x-mock-response"
@@ -54,14 +60,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/transfer_post_request"
+                "$ref": "#/components/schemas/InitiateANewFundTransferRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successful transfer initiation response",
+            "description": "Transfer completed successfully.",
             "headers": {
               "date": {
                 "$ref": "#/components/headers/Date"
@@ -82,7 +88,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/transfer_post_response_200"
+                  "$ref": "#/components/schemas/InitiateANewFundTransferResponse_200"
                 }
               }
             }
@@ -98,38 +104,39 @@
   },
   "components": {
     "schemas": {
-      "transfer_post_request": {
+      "InitiateANewFundTransferRequest": {
         "type": "object",
         "properties": {
           "fromAccount": {
             "type": "string",
-            "example": "tUEh0F"
+            "example": "ApwLRY"
           },
           "toAccount": {
             "type": "string",
-            "example": "6WhODs"
+            "example": "iC6Vtr"
           },
           "amount": {
             "type": "integer",
             "format": "int32",
-            "example": 12
+            "example": 64
           },
-          "userId": {
-            "type": "string",
-            "example": "wvtxliw"
+          "currency": {
+            "type": "string"
           },
-          "message": {
-            "type": "string",
-            "example": "sgfg"
+          "reference": {
+            "type": "string"
           },
-          "type": {
-            "type": "string",
-            "example": "rmds"
+          "channel": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "number",
+            "example": 49.91
           }
         },
-        "example": "{\n  \"fromAccount\" : \"tUEh0F\",\n  \"toAccount\" : \"6WhODs\",\n  \"amount\" : 12,\n  \"userId\" : \"wvtxliw\",\n  \"message\" : \"sgfg\",\n  \"type\" : \"rmds\"\n}"
+        "example": "{\n  \"fromAccount\" : \"ApwLRY\",\n  \"toAccount\" : \"iC6Vtr\",\n  \"amount\" : 64,\n  \"currency\" : null,\n  \"reference\" : null,\n  \"channel\" : null,\n  \"createdAt\" : 49.91\n}"
       },
-      "transfer_post_response_200": {
+      "InitiateANewFundTransferResponse_200": {
         "type": "object",
         "properties": {
           "fromAccount": {
@@ -156,34 +163,29 @@
           },
           "createdAt": {
             "type": "string",
-            "example": "2026-04-28T13:10:33.444+00:00"
-          },
-          "status": {
-            "type": "string",
-            "example": "SUCCESS"
+            "example": "2026-04-28T14:41:32.710+00:00"
           }
         },
         "example": {
           "fromAccount": "ACC123",
           "toAccount": "ACC456",
           "amount": 1000,
-          "createdAt": "2026-04-28T13:10:33.444+00:00",
-          "status": "SUCCESS"
+          "createdAt": "2026-04-28T14:41:32.710+00:00"
         }
       }
     },
     "parameters": {
-      "x-real-ip": {
-        "name": "x-real-ip",
+      "activityid": {
+        "name": "activityid",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "34.217.218.221"
+          "example": "9d12a6bd-aa12-4495-8500-4d8af7604faa"
         },
-        "example": "34.217.218.221"
+        "example": "9d12a6bd-aa12-4495-8500-4d8af7604faa"
       },
       "content-type": {
         "name": "content-type",
@@ -197,53 +199,53 @@
         },
         "example": "application/json"
       },
-      "x-forwarded-host": {
-        "name": "x-forwarded-host",
+      "application-name": {
+        "name": "application-name",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "52.38.81.177"
+          "example": "Accounts Transfer ESB"
         },
-        "example": "52.38.81.177"
+        "example": "Accounts Transfer ESB"
       },
-      "x-forwarded-path": {
-        "name": "x-forwarded-path",
+      "application-type": {
+        "name": "application-type",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "/api/v1/transfer"
+          "example": "WS02"
         },
-        "example": "/api/v1/transfer"
+        "example": "WS02"
       },
-      "x-forwarded-port": {
-        "name": "x-forwarded-port",
+      "transfer-encoding": {
+        "name": "transfer-encoding",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "8000"
+          "example": "chunked"
         },
-        "example": "8000"
+        "example": "chunked"
       },
-      "x-kong-request-id": {
-        "name": "x-kong-request-id",
+      "custom-header-post": {
+        "name": "custom-header-post",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "3902b010c8402c1836b66806e7c12907"
+          "example": "MyHeaderValue-POST"
         },
-        "example": "3902b010c8402c1836b66806e7c12907"
+        "example": "MyHeaderValue-POST"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -255,9 +257,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "success",
-            "client_error",
-            "server_error"
+            "success"
           ]
         }
       }
@@ -268,45 +268,45 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "uotKjEgUBje5Pj8BFbcXy8RwfpRum"
+          "example": "cgsRs8N1kksaEQhRElbNV8H523qpW"
         },
-        "example": "uotKjEgUBje5Pj8BFbcXy8RwfpRum"
+        "example": "cgsRs8N1kksaEQhRElbNV8H523qpW"
       },
       "Vary": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "kjmaga"
+          "example": "kqxsbl"
         },
-        "example": "kjmaga"
+        "example": "kqxsbl"
       },
       "Connection": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": ",Z0u)'Sz=g"
+          "example": "Q;f:,Rze,W"
         },
-        "example": ",Z0u)'Sz=g"
+        "example": "Q;f:,Rze,W"
       },
       "Keep-Alive": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "9Xyi9RFglu"
+          "example": "fhnHy7rjbk"
         },
-        "example": "9Xyi9RFglu"
+        "example": "fhnHy7rjbk"
       },
       "Content-Type": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "7(rw/5x+tWg5s5q<"
+          "example": "rhvtz'[vm=MYo$X|"
         },
-        "example": "7(rw/5x+tWg5s5q<"
+        "example": "rhvtz'[vm=MYo$X|"
       }
     }
   }
