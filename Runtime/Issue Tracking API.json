@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Issue Tracking API",
-    "description": "This API allows users to report and check issues efficiently, facilitating a streamlined process for tracking and managing issues within the system. It provides an easy-to-use interface for submitting details about issues, including priority and tenant information, and delivers responses detailing the status of the issue reported.",
+    "description": "The Issue Tracking API provides a streamlined interface for reporting and managing issues within the system. It allows users to submit issue reports with various parameters to classify their urgency and origin. Responses include detailed feedback, ensuring users can track the status of their submitted issues effectively.",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -27,9 +27,9 @@
         "tags": [
           "Issue Tracking"
         ],
-        "summary": "Check an issue status",
-        "description": "This endpoint allows users to check the status of a specific issue by submitting relevant information. The user needs to provide the necessary data regarding the issue to receive an accurate response. Once the information is processed, the system will return the current status of the issue, helping users understand its resolution process.",
-        "operationId": "checkAnIssueStatus",
+        "summary": "Check for an issue",
+        "description": "This operation allows the user to check for a specific issue that might be affecting their system or service. The request should include relevant parameters to identify the issue accurately. Upon successful execution, the user will receive information regarding the status of the issue, enabling them to take appropriate action.",
+        "operationId": "checkForAnIssue",
         "parameters": [
           {
             "$ref": "#/components/parameters/referer"
@@ -75,14 +75,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CheckAnIssueStatusRequest"
+                "$ref": "#/components/schemas/CheckForAnIssueRequest"
               }
             }
           }
         },
         "responses": {
-          "422": {
-            "description": "Validation failed for request data.",
+          "200": {
+            "description": "Successfully retrieved issue status",
             "headers": {
               "x-log-id": {
                 "$ref": "#/components/headers/x-log-id"
@@ -91,13 +91,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CheckAnIssueStatusResponse_422"
+                  "$ref": "#/components/schemas/CheckForAnIssueResponse_200"
                 }
               }
             }
           },
-          "200": {
-            "description": "Successfully retrieved issue status.",
+          "422": {
+            "description": "Invalid request parameters provided",
             "headers": {
               "x-log-id": {
                 "$ref": "#/components/headers/x-log-id"
@@ -106,13 +106,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CheckAnIssueStatusResponse_200"
+                  "$ref": "#/components/schemas/CheckForAnIssueResponse_422"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal server error encountered.",
+            "description": "Internal server error occurred",
             "headers": {
               "x-log-id": {
                 "$ref": "#/components/headers/x-log-id"
@@ -121,7 +121,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CheckAnIssueStatusResponse_500"
+                  "$ref": "#/components/schemas/CheckForAnIssueResponse_500"
                 }
               }
             }
@@ -137,60 +137,7 @@
   },
   "components": {
     "schemas": {
-      "CheckAnIssueStatusResponse_422": {
-        "type": "object",
-        "properties": {
-          "errorCode": {
-            "type": "string",
-            "example": "CASH-4221"
-          },
-          "errorMessage": {
-            "type": "string",
-            "example": "Recipient identity verification failed"
-          },
-          "errorType": {
-            "type": "string",
-            "example": "BUSINESS_ERROR"
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "example": 422
-          },
-          "traceId": {
-            "type": "string",
-            "example": "6f9c9e0c-0f51-4f8c-9f72-2a1c4f99c901"
-          },
-          "timestamp": {
-            "type": "string",
-            "example": "2026-03-13T11:18:45Z"
-          },
-          "details": {
-            "type": "array",
-            "example": [
-              "recipientIdNumber does not match verification records",
-              "pickupBranch is currently unavailable"
-            ],
-            "items": {
-              "type": "string",
-              "example": "pswhvkvrwxlyybjyucwpzkezxhebneebewyqyaavetytusipdlakq"
-            }
-          }
-        },
-        "example": {
-          "errorCode": "CASH-4221",
-          "errorMessage": "Recipient identity verification failed",
-          "errorType": "BUSINESS_ERROR",
-          "status": 422,
-          "traceId": "6f9c9e0c-0f51-4f8c-9f72-2a1c4f99c901",
-          "timestamp": "2026-03-13T11:18:45Z",
-          "details": [
-            "recipientIdNumber does not match verification records",
-            "pickupBranch is currently unavailable"
-          ]
-        }
-      },
-      "CheckAnIssueStatusResponse_200": {
+      "CheckForAnIssueResponse_200": {
         "type": "object",
         "properties": {
           "transactionId": {
@@ -278,17 +225,70 @@
           "timestamp": "2026-03-13T10:22:45Z"
         }
       },
-      "CheckAnIssueStatusRequest": {
+      "CheckForAnIssueResponse_422": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "example": "CASH-4221"
+          },
+          "errorMessage": {
+            "type": "string",
+            "example": "Recipient identity verification failed"
+          },
+          "errorType": {
+            "type": "string",
+            "example": "BUSINESS_ERROR"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "example": 422
+          },
+          "traceId": {
+            "type": "string",
+            "example": "6f9c9e0c-0f51-4f8c-9f72-2a1c4f99c901"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-03-13T11:18:45Z"
+          },
+          "details": {
+            "type": "array",
+            "example": [
+              "recipientIdNumber does not match verification records",
+              "pickupBranch is currently unavailable"
+            ],
+            "items": {
+              "type": "string",
+              "example": "bptujhqrqkkpxqegackteixycbgqypabkwzfdrfqdlzrlffhzokjr"
+            }
+          }
+        },
+        "example": {
+          "errorCode": "CASH-4221",
+          "errorMessage": "Recipient identity verification failed",
+          "errorType": "BUSINESS_ERROR",
+          "status": 422,
+          "traceId": "6f9c9e0c-0f51-4f8c-9f72-2a1c4f99c901",
+          "timestamp": "2026-03-13T11:18:45Z",
+          "details": [
+            "recipientIdNumber does not match verification records",
+            "pickupBranch is currently unavailable"
+          ]
+        }
+      },
+      "CheckForAnIssueRequest": {
         "type": "object",
         "properties": {
           "checkNumbaer": {
             "type": "string",
-            "example": "mgv02btfvp"
+            "example": "sugPme8kxd"
           }
         },
-        "example": "{\n  \"checkNumbaer\" : \"mgv02btfvp\"\n}"
+        "example": "{\n  \"checkNumbaer\" : \"sugPme8kxd\"\n}"
       },
-      "CheckAnIssueStatusResponse_500": {
+      "CheckForAnIssueResponse_500": {
         "type": "object",
         "properties": {
           "errorCode": {
@@ -496,8 +496,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "status_422",
             "success",
+            "status_422",
             "server_error"
           ]
         }
