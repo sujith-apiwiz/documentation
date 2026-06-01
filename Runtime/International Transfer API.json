@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "International Transfer API",
-    "description": "The International Transfer API enables users to execute and manage cross-border money transfers seamlessly. This API facilitates secure, real-time financial transactions, allowing businesses and individuals to send funds internationally while providing detailed responses for successful transfers as well as error handling for unsuccessful attempts. Integrate this API into your existing systems to enhance your financial operations and broaden your reach in global markets.",
+    "description": "This API facilitates the process of executing international money transfers, allowing users to initiate, track, and manage their transactions seamlessly. With a focus on security and efficiency, the International Transfer API incorporates essential parameters to ensure smooth communication and reliable processing of transfer requests.",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -25,10 +25,10 @@
     "/international-transfer": {
       "post": {
         "tags": [
-          "International Transfer"
+          "Money Transfer"
         ],
         "summary": "Initiate an international money transfer",
-        "description": "This operation allows users to initiate an international money transfer to a designated recipient. Users need to provide details such as the recipient's information, the amount to be transferred, and any applicable currency types. Upon successful processing of the transaction, a confirmation response will be returned, indicating the status of the transfer.",
+        "description": "This operation allows users to initiate an international money transfer. It requires payment details, recipient information, and the amount to be transferred. Upon successful completion, the operation will return a confirmation of the transaction along with a unique reference number for tracking purposes.",
         "operationId": "initiateAnInternationalMoneyTransfer",
         "parameters": [
           {
@@ -39,14 +39,26 @@
           },
           {
             "$ref": "#/components/parameters/x-mock-response"
-          },
-          {
-            "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "responses": {
+          "422": {
+            "description": "Invalid data or request format.",
+            "headers": {
+              "x-log-id": {
+                "$ref": "#/components/headers/x-log-id"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitiateAnInternationalMoneyTransferResponse_422"
+                }
+              }
+            }
+          },
           "500": {
-            "description": "Internal server error occurred.",
+            "description": "Unexpected server error occurred.",
             "headers": {
               "x-log-id": {
                 "$ref": "#/components/headers/x-log-id"
@@ -61,7 +73,7 @@
             }
           },
           "200": {
-            "description": "Successful transfer initiation response.",
+            "description": "Successfully initiated transfer.",
             "headers": {
               "x-log-id": {
                 "$ref": "#/components/headers/x-log-id"
@@ -71,21 +83,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InitiateAnInternationalMoneyTransferResponse_200"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable entity due to validation failure.",
-            "headers": {
-              "x-log-id": {
-                "$ref": "#/components/headers/x-log-id"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InitiateAnInternationalMoneyTransferResponse_422"
                 }
               }
             }
@@ -101,6 +98,67 @@
   },
   "components": {
     "schemas": {
+      "InitiateAnInternationalMoneyTransferResponse_422": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "example": "SEND-4221"
+          },
+          "errorMessage": {
+            "type": "string",
+            "example": "Invalid SWIFT code provided."
+          },
+          "errorType": {
+            "type": "string",
+            "example": "BUSINESS_ERROR"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "example": 422
+          },
+          "service": {
+            "type": "string",
+            "example": "send-funds-service"
+          },
+          "operation": {
+            "type": "string",
+            "example": "sendFundsInternationalTransfer"
+          },
+          "traceId": {
+            "type": "string",
+            "example": "trace-7711cc22-4488"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-03-13T12:34:10Z"
+          },
+          "details": {
+            "type": "array",
+            "example": [
+              "The SWIFT code format does not match the required international banking standard."
+            ],
+            "items": {
+              "type": "string",
+              "example": "aC}#:fJ:+lU=h5:+S)A'F#X=]3qR+@h|_$Oqe>b@|ms:3?NW|aqB4gjGtU:FKPmlV>/jGah.<4fquv\"fx"
+            }
+          }
+        },
+        "example": {
+          "errorCode": "SEND-4221",
+          "errorMessage": "Invalid SWIFT code provided.",
+          "errorType": "BUSINESS_ERROR",
+          "status": 422,
+          "service": "send-funds-service",
+          "operation": "sendFundsInternationalTransfer",
+          "traceId": "trace-7711cc22-4488",
+          "timestamp": "2026-03-13T12:34:10Z",
+          "details": [
+            "The SWIFT code format does not match the required international banking standard."
+          ]
+        }
+      },
       "InitiateAnInternationalMoneyTransferResponse_500": {
         "type": "object",
         "properties": {
@@ -241,67 +299,6 @@
           "traceId": "a99212aa-1234-44d5-b234-4a1f23b1a111",
           "timestamp": "2026-03-13T10:22:45Z"
         }
-      },
-      "InitiateAnInternationalMoneyTransferResponse_422": {
-        "type": "object",
-        "properties": {
-          "errorCode": {
-            "type": "string",
-            "example": "SEND-4221"
-          },
-          "errorMessage": {
-            "type": "string",
-            "example": "Invalid SWIFT code provided."
-          },
-          "errorType": {
-            "type": "string",
-            "example": "BUSINESS_ERROR"
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "example": 422
-          },
-          "service": {
-            "type": "string",
-            "example": "send-funds-service"
-          },
-          "operation": {
-            "type": "string",
-            "example": "sendFundsInternationalTransfer"
-          },
-          "traceId": {
-            "type": "string",
-            "example": "trace-7711cc22-4488"
-          },
-          "timestamp": {
-            "type": "string",
-            "example": "2026-03-13T12:34:10Z"
-          },
-          "details": {
-            "type": "array",
-            "example": [
-              "The SWIFT code format does not match the required international banking standard."
-            ],
-            "items": {
-              "type": "string",
-              "example": "Y]zm)2%>|KZFmQL$!G:}#4]s?#C*GB#.gN?t'1])79{4?B4NTF9?Y>-Ff(kVo^U=v/VpVzQ}[s@{um);h"
-            }
-          }
-        },
-        "example": {
-          "errorCode": "SEND-4221",
-          "errorMessage": "Invalid SWIFT code provided.",
-          "errorType": "BUSINESS_ERROR",
-          "status": 422,
-          "service": "send-funds-service",
-          "operation": "sendFundsInternationalTransfer",
-          "traceId": "trace-7711cc22-4488",
-          "timestamp": "2026-03-13T12:34:10Z",
-          "details": [
-            "The SWIFT code format does not match the required international banking standard."
-          ]
-        }
       }
     },
     "parameters": {
@@ -325,21 +322,27 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "90ce0705-2f38-40de-8747-34b9d31adad7"
+          "example": "d5db254c-07ef-463a-a643-dff314ec31a0"
         },
-        "example": "90ce0705-2f38-40de-8747-34b9d31adad7"
+        "example": "d5db254c-07ef-463a-a643-dff314ec31a0"
       },
       "x-mock-response": {
         "name": "x-mock-response",
         "in": "header",
+        "description": "Controls x-mock-response response status",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "elif"
+          "example": "if",
+          "enum": [
+            "status_422",
+            "server_error",
+            "success"
+          ]
         },
-        "example": "elif"
+        "example": "if"
       }
     },
     "headers": {
@@ -348,9 +351,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6a181484bf6a435f21db2aaf"
+          "example": "6a181486bf6a435f21db2ab1"
         },
-        "example": "6a181484bf6a435f21db2aaf"
+        "example": "6a181486bf6a435f21db2ab1"
       }
     }
   }
