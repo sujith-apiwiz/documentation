@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Notification Management API",
-    "description": "The Notification Management API enables seamless integration of notification services into applications, allowing for real-time communication and alerts. This API facilitates the sending and managing of notifications through a simple POST request. With robust error handling and response management, developers can easily implement features that keep users informed and engaged.",
+    "description": "The Notification Management API provides endpoints for sending and managing notifications, allowing users to notify subscribers or systems through various identified channels. This API allows for detailed configuration of notifications and handling of responses, making it an essential tool for real-time communications.",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/api/v1",
+      "url": "https://stage-data-gujl.apiwiz.io/base-test/v1",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,7 +18,7 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/api/v1"
+      "x-basePath": "/base-test/v1"
     }
   ],
   "paths": {
@@ -28,9 +28,39 @@
           "Notification Service"
         ],
         "summary": "Send a notification",
-        "description": "This operation allows you to send a notification to a specified user or group. You will need to provide the recipient's details and the message content in the request body. Upon successful execution, the notification will be dispatched, and the system will respond with a success status indicating that the notification was sent successfully.",
+        "description": "This endpoint allows users to send notifications to the designated recipients. You must provide the necessary details, including the message content and the target users. Upon successful execution, a confirmation response will be returned, indicating that the notification has been dispatched.",
         "operationId": "sendNotification",
         "parameters": [
+          {
+            "$ref": "#/components/parameters/Referer"
+          },
+          {
+            "$ref": "#/components/parameters/sec-ch-ua"
+          },
+          {
+            "$ref": "#/components/parameters/Sec-Fetch-Dest"
+          },
+          {
+            "$ref": "#/components/parameters/Sec-Fetch-Mode"
+          },
+          {
+            "$ref": "#/components/parameters/Sec-Fetch-Site"
+          },
+          {
+            "$ref": "#/components/parameters/Accept-Language"
+          },
+          {
+            "$ref": "#/components/parameters/sec-ch-ua-mobile"
+          },
+          {
+            "$ref": "#/components/parameters/sec-ch-ua-platform"
+          },
+          {
+            "$ref": "#/components/parameters/ocp-apim-subscription-key"
+          },
+          {
+            "$ref": "#/components/parameters/test"
+          },
           {
             "$ref": "#/components/parameters/Cookie"
           },
@@ -52,7 +82,7 @@
         },
         "responses": {
           "200": {
-            "description": "Notification sent successfully.",
+            "description": "Successful notification dispatch",
             "headers": {
               "date": {
                 "$ref": "#/components/headers/date"
@@ -84,35 +114,32 @@
               }
             }
           },
-          "404": {
-            "description": "Recipient not found.",
+          "403": {
+            "description": "Access forbidden to this resource",
             "headers": {
-              "date": {
-                "$ref": "#/components/headers/date"
-              },
-              "vary": {
-                "$ref": "#/components/headers/vary"
-              },
-              "keep-alive": {
-                "$ref": "#/components/headers/keep-alive"
-              },
               "content-type": {
-                "$ref": "#/components/headers/content-type"
-              },
-              "x-robots-tag": {
-                "$ref": "#/components/headers/x-robots-tag"
-              },
-              "transfer-encoding": {
-                "$ref": "#/components/headers/transfer-encoding"
-              },
-              "x-localtunnel-agent-ips": {
-                "$ref": "#/components/headers/x-localtunnel-agent-ips"
+                "$ref": "#/components/headers/Content-Type"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SendNotificationResponse_404"
+                  "$ref": "#/components/schemas/SendNotificationResponse_403"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error occurred",
+            "headers": {
+              "content-type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SendNotificationResponse_500"
                 }
               }
             }
@@ -157,7 +184,7 @@
           },
           "createdAt": {
             "type": "string",
-            "example": "2026-05-18T06:55:04.166+00:00"
+            "example": "2026-05-19T11:45:09.411+00:00"
           }
         },
         "example": {
@@ -167,7 +194,25 @@
           "currency": "currency_0361f425f854",
           "reference": "reference_02ce1972cbfc",
           "channel": "channel_4cb5861c61b9",
-          "createdAt": "2026-05-18T06:55:04.166+00:00"
+          "createdAt": "2026-05-19T11:45:09.411+00:00"
+        }
+      },
+      "SendNotificationResponse_403": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "format": "int32",
+            "example": 403
+          },
+          "message": {
+            "type": "string",
+            "example": "Forbidden"
+          }
+        },
+        "example": {
+          "statusCode": 403,
+          "message": "Forbidden"
         }
       },
       "SendNotificationRequest": {
@@ -175,61 +220,180 @@
         "properties": {
           "fromAccount": {
             "type": "string",
-            "example": "MxEjibdJ3NdnZVVd6hf36cDj"
+            "example": "6gJVTPSmYrxgdx1sjEKt46sA"
           },
           "toAccount": {
             "type": "string",
-            "example": "DTfhEjgmldS6ShEnBFZi87"
+            "example": "qwLR0dAqkyONE8UtPBICYY"
           },
           "amount": {
             "type": "number",
-            "example": 47.42
+            "example": 84.85
           },
           "currency": {
             "type": "string",
-            "example": "iE6ZGZt2PWIrZsiKHxYQn"
+            "example": "cx9dYXrKdJFXwi6FyaOB3"
           },
           "reference": {
             "type": "string",
-            "example": "NIpJcTEVwMUSafkDkK2pZA"
+            "example": "ETYwRy1VvP71QT9ameWUTw"
           },
           "channel": {
             "type": "string",
-            "example": "QFkCeDD4Hpv5EOTiGCb8"
+            "example": "wab6b31XqpKDnV1BoFmX"
           }
         },
-        "example": "{\n  \"fromAccount\" : \"MxEjibdJ3NdnZVVd6hf36cDj\",\n  \"toAccount\" : \"DTfhEjgmldS6ShEnBFZi87\",\n  \"amount\" : 47.42,\n  \"currency\" : \"iE6ZGZt2PWIrZsiKHxYQn\",\n  \"reference\" : \"NIpJcTEVwMUSafkDkK2pZA\",\n  \"channel\" : \"QFkCeDD4Hpv5EOTiGCb8\"\n}"
+        "example": "{\n  \"fromAccount\" : \"6gJVTPSmYrxgdx1sjEKt46sA\",\n  \"toAccount\" : \"qwLR0dAqkyONE8UtPBICYY\",\n  \"amount\" : 84.85,\n  \"currency\" : \"cx9dYXrKdJFXwi6FyaOB3\",\n  \"reference\" : \"ETYwRy1VvP71QT9ameWUTw\",\n  \"channel\" : \"wab6b31XqpKDnV1BoFmX\"\n}"
       },
-      "SendNotificationResponse_404": {
+      "SendNotificationResponse_500": {
         "type": "object",
         "properties": {
-          "timestamp": {
-            "type": "string",
-            "example": "2026-05-18T06:54:18.219+00:00"
-          },
-          "status": {
+          "statusCode": {
             "type": "integer",
             "format": "int32",
-            "example": 404
+            "example": 500
           },
-          "error": {
+          "message": {
             "type": "string",
-            "example": "Not Found"
+            "example": "Internal server error"
           },
-          "path": {
+          "activityId": {
             "type": "string",
-            "example": "/api/v1/api/v1/notify"
+            "example": "a9f8d6c1-d03c-4237-ac93-85d49a1a8587"
           }
         },
         "example": {
-          "timestamp": "2026-05-18T06:54:18.219+00:00",
-          "status": 404,
-          "error": "Not Found",
-          "path": "/api/v1/api/v1/notify"
+          "statusCode": 500,
+          "message": "Internal server error",
+          "activityId": "a9f8d6c1-d03c-4237-ac93-85d49a1a8587"
         }
       }
     },
     "parameters": {
+      "Referer": {
+        "name": "Referer",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "https://apimanagement.hosting.portal.azure.net/"
+        },
+        "example": "https://apimanagement.hosting.portal.azure.net/"
+      },
+      "sec-ch-ua": {
+        "name": "sec-ch-ua",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "\"Google Chrome\";v=\"147\""
+        },
+        "example": "\"Google Chrome\";v=\"147\""
+      },
+      "Sec-Fetch-Dest": {
+        "name": "Sec-Fetch-Dest",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "empty"
+        },
+        "example": "empty"
+      },
+      "Sec-Fetch-Mode": {
+        "name": "Sec-Fetch-Mode",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "cors"
+        },
+        "example": "cors"
+      },
+      "Sec-Fetch-Site": {
+        "name": "Sec-Fetch-Site",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "cross-site"
+        },
+        "example": "cross-site"
+      },
+      "Accept-Language": {
+        "name": "Accept-Language",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "en-GB"
+        },
+        "example": "en-GB"
+      },
+      "sec-ch-ua-mobile": {
+        "name": "sec-ch-ua-mobile",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "?0"
+        },
+        "example": "?0"
+      },
+      "sec-ch-ua-platform": {
+        "name": "sec-ch-ua-platform",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "\"macOS\""
+        },
+        "example": "\"macOS\""
+      },
+      "ocp-apim-subscription-key": {
+        "name": "ocp-apim-subscription-key",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "74943308fdca4ac09f063d67eaf94205"
+        },
+        "example": "74943308fdca4ac09f063d67eaf94205"
+      },
+      "test": {
+        "name": "test",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "array",
+          "example": "sad",
+          "items": {
+            "type": "string",
+            "example": "is"
+          }
+        },
+        "example": "sad"
+      },
       "Cookie": {
         "name": "Cookie",
         "in": "header",
@@ -265,7 +429,8 @@
           "type": "string",
           "enum": [
             "success",
-            "not_found"
+            "forbidden",
+            "server_error"
           ]
         }
       }
@@ -276,9 +441,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Mon, 18 May 2026 06:54:18 GMT"
+          "example": "Tue, 19 May 2026 11:45:14 GMT"
         },
-        "example": "Mon, 18 May 2026 06:54:18 GMT"
+        "example": "Tue, 19 May 2026 11:45:14 GMT"
       },
       "vary": {
         "style": "simple",
@@ -330,9 +495,18 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "[\"27.7.8.170\"]"
+          "example": "[\"34.217.218.221\"]"
         },
-        "example": "[\"27.7.8.170\"]"
+        "example": "[\"34.217.218.221\"]"
+      },
+      "Content-Type": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
       }
     }
   }
