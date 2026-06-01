@@ -2,7 +2,13 @@
   "openapi": "3.0.1",
   "info": {
     "title": "QR Transfer API",
-    "description": "The QR Transfer API allows for seamless and efficient transfer of funds using QR codes, enabling users to easily send or receive payments by scanning or sharing QR codes. This API provides the necessary endpoints to facilitate secure transactions, handle errors, and manage requests in a streamlined manner.",
+    "description": "This API facilitates the secure transfer of QR codes, enabling seamless transactions and data exchanges. It is designed to handle requests efficiently, providing detailed responses and error handling to ensure smooth integration within applications.",
+    "termsOfService": "By using this API, you agree to comply with our terms and conditions. For further details, please visit our terms of service page at https://www.yourdomain.com/terms.",
+    "contact": {
+      "name": "Support Team",
+      "url": "https://support.yourdomain.com",
+      "email": "support@yourdomain.com"
+    },
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -25,11 +31,11 @@
     "/qr-transfer": {
       "post": {
         "tags": [
-          "QR Payment"
+          "Transfer Management"
         ],
-        "summary": "Initiate a QR transfer",
-        "description": "This endpoint allows users to initiate a QR transfer of funds to another user or merchant. The request must include the necessary amount and recipient information. After successful processing, the user will receive confirmation of the transfer and any relevant transaction details.",
-        "operationId": "initiateQrTransfer",
+        "summary": "Initiate a QR code transfer",
+        "description": "This endpoint allows the user to initiate a transfer using a QR code. The user needs to provide the necessary transfer details in the request body. After the transfer is initiated, a response will confirm the successful initiation of the QR transfer along with any required identifiers used in the transaction.",
+        "operationId": "initiateQrCodeTransfer",
         "parameters": [
           {
             "$ref": "#/components/parameters/content-type"
@@ -42,23 +48,8 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Internal server error occurred.",
-            "headers": {
-              "x-log-id": {
-                "$ref": "#/components/headers/x-log-id"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InitiateQrTransferResponse_500"
-                }
-              }
-            }
-          },
           "404": {
-            "description": "Requested resource not found.",
+            "description": "Resource not found for transfer",
             "headers": {
               "x-log-id": {
                 "$ref": "#/components/headers/x-log-id"
@@ -67,13 +58,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InitiateQrTransferResponse_404"
+                  "$ref": "#/components/schemas/InitiateQrCodeTransferResponse_404"
                 }
               }
             }
           },
           "200": {
-            "description": "Transfer successfully initiated.",
+            "description": "Transfer initiated successfully",
             "headers": {
               "x-log-id": {
                 "$ref": "#/components/headers/x-log-id"
@@ -82,7 +73,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InitiateQrTransferResponse_200"
+                  "$ref": "#/components/schemas/InitiateQrCodeTransferResponse_200"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error occurred",
+            "headers": {
+              "x-log-id": {
+                "$ref": "#/components/headers/x-log-id"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitiateQrCodeTransferResponse_500"
                 }
               }
             }
@@ -98,60 +104,7 @@
   },
   "components": {
     "schemas": {
-      "InitiateQrTransferResponse_500": {
-        "type": "object",
-        "properties": {
-          "errorCode": {
-            "type": "string",
-            "example": "SYS-500"
-          },
-          "errorMessage": {
-            "type": "string",
-            "example": "An unexpected error occurred while processing the transaction."
-          },
-          "errorType": {
-            "type": "string",
-            "example": "SYSTEM_ERROR"
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "example": 500
-          },
-          "service": {
-            "type": "string",
-            "example": "send-funds-service"
-          },
-          "operation": {
-            "type": "string",
-            "example": "sendFundsLocalTransfer"
-          },
-          "traceId": {
-            "type": "string",
-            "example": "ffb0bcd1-0b6d-4e3b-83fd-2e6b7c4e123a"
-          },
-          "supportReference": {
-            "type": "string",
-            "example": "SUP-778212"
-          },
-          "timestamp": {
-            "type": "string",
-            "example": "2026-03-13T11:07:20Z"
-          }
-        },
-        "example": {
-          "errorCode": "SYS-500",
-          "errorMessage": "An unexpected error occurred while processing the transaction.",
-          "errorType": "SYSTEM_ERROR",
-          "status": 500,
-          "service": "send-funds-service",
-          "operation": "sendFundsLocalTransfer",
-          "traceId": "ffb0bcd1-0b6d-4e3b-83fd-2e6b7c4e123a",
-          "supportReference": "SUP-778212",
-          "timestamp": "2026-03-13T11:07:20Z"
-        }
-      },
-      "InitiateQrTransferResponse_404": {
+      "InitiateQrCodeTransferResponse_404": {
         "type": "object",
         "properties": {
           "errorCode": {
@@ -194,7 +147,7 @@
             ],
             "items": {
               "type": "string",
-              "example": "3}4qjD[g$e8nduucbP?w9\"(jl+y2vi?g;[0|0JT2JLXNLR$3\"*>&(9#s)'PE"
+              "example": "bxm5b5)0fTg3LnueW5)R6Ph'mAouVO+QxN'U9fv-&%0!N|nw?=.gonufD^?r"
             }
           }
         },
@@ -212,7 +165,7 @@
           ]
         }
       },
-      "InitiateQrTransferResponse_200": {
+      "InitiateQrCodeTransferResponse_200": {
         "type": "object",
         "properties": {
           "transactionId": {
@@ -299,6 +252,59 @@
           "traceId": "a99212aa-1234-44d5-b234-4a1f23b1a111",
           "timestamp": "2026-03-13T10:22:45Z"
         }
+      },
+      "InitiateQrCodeTransferResponse_500": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "example": "SYS-500"
+          },
+          "errorMessage": {
+            "type": "string",
+            "example": "An unexpected error occurred while processing the transaction."
+          },
+          "errorType": {
+            "type": "string",
+            "example": "SYSTEM_ERROR"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "example": 500
+          },
+          "service": {
+            "type": "string",
+            "example": "send-funds-service"
+          },
+          "operation": {
+            "type": "string",
+            "example": "sendFundsLocalTransfer"
+          },
+          "traceId": {
+            "type": "string",
+            "example": "ffb0bcd1-0b6d-4e3b-83fd-2e6b7c4e123a"
+          },
+          "supportReference": {
+            "type": "string",
+            "example": "SUP-778212"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-03-13T11:07:20Z"
+          }
+        },
+        "example": {
+          "errorCode": "SYS-500",
+          "errorMessage": "An unexpected error occurred while processing the transaction.",
+          "errorType": "SYSTEM_ERROR",
+          "status": 500,
+          "service": "send-funds-service",
+          "operation": "sendFundsLocalTransfer",
+          "traceId": "ffb0bcd1-0b6d-4e3b-83fd-2e6b7c4e123a",
+          "supportReference": "SUP-778212",
+          "timestamp": "2026-03-13T11:07:20Z"
+        }
       }
     },
     "parameters": {
@@ -322,9 +328,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "fb8fbe98-f13d-47a3-ba2d-0a8246df9090"
+          "example": "62527b27-daf9-4b00-a5a2-bc67fcd70887"
         },
-        "example": "fb8fbe98-f13d-47a3-ba2d-0a8246df9090"
+        "example": "62527b27-daf9-4b00-a5a2-bc67fcd70887"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -335,14 +341,14 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "if",
+          "example": "ifs",
           "enum": [
-            "server_error",
             "not_found",
-            "success"
+            "success",
+            "server_error"
           ]
         },
-        "example": "if"
+        "example": "ifs"
       }
     },
     "headers": {
@@ -351,9 +357,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6a18147dbf6a435f21db2aab"
+          "example": "6a18147ebf6a435f21db2aad"
         },
-        "example": "6a18147dbf6a435f21db2aab"
+        "example": "6a18147ebf6a435f21db2aad"
       }
     }
   }
