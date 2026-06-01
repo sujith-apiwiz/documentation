@@ -2,7 +2,13 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Funds Transfer API",
-    "description": "The Funds Transfer API allows users to securely and efficiently initiate and manage financial transfers between accounts. It provides endpoints for handling transfer requests, including detailed response information and customizable header parameters for enhanced connectivity. Ideal for integrating banking functionalities into applications, it ensures reliability and ease of use.",
+    "description": "The Funds Transfer API allows clients to initiate and manage financial transfer operations securely and efficiently. This API provides endpoints to submit transfer requests, track their status, and handle various parameters required for transaction processing, ensuring a streamlined user experience.",
+    "termsOfService": "By using this API, you agree to adhere to our policies concerning data protection, security protocols, and transaction management. Please review our terms of service for more detailed information.",
+    "contact": {
+      "name": "Support Team",
+      "url": "https://www.example.com/support",
+      "email": "support@example.com"
+    },
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -10,7 +16,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/api/v1",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/direct-payments",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,36 +24,54 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/api/v1"
+      "x-basePath": "/v1/direct-payments"
     }
   ],
   "paths": {
     "/transfer": {
       "post": {
         "tags": [
-          "Funds Transfer"
+          "Fund Transfer"
         ],
-        "summary": "Initiate a fund transfer",
-        "description": "This operation allows users to initiate a fund transfer between accounts. The request should include the source and destination account details along with the amount to be transferred. Upon successful execution, the system will provide a confirmation of the transaction.",
-        "operationId": "initiateFundTransfer",
+        "summary": "Initiate a new transfer",
+        "description": "This operation allows users to initiate a transfer of funds from one account to another. It requires the sender's account information, receiver's account information, and the amount to be transferred. Upon successful submission, the transfer will be processed, and a confirmation will be returned, ensuring a seamless financial transaction.",
+        "operationId": "initiateNewTransfer",
         "parameters": [
           {
-            "$ref": "#/components/parameters/x-real-ip"
+            "$ref": "#/components/parameters/referer"
+          },
+          {
+            "$ref": "#/components/parameters/priority"
+          },
+          {
+            "$ref": "#/components/parameters/sec-ch-ua"
           },
           {
             "$ref": "#/components/parameters/content-type"
           },
           {
-            "$ref": "#/components/parameters/x-forwarded-host"
+            "$ref": "#/components/parameters/x-request-id"
           },
           {
-            "$ref": "#/components/parameters/x-forwarded-path"
+            "$ref": "#/components/parameters/sec-fetch-dest"
           },
           {
-            "$ref": "#/components/parameters/x-forwarded-port"
+            "$ref": "#/components/parameters/sec-fetch-mode"
           },
           {
-            "$ref": "#/components/parameters/x-kong-request-id"
+            "$ref": "#/components/parameters/sec-fetch-site"
+          },
+          {
+            "$ref": "#/components/parameters/accept-language"
+          },
+          {
+            "$ref": "#/components/parameters/sec-ch-ua-mobile"
+          },
+          {
+            "$ref": "#/components/parameters/sec-ch-ua-platform"
+          },
+          {
+            "$ref": "#/components/parameters/x-apiwiz-enable-events"
           },
           {
             "$ref": "#/components/parameters/x-mock-response"
@@ -57,35 +81,44 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/InitiateFundTransferRequest"
+                "$ref": "#/components/schemas/InitiateNewTransferRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Transfer completed successfully",
+          "400": {
+            "description": "Invalid request data provided.",
             "headers": {
-              "date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "vary": {
-                "$ref": "#/components/headers/Vary"
-              },
-              "connection": {
-                "$ref": "#/components/headers/Connection"
-              },
-              "keep-alive": {
-                "$ref": "#/components/headers/Keep-Alive"
+              "x-log-id": {
+                "$ref": "#/components/headers/x-log-id"
               },
               "content-type": {
-                "$ref": "#/components/headers/Content-Type"
+                "$ref": "#/components/headers/content-type"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InitiateFundTransferResponse_200"
+                  "$ref": "#/components/schemas/InitiateNewTransferResponse_400"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Transfer initiated successfully.",
+            "headers": {
+              "x-log-id": {
+                "$ref": "#/components/headers/x-log-id"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitiateNewTransferResponse_200"
                 }
               }
             }
@@ -101,92 +134,102 @@
   },
   "components": {
     "schemas": {
-      "InitiateFundTransferRequest": {
+      "InitiateNewTransferResponse_400": {
         "type": "object",
         "properties": {
-          "fromAccount": {
+          "partnerSessionId": {
             "type": "string",
-            "example": "9p2oN6"
-          },
-          "toAccount": {
-            "type": "string",
-            "example": "GvO9v8"
-          },
-          "amount": {
-            "type": "integer",
-            "format": "int32",
-            "example": 93
-          },
-          "userId": {
-            "type": "string",
-            "example": "mafgdru"
-          },
-          "message": {
-            "type": "string",
-            "example": "pfrj"
-          },
-          "type": {
-            "type": "string",
-            "example": "xxiz"
-          }
-        },
-        "example": "{\n  \"fromAccount\" : \"9p2oN6\",\n  \"toAccount\" : \"GvO9v8\",\n  \"amount\" : 93,\n  \"userId\" : \"mafgdru\",\n  \"message\" : \"pfrj\",\n  \"type\" : \"xxiz\"\n}"
-      },
-      "InitiateFundTransferResponse_200": {
-        "type": "object",
-        "properties": {
-          "fromAccount": {
-            "type": "string",
-            "example": "ACC123"
-          },
-          "toAccount": {
-            "type": "string",
-            "example": "ACC456"
-          },
-          "amount": {
-            "type": "integer",
-            "format": "int32",
-            "example": 1000
-          },
-          "currency": {
-            "type": "string"
-          },
-          "reference": {
-            "type": "string"
-          },
-          "channel": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string",
-            "example": "2026-04-28T13:10:33.444+00:00"
+            "example": "DF195633-E743-4E1A-B4865D5EA95FB21F"
           },
           "status": {
             "type": "string",
-            "example": "SUCCESS"
+            "example": "FAILED"
+          },
+          "code": {
+            "type": "string",
+            "example": "400"
+          },
+          "description": {
+            "type": "string",
+            "example": "BadRequest: Enter a valid User"
           }
         },
         "example": {
-          "fromAccount": "ACC123",
-          "toAccount": "ACC456",
-          "amount": 1000,
-          "createdAt": "2026-04-28T13:10:33.444+00:00",
-          "status": "SUCCESS"
+          "partnerSessionId": "DF195633-E743-4E1A-B4865D5EA95FB21F",
+          "status": "FAILED",
+          "code": "400",
+          "description": "BadRequest: Enter a valid User"
+        }
+      },
+      "InitiateNewTransferRequest": {
+        "type": "object",
+        "properties": {
+          "partnerCode": {
+            "type": "string",
+            "example": "bvqhcvi"
+          }
+        },
+        "example": "{\n  \"partnerCode\" : \"bvqhcvi\"\n}"
+      },
+      "InitiateNewTransferResponse_200": {
+        "type": "object",
+        "properties": {
+          "partnerSessionId": {
+            "type": "string",
+            "example": "DF195633-E743-4E1A-B4865D5EA95FB21F"
+          },
+          "status": {
+            "type": "string",
+            "example": "Success"
+          },
+          "code": {
+            "type": "string",
+            "example": "000"
+          }
+        },
+        "example": {
+          "partnerSessionId": "DF195633-E743-4E1A-B4865D5EA95FB21F",
+          "status": "Success",
+          "code": "000"
         }
       }
     },
     "parameters": {
-      "x-real-ip": {
-        "name": "x-real-ip",
+      "referer": {
+        "name": "referer",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "34.217.218.221"
+          "example": "https://stage-data.apiwiz.io/api-sandbox"
         },
-        "example": "34.217.218.221"
+        "example": "https://stage-data.apiwiz.io/api-sandbox"
+      },
+      "priority": {
+        "name": "priority",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "u=1, i"
+        },
+        "example": "u=1, i"
+      },
+      "sec-ch-ua": {
+        "name": "sec-ch-ua",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "\"Google Chrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\""
+        },
+        "example": "\"Google Chrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\""
       },
       "content-type": {
         "name": "content-type",
@@ -200,53 +243,101 @@
         },
         "example": "application/json"
       },
-      "x-forwarded-host": {
-        "name": "x-forwarded-host",
+      "x-request-id": {
+        "name": "x-request-id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "52.38.81.177"
+          "example": "f5d5ea89-173d-4226-a4c5-c1dd683ed265"
         },
-        "example": "52.38.81.177"
+        "example": "f5d5ea89-173d-4226-a4c5-c1dd683ed265"
       },
-      "x-forwarded-path": {
-        "name": "x-forwarded-path",
+      "sec-fetch-dest": {
+        "name": "sec-fetch-dest",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "/api/v1/transfer"
+          "example": "empty"
         },
-        "example": "/api/v1/transfer"
+        "example": "empty"
       },
-      "x-forwarded-port": {
-        "name": "x-forwarded-port",
+      "sec-fetch-mode": {
+        "name": "sec-fetch-mode",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "8000"
+          "example": "cors"
         },
-        "example": "8000"
+        "example": "cors"
       },
-      "x-kong-request-id": {
-        "name": "x-kong-request-id",
+      "sec-fetch-site": {
+        "name": "sec-fetch-site",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "3902b010c8402c1836b66806e7c12907"
+          "example": "same-site"
         },
-        "example": "3902b010c8402c1836b66806e7c12907"
+        "example": "same-site"
+      },
+      "accept-language": {
+        "name": "accept-language",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "en-GB,en-US;q=0.9,en;q=0.8"
+        },
+        "example": "en-GB,en-US;q=0.9,en;q=0.8"
+      },
+      "sec-ch-ua-mobile": {
+        "name": "sec-ch-ua-mobile",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "?0"
+        },
+        "example": "?0"
+      },
+      "sec-ch-ua-platform": {
+        "name": "sec-ch-ua-platform",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "\"macOS\""
+        },
+        "example": "\"macOS\""
+      },
+      "x-apiwiz-enable-events": {
+        "name": "x-apiwiz-enable-events",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "true"
+        },
+        "example": "true"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -258,56 +349,30 @@
         "schema": {
           "type": "string",
           "enum": [
+            "bad_request",
             "success"
           ]
         }
       }
     },
     "headers": {
-      "Date": {
+      "x-log-id": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "FXfzdEbZ87blGWuDChp4HpQA8Yz90"
+          "example": "6a1d261301d29a24f2bb8c96"
         },
-        "example": "FXfzdEbZ87blGWuDChp4HpQA8Yz90"
+        "example": "6a1d261301d29a24f2bb8c96"
       },
-      "Vary": {
+      "content-type": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "ifecfe"
+          "example": "application/json"
         },
-        "example": "ifecfe"
-      },
-      "Connection": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "@(/%CDuF2o"
-        },
-        "example": "@(/%CDuF2o"
-      },
-      "Keep-Alive": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "fVDox00PLw"
-        },
-        "example": "fVDox00PLw"
-      },
-      "Content-Type": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "|ji9E0Q7(s$:&uj'"
-        },
-        "example": "|ji9E0Q7(s$:&uj'"
+        "example": "application/json"
       }
     }
   }
