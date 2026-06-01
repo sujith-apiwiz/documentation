@@ -2,8 +2,11 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Local Transfer API",
-    "description": "The Local Transfer API enables seamless transactions for transferring funds between accounts within the same network. It streamlines the process of initiating and processing local transfers while ensuring data integrity and security. This API provides essential features for managing requests, responses, and various transfer parameters, along with robust error handling and logging capabilities.",
-    "version": "1.0"
+    "description": "This API facilitates the initiation and management of local financial transfers. It allows users to securely perform actions related to transferring funds between accounts, detailing parameters such as priority and destination accounts. Designed for efficient transaction processing, it returns appropriately structured responses depending on the status of the transaction request.",
+    "version": "1.0",
+    "extensions": {
+      "x-oas-type": "Runtime"
+    }
   },
   "servers": [
     {
@@ -20,48 +23,57 @@
   ],
   "paths": {
     "/local-transfer": {
-      "post": {
+      "get": {
         "tags": [
-          "Transfer Management"
+          "Local Transfer"
         ],
-        "summary": "Initiate a local transfer",
-        "description": "This operation allows the user to initiate a local funds transfer between accounts. The request should include necessary account details and amount to be transferred.",
-        "operationId": "initiateALocalTransfer",
+        "summary": "Retrieve local transfer details",
+        "description": "This operation allows you to retrieve details of local transfers available within the system. By providing necessary parameters, users can filter results according to specific criteria. The expected outcome is a comprehensive list of local transfers along with their details for review or further action.",
+        "operationId": "retrieveLocalTransferDetails",
         "parameters": [
           {
-            "$ref": "#/components/parameters/mock"
+            "$ref": "#/components/parameters/referer"
           },
           {
-            "$ref": "#/components/parameters/content-type"
+            "$ref": "#/components/parameters/priority"
+          },
+          {
+            "$ref": "#/components/parameters/sec-ch-ua"
           },
           {
             "$ref": "#/components/parameters/x-request-id"
+          },
+          {
+            "$ref": "#/components/parameters/sec-fetch-dest"
+          },
+          {
+            "$ref": "#/components/parameters/sec-fetch-mode"
+          },
+          {
+            "$ref": "#/components/parameters/sec-fetch-site"
+          },
+          {
+            "$ref": "#/components/parameters/accept-language"
+          },
+          {
+            "$ref": "#/components/parameters/sec-ch-ua-mobile"
+          },
+          {
+            "$ref": "#/components/parameters/destinationaccount"
+          },
+          {
+            "$ref": "#/components/parameters/sec-ch-ua-platform"
+          },
+          {
+            "$ref": "#/components/parameters/x-apiwiz-enable-events"
           },
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successful transfer initiation",
-            "headers": {
-              "x-log-id": {
-                "$ref": "#/components/headers/x-log-id"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/local-transfer_post_response_200"
-                }
-              }
-            }
-          },
           "400": {
-            "description": "Invalid request parameters",
+            "description": "Bad request due to validation errors",
             "headers": {
               "x-log-id": {
                 "$ref": "#/components/headers/x-log-id"
@@ -73,7 +85,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/local-transfer_post_response_400"
+                  "$ref": "#/components/schemas/RetrieveLocalTransferDetailsResponse_400"
                 }
               }
             }
@@ -91,7 +103,106 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/local-transfer_post_response_500"
+                  "$ref": "#/components/schemas/RetrieveLocalTransferDetailsResponse_500"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Successfully retrieved transfer details",
+            "headers": {
+              "x-log-id": {
+                "$ref": "#/components/headers/x-log-id"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveLocalTransferDetailsResponse_200"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [],
+        "servers": []
+      },
+      "post": {
+        "tags": [
+          "Local Transfer"
+        ],
+        "summary": "Initiate a local transfer",
+        "description": "This operation enables users to initiate a new local transfer transaction within the platform. The request must include details such as the sender, receiver, and amount. Once processed, it will return a confirmation of the transfer initiation, along with any relevant transaction identifiers.",
+        "operationId": "initiateLocalTransfer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/mock"
+          },
+          {
+            "$ref": "#/components/parameters/content-type"
+          },
+          {
+            "$ref": "#/components/parameters/x-request-id"
+          },
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad request due to invalid input",
+            "headers": {
+              "x-log-id": {
+                "$ref": "#/components/headers/x-log-id"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveLocalTransferDetailsResponse_400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error occurred",
+            "headers": {
+              "x-log-id": {
+                "$ref": "#/components/headers/x-log-id"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveLocalTransferDetailsResponse_500"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Transfer successfully initiated",
+            "headers": {
+              "x-log-id": {
+                "$ref": "#/components/headers/x-log-id"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveLocalTransferDetailsResponse_200"
                 }
               }
             }
@@ -107,7 +218,68 @@
   },
   "components": {
     "schemas": {
-      "local-transfer_post_response_200": {
+      "RetrieveLocalTransferDetailsResponse_400": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "example": "SEND-4002"
+          },
+          "errorMessage": {
+            "type": "string",
+            "example": "Destination account number is invalid."
+          },
+          "errorType": {
+            "type": "string",
+            "example": "VALIDATION_ERROR"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "example": 400
+          },
+          "service": {
+            "type": "string",
+            "example": "send-funds-service"
+          },
+          "operation": {
+            "type": "string",
+            "example": "sendFundsLocalTransfer"
+          },
+          "traceId": {
+            "type": "string",
+            "example": "trace-8899aa22-1100"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-03-13T12:18:35Z"
+          },
+          "details": {
+            "type": "array",
+            "example": [
+              "The destination account number format does not match the required banking format."
+            ],
+            "items": {
+              "type": "string",
+              "example": "6v|W5*=)w$&}!UD-!3e0V.Jo/gUc1ZZks%!ezq>rPP$c1d6_9fgyO1t4kp(tJA%HBn%b|?:E95.D'^5{E"
+            }
+          }
+        },
+        "example": {
+          "errorCode": "SEND-4002",
+          "errorMessage": "Destination account number is invalid.",
+          "errorType": "VALIDATION_ERROR",
+          "status": 400,
+          "service": "send-funds-service",
+          "operation": "sendFundsLocalTransfer",
+          "traceId": "trace-8899aa22-1100",
+          "timestamp": "2026-03-13T12:18:35Z",
+          "details": [
+            "The destination account number format does not match the required banking format."
+          ]
+        }
+      },
+      "RetrieveLocalTransferDetailsResponse_200": {
         "type": "object",
         "properties": {
           "transactionId": {
@@ -195,68 +367,7 @@
           "timestamp": "2026-03-13T10:22:45Z"
         }
       },
-      "local-transfer_post_response_400": {
-        "type": "object",
-        "properties": {
-          "errorCode": {
-            "type": "string",
-            "example": "SEND-4002"
-          },
-          "errorMessage": {
-            "type": "string",
-            "example": "Destination account number is invalid."
-          },
-          "errorType": {
-            "type": "string",
-            "example": "VALIDATION_ERROR"
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "example": 400
-          },
-          "service": {
-            "type": "string",
-            "example": "send-funds-service"
-          },
-          "operation": {
-            "type": "string",
-            "example": "sendFundsLocalTransfer"
-          },
-          "traceId": {
-            "type": "string",
-            "example": "trace-8899aa22-1100"
-          },
-          "timestamp": {
-            "type": "string",
-            "example": "2026-03-13T12:18:35Z"
-          },
-          "details": {
-            "type": "array",
-            "example": [
-              "The destination account number format does not match the required banking format."
-            ],
-            "items": {
-              "type": "string",
-              "example": "Y]_v{g5f=;+:E'o[cz8$0*iA9En&4Nk7/f:NOugM_OsARQ7o;}lu]M&L|l]:bz1,*6/R?8LBI\"g%uV%M2"
-            }
-          }
-        },
-        "example": {
-          "errorCode": "SEND-4002",
-          "errorMessage": "Destination account number is invalid.",
-          "errorType": "VALIDATION_ERROR",
-          "status": 400,
-          "service": "send-funds-service",
-          "operation": "sendFundsLocalTransfer",
-          "traceId": "trace-8899aa22-1100",
-          "timestamp": "2026-03-13T12:18:35Z",
-          "details": [
-            "The destination account number format does not match the required banking format."
-          ]
-        }
-      },
-      "local-transfer_post_response_500": {
+      "RetrieveLocalTransferDetailsResponse_500": {
         "type": "object",
         "properties": {
           "errorCode": {
@@ -311,6 +422,150 @@
       }
     },
     "parameters": {
+      "referer": {
+        "name": "referer",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "https://stage-data.apiwiz.io/api-sandbox"
+        },
+        "example": "https://stage-data.apiwiz.io/api-sandbox"
+      },
+      "priority": {
+        "name": "priority",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "u=1, i"
+        },
+        "example": "u=1, i"
+      },
+      "sec-ch-ua": {
+        "name": "sec-ch-ua",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "\"Google Chrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\""
+        },
+        "example": "\"Google Chrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\""
+      },
+      "x-request-id": {
+        "name": "x-request-id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "aec0b6cc-ce2b-4fbc-8387-f192345611eb"
+        },
+        "example": "aec0b6cc-ce2b-4fbc-8387-f192345611eb"
+      },
+      "sec-fetch-dest": {
+        "name": "sec-fetch-dest",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "empty"
+        },
+        "example": "empty"
+      },
+      "sec-fetch-mode": {
+        "name": "sec-fetch-mode",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "cors"
+        },
+        "example": "cors"
+      },
+      "sec-fetch-site": {
+        "name": "sec-fetch-site",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "same-site"
+        },
+        "example": "same-site"
+      },
+      "accept-language": {
+        "name": "accept-language",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "en-GB,en-US;q=0.9,en;q=0.8"
+        },
+        "example": "en-GB,en-US;q=0.9,en;q=0.8"
+      },
+      "sec-ch-ua-mobile": {
+        "name": "sec-ch-ua-mobile",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "?0"
+        },
+        "example": "?0"
+      },
+      "destinationaccount": {
+        "name": "destinationaccount",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "5555100223"
+        },
+        "example": "5555100223"
+      },
+      "sec-ch-ua-platform": {
+        "name": "sec-ch-ua-platform",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "\"macOS\""
+        },
+        "example": "\"macOS\""
+      },
+      "x-apiwiz-enable-events": {
+        "name": "x-apiwiz-enable-events",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "true"
+        },
+        "example": "true"
+      },
       "mock": {
         "name": "mock",
         "in": "header",
@@ -335,18 +590,6 @@
         },
         "example": "application/json"
       },
-      "x-request-id": {
-        "name": "x-request-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "aec0b6cc-ce2b-4fbc-8387-f192345611eb"
-        },
-        "example": "aec0b6cc-ce2b-4fbc-8387-f192345611eb"
-      },
       "x-mock-response": {
         "name": "x-mock-response",
         "in": "header",
@@ -357,9 +600,9 @@
         "schema": {
           "type": "string",
           "enum": [
-            "success",
-            "client_error",
-            "server_error"
+            "bad_request",
+            "server_error",
+            "success"
           ]
         }
       }
