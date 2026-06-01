@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Fund Transfer API",
-    "description": "The Fund Transfer API enables users to initiate and manage monetary transfers securely and efficiently. This API provides endpoints for submitting transfer requests, handling responses for various scenarios including success and errors, and ensuring proper authorization for transactions.",
+    "description": "The Fund Transfer API enables seamless and secure transactions between users, allowing them to initiate and manage fund transfers with ease. This API provides robust functionalities for sending and receiving funds, ensuring high reliability and performance.",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/payments",
+      "url": "https://stage-data-gujl.apiwiz.io/api/v1",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,24 +18,36 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/payments"
+      "x-basePath": "/api/v1"
     }
   ],
   "paths": {
     "/transfer": {
       "post": {
         "tags": [
-          "Fund Transfer"
+          "Transfer Operations"
         ],
-        "summary": "Initiate a new fund transfer",
-        "description": "This operation allows users to initiate a fund transfer from one account to another. You need to provide the necessary details such as the sender and receiver account information along with the transfer amount. Upon successful completion, the transfer will be processed and the users will receive a confirmation of their transaction.",
-        "operationId": "initiateNewFundTransfer",
+        "summary": "Initiate a fund transfer",
+        "description": "This operation allows users to initiate a fund transfer between accounts. The request requires specific details such as the amount, sender's account, and recipient's account. Upon successful execution, the funds will be debited from the sender's account and credited to the recipient's account, ensuring a seamless transaction between parties.",
+        "operationId": "initiateFundTransfer",
         "parameters": [
           {
-            "$ref": "#/components/parameters/Authorization"
+            "$ref": "#/components/parameters/x-real-ip"
           },
           {
-            "$ref": "#/components/parameters/Content-Type"
+            "$ref": "#/components/parameters/content-type"
+          },
+          {
+            "$ref": "#/components/parameters/x-forwarded-host"
+          },
+          {
+            "$ref": "#/components/parameters/x-forwarded-path"
+          },
+          {
+            "$ref": "#/components/parameters/x-forwarded-port"
+          },
+          {
+            "$ref": "#/components/parameters/x-kong-request-id"
           },
           {
             "$ref": "#/components/parameters/x-mock-response"
@@ -45,71 +57,26 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/InitiateNewFundTransferRequest"
+                "$ref": "#/components/schemas/InitiateFundTransferRequest"
               }
             }
           }
         },
         "responses": {
-          "400": {
-            "description": "Invalid request parameters provided.",
-            "headers": {
-              "date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/Content-Type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InitiateNewFundTransferResponse_400"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Access denied for this operation.",
-            "headers": {
-              "date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/Content-Type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InitiateNewFundTransferResponse_403"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error occurred.",
-            "headers": {
-              "date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/Content-Type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InitiateNewFundTransferResponse_500"
-                }
-              }
-            }
-          },
           "200": {
-            "description": "Fund transfer initiated successfully.",
+            "description": "Successful fund transfer initiation",
             "headers": {
               "date": {
                 "$ref": "#/components/headers/Date"
+              },
+              "vary": {
+                "$ref": "#/components/headers/Vary"
+              },
+              "connection": {
+                "$ref": "#/components/headers/Connection"
+              },
+              "keep-alive": {
+                "$ref": "#/components/headers/Keep-Alive"
               },
               "content-type": {
                 "$ref": "#/components/headers/Content-Type"
@@ -118,7 +85,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InitiateNewFundTransferResponse_200"
+                  "$ref": "#/components/schemas/InitiateFundTransferResponse_200"
                 }
               }
             }
@@ -134,175 +101,95 @@
   },
   "components": {
     "schemas": {
-      "InitiateNewFundTransferResponse_400": {
+      "InitiateFundTransferRequest": {
         "type": "object",
         "properties": {
-          "errorCode": {
+          "fromAccount": {
             "type": "string",
-            "example": "INVALID_AMOUNT"
+            "example": "abJNTQ"
           },
-          "message": {
+          "toAccount": {
             "type": "string",
-            "example": "Transfer amount must be greater than zero"
-          },
-          "details": {
-            "type": "string",
-            "example": "The field 'amount' contains an invalid value: -250.75"
-          },
-          "traceId": {
-            "type": "string",
-            "example": "f4b81d7c9a2e46e6b5c3d8f1a7e9b245"
-          }
-        },
-        "example": {
-          "errorCode": "INVALID_AMOUNT",
-          "message": "Transfer amount must be greater than zero",
-          "details": "The field 'amount' contains an invalid value: -250.75",
-          "traceId": "f4b81d7c9a2e46e6b5c3d8f1a7e9b245"
-        }
-      },
-      "InitiateNewFundTransferResponse_403": {
-        "type": "object",
-        "properties": {
-          "errorCode": {
-            "type": "string",
-            "example": "FORBIDDEN"
-          },
-          "message": {
-            "type": "string",
-            "example": "Access to the requested resource is denied"
-          },
-          "details": {
-            "type": "string",
-            "example": "The authenticated user does not have permission to perform payment transfers"
-          },
-          "traceId": {
-            "type": "string",
-            "example": "7a3d9e5c2f184b8d91c6e4a7f2b5d813"
-          }
-        },
-        "example": {
-          "errorCode": "FORBIDDEN",
-          "message": "Access to the requested resource is denied",
-          "details": "The authenticated user does not have permission to perform payment transfers",
-          "traceId": "7a3d9e5c2f184b8d91c6e4a7f2b5d813"
-        }
-      },
-      "InitiateNewFundTransferResponse_500": {
-        "type": "object",
-        "properties": {
-          "errorCode": {
-            "type": "string",
-            "example": "INTERNAL_SERVER_ERROR"
-          },
-          "message": {
-            "type": "string",
-            "example": "An unexpected error occurred while processing the transaction"
-          },
-          "details": {
-            "type": "string",
-            "example": "Failed to persist transaction record due to database connection timeout"
-          },
-          "traceId": {
-            "type": "string",
-            "example": "c9e27f14b6d8432a8f51e7d394ab6c18"
-          }
-        },
-        "example": {
-          "errorCode": "INTERNAL_SERVER_ERROR",
-          "message": "An unexpected error occurred while processing the transaction",
-          "details": "Failed to persist transaction record due to database connection timeout",
-          "traceId": "c9e27f14b6d8432a8f51e7d394ab6c18"
-        }
-      },
-      "InitiateNewFundTransferRequest": {
-        "type": "object",
-        "properties": {
-          "transactionId": {
-            "type": "string",
-            "example": "DniwUoyVs45vK"
-          },
-          "sourceAccount": {
-            "type": "string",
-            "example": "9Q0YWr23Li8U"
-          },
-          "destinationAccount": {
-            "type": "string",
-            "example": "74jMku0pzVRx"
-          },
-          "currency": {
-            "type": "string",
-            "example": "wec"
+            "example": "6Q05Gz"
           },
           "amount": {
-            "type": "number",
-            "example": 49.6
+            "type": "integer",
+            "format": "int32",
+            "example": 55
           },
-          "description": {
+          "userId": {
             "type": "string",
-            "example": "usqqpkuxqvvpsfi"
+            "example": "kyjpmkc"
+          },
+          "message": {
+            "type": "string",
+            "example": "lxvm"
+          },
+          "type": {
+            "type": "string",
+            "example": "wdvy"
           }
         },
-        "example": "{\n  \"transactionId\" : \"DniwUoyVs45vK\",\n  \"sourceAccount\" : \"9Q0YWr23Li8U\",\n  \"destinationAccount\" : \"74jMku0pzVRx\",\n  \"currency\" : \"wec\",\n  \"amount\" : 49.6,\n  \"description\" : \"usqqpkuxqvvpsfi\"\n}"
+        "example": "{\n  \"fromAccount\" : \"abJNTQ\",\n  \"toAccount\" : \"6Q05Gz\",\n  \"amount\" : 55,\n  \"userId\" : \"kyjpmkc\",\n  \"message\" : \"lxvm\",\n  \"type\" : \"wdvy\"\n}"
       },
-      "InitiateNewFundTransferResponse_200": {
+      "InitiateFundTransferResponse_200": {
         "type": "object",
         "properties": {
-          "transactionId": {
+          "fromAccount": {
             "type": "string",
-            "example": "TXN-987654321"
+            "example": "ACC123"
+          },
+          "toAccount": {
+            "type": "string",
+            "example": "ACC456"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1000
+          },
+          "currency": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2026-04-28T13:10:33.444+00:00"
           },
           "status": {
             "type": "string",
             "example": "SUCCESS"
-          },
-          "referenceId": {
-            "type": "string",
-            "example": "REF-567890123"
-          },
-          "amount": {
-            "type": "number",
-            "example": 250.75
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD"
-          },
-          "processedAt": {
-            "type": "string",
-            "example": "2026-05-18T06:08:00Z"
-          },
-          "message": {
-            "type": "string",
-            "example": "Funds transferred successfully"
           }
         },
         "example": {
-          "transactionId": "TXN-987654321",
-          "status": "SUCCESS",
-          "referenceId": "REF-567890123",
-          "amount": 250.75,
-          "currency": "USD",
-          "processedAt": "2026-05-18T06:08:00Z",
-          "message": "Funds transferred successfully"
+          "fromAccount": "ACC123",
+          "toAccount": "ACC456",
+          "amount": 1000,
+          "createdAt": "2026-04-28T13:10:33.444+00:00",
+          "status": "SUCCESS"
         }
       }
     },
     "parameters": {
-      "Authorization": {
-        "name": "Authorization",
+      "x-real-ip": {
+        "name": "x-real-ip",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer invalid-or-expired-token"
+          "example": "34.217.218.221"
         },
-        "example": "Bearer invalid-or-expired-token"
+        "example": "34.217.218.221"
       },
-      "Content-Type": {
-        "name": "Content-Type",
+      "content-type": {
+        "name": "content-type",
         "in": "header",
         "required": false,
         "style": "simple",
@@ -312,6 +199,54 @@
           "example": "application/json"
         },
         "example": "application/json"
+      },
+      "x-forwarded-host": {
+        "name": "x-forwarded-host",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "52.38.81.177"
+        },
+        "example": "52.38.81.177"
+      },
+      "x-forwarded-path": {
+        "name": "x-forwarded-path",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "/api/v1/transfer"
+        },
+        "example": "/api/v1/transfer"
+      },
+      "x-forwarded-port": {
+        "name": "x-forwarded-port",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "8000"
+        },
+        "example": "8000"
+      },
+      "x-kong-request-id": {
+        "name": "x-kong-request-id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "3902b010c8402c1836b66806e7c12907"
+        },
+        "example": "3902b010c8402c1836b66806e7c12907"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -323,9 +258,6 @@
         "schema": {
           "type": "string",
           "enum": [
-            "bad_request",
-            "forbidden",
-            "server_error",
             "success"
           ]
         }
@@ -337,18 +269,45 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "G4dCuDEsoECKWDczFDxfJ8CIaTO94"
+          "example": "JwV4dG2wHBy10VLlwZSrzqT9xfoKt"
         },
-        "example": "G4dCuDEsoECKWDczFDxfJ8CIaTO94"
+        "example": "JwV4dG2wHBy10VLlwZSrzqT9xfoKt"
+      },
+      "Vary": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "zevoug"
+        },
+        "example": "zevoug"
+      },
+      "Connection": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "z<_&4\"^@<a"
+        },
+        "example": "z<_&4\"^@<a"
+      },
+      "Keep-Alive": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "bo2vOt0dGG"
+        },
+        "example": "bo2vOt0dGG"
       },
       "Content-Type": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "4'9t'5sY1'57ylwZ"
+          "example": "*PM%iU2OY#?>5qn{"
         },
-        "example": "4'9t'5sY1'57ylwZ"
+        "example": "*PM%iU2OY#?>5qn{"
       }
     }
   }
