@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/payments",
+      "url": "https://stage-data-gujl.apiwiz.io/workflow/v1",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,102 +18,126 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/payments"
+      "x-basePath": "/workflow/v1"
     }
   ],
   "paths": {
-    "/transfer": {
+    "/direct-payments/transfer": {
       "post": {
-        "operationId": "POST_transfer",
+        "operationId": "POST_direct-payments_transfer",
         "parameters": [
           {
-            "$ref": "#/components/parameters/Content-Type"
+            "$ref": "#/components/parameters/referer"
           },
           {
-            "$ref": "#/components/parameters/parentspanid"
+            "$ref": "#/components/parameters/priority"
           },
           {
-            "$ref": "#/components/parameters/Authorization"
+            "$ref": "#/components/parameters/x-tenant"
+          },
+          {
+            "$ref": "#/components/parameters/sec-ch-ua"
+          },
+          {
+            "$ref": "#/components/parameters/x-b3-spanid"
+          },
+          {
+            "$ref": "#/components/parameters/content-type"
+          },
+          {
+            "$ref": "#/components/parameters/x-b3-sampled"
+          },
+          {
+            "$ref": "#/components/parameters/x-b3-traceid"
+          },
+          {
+            "$ref": "#/components/parameters/x-request-id"
+          },
+          {
+            "$ref": "#/components/parameters/sec-fetch-dest"
+          },
+          {
+            "$ref": "#/components/parameters/sec-fetch-mode"
+          },
+          {
+            "$ref": "#/components/parameters/sec-fetch-site"
+          },
+          {
+            "$ref": "#/components/parameters/accept-language"
+          },
+          {
+            "$ref": "#/components/parameters/sec-ch-ua-mobile"
+          },
+          {
+            "$ref": "#/components/parameters/x-forwarded-proto"
+          },
+          {
+            "$ref": "#/components/parameters/sec-ch-ua-platform"
+          },
+          {
+            "$ref": "#/components/parameters/x-application-type"
+          },
+          {
+            "$ref": "#/components/parameters/x-envoy-attempt-count"
+          },
+          {
+            "$ref": "#/components/parameters/x-envoy-peer-metadata"
+          },
+          {
+            "$ref": "#/components/parameters/x-apiwiz-enable-events"
+          },
+          {
+            "$ref": "#/components/parameters/x-envoy-external-address"
+          },
+          {
+            "$ref": "#/components/parameters/x-envoy-peer-metadata-id"
+          },
+          {
+            "$ref": "#/components/parameters/x-envoy-decorator-operation"
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/POST_transferRequest"
+                "$ref": "#/components/schemas/POST_direct-payments_transferRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Resource created successfully",
-            "headers": {
-              "Date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "Content-Type": {
-                "$ref": "#/components/headers/Content-Type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/POST_transferResponse_200"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "500Description",
-            "headers": {
-              "Date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "Content-Type": {
-                "$ref": "#/components/headers/Content-Type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/POST_transferResponse_500"
-                }
-              }
-            }
-          },
           "400": {
             "description": "400Description",
             "headers": {
-              "Date": {
-                "$ref": "#/components/headers/Date"
+              "x-log-id": {
+                "$ref": "#/components/headers/x-log-id"
               },
-              "Content-Type": {
-                "$ref": "#/components/headers/Content-Type"
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/POST_transferResponse_400"
+                  "$ref": "#/components/schemas/POST_direct-payments_transferResponse_400"
                 }
               }
             }
           },
-          "403": {
-            "description": "403Description",
+          "200": {
+            "description": "Resource created successfully",
             "headers": {
-              "Date": {
-                "$ref": "#/components/headers/Date"
+              "x-log-id": {
+                "$ref": "#/components/headers/x-log-id"
               },
-              "Content-Type": {
-                "$ref": "#/components/headers/Content-Type"
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/POST_transferResponse_403"
+                  "$ref": "#/components/schemas/POST_direct-payments_transferResponse_200"
                 }
               }
             }
@@ -129,163 +153,141 @@
   },
   "components": {
     "schemas": {
-      "POST_transferResponse_200": {
+      "POST_direct-payments_transferResponse_400": {
         "type": "object",
         "properties": {
-          "transactionId": {
+          "partnerSessionId": {
             "type": "string",
-            "example": "TXN-987654321"
+            "example": "DF195633-E743-4E1A-B4865D5EA95FB21F"
           },
           "status": {
             "type": "string",
-            "example": "SUCCESS"
+            "example": "FAILED"
           },
-          "referenceId": {
+          "code": {
             "type": "string",
-            "example": "REF-567890123"
-          },
-          "amount": {
-            "type": "number",
-            "example": 250.75
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD"
-          },
-          "processedAt": {
-            "type": "string",
-            "example": "2026-05-18T06:08:00Z"
-          },
-          "message": {
-            "type": "string",
-            "example": "Funds transferred successfully"
-          }
-        },
-        "example": {
-          "transactionId": "TXN-987654321",
-          "status": "SUCCESS",
-          "referenceId": "REF-567890123",
-          "amount": 250.75,
-          "currency": "USD",
-          "processedAt": "2026-05-18T06:08:00Z",
-          "message": "Funds transferred successfully"
-        }
-      },
-      "POST_transferResponse_500": {
-        "type": "object",
-        "properties": {
-          "errorCode": {
-            "type": "string",
-            "example": "INTERNAL_SERVER_ERROR"
-          },
-          "message": {
-            "type": "string",
-            "example": "An unexpected error occurred while processing the transaction"
-          },
-          "details": {
-            "type": "string",
-            "example": "Failed to persist transaction record due to database connection timeout"
-          },
-          "traceId": {
-            "type": "string",
-            "example": "c9e27f14b6d8432a8f51e7d394ab6c18"
-          }
-        },
-        "example": {
-          "errorCode": "INTERNAL_SERVER_ERROR",
-          "message": "An unexpected error occurred while processing the transaction",
-          "details": "Failed to persist transaction record due to database connection timeout",
-          "traceId": "c9e27f14b6d8432a8f51e7d394ab6c18"
-        }
-      },
-      "POST_transferResponse_400": {
-        "type": "object",
-        "properties": {
-          "errorCode": {
-            "type": "string",
-            "example": "INVALID_AMOUNT"
-          },
-          "message": {
-            "type": "string",
-            "example": "Transfer amount must be greater than zero"
-          },
-          "details": {
-            "type": "string",
-            "example": "The field 'amount' contains an invalid value: -250.75"
-          },
-          "traceId": {
-            "type": "string",
-            "example": "f4b81d7c9a2e46e6b5c3d8f1a7e9b245"
-          }
-        },
-        "example": {
-          "errorCode": "INVALID_AMOUNT",
-          "message": "Transfer amount must be greater than zero",
-          "details": "The field 'amount' contains an invalid value: -250.75",
-          "traceId": "f4b81d7c9a2e46e6b5c3d8f1a7e9b245"
-        }
-      },
-      "POST_transferRequest": {
-        "type": "object",
-        "properties": {
-          "transactionId": {
-            "type": "string",
-            "example": "Ke7KaIc2hOwgg"
-          },
-          "sourceAccount": {
-            "type": "string",
-            "example": "r7y8jZguJ7Nd"
-          },
-          "destinationAccount": {
-            "type": "string",
-            "example": "tnT5QsAzpiXK"
-          },
-          "currency": {
-            "type": "string",
-            "example": "yiw"
-          },
-          "amount": {
-            "type": "number",
-            "example": 74.01
+            "example": "400"
           },
           "description": {
             "type": "string",
-            "example": "aerqmlccguqtjube"
-          }
-        },
-        "example": "{\n  \"transactionId\" : \"Ke7KaIc2hOwgg\",\n  \"sourceAccount\" : \"r7y8jZguJ7Nd\",\n  \"destinationAccount\" : \"tnT5QsAzpiXK\",\n  \"currency\" : \"yiw\",\n  \"amount\" : 74.01,\n  \"description\" : \"aerqmlccguqtjube\"\n}"
-      },
-      "POST_transferResponse_403": {
-        "type": "object",
-        "properties": {
-          "errorCode": {
-            "type": "string",
-            "example": "FORBIDDEN"
-          },
-          "message": {
-            "type": "string",
-            "example": "Access to the requested resource is denied"
-          },
-          "details": {
-            "type": "string",
-            "example": "The authenticated user does not have permission to perform payment transfers"
-          },
-          "traceId": {
-            "type": "string",
-            "example": "7a3d9e5c2f184b8d91c6e4a7f2b5d813"
+            "example": "BadRequest: Enter a valid User"
           }
         },
         "example": {
-          "errorCode": "FORBIDDEN",
-          "message": "Access to the requested resource is denied",
-          "details": "The authenticated user does not have permission to perform payment transfers",
-          "traceId": "7a3d9e5c2f184b8d91c6e4a7f2b5d813"
+          "partnerSessionId": "DF195633-E743-4E1A-B4865D5EA95FB21F",
+          "status": "FAILED",
+          "code": "400",
+          "description": "BadRequest: Enter a valid User"
+        }
+      },
+      "POST_direct-payments_transferRequest": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "givb"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "cck"
+          },
+          "email": {
+            "type": "string",
+            "example": "CU?f4GMoj@?>@oV]2(Hw"
+          },
+          "partnerCode": {
+            "type": "string",
+            "example": "tdyrgit"
+          }
+        },
+        "example": "{\n  \"firstName\" : \"givb\",\n  \"lastName\" : \"cck\",\n  \"email\" : \"CU?f4GMoj@?>@oV]2(Hw\",\n  \"partnerCode\" : \"tdyrgit\"\n}"
+      },
+      "POST_direct-payments_transferResponse_200": {
+        "type": "object",
+        "properties": {
+          "partnerSessionId": {
+            "type": "string",
+            "example": "DF195633-E743-4E1A-B4865D5EA95FB21F"
+          },
+          "status": {
+            "type": "string",
+            "example": "Success"
+          },
+          "code": {
+            "type": "string",
+            "example": "000"
+          }
+        },
+        "example": {
+          "partnerSessionId": "DF195633-E743-4E1A-B4865D5EA95FB21F",
+          "status": "Success",
+          "code": "000"
         }
       }
     },
     "parameters": {
-      "Content-Type": {
-        "name": "Content-Type",
+      "referer": {
+        "name": "referer",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "https://stage-data.apiwiz.io/api-sandbox"
+        },
+        "example": "https://stage-data.apiwiz.io/api-sandbox"
+      },
+      "priority": {
+        "name": "priority",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "u=1, i"
+        },
+        "example": "u=1, i"
+      },
+      "x-tenant": {
+        "name": "x-tenant",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "stage-data"
+        },
+        "example": "stage-data"
+      },
+      "sec-ch-ua": {
+        "name": "sec-ch-ua",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "\"Google Chrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\""
+        },
+        "example": "\"Google Chrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\""
+      },
+      "x-b3-spanid": {
+        "name": "x-b3-spanid",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "b2015cc8341e91bc"
+        },
+        "example": "b2015cc8341e91bc"
+      },
+      "content-type": {
+        "name": "content-type",
         "in": "header",
         "required": false,
         "style": "simple",
@@ -296,42 +298,222 @@
         },
         "example": "application/json"
       },
-      "parentspanid": {
-        "name": "parentspanid",
+      "x-b3-sampled": {
+        "name": "x-b3-sampled",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "7a3d9e5c2f184b8d91c6e4a7f2b5d813"
+          "example": "0"
         },
-        "example": "7a3d9e5c2f184b8d91c6e4a7f2b5d813"
+        "example": "0"
       },
-      "Authorization": {
-        "name": "Authorization",
+      "x-b3-traceid": {
+        "name": "x-b3-traceid",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer invalid-or-expired-token"
+          "example": "8de86e4eb050e0e9b2015cc8341e91bc"
         },
-        "example": "Bearer invalid-or-expired-token"
+        "example": "8de86e4eb050e0e9b2015cc8341e91bc"
+      },
+      "x-request-id": {
+        "name": "x-request-id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "6b99da76-2561-417c-a857-49d0eae616f2"
+        },
+        "example": "6b99da76-2561-417c-a857-49d0eae616f2"
+      },
+      "sec-fetch-dest": {
+        "name": "sec-fetch-dest",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "empty"
+        },
+        "example": "empty"
+      },
+      "sec-fetch-mode": {
+        "name": "sec-fetch-mode",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "cors"
+        },
+        "example": "cors"
+      },
+      "sec-fetch-site": {
+        "name": "sec-fetch-site",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "same-site"
+        },
+        "example": "same-site"
+      },
+      "accept-language": {
+        "name": "accept-language",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "en-GB,en-US;q=0.9,en;q=0.8"
+        },
+        "example": "en-GB,en-US;q=0.9,en;q=0.8"
+      },
+      "sec-ch-ua-mobile": {
+        "name": "sec-ch-ua-mobile",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "?0"
+        },
+        "example": "?0"
+      },
+      "x-forwarded-proto": {
+        "name": "x-forwarded-proto",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "https"
+        },
+        "example": "https"
+      },
+      "sec-ch-ua-platform": {
+        "name": "sec-ch-ua-platform",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "\"macOS\""
+        },
+        "example": "\"macOS\""
+      },
+      "x-application-type": {
+        "name": "x-application-type",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "ApiSandbox"
+        },
+        "example": "ApiSandbox"
+      },
+      "x-envoy-attempt-count": {
+        "name": "x-envoy-attempt-count",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "1"
+        },
+        "example": "1"
+      },
+      "x-envoy-peer-metadata": {
+        "name": "x-envoy-peer-metadata",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "ChQKDkFQUF9DT05UQUlORVJTEgIaAAoaCgpDTFVTVEVSX0lEEgwaCkt1YmVybmV0ZXMKHQoMSU5TVEFOQ0VfSVBTEg0aCzEwLjEwLjgyLjQ5ChkKDUlTVElPX1ZFUlNJT04SCBoGMS4xOC4wCpsDCgZMQUJFTFMSkAMqjQMKHQoDYXBwEhYaFGlzdGlvLWluZ3Jlc3NnYXRld2F5ChMKBWNoYXJ0EgoaCGdhdGV3YXlzChQKCGhlcml0YWdlEggaBlRpbGxlcgo2CilpbnN0YWxsLm9wZXJhdG9yLmlzdGlvLmlvL293bmluZy1yZXNvdXJjZRIJGgd1bmtub3duChkKBWlzdGlvEhAaDmluZ3Jlc3NnYXRld2F5ChgKDGlzdGlvLmlvL3JldhIIGgYxLTE4LTAKMAobb3BlcmF0b3IuaXN0aW8uaW8vY29tcG9uZW50EhEaD0luZ3Jlc3NHYXRld2F5cwoSCgdyZWxlYXNlEgcaBWlzdGlvCjkKH3NlcnZpY2UuaXN0aW8uaW8vY2Fub25pY2FsLW5hbWUSFhoUaXN0aW8taW5ncmVzc2dhdGV3YXkKLwojc2VydmljZS5pc3Rpby5pby9jYW5vbmljYWwtcmV2aXNpb24SCBoGMS0xOC0wCiIKF3NpZGVjYXIuaXN0aW8uaW8vaW5qZWN0EgcaBWZhbHNlChoKB01FU0hfSUQSDxoNY2x1c3Rlci5sb2NhbAovCgROQU1FEicaJWlzdGlvLWluZ3Jlc3NnYXRld2F5LTc3ZDQ0YmM5NGYtbHNzcWIKGwoJTkFNRVNQQUNFEg4aDGlzdGlvLXN5c3RlbQpdCgVPV05FUhJUGlJrdWJlcm5ldGVzOi8vYXBpcy9hcHBzL3YxL25hbWVzcGFjZXMvaXN0aW8tc3lzdGVtL2RlcGxveW1lbnRzL2lzdGlvLWluZ3Jlc3NnYXRld2F5ChcKEVBMQVRGT1JNX01FVEFEQVRBEgIqAAonCg1XT1JLTE9BRF9OQU1FEhYaFGlzdGlvLWluZ3Jlc3NnYXRld2F5"
+        },
+        "example": "ChQKDkFQUF9DT05UQUlORVJTEgIaAAoaCgpDTFVTVEVSX0lEEgwaCkt1YmVybmV0ZXMKHQoMSU5TVEFOQ0VfSVBTEg0aCzEwLjEwLjgyLjQ5ChkKDUlTVElPX1ZFUlNJT04SCBoGMS4xOC4wCpsDCgZMQUJFTFMSkAMqjQMKHQoDYXBwEhYaFGlzdGlvLWluZ3Jlc3NnYXRld2F5ChMKBWNoYXJ0EgoaCGdhdGV3YXlzChQKCGhlcml0YWdlEggaBlRpbGxlcgo2CilpbnN0YWxsLm9wZXJhdG9yLmlzdGlvLmlvL293bmluZy1yZXNvdXJjZRIJGgd1bmtub3duChkKBWlzdGlvEhAaDmluZ3Jlc3NnYXRld2F5ChgKDGlzdGlvLmlvL3JldhIIGgYxLTE4LTAKMAobb3BlcmF0b3IuaXN0aW8uaW8vY29tcG9uZW50EhEaD0luZ3Jlc3NHYXRld2F5cwoSCgdyZWxlYXNlEgcaBWlzdGlvCjkKH3NlcnZpY2UuaXN0aW8uaW8vY2Fub25pY2FsLW5hbWUSFhoUaXN0aW8taW5ncmVzc2dhdGV3YXkKLwojc2VydmljZS5pc3Rpby5pby9jYW5vbmljYWwtcmV2aXNpb24SCBoGMS0xOC0wCiIKF3NpZGVjYXIuaXN0aW8uaW8vaW5qZWN0EgcaBWZhbHNlChoKB01FU0hfSUQSDxoNY2x1c3Rlci5sb2NhbAovCgROQU1FEicaJWlzdGlvLWluZ3Jlc3NnYXRld2F5LTc3ZDQ0YmM5NGYtbHNzcWIKGwoJTkFNRVNQQUNFEg4aDGlzdGlvLXN5c3RlbQpdCgVPV05FUhJUGlJrdWJlcm5ldGVzOi8vYXBpcy9hcHBzL3YxL25hbWVzcGFjZXMvaXN0aW8tc3lzdGVtL2RlcGxveW1lbnRzL2lzdGlvLWluZ3Jlc3NnYXRld2F5ChcKEVBMQVRGT1JNX01FVEFEQVRBEgIqAAonCg1XT1JLTE9BRF9OQU1FEhYaFGlzdGlvLWluZ3Jlc3NnYXRld2F5"
+      },
+      "x-apiwiz-enable-events": {
+        "name": "x-apiwiz-enable-events",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "true"
+        },
+        "example": "true"
+      },
+      "x-envoy-external-address": {
+        "name": "x-envoy-external-address",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "34.217.218.221"
+        },
+        "example": "34.217.218.221"
+      },
+      "x-envoy-peer-metadata-id": {
+        "name": "x-envoy-peer-metadata-id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "router~10.10.82.49~istio-ingressgateway-77d44bc94f-lssqb.istio-system~istio-system.svc.cluster.local"
+        },
+        "example": "router~10.10.82.49~istio-ingressgateway-77d44bc94f-lssqb.istio-system~istio-system.svc.cluster.local"
+      },
+      "x-envoy-decorator-operation": {
+        "name": "x-envoy-decorator-operation",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "apibuilder-agent.dev.svc.cluster.local:8000/*"
+        },
+        "example": "apibuilder-agent.dev.svc.cluster.local:8000/*"
       }
     },
     "headers": {
-      "Date": {
+      "x-log-id": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Mon, 18 May 2026 06:13:41 GMT"
+          "example": "6a214c3a6fc8940f1610740e"
         },
-        "example": "Mon, 18 May 2026 06:13:41 GMT"
+        "example": "6a214c3a6fc8940f1610740e"
       },
-      "Content-Type": {
+      "content-type": {
         "style": "simple",
         "explode": false,
         "schema": {
