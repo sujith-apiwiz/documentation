@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/workflow/v1",
+      "url": "https://stage-data-gujl.apiwiz.io/esb/v1",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,126 +18,72 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/workflow/v1"
+      "x-basePath": "/esb/v1"
     }
   ],
   "paths": {
-    "/direct-payments/transfer": {
+    "/transfer": {
       "post": {
-        "operationId": "POST_direct-payments_transfer",
+        "operationId": "POST_transfer",
         "parameters": [
           {
-            "$ref": "#/components/parameters/referer"
+            "$ref": "#/components/parameters/activityid"
           },
           {
-            "$ref": "#/components/parameters/priority"
-          },
-          {
-            "$ref": "#/components/parameters/x-tenant"
-          },
-          {
-            "$ref": "#/components/parameters/sec-ch-ua"
-          },
-          {
-            "$ref": "#/components/parameters/x-b3-spanid"
+            "$ref": "#/components/parameters/connection"
           },
           {
             "$ref": "#/components/parameters/content-type"
           },
           {
-            "$ref": "#/components/parameters/x-b3-sampled"
+            "$ref": "#/components/parameters/parentspanid"
           },
           {
-            "$ref": "#/components/parameters/x-b3-traceid"
+            "$ref": "#/components/parameters/application-name"
           },
           {
-            "$ref": "#/components/parameters/x-request-id"
+            "$ref": "#/components/parameters/application-type"
           },
           {
-            "$ref": "#/components/parameters/sec-fetch-dest"
+            "$ref": "#/components/parameters/transfer-encoding"
           },
           {
-            "$ref": "#/components/parameters/sec-fetch-mode"
-          },
-          {
-            "$ref": "#/components/parameters/sec-fetch-site"
-          },
-          {
-            "$ref": "#/components/parameters/accept-language"
-          },
-          {
-            "$ref": "#/components/parameters/sec-ch-ua-mobile"
-          },
-          {
-            "$ref": "#/components/parameters/x-forwarded-proto"
-          },
-          {
-            "$ref": "#/components/parameters/sec-ch-ua-platform"
-          },
-          {
-            "$ref": "#/components/parameters/x-application-type"
-          },
-          {
-            "$ref": "#/components/parameters/x-envoy-attempt-count"
-          },
-          {
-            "$ref": "#/components/parameters/x-envoy-peer-metadata"
-          },
-          {
-            "$ref": "#/components/parameters/x-apiwiz-enable-events"
-          },
-          {
-            "$ref": "#/components/parameters/x-envoy-external-address"
-          },
-          {
-            "$ref": "#/components/parameters/x-envoy-peer-metadata-id"
-          },
-          {
-            "$ref": "#/components/parameters/x-envoy-decorator-operation"
+            "$ref": "#/components/parameters/custom-header-post"
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/POST_direct-payments_transferRequest"
+                "$ref": "#/components/schemas/POST_transferRequest"
               }
             }
           }
         },
         "responses": {
-          "400": {
-            "description": "400Description",
-            "headers": {
-              "x-log-id": {
-                "$ref": "#/components/headers/x-log-id"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/POST_direct-payments_transferResponse_400"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Resource created successfully",
             "headers": {
-              "x-log-id": {
-                "$ref": "#/components/headers/x-log-id"
+              "Date": {
+                "$ref": "#/components/headers/Date"
               },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              },
+              "Connection": {
+                "$ref": "#/components/headers/Connection"
+              },
+              "Keep-Alive": {
+                "$ref": "#/components/headers/Keep-Alive"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/POST_direct-payments_transferResponse_200"
+                  "$ref": "#/components/schemas/POST_transferResponse_200"
                 }
               }
             }
@@ -153,138 +99,100 @@
   },
   "components": {
     "schemas": {
-      "POST_direct-payments_transferResponse_400": {
+      "POST_transferRequest": {
         "type": "object",
         "properties": {
-          "partnerSessionId": {
+          "fromAccount": {
             "type": "string",
-            "example": "DF195633-E743-4E1A-B4865D5EA95FB21F"
+            "example": "dfKQto"
           },
-          "status": {
+          "toAccount": {
             "type": "string",
-            "example": "FAILED"
+            "example": "bIsLmT"
           },
-          "code": {
-            "type": "string",
-            "example": "400"
+          "amount": {
+            "type": "integer",
+            "format": "int32",
+            "example": 64
           },
-          "description": {
+          "currency": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "number",
+            "example": 98.71
+          }
+        },
+        "example": "{\n  \"fromAccount\" : \"dfKQto\",\n  \"toAccount\" : \"bIsLmT\",\n  \"amount\" : 64,\n  \"currency\" : null,\n  \"reference\" : null,\n  \"channel\" : null,\n  \"createdAt\" : 98.71\n}"
+      },
+      "POST_transferResponse_200": {
+        "type": "object",
+        "properties": {
+          "fromAccount": {
             "type": "string",
-            "example": "BadRequest: Enter a valid User"
+            "example": "ACC123"
+          },
+          "toAccount": {
+            "type": "string",
+            "example": "ACC456"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1000
+          },
+          "currency": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2026-04-28T14:41:32.710+00:00"
           }
         },
         "example": {
-          "partnerSessionId": "DF195633-E743-4E1A-B4865D5EA95FB21F",
-          "status": "FAILED",
-          "code": "400",
-          "description": "BadRequest: Enter a valid User"
-        }
-      },
-      "POST_direct-payments_transferRequest": {
-        "type": "object",
-        "properties": {
-          "firstName": {
-            "type": "string",
-            "example": "lsaz"
-          },
-          "lastName": {
-            "type": "string",
-            "example": "gsb"
-          },
-          "email": {
-            "type": "string",
-            "example": "j%OK=Za7A.lVaD+B&[=6"
-          },
-          "partnerCode": {
-            "type": "string",
-            "example": "ssbrpeh"
-          }
-        },
-        "example": "{\n  \"firstName\" : \"lsaz\",\n  \"lastName\" : \"gsb\",\n  \"email\" : \"j%OK=Za7A.lVaD+B&[=6\",\n  \"partnerCode\" : \"ssbrpeh\"\n}"
-      },
-      "POST_direct-payments_transferResponse_200": {
-        "type": "object",
-        "properties": {
-          "partnerSessionId": {
-            "type": "string",
-            "example": "DF195633-E743-4E1A-B4865D5EA95FB21F"
-          },
-          "status": {
-            "type": "string",
-            "example": "Success"
-          },
-          "code": {
-            "type": "string",
-            "example": "000"
-          }
-        },
-        "example": {
-          "partnerSessionId": "DF195633-E743-4E1A-B4865D5EA95FB21F",
-          "status": "Success",
-          "code": "000"
+          "fromAccount": "ACC123",
+          "toAccount": "ACC456",
+          "amount": 1000,
+          "createdAt": "2026-04-28T14:41:32.710+00:00"
         }
       }
     },
     "parameters": {
-      "referer": {
-        "name": "referer",
+      "activityid": {
+        "name": "activityid",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "https://stage-data.apiwiz.io/api-sandbox"
+          "example": "9d12a6bd-aa12-4495-8500-4d8af7604faa"
         },
-        "example": "https://stage-data.apiwiz.io/api-sandbox"
+        "example": "9d12a6bd-aa12-4495-8500-4d8af7604faa"
       },
-      "priority": {
-        "name": "priority",
+      "connection": {
+        "name": "connection",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "u=1, i"
+          "example": "Keep-Alive"
         },
-        "example": "u=1, i"
-      },
-      "x-tenant": {
-        "name": "x-tenant",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "stage-data"
-        },
-        "example": "stage-data"
-      },
-      "sec-ch-ua": {
-        "name": "sec-ch-ua",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "\"Google Chrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\""
-        },
-        "example": "\"Google Chrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\""
-      },
-      "x-b3-spanid": {
-        "name": "x-b3-spanid",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "b2015cc8341e91bc"
-        },
-        "example": "b2015cc8341e91bc"
+        "example": "Keep-Alive"
       },
       "content-type": {
         "name": "content-type",
@@ -298,222 +206,105 @@
         },
         "example": "application/json"
       },
-      "x-b3-sampled": {
-        "name": "x-b3-sampled",
+      "parentspanid": {
+        "name": "parentspanid",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "0"
+          "example": "cfa8494fe7c8248b"
         },
-        "example": "0"
+        "example": "cfa8494fe7c8248b"
       },
-      "x-b3-traceid": {
-        "name": "x-b3-traceid",
+      "application-name": {
+        "name": "application-name",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "8de86e4eb050e0e9b2015cc8341e91bc"
+          "example": "Accounts Transfer ESB"
         },
-        "example": "8de86e4eb050e0e9b2015cc8341e91bc"
+        "example": "Accounts Transfer ESB"
       },
-      "x-request-id": {
-        "name": "x-request-id",
+      "application-type": {
+        "name": "application-type",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6b99da76-2561-417c-a857-49d0eae616f2"
+          "example": "WS02"
         },
-        "example": "6b99da76-2561-417c-a857-49d0eae616f2"
+        "example": "WS02"
       },
-      "sec-fetch-dest": {
-        "name": "sec-fetch-dest",
+      "transfer-encoding": {
+        "name": "transfer-encoding",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "empty"
+          "example": "chunked"
         },
-        "example": "empty"
+        "example": "chunked"
       },
-      "sec-fetch-mode": {
-        "name": "sec-fetch-mode",
+      "custom-header-post": {
+        "name": "custom-header-post",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "cors"
+          "example": "MyHeaderValue-POST"
         },
-        "example": "cors"
-      },
-      "sec-fetch-site": {
-        "name": "sec-fetch-site",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "same-site"
-        },
-        "example": "same-site"
-      },
-      "accept-language": {
-        "name": "accept-language",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "en-GB,en-US;q=0.9,en;q=0.8"
-        },
-        "example": "en-GB,en-US;q=0.9,en;q=0.8"
-      },
-      "sec-ch-ua-mobile": {
-        "name": "sec-ch-ua-mobile",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "?0"
-        },
-        "example": "?0"
-      },
-      "x-forwarded-proto": {
-        "name": "x-forwarded-proto",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "https"
-        },
-        "example": "https"
-      },
-      "sec-ch-ua-platform": {
-        "name": "sec-ch-ua-platform",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "\"macOS\""
-        },
-        "example": "\"macOS\""
-      },
-      "x-application-type": {
-        "name": "x-application-type",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "ApiSandbox"
-        },
-        "example": "ApiSandbox"
-      },
-      "x-envoy-attempt-count": {
-        "name": "x-envoy-attempt-count",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "1"
-        },
-        "example": "1"
-      },
-      "x-envoy-peer-metadata": {
-        "name": "x-envoy-peer-metadata",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "ChQKDkFQUF9DT05UQUlORVJTEgIaAAoaCgpDTFVTVEVSX0lEEgwaCkt1YmVybmV0ZXMKHQoMSU5TVEFOQ0VfSVBTEg0aCzEwLjEwLjgyLjQ5ChkKDUlTVElPX1ZFUlNJT04SCBoGMS4xOC4wCpsDCgZMQUJFTFMSkAMqjQMKHQoDYXBwEhYaFGlzdGlvLWluZ3Jlc3NnYXRld2F5ChMKBWNoYXJ0EgoaCGdhdGV3YXlzChQKCGhlcml0YWdlEggaBlRpbGxlcgo2CilpbnN0YWxsLm9wZXJhdG9yLmlzdGlvLmlvL293bmluZy1yZXNvdXJjZRIJGgd1bmtub3duChkKBWlzdGlvEhAaDmluZ3Jlc3NnYXRld2F5ChgKDGlzdGlvLmlvL3JldhIIGgYxLTE4LTAKMAobb3BlcmF0b3IuaXN0aW8uaW8vY29tcG9uZW50EhEaD0luZ3Jlc3NHYXRld2F5cwoSCgdyZWxlYXNlEgcaBWlzdGlvCjkKH3NlcnZpY2UuaXN0aW8uaW8vY2Fub25pY2FsLW5hbWUSFhoUaXN0aW8taW5ncmVzc2dhdGV3YXkKLwojc2VydmljZS5pc3Rpby5pby9jYW5vbmljYWwtcmV2aXNpb24SCBoGMS0xOC0wCiIKF3NpZGVjYXIuaXN0aW8uaW8vaW5qZWN0EgcaBWZhbHNlChoKB01FU0hfSUQSDxoNY2x1c3Rlci5sb2NhbAovCgROQU1FEicaJWlzdGlvLWluZ3Jlc3NnYXRld2F5LTc3ZDQ0YmM5NGYtbHNzcWIKGwoJTkFNRVNQQUNFEg4aDGlzdGlvLXN5c3RlbQpdCgVPV05FUhJUGlJrdWJlcm5ldGVzOi8vYXBpcy9hcHBzL3YxL25hbWVzcGFjZXMvaXN0aW8tc3lzdGVtL2RlcGxveW1lbnRzL2lzdGlvLWluZ3Jlc3NnYXRld2F5ChcKEVBMQVRGT1JNX01FVEFEQVRBEgIqAAonCg1XT1JLTE9BRF9OQU1FEhYaFGlzdGlvLWluZ3Jlc3NnYXRld2F5"
-        },
-        "example": "ChQKDkFQUF9DT05UQUlORVJTEgIaAAoaCgpDTFVTVEVSX0lEEgwaCkt1YmVybmV0ZXMKHQoMSU5TVEFOQ0VfSVBTEg0aCzEwLjEwLjgyLjQ5ChkKDUlTVElPX1ZFUlNJT04SCBoGMS4xOC4wCpsDCgZMQUJFTFMSkAMqjQMKHQoDYXBwEhYaFGlzdGlvLWluZ3Jlc3NnYXRld2F5ChMKBWNoYXJ0EgoaCGdhdGV3YXlzChQKCGhlcml0YWdlEggaBlRpbGxlcgo2CilpbnN0YWxsLm9wZXJhdG9yLmlzdGlvLmlvL293bmluZy1yZXNvdXJjZRIJGgd1bmtub3duChkKBWlzdGlvEhAaDmluZ3Jlc3NnYXRld2F5ChgKDGlzdGlvLmlvL3JldhIIGgYxLTE4LTAKMAobb3BlcmF0b3IuaXN0aW8uaW8vY29tcG9uZW50EhEaD0luZ3Jlc3NHYXRld2F5cwoSCgdyZWxlYXNlEgcaBWlzdGlvCjkKH3NlcnZpY2UuaXN0aW8uaW8vY2Fub25pY2FsLW5hbWUSFhoUaXN0aW8taW5ncmVzc2dhdGV3YXkKLwojc2VydmljZS5pc3Rpby5pby9jYW5vbmljYWwtcmV2aXNpb24SCBoGMS0xOC0wCiIKF3NpZGVjYXIuaXN0aW8uaW8vaW5qZWN0EgcaBWZhbHNlChoKB01FU0hfSUQSDxoNY2x1c3Rlci5sb2NhbAovCgROQU1FEicaJWlzdGlvLWluZ3Jlc3NnYXRld2F5LTc3ZDQ0YmM5NGYtbHNzcWIKGwoJTkFNRVNQQUNFEg4aDGlzdGlvLXN5c3RlbQpdCgVPV05FUhJUGlJrdWJlcm5ldGVzOi8vYXBpcy9hcHBzL3YxL25hbWVzcGFjZXMvaXN0aW8tc3lzdGVtL2RlcGxveW1lbnRzL2lzdGlvLWluZ3Jlc3NnYXRld2F5ChcKEVBMQVRGT1JNX01FVEFEQVRBEgIqAAonCg1XT1JLTE9BRF9OQU1FEhYaFGlzdGlvLWluZ3Jlc3NnYXRld2F5"
-      },
-      "x-apiwiz-enable-events": {
-        "name": "x-apiwiz-enable-events",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "true"
-        },
-        "example": "true"
-      },
-      "x-envoy-external-address": {
-        "name": "x-envoy-external-address",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "34.217.218.221"
-        },
-        "example": "34.217.218.221"
-      },
-      "x-envoy-peer-metadata-id": {
-        "name": "x-envoy-peer-metadata-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "router~10.10.82.49~istio-ingressgateway-77d44bc94f-lssqb.istio-system~istio-system.svc.cluster.local"
-        },
-        "example": "router~10.10.82.49~istio-ingressgateway-77d44bc94f-lssqb.istio-system~istio-system.svc.cluster.local"
-      },
-      "x-envoy-decorator-operation": {
-        "name": "x-envoy-decorator-operation",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "apibuilder-agent.dev.svc.cluster.local:8000/*"
-        },
-        "example": "apibuilder-agent.dev.svc.cluster.local:8000/*"
+        "example": "MyHeaderValue-POST"
       }
     },
     "headers": {
-      "x-log-id": {
+      "Date": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6a214c3a6fc8940f1610740e"
+          "example": "Tue, 28 Apr 2026 14:41:32 GMT"
         },
-        "example": "6a214c3a6fc8940f1610740e"
+        "example": "Tue, 28 Apr 2026 14:41:32 GMT"
       },
-      "content-type": {
+      "Vary": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "Origin"
+        },
+        "example": "Origin"
+      },
+      "Connection": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "keep-alive"
+        },
+        "example": "keep-alive"
+      },
+      "Keep-Alive": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "timeout=60"
+        },
+        "example": "timeout=60"
+      },
+      "Content-Type": {
         "style": "simple",
         "explode": false,
         "schema": {
