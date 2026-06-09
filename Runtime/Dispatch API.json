@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Confirm API",
-    "description": "Confirm API",
+    "title": "Dispatch API",
+    "description": "Dispatch API",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/parking",
+      "url": "https://stage-data-gujl.apiwiz.io/v2/logistics",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,16 +18,19 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/parking"
+      "x-basePath": "/v2/logistics"
     }
   ],
   "paths": {
-    "/reservations/PARK-RES-20260608-7712/extend/duration/payment/confirm": {
-      "put": {
-        "operationId": "PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirm",
+    "/shipments/warehouse/outbound/manifest/carrier/dispatch": {
+      "post": {
+        "operationId": "POST_shipments_warehouse_outbound_manifest_carrier_dispatch",
         "parameters": [
           {
-            "$ref": "#/components/parameters/X-Driver-Id"
+            "$ref": "#/components/parameters/X-Client-Code"
+          },
+          {
+            "$ref": "#/components/parameters/X-Warehouse-Id"
           },
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -43,14 +46,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmRequest"
+                "$ref": "#/components/schemas/POST_shipments_warehouse_outbound_manifest_carrier_dispatchRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Resource updated successfully",
+            "description": "Resource created successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -65,7 +68,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmResponse_200"
+                  "$ref": "#/components/schemas/POST_shipments_warehouse_outbound_manifest_carrier_dispatchResponse_200"
                 }
               }
             }
@@ -86,7 +89,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmResponse_400"
+                  "$ref": "#/components/schemas/POST_shipments_warehouse_outbound_manifest_carrier_dispatchResponse_400"
                 }
               }
             }
@@ -102,28 +105,44 @@
   },
   "components": {
     "schemas": {
-      "PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmResponse_200": {
+      "POST_shipments_warehouse_outbound_manifest_carrier_dispatchResponse_200": {
         "type": "object",
         "properties": {
-          "reservationId": {
+          "shipmentId": {
             "type": "string",
-            "example": "PARK-RES-20260608-7712"
+            "example": "SHIP-20260608-9921"
+          },
+          "trackingNumber": {
+            "type": "string",
+            "example": "794644790969"
+          },
+          "carrier": {
+            "type": "string",
+            "example": "FEDEX"
+          },
+          "serviceType": {
+            "type": "string",
+            "example": "GROUND"
           },
           "status": {
             "type": "string",
-            "example": "EXTENDED"
+            "example": "LABEL_CREATED"
           },
-          "newEndTime": {
+          "estimatedDelivery": {
             "type": "string",
-            "example": "2026-06-08T16:00:00Z"
+            "example": "2026-06-11"
           },
-          "additionalCharge": {
-            "type": "number",
-            "example": 9.0
+          "labelUrl": {
+            "type": "string",
+            "example": "https://labels.supplyco.com/SHIP-20260608-9921.pdf"
           },
-          "totalCharge": {
+          "totalWeight": {
             "type": "number",
-            "example": 22.5
+            "example": 1.3
+          },
+          "shippingCost": {
+            "type": "number",
+            "example": 8.75
           },
           "currency": {
             "type": "string",
@@ -131,40 +150,54 @@
           },
           "message": {
             "type": "string",
-            "example": "Parking reservation extended successfully"
+            "example": "Shipment created and label generated successfully"
           }
         },
         "example": {
-          "reservationId": "PARK-RES-20260608-7712",
-          "status": "EXTENDED",
-          "newEndTime": "2026-06-08T16:00:00Z",
-          "additionalCharge": 9.0,
-          "totalCharge": 22.5,
+          "shipmentId": "SHIP-20260608-9921",
+          "trackingNumber": "794644790969",
+          "carrier": "FEDEX",
+          "serviceType": "GROUND",
+          "status": "LABEL_CREATED",
+          "estimatedDelivery": "2026-06-11",
+          "labelUrl": "https://labels.supplyco.com/SHIP-20260608-9921.pdf",
+          "totalWeight": 1.3,
+          "shippingCost": 8.75,
           "currency": "USD",
-          "message": "Parking reservation extended successfully"
+          "message": "Shipment created and label generated successfully"
         }
       },
-      "PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmRequest": {
+      "POST_shipments_warehouse_outbound_manifest_carrier_dispatchRequest": {
         "type": "object",
         "properties": {
-          "reservationId": {
+          "orderId": {
             "type": "string",
-            "example": "CJkf8CVA8KZKIUrLruEbfn"
+            "example": "Nrgl036qok5YA24bKz"
           },
-          "extendByHours": {
-            "type": "integer",
-            "format": "int32",
-            "example": 27
+          "warehouseId": {
+            "type": "string",
+            "example": "WDCuxBKlYmS"
+          },
+          "carrier": {
+            "type": "string",
+            "example": "u!gn@J5$D#(Do_o"
+          },
+          "items": {
+            "type": "array",
+            "example": "[]",
+            "items": {
+              "type": "string"
+            }
           }
         },
-        "example": "{\n  \"reservationId\" : \"CJkf8CVA8KZKIUrLruEbfn\",\n  \"extendByHours\" : 27\n}"
+        "example": "{\n  \"orderId\" : \"Nrgl036qok5YA24bKz\",\n  \"warehouseId\" : \"WDCuxBKlYmS\",\n  \"carrier\" : \"u!gn@J5$D#(Do_o\",\n  \"items\" : [ ]\n}"
       },
-      "PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmResponse_400": {
+      "POST_shipments_warehouse_outbound_manifest_carrier_dispatchResponse_400": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "EXTENSION_INVALID"
+            "example": "SHIPMENT_VALIDATION_ERROR"
           },
           "code": {
             "type": "integer",
@@ -174,13 +207,14 @@
           "details": {
             "type": "array",
             "example": [
-              "Maximum extension is 6 hours per reservation",
-              "Slot SLOT-B2-044 is pre-booked by another vehicle from 2026-06-08T17:00:00Z",
-              "paymentMethod is required"
+              "Warehouse WH-WEST-999 not found or not authorized",
+              "carrier must be one of: FEDEX, UPS, DHL, USPS",
+              "items array cannot be empty",
+              "receiverAddress is required"
             ],
             "items": {
               "type": "string",
-              "example": "E4dUsyE9mxHWNoWcQk7dPIMY37szfD8TJd6SAnLcTe9U"
+              "example": "GWevXBihkHk8HdOlohjHi0NMiIQq39O1StGwXeHbdyKyzci2Y"
             }
           },
           "timestamp": {
@@ -189,29 +223,42 @@
           }
         },
         "example": {
-          "error": "EXTENSION_INVALID",
+          "error": "SHIPMENT_VALIDATION_ERROR",
           "code": 400,
           "details": [
-            "Maximum extension is 6 hours per reservation",
-            "Slot SLOT-B2-044 is pre-booked by another vehicle from 2026-06-08T17:00:00Z",
-            "paymentMethod is required"
+            "Warehouse WH-WEST-999 not found or not authorized",
+            "carrier must be one of: FEDEX, UPS, DHL, USPS",
+            "items array cannot be empty",
+            "receiverAddress is required"
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "X-Driver-Id": {
-        "name": "X-Driver-Id",
+      "X-Client-Code": {
+        "name": "X-Client-Code",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "DRV-PARK-441"
+          "example": "RETAIL-ABC"
         },
-        "example": "DRV-PARK-441"
+        "example": "RETAIL-ABC"
+      },
+      "X-Warehouse-Id": {
+        "name": "X-Warehouse-Id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "WH-EAST-001"
+        },
+        "example": "WH-EAST-001"
       },
       "Content-Type": {
         "name": "Content-Type",
@@ -233,9 +280,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "a251f11485bc44e5a4e3738bc997144837d78260d87d4bd3"
+          "example": "cbfbdc561ae0484b0487dcfbd05c4d3b"
         },
-        "example": "a251f11485bc44e5a4e3738bc997144837d78260d87d4bd3"
+        "example": "cbfbdc561ae0484b0487dcfbd05c4d3b"
       },
       "Authorization": {
         "name": "Authorization",
@@ -245,9 +292,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer driver-auth-token"
+          "example": "Bearer wms-system-token-valid"
         },
-        "example": "Bearer driver-auth-token"
+        "example": "Bearer wms-system-token-valid"
       }
     },
     "headers": {
@@ -265,9 +312,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "33c6147db1d24e48a6ae7553abbe49b5a91b75c7971f4942"
+          "example": "4e6cb48f1a17454360bdeed3b5be4d79"
         },
-        "example": "33c6147db1d24e48a6ae7553abbe49b5a91b75c7971f4942"
+        "example": "4e6cb48f1a17454360bdeed3b5be4d79"
       },
       "Content-Type": {
         "style": "simple",
