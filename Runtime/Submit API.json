@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v2/rideshare",
+      "url": "https://stage-data-gujl.apiwiz.io/v2/food",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,16 +18,16 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v2/rideshare"
+      "x-basePath": "/v2/food"
     }
   ],
   "paths": {
-    "/rides/RIDE-20260607-5511/driver/rating/feedback/tags/submit": {
-      "put": {
-        "operationId": "PUT_rides_RIDE-20260607-5511_driver_rating_feedback_tags_submit",
+    "/orders/FD-ORD-20260607-5510/review/restaurant/delivery/agent/rating/submit": {
+      "post": {
+        "operationId": "POST_orders_FD-ORD-20260607-5510_review_restaurant_delivery_agent_rating_submit",
         "parameters": [
           {
-            "$ref": "#/components/parameters/X-Rider-Id"
+            "$ref": "#/components/parameters/X-User-Id"
           },
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -43,12 +43,33 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PUT_rides_RIDE-20260607-5511_driver_rating_feedback_tags_submitRequest"
+                "$ref": "#/components/schemas/POST_orders_FD-ORD-20260607-5510_review_restaurant_delivery_agent_rating_submitRequest"
               }
             }
           }
         },
         "responses": {
+          "200": {
+            "description": "Resource created successfully",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/POST_orders_FD-ORD-20260607-5510_review_restaurant_delivery_agent_rating_submitResponse_200"
+                }
+              }
+            }
+          },
           "400": {
             "description": "400Description",
             "headers": {
@@ -65,28 +86,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PUT_rides_RIDE-20260607-5511_driver_rating_feedback_tags_submitResponse_400"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Resource updated successfully",
-            "headers": {
-              "Date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "X-Trace-Id": {
-                "$ref": "#/components/headers/X-Trace-Id"
-              },
-              "Content-Type": {
-                "$ref": "#/components/headers/Content-Type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PUT_rides_RIDE-20260607-5511_driver_rating_feedback_tags_submitResponse_200"
+                  "$ref": "#/components/schemas/POST_orders_FD-ORD-20260607-5510_review_restaurant_delivery_agent_rating_submitResponse_400"
                 }
               }
             }
@@ -102,12 +102,64 @@
   },
   "components": {
     "schemas": {
-      "PUT_rides_RIDE-20260607-5511_driver_rating_feedback_tags_submitResponse_400": {
+      "POST_orders_FD-ORD-20260607-5510_review_restaurant_delivery_agent_rating_submitResponse_200": {
+        "type": "object",
+        "properties": {
+          "reviewId": {
+            "type": "string",
+            "example": "REV-20260608-4421"
+          },
+          "orderId": {
+            "type": "string",
+            "example": "FD-ORD-20260607-5510"
+          },
+          "status": {
+            "type": "string",
+            "example": "PUBLISHED"
+          },
+          "rewardPointsEarned": {
+            "type": "integer",
+            "format": "int32",
+            "example": 50
+          },
+          "message": {
+            "type": "string",
+            "example": "Thank you for your review!"
+          }
+        },
+        "example": {
+          "reviewId": "REV-20260608-4421",
+          "orderId": "FD-ORD-20260607-5510",
+          "status": "PUBLISHED",
+          "rewardPointsEarned": 50,
+          "message": "Thank you for your review!"
+        }
+      },
+      "POST_orders_FD-ORD-20260607-5510_review_restaurant_delivery_agent_rating_submitRequest": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "example": "YqbTRJLp1lMPxg6XOjUW"
+          },
+          "restaurantRating": {
+            "type": "integer",
+            "format": "int32",
+            "example": 65
+          },
+          "overallComment": {
+            "type": "string",
+            "example": "h"
+          }
+        },
+        "example": "{\n  \"orderId\" : \"YqbTRJLp1lMPxg6XOjUW\",\n  \"restaurantRating\" : 65,\n  \"overallComment\" : \"h\"\n}"
+      },
+      "POST_orders_FD-ORD-20260607-5510_review_restaurant_delivery_agent_rating_submitResponse_400": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "RATING_INVALID"
+            "example": "REVIEW_VALIDATION_FAILED"
           },
           "code": {
             "type": "integer",
@@ -117,13 +169,14 @@
           "details": {
             "type": "array",
             "example": [
-              "driverRating must be between 1 and 5",
-              "comment must be at least 10 characters",
-              "Rating window has expired for this ride (must rate within 48 hours)"
+              "restaurantRating must be between 1 and 5",
+              "overallComment must be at least 10 characters",
+              "deliveryRating is required",
+              "A review for this order has already been submitted"
             ],
             "items": {
               "type": "string",
-              "example": "SCH5UEkNs4sBE7TUPiLlP5Po1oInnUAWDdch"
+              "example": "TZGpaHyHtv2Ee1ZyjEJp0u6DT0wzzetz2noGd17L"
             }
           },
           "timestamp": {
@@ -132,64 +185,30 @@
           }
         },
         "example": {
-          "error": "RATING_INVALID",
+          "error": "REVIEW_VALIDATION_FAILED",
           "code": 400,
           "details": [
-            "driverRating must be between 1 and 5",
-            "comment must be at least 10 characters",
-            "Rating window has expired for this ride (must rate within 48 hours)"
+            "restaurantRating must be between 1 and 5",
+            "overallComment must be at least 10 characters",
+            "deliveryRating is required",
+            "A review for this order has already been submitted"
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
-      },
-      "PUT_rides_RIDE-20260607-5511_driver_rating_feedback_tags_submitRequest": {
-        "type": "object",
-        "properties": {
-          "rideId": {
-            "type": "string",
-            "example": "x15EloEZlEZ9bwinNa"
-          },
-          "driverRating": {
-            "type": "integer",
-            "format": "int32",
-            "example": 33
-          },
-          "comment": {
-            "type": "string",
-            "example": "A<F[xMAu4]H-+p)Xi.W'VIOeR^m1S+5J[+KCs,j{{mY0}Mg]"
-          },
-          "tags": {
-            "type": "array",
-            "example": "[ \"Wh_5UIT]%acoff}y]B\", \"UR2TmuZWy\", \"KZA<f:D\", \"}]JqzY!.f0/<\" ]",
-            "items": {
-              "type": "string",
-              "example": "Wh_5UIT]%acoff}y]B"
-            }
-          },
-          "tip": {
-            "type": "number",
-            "example": 32.28
-          }
-        },
-        "example": "{\n  \"rideId\" : \"x15EloEZlEZ9bwinNa\",\n  \"driverRating\" : 33,\n  \"comment\" : \"A<F[xMAu4]H-+p)Xi.W'VIOeR^m1S+5J[+KCs,j{{mY0}Mg]\",\n  \"tags\" : [ \"Wh_5UIT]%acoff}y]B\", \"UR2TmuZWy\", \"KZA<f:D\", \"}]JqzY!.f0/<\" ],\n  \"tip\" : 32.28\n}"
-      },
-      "PUT_rides_RIDE-20260607-5511_driver_rating_feedback_tags_submitResponse_200": {
-        "type": "object",
-        "example": {}
       }
     },
     "parameters": {
-      "X-Rider-Id": {
-        "name": "X-Rider-Id",
+      "X-User-Id": {
+        "name": "X-User-Id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "RIDER-334455"
+          "example": "USR-FOOD-5521"
         },
-        "example": "RIDER-334455"
+        "example": "USR-FOOD-5521"
       },
       "Content-Type": {
         "name": "Content-Type",
@@ -211,9 +230,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6d055eadd32345e18e776e37964457cbff26dd666b2e407f"
+          "example": "2f15c4df168141e48454763ab6a5d8a0345ffd57203346c9"
         },
-        "example": "6d055eadd32345e18e776e37964457cbff26dd666b2e407f"
+        "example": "2f15c4df168141e48454763ab6a5d8a0345ffd57203346c9"
       },
       "Authorization": {
         "name": "Authorization",
@@ -223,9 +242,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer rider-auth-token"
+          "example": "Bearer customer-food-token"
         },
-        "example": "Bearer rider-auth-token"
+        "example": "Bearer customer-food-token"
       }
     },
     "headers": {
@@ -243,9 +262,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "dd96d05b6ab24443918874628c0fca240236c3d7303e4b4f"
+          "example": "260d3159d3544c48945bf3d5f517d6b1ba6b5e57ea2f48c8"
         },
-        "example": "dd96d05b6ab24443918874628c0fca240236c3d7303e4b4f"
+        "example": "260d3159d3544c48945bf3d5f517d6b1ba6b5e57ea2f48c8"
       },
       "Content-Type": {
         "style": "simple",

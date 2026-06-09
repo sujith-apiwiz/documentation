@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/parking",
+      "url": "https://stage-data-gujl.apiwiz.io/v2/rideshare",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,16 +18,19 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/parking"
+      "x-basePath": "/v2/rideshare"
     }
   ],
   "paths": {
-    "/reservations/PARK-RES-20260608-7712/extend/duration/payment/confirm": {
-      "put": {
-        "operationId": "PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirm",
+    "/rides/booking/rider/pickup/destination/fare/confirm": {
+      "post": {
+        "operationId": "POST_rides_booking_rider_pickup_destination_fare_confirm",
         "parameters": [
           {
-            "$ref": "#/components/parameters/X-Driver-Id"
+            "$ref": "#/components/parameters/X-Rider-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Version"
           },
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -43,14 +46,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmRequest"
+                "$ref": "#/components/schemas/POST_rides_booking_rider_pickup_destination_fare_confirmRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Resource updated successfully",
+          "500": {
+            "description": "500Description",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -65,7 +68,28 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmResponse_200"
+                  "$ref": "#/components/schemas/POST_rides_booking_rider_pickup_destination_fare_confirmResponse_500"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Resource created successfully",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/POST_rides_booking_rider_pickup_destination_fare_confirmResponse_200"
                 }
               }
             }
@@ -86,7 +110,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmResponse_400"
+                  "$ref": "#/components/schemas/POST_rides_booking_rider_pickup_destination_fare_confirmResponse_400"
                 }
               }
             }
@@ -102,69 +126,254 @@
   },
   "components": {
     "schemas": {
-      "PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmResponse_200": {
-        "type": "object",
-        "properties": {
-          "reservationId": {
-            "type": "string",
-            "example": "PARK-RES-20260608-7712"
-          },
-          "status": {
-            "type": "string",
-            "example": "EXTENDED"
-          },
-          "newEndTime": {
-            "type": "string",
-            "example": "2026-06-08T16:00:00Z"
-          },
-          "additionalCharge": {
-            "type": "number",
-            "example": 9.0
-          },
-          "totalCharge": {
-            "type": "number",
-            "example": 22.5
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD"
-          },
-          "message": {
-            "type": "string",
-            "example": "Parking reservation extended successfully"
-          }
-        },
-        "example": {
-          "reservationId": "PARK-RES-20260608-7712",
-          "status": "EXTENDED",
-          "newEndTime": "2026-06-08T16:00:00Z",
-          "additionalCharge": 9.0,
-          "totalCharge": 22.5,
-          "currency": "USD",
-          "message": "Parking reservation extended successfully"
-        }
-      },
-      "PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmRequest": {
-        "type": "object",
-        "properties": {
-          "reservationId": {
-            "type": "string",
-            "example": "CJkf8CVA8KZKIUrLruEbfn"
-          },
-          "extendByHours": {
-            "type": "integer",
-            "format": "int32",
-            "example": 27
-          }
-        },
-        "example": "{\n  \"reservationId\" : \"CJkf8CVA8KZKIUrLruEbfn\",\n  \"extendByHours\" : 27\n}"
-      },
-      "PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmResponse_400": {
+      "POST_rides_booking_rider_pickup_destination_fare_confirmResponse_500": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "EXTENSION_INVALID"
+            "example": "DRIVER_MATCHING_SERVICE_DOWN"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 500
+          },
+          "message": {
+            "type": "string",
+            "example": "Driver matching engine is temporarily unavailable due to high demand. Please try again in 2 minutes."
+          },
+          "incidentId": {
+            "type": "string",
+            "example": "INC-RIDE-2026-0534"
+          },
+          "retryAfter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 120
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
+          }
+        },
+        "example": {
+          "error": "DRIVER_MATCHING_SERVICE_DOWN",
+          "code": 500,
+          "message": "Driver matching engine is temporarily unavailable due to high demand. Please try again in 2 minutes.",
+          "incidentId": "INC-RIDE-2026-0534",
+          "retryAfter": 120,
+          "timestamp": "2026-06-08T10:00:00Z"
+        }
+      },
+      "POST_rides_booking_rider_pickup_destination_fare_confirmResponse_200": {
+        "type": "object",
+        "properties": {
+          "rideId": {
+            "type": "string",
+            "example": "RIDE-20260608-7741"
+          },
+          "status": {
+            "type": "string",
+            "example": "DRIVER_ASSIGNED"
+          },
+          "rideType": {
+            "type": "string",
+            "example": "PREMIUM"
+          },
+          "estimatedPickup": {
+            "type": "string",
+            "example": "2026-06-08T10:08:00Z"
+          },
+          "estimatedDuration": {
+            "type": "integer",
+            "format": "int32",
+            "example": 38
+          },
+          "estimatedDistance": {
+            "type": "string",
+            "example": "20.4 km"
+          },
+          "fare": {
+            "type": "object",
+            "properties": {
+              "baseFare": {
+                "type": "number",
+                "example": 77.6
+              },
+              "discount": {
+                "type": "number",
+                "example": 51.85
+              },
+              "taxes": {
+                "type": "number",
+                "example": 35.05
+              },
+              "total": {
+                "type": "number",
+                "example": 88.6
+              },
+              "currency": {
+                "type": "string",
+                "example": "noy"
+              }
+            },
+            "example": {
+              "baseFare": 32.0,
+              "discount": 6.4,
+              "taxes": 2.23,
+              "total": 27.83,
+              "currency": "USD"
+            }
+          },
+          "driver": {
+            "type": "object",
+            "properties": {
+              "driverId": {
+                "type": "string",
+                "example": "RFG5gnvvJ"
+              },
+              "name": {
+                "type": "string",
+                "example": "kggnasadmjjrzsmu"
+              },
+              "rating": {
+                "type": "number",
+                "example": 63.9
+              },
+              "vehicle": {
+                "type": "object",
+                "properties": {
+                  "make": {
+                    "type": "string",
+                    "example": "jgpvzd"
+                  },
+                  "model": {
+                    "type": "string",
+                    "example": "uhsdo"
+                  },
+                  "color": {
+                    "type": "string",
+                    "example": "pqdqv"
+                  },
+                  "licensePlate": {
+                    "type": "string",
+                    "example": "BDTjAr5"
+                  }
+                },
+                "example": "{\n  \"make\" : \"jgpvzd\",\n  \"model\" : \"uhsdo\",\n  \"color\" : \"pqdqv\",\n  \"licensePlate\" : \"BDTjAr5\"\n}"
+              },
+              "currentLocation": {
+                "type": "object",
+                "properties": {
+                  "lat": {
+                    "type": "number",
+                    "example": 40.14
+                  },
+                  "lng": {
+                    "type": "number",
+                    "example": 92.67
+                  }
+                },
+                "example": "{\n  \"lat\" : 40.14,\n  \"lng\" : 92.67\n}"
+              },
+              "eta": {
+                "type": "string",
+                "example": "8mTq5"
+              }
+            },
+            "example": {
+              "driverId": "DRV-88221",
+              "name": "Carlos Rodriguez",
+              "rating": 4.9,
+              "vehicle": {
+                "make": "Toyota",
+                "model": "Camry",
+                "color": "Black",
+                "licensePlate": "7SFO123"
+              },
+              "currentLocation": {
+                "lat": 37.792,
+                "lng": -122.3944
+              },
+              "eta": "8 min"
+            }
+          },
+          "trackingUrl": {
+            "type": "string",
+            "example": "https://track.swiftcab.com/RIDE-20260608-7741"
+          },
+          "message": {
+            "type": "string",
+            "example": "Ride confirmed and driver assigned"
+          }
+        },
+        "example": {
+          "rideId": "RIDE-20260608-7741",
+          "status": "DRIVER_ASSIGNED",
+          "rideType": "PREMIUM",
+          "estimatedPickup": "2026-06-08T10:08:00Z",
+          "estimatedDuration": 38,
+          "estimatedDistance": "20.4 km",
+          "fare": {
+            "baseFare": 32.0,
+            "discount": 6.4,
+            "taxes": 2.23,
+            "total": 27.83,
+            "currency": "USD"
+          },
+          "driver": {
+            "driverId": "DRV-88221",
+            "name": "Carlos Rodriguez",
+            "rating": 4.9,
+            "vehicle": {
+              "make": "Toyota",
+              "model": "Camry",
+              "color": "Black",
+              "licensePlate": "7SFO123"
+            },
+            "currentLocation": {
+              "lat": 37.792,
+              "lng": -122.3944
+            },
+            "eta": "8 min"
+          },
+          "trackingUrl": "https://track.swiftcab.com/RIDE-20260608-7741",
+          "message": "Ride confirmed and driver assigned"
+        }
+      },
+      "POST_rides_booking_rider_pickup_destination_fare_confirmRequest": {
+        "type": "object",
+        "properties": {
+          "riderId": {
+            "type": "string",
+            "example": "fBI0tydCyCHR"
+          },
+          "rideType": {
+            "type": "string",
+            "example": "\"7]!wdFkH*yR"
+          },
+          "pickupLocation": {
+            "type": "object",
+            "example": "{ }"
+          },
+          "dropLocation": {
+            "type": "object",
+            "example": "{ }"
+          },
+          "passengers": {
+            "type": "integer",
+            "format": "int32",
+            "example": 42
+          }
+        },
+        "example": "{\n  \"riderId\" : \"fBI0tydCyCHR\",\n  \"rideType\" : \"\\\"7]!wdFkH*yR\",\n  \"pickupLocation\" : { },\n  \"dropLocation\" : { },\n  \"passengers\" : 42\n}"
+      },
+      "POST_rides_booking_rider_pickup_destination_fare_confirmResponse_400": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "RIDE_REQUEST_INVALID"
           },
           "code": {
             "type": "integer",
@@ -174,13 +383,14 @@
           "details": {
             "type": "array",
             "example": [
-              "Maximum extension is 6 hours per reservation",
-              "Slot SLOT-B2-044 is pre-booked by another vehicle from 2026-06-08T17:00:00Z",
-              "paymentMethod is required"
+              "rideType must be one of: ECONOMY, STANDARD, PREMIUM, POOL",
+              "pickupLocation.lat and pickupLocation.lng are required",
+              "dropLocation.lat and dropLocation.lng are required",
+              "passengers maximum is 6"
             ],
             "items": {
               "type": "string",
-              "example": "E4dUsyE9mxHWNoWcQk7dPIMY37szfD8TJd6SAnLcTe9U"
+              "example": "fS2)0YeK^4O!e6|_'#LjE7Mu^AA?qj)dsv>\"o\"AyEluz#Dc4PSC^A|yJ9"
             }
           },
           "timestamp": {
@@ -189,29 +399,42 @@
           }
         },
         "example": {
-          "error": "EXTENSION_INVALID",
+          "error": "RIDE_REQUEST_INVALID",
           "code": 400,
           "details": [
-            "Maximum extension is 6 hours per reservation",
-            "Slot SLOT-B2-044 is pre-booked by another vehicle from 2026-06-08T17:00:00Z",
-            "paymentMethod is required"
+            "rideType must be one of: ECONOMY, STANDARD, PREMIUM, POOL",
+            "pickupLocation.lat and pickupLocation.lng are required",
+            "dropLocation.lat and dropLocation.lng are required",
+            "passengers maximum is 6"
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "X-Driver-Id": {
-        "name": "X-Driver-Id",
+      "X-Rider-Id": {
+        "name": "X-Rider-Id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "DRV-PARK-441"
+          "example": "RIDER-334455"
         },
-        "example": "DRV-PARK-441"
+        "example": "RIDER-334455"
+      },
+      "X-App-Version": {
+        "name": "X-App-Version",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "5.1.2"
+        },
+        "example": "5.1.2"
       },
       "Content-Type": {
         "name": "Content-Type",
@@ -233,9 +456,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "a251f11485bc44e5a4e3738bc997144837d78260d87d4bd3"
+          "example": "fc806ed9f37e40178e88346eb0a0d78aa575051a9fa04b73"
         },
-        "example": "a251f11485bc44e5a4e3738bc997144837d78260d87d4bd3"
+        "example": "fc806ed9f37e40178e88346eb0a0d78aa575051a9fa04b73"
       },
       "Authorization": {
         "name": "Authorization",
@@ -245,9 +468,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer driver-auth-token"
+          "example": "Bearer rider-auth-token"
         },
-        "example": "Bearer driver-auth-token"
+        "example": "Bearer rider-auth-token"
       }
     },
     "headers": {
@@ -265,9 +488,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "33c6147db1d24e48a6ae7553abbe49b5a91b75c7971f4942"
+          "example": "f95d54acfc5a44f8867970800dea8d565c6800c12b5c49e4"
         },
-        "example": "33c6147db1d24e48a6ae7553abbe49b5a91b75c7971f4942"
+        "example": "f95d54acfc5a44f8867970800dea8d565c6800c12b5c49e4"
       },
       "Content-Type": {
         "style": "simple",

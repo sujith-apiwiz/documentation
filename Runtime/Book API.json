@@ -27,9 +27,6 @@
         "operationId": "POST_hospital_appointments_patient_doctor_schedule_book",
         "parameters": [
           {
-            "$ref": "#/components/parameters/X-Hospital-Id"
-          },
-          {
             "$ref": "#/components/parameters/Content-Type"
           },
           {
@@ -40,6 +37,9 @@
           },
           {
             "$ref": "#/components/parameters/Authorization"
+          },
+          {
+            "$ref": "#/components/parameters/X-Hospital-Id"
           }
         ],
         "requestBody": {
@@ -52,8 +52,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Resource created successfully",
+          "400": {
+            "description": "400Description",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -68,7 +68,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/POST_hospital_appointments_patient_doctor_schedule_bookResponse_200"
+                  "$ref": "#/components/schemas/POST_hospital_appointments_patient_doctor_schedule_bookResponse_400"
                 }
               }
             }
@@ -94,8 +94,8 @@
               }
             }
           },
-          "400": {
-            "description": "400Description",
+          "200": {
+            "description": "Resource created successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -110,7 +110,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/POST_hospital_appointments_patient_doctor_schedule_bookResponse_400"
+                  "$ref": "#/components/schemas/POST_hospital_appointments_patient_doctor_schedule_bookResponse_200"
                 }
               }
             }
@@ -126,9 +126,45 @@
   },
   "components": {
     "schemas": {
-      "POST_hospital_appointments_patient_doctor_schedule_bookResponse_200": {
+      "POST_hospital_appointments_patient_doctor_schedule_bookResponse_400": {
         "type": "object",
-        "example": {}
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "SLOT_UNAVAILABLE"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 400
+          },
+          "details": {
+            "type": "array",
+            "example": [
+              "Selected time slot is already booked",
+              "Appointment date cannot be today for new bookings",
+              "Available slots: 11:00, 14:30, 16:00 on 2026-06-09"
+            ],
+            "items": {
+              "type": "string",
+              "example": "ddjqmbtjpvrwoolwvwzunxucsudbyyjlfzih"
+            }
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
+          }
+        },
+        "example": {
+          "error": "SLOT_UNAVAILABLE",
+          "code": 400,
+          "details": [
+            "Selected time slot is already booked",
+            "Appointment date cannot be today for new bookings",
+            "Available slots: 11:00, 14:30, 16:00 on 2026-06-09"
+          ],
+          "timestamp": "2026-06-08T10:00:00Z"
+        }
       },
       "POST_hospital_appointments_patient_doctor_schedule_bookResponse_500": {
         "type": "object",
@@ -164,81 +200,14 @@
         }
       },
       "POST_hospital_appointments_patient_doctor_schedule_bookRequest": {
-        "type": "object",
-        "properties": {
-          "patientId": {
-            "type": "string",
-            "example": "n137fzwDAV"
-          },
-          "doctorId": {
-            "type": "string",
-            "example": "njq1heJxhN"
-          },
-          "appointmentDate": {
-            "type": "string",
-            "example": "dF=:zD@7@T"
-          },
-          "appointmentTime": {
-            "type": "string",
-            "example": "^I;X%"
-          }
-        },
-        "example": "{\n  \"patientId\" : \"n137fzwDAV\",\n  \"doctorId\" : \"njq1heJxhN\",\n  \"appointmentDate\" : \"dF=:zD@7@T\",\n  \"appointmentTime\" : \"^I;X%\"\n}"
+        "type": "object"
       },
-      "POST_hospital_appointments_patient_doctor_schedule_bookResponse_400": {
+      "POST_hospital_appointments_patient_doctor_schedule_bookResponse_200": {
         "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "example": "SLOT_UNAVAILABLE"
-          },
-          "code": {
-            "type": "integer",
-            "format": "int32",
-            "example": 400
-          },
-          "details": {
-            "type": "array",
-            "example": [
-              "Selected time slot is already booked",
-              "Appointment date cannot be today for new bookings",
-              "Available slots: 11:00, 14:30, 16:00 on 2026-06-09"
-            ],
-            "items": {
-              "type": "string",
-              "example": "gunaralnoqwbdmaxvenkagofjfkcoaldbico"
-            }
-          },
-          "timestamp": {
-            "type": "string",
-            "example": "2026-06-08T10:00:00Z"
-          }
-        },
-        "example": {
-          "error": "SLOT_UNAVAILABLE",
-          "code": 400,
-          "details": [
-            "Selected time slot is already booked",
-            "Appointment date cannot be today for new bookings",
-            "Available slots: 11:00, 14:30, 16:00 on 2026-06-09"
-          ],
-          "timestamp": "2026-06-08T10:00:00Z"
-        }
+        "example": {}
       }
     },
     "parameters": {
-      "X-Hospital-Id": {
-        "name": "X-Hospital-Id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "HOSP-CENTRAL"
-        },
-        "example": "HOSP-CENTRAL"
-      },
       "Content-Type": {
         "name": "Content-Type",
         "in": "header",
@@ -271,9 +240,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "2817c1f2b8a04f3775faa38c2cfa4586"
+          "example": "f037b4c28dff4537f1a8422fec1143de"
         },
-        "example": "2817c1f2b8a04f3775faa38c2cfa4586"
+        "example": "f037b4c28dff4537f1a8422fec1143de"
       },
       "Authorization": {
         "name": "Authorization",
@@ -286,6 +255,18 @@
           "example": "Bearer patient-auth-token-valid"
         },
         "example": "Bearer patient-auth-token-valid"
+      },
+      "X-Hospital-Id": {
+        "name": "X-Hospital-Id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "HOSP-CENTRAL"
+        },
+        "example": "HOSP-CENTRAL"
       }
     },
     "headers": {
@@ -303,9 +284,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f90d1209190c4be1fe98a5eb92ed41ad"
+          "example": "2af1f752f5fb407099da385fa8b14767"
         },
-        "example": "f90d1209190c4be1fe98a5eb92ed41ad"
+        "example": "2af1f752f5fb407099da385fa8b14767"
       },
       "Content-Type": {
         "style": "simple",
