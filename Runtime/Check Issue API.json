@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Transfer API",
-    "description": "Transfer API",
+    "title": "Check Issue API",
+    "description": "Check Issue API",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/direct-payments",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/disbursements",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,13 +18,13 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/direct-payments"
+      "x-basePath": "/v1/disbursements"
     }
   ],
   "paths": {
-    "/transfer": {
+    "/check-issue": {
       "post": {
-        "operationId": "POST_transfer",
+        "operationId": "POST_check-issue",
         "parameters": [
           {
             "$ref": "#/components/parameters/referer"
@@ -100,26 +100,23 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/POST_transferRequest"
+                "$ref": "#/components/schemas/POST_check-issueRequest"
               }
             }
           }
         },
         "responses": {
-          "400": {
-            "description": "400Description",
+          "500": {
+            "description": "500Description",
             "headers": {
               "x-log-id": {
                 "$ref": "#/components/headers/x-log-id"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/POST_transferResponse_400"
+                  "$ref": "#/components/schemas/POST_check-issueResponse_500"
                 }
               }
             }
@@ -129,15 +126,27 @@
             "headers": {
               "x-log-id": {
                 "$ref": "#/components/headers/x-log-id"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/POST_transferResponse_200"
+                  "$ref": "#/components/schemas/POST_check-issueResponse_200"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "422Description",
+            "headers": {
+              "x-log-id": {
+                "$ref": "#/components/headers/x-log-id"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/POST_check-issueResponse_422"
                 }
               }
             }
@@ -153,63 +162,207 @@
   },
   "components": {
     "schemas": {
-      "POST_transferResponse_400": {
+      "POST_check-issueResponse_500": {
         "type": "object",
         "properties": {
-          "partnerSessionId": {
+          "errorCode": {
             "type": "string",
-            "example": "DF195633-E743-4E1A-B4865D5EA95FB21F"
+            "example": "SYS-500"
+          },
+          "errorMessage": {
+            "type": "string",
+            "example": "An unexpected error occurred while processing the transaction."
+          },
+          "errorType": {
+            "type": "string",
+            "example": "SYSTEM_ERROR"
           },
           "status": {
             "type": "string",
-            "example": "FAILED"
+            "example": "integer"
           },
-          "code": {
+          "service": {
             "type": "string",
-            "example": "400"
+            "example": "send-funds-service"
           },
-          "description": {
+          "operation": {
             "type": "string",
-            "example": "BadRequest: Enter a valid User"
+            "example": "sendFundsLocalTransfer"
+          },
+          "traceId": {
+            "type": "string",
+            "example": "ffb0bcd1-0b6d-4e3b-83fd-2e6b7c4e123a"
+          },
+          "supportReference": {
+            "type": "string",
+            "example": "SUP-778212"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-03-13T11:07:20Z"
           }
         },
         "example": {
-          "partnerSessionId": "DF195633-E743-4E1A-B4865D5EA95FB21F",
-          "status": "FAILED",
-          "code": "400",
-          "description": "BadRequest: Enter a valid User"
+          "errorCode": "SYS-500",
+          "errorMessage": "An unexpected error occurred while processing the transaction.",
+          "errorType": "SYSTEM_ERROR",
+          "status": "integer",
+          "service": "send-funds-service",
+          "operation": "sendFundsLocalTransfer",
+          "traceId": "ffb0bcd1-0b6d-4e3b-83fd-2e6b7c4e123a",
+          "supportReference": "SUP-778212",
+          "timestamp": "2026-03-13T11:07:20Z"
         }
       },
-      "POST_transferRequest": {
+      "POST_check-issueResponse_200": {
         "type": "object",
         "properties": {
-          "partnerCode": {
+          "transactionId": {
             "type": "string",
-            "example": "bnwntaa"
-          }
-        },
-        "example": "{\n  \"partnerCode\" : \"bnwntaa\"\n}"
-      },
-      "POST_transferResponse_200": {
-        "type": "object",
-        "properties": {
-          "partnerSessionId": {
+            "example": "TXN98456321"
+          },
+          "referenceNumber": {
             "type": "string",
-            "example": "DF195633-E743-4E1A-B4865D5EA95FB21F"
+            "example": "REF88392012"
+          },
+          "clientReference": {
+            "type": "string",
+            "example": "REF-20260313-001"
           },
           "status": {
             "type": "string",
-            "example": "Success"
+            "example": "SUCCESS"
           },
-          "code": {
+          "processingChannel": {
             "type": "string",
-            "example": "000"
+            "example": "LOCAL_TRANSFER"
+          },
+          "processingTimeMs": {
+            "type": "integer",
+            "format": "int32",
+            "example": 320
+          },
+          "settlementDate": {
+            "type": "string",
+            "example": "2026-03-14"
+          },
+          "amountProcessed": {
+            "type": "number",
+            "example": 5000.75
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "feesCharged": {
+            "type": "number",
+            "example": 2.5
+          },
+          "taxApplied": {
+            "type": "number",
+            "example": 0.25
+          },
+          "exchangeRateApplied": {
+            "type": "number",
+            "example": 1.1
+          },
+          "balanceAfterTransaction": {
+            "type": "number",
+            "example": 45210.55
+          },
+          "message": {
+            "type": "string",
+            "example": "Transaction processed successfully"
+          },
+          "traceId": {
+            "type": "string",
+            "example": "a99212aa-1234-44d5-b234-4a1f23b1a111"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-03-13T10:22:45Z"
           }
         },
         "example": {
-          "partnerSessionId": "DF195633-E743-4E1A-B4865D5EA95FB21F",
-          "status": "Success",
-          "code": "000"
+          "transactionId": "TXN98456321",
+          "referenceNumber": "REF88392012",
+          "clientReference": "REF-20260313-001",
+          "status": "SUCCESS",
+          "processingChannel": "LOCAL_TRANSFER",
+          "processingTimeMs": 320,
+          "settlementDate": "2026-03-14",
+          "amountProcessed": 5000.75,
+          "currency": "USD",
+          "feesCharged": 2.5,
+          "taxApplied": 0.25,
+          "exchangeRateApplied": 1.1,
+          "balanceAfterTransaction": 45210.55,
+          "message": "Transaction processed successfully",
+          "traceId": "a99212aa-1234-44d5-b234-4a1f23b1a111",
+          "timestamp": "2026-03-13T10:22:45Z"
+        }
+      },
+      "POST_check-issueRequest": {
+        "type": "object",
+        "properties": {
+          "checkNumber": {
+            "type": "string",
+            "example": "ngBGvsXgyJ"
+          }
+        },
+        "example": "{\n  \"checkNumber\" : \"ngBGvsXgyJ\"\n}"
+      },
+      "POST_check-issueResponse_422": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "example": "CASH-4221"
+          },
+          "errorMessage": {
+            "type": "string",
+            "example": "Recipient identity verification failed"
+          },
+          "errorType": {
+            "type": "string",
+            "example": "BUSINESS_ERROR"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "example": 422
+          },
+          "traceId": {
+            "type": "string",
+            "example": "6f9c9e0c-0f51-4f8c-9f72-2a1c4f99c901"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-03-13T11:18:45Z"
+          },
+          "details": {
+            "type": "array",
+            "example": [
+              "recipientIdNumber does not match verification records",
+              "pickupBranch is currently unavailable"
+            ],
+            "items": {
+              "type": "string",
+              "example": "nioufheeohooumudmiyhptdmstybxlwrdaeisuzzjkwxhnhsnuvwl"
+            }
+          }
+        },
+        "example": {
+          "errorCode": "CASH-4221",
+          "errorMessage": "Recipient identity verification failed",
+          "errorType": "BUSINESS_ERROR",
+          "status": 422,
+          "traceId": "6f9c9e0c-0f51-4f8c-9f72-2a1c4f99c901",
+          "timestamp": "2026-03-13T11:18:45Z",
+          "details": [
+            "recipientIdNumber does not match verification records",
+            "pickupBranch is currently unavailable"
+          ]
         }
       }
     },
@@ -270,9 +423,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f4978e0ae3af4379"
+          "example": "669fbe13e3e0c41f"
         },
-        "example": "f4978e0ae3af4379"
+        "example": "669fbe13e3e0c41f"
       },
       "content-type": {
         "name": "content-type",
@@ -306,9 +459,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "1f78062d70c9a21bf4978e0ae3af4379"
+          "example": "08a6313c47e423c0669fbe13e3e0c41f"
         },
-        "example": "1f78062d70c9a21bf4978e0ae3af4379"
+        "example": "08a6313c47e423c0669fbe13e3e0c41f"
       },
       "x-request-id": {
         "name": "x-request-id",
@@ -318,9 +471,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f5d5ea89-173d-4226-a4c5-c1dd683ed265"
+          "example": "c21cc042-b637-4578-90fa-e70b433b93d6"
         },
-        "example": "f5d5ea89-173d-4226-a4c5-c1dd683ed265"
+        "example": "c21cc042-b637-4578-90fa-e70b433b93d6"
       },
       "sec-fetch-dest": {
         "name": "sec-fetch-dest",
@@ -497,18 +650,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6a1d261301d29a24f2bb8c96"
+          "example": "6a1d266801d29a24f2bb8caa"
         },
-        "example": "6a1d261301d29a24f2bb8c96"
-      },
-      "content-type": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "application/json"
-        },
-        "example": "application/json"
+        "example": "6a1d266801d29a24f2bb8caa"
       }
     }
   }
