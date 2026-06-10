@@ -2,7 +2,13 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Home Automation Device Update API",
-    "description": "This API enables users to update the configurations of devices linked to specific automation rules within a home automation system. It provides a streamlined interface for scheduling and triggering changes to device settings based on defined rules, enhancing user control over their smart home environment.",
+    "description": "This API facilitates the update of automation rules for devices in home automation systems. It allows users to trigger updates for specific devices based on defined automation rules, enhancing the management and configuration of smart home environments.",
+    "termsOfService": "https://www.homeautomationsupport.com/terms",
+    "contact": {
+      "name": "Home Automation Support",
+      "url": "https://www.homeautomationsupport.com",
+      "email": "support@homeautomationsupport.com"
+    },
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -22,18 +28,15 @@
     }
   ],
   "paths": {
-    "/homes/HOME-441122/automation/rules/RULE-AUTO-8821/schedule/trigger/device/update": {
+    "/homes/HOME-441122/automation/rules/RULE-AUTO-9900/schedule/trigger/device/update": {
       "put": {
         "tags": [
           "Automation"
         ],
-        "summary": "Update Device Trigger Settings",
-        "description": "This operation updates the settings of a specific device trigger within an automation rule in a home automation system. The request requires the home ID, authorization, and content type in the headers, and the body should include the updated trigger settings in JSON format. Upon successful execution, the device trigger settings will be modified accordingly.",
-        "operationId": "updateDeviceTriggerSettings",
+        "summary": "Update Device Trigger Schedule",
+        "description": "This operation updates the schedule for a specific device trigger associated with automation rules in your home system. It expects the necessary authentication parameters and a request body containing the updated schedule details in JSON format. On success, the device trigger schedule will be updated accordingly.",
+        "operationId": "updateDeviceTriggerSchedule",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/X-Home-Id"
-          },
           {
             "$ref": "#/components/parameters/Content-Type"
           },
@@ -51,14 +54,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateDeviceTriggerSettingsRequest"
+                "$ref": "#/components/schemas/UpdateDeviceTriggerScheduleRequest"
               }
             }
           }
         },
         "responses": {
-          "400": {
-            "description": "Invalid request parameters",
+          "500": {
+            "description": "Internal server error occurred",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -73,28 +76,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateDeviceTriggerSettingsResponse_400"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Device trigger settings updated successfully",
-            "headers": {
-              "Date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "X-Trace-Id": {
-                "$ref": "#/components/headers/X-Trace-Id"
-              },
-              "Content-Type": {
-                "$ref": "#/components/headers/Content-Type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateDeviceTriggerSettingsResponse_200"
+                  "$ref": "#/components/schemas/UpdateDeviceTriggerScheduleResponse_500"
                 }
               }
             }
@@ -110,29 +92,68 @@
   },
   "components": {
     "schemas": {
-      "UpdateDeviceTriggerSettingsResponse_400": {
+      "UpdateDeviceTriggerScheduleRequest": {
+        "type": "object",
+        "properties": {
+          "ruleName": {
+            "type": "string",
+            "example": "raqokonxwgepihfe"
+          },
+          "trigger": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "olhegs"
+              }
+            },
+            "example": "{\n  \"type\" : \"olhegs\"\n}"
+          },
+          "actions": {
+            "type": "array",
+            "example": "[ {\n  \"deviceId\" : \"YyQf84fydDW9\",\n  \"command\" : \"cenp\"\n} ]",
+            "items": {
+              "type": "object",
+              "properties": {
+                "deviceId": {
+                  "type": "string",
+                  "example": "YyQf84fydDW9"
+                },
+                "command": {
+                  "type": "string",
+                  "example": "cenp"
+                }
+              },
+              "example": "{\n  \"deviceId\" : \"YyQf84fydDW9\",\n  \"command\" : \"cenp\"\n}"
+            }
+          }
+        },
+        "example": "{\n  \"ruleName\" : \"raqokonxwgepihfe\",\n  \"trigger\" : {\n    \"type\" : \"olhegs\"\n  },\n  \"actions\" : [ {\n    \"deviceId\" : \"YyQf84fydDW9\",\n    \"command\" : \"cenp\"\n  } ]\n}"
+      },
+      "UpdateDeviceTriggerScheduleResponse_500": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "AUTOMATION_RULE_INVALID"
+            "example": "DEVICE_MESH_SYNC_ERROR"
           },
           "code": {
             "type": "integer",
             "format": "int32",
-            "example": 400
+            "example": 500
           },
-          "details": {
-            "type": "array",
-            "example": [
-              "trigger.type must be one of: TIME, SUNRISE, SUNSET, SENSOR_THRESHOLD, GEOFENCE",
-              "actions array cannot be empty",
-              "ruleName is required"
-            ],
-            "items": {
-              "type": "string",
-              "example": "-h)NsB)vuTi*wO2QNoa7qTPIA7a:PB]o>]wP.Q:Z^Z][hF_V{}&Z@|d4tPgS*vQYNxR^hM.>_k6\"sV"
-            }
+          "message": {
+            "type": "string",
+            "example": "Smart home hub is unreachable. Rule saved but device sync failed."
+          },
+          "incidentId": {
+            "type": "string",
+            "example": "INC-IOT-2026-0220"
+          },
+          "retryAfter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 30
           },
           "timestamp": {
             "type": "string",
@@ -140,71 +161,16 @@
           }
         },
         "example": {
-          "error": "AUTOMATION_RULE_INVALID",
-          "code": 400,
-          "details": [
-            "trigger.type must be one of: TIME, SUNRISE, SUNSET, SENSOR_THRESHOLD, GEOFENCE",
-            "actions array cannot be empty",
-            "ruleName is required"
-          ],
+          "error": "DEVICE_MESH_SYNC_ERROR",
+          "code": 500,
+          "message": "Smart home hub is unreachable. Rule saved but device sync failed.",
+          "incidentId": "INC-IOT-2026-0220",
+          "retryAfter": 30,
           "timestamp": "2026-06-08T10:00:00Z"
-        }
-      },
-      "UpdateDeviceTriggerSettingsRequest": {
-        "type": "object"
-      },
-      "UpdateDeviceTriggerSettingsResponse_200": {
-        "type": "object",
-        "properties": {
-          "ruleId": {
-            "type": "string",
-            "example": "RULE-AUTO-8821"
-          },
-          "status": {
-            "type": "string",
-            "example": "UPDATED"
-          },
-          "ruleName": {
-            "type": "string",
-            "example": "Morning Cool Down"
-          },
-          "nextTrigger": {
-            "type": "string",
-            "example": "2026-06-09T07:00:00Z"
-          },
-          "devicesAffected": {
-            "type": "integer",
-            "format": "int32",
-            "example": 2
-          },
-          "message": {
-            "type": "string",
-            "example": "Automation rule updated successfully"
-          }
-        },
-        "example": {
-          "ruleId": "RULE-AUTO-8821",
-          "status": "UPDATED",
-          "ruleName": "Morning Cool Down",
-          "nextTrigger": "2026-06-09T07:00:00Z",
-          "devicesAffected": 2,
-          "message": "Automation rule updated successfully"
         }
       }
     },
     "parameters": {
-      "X-Home-Id": {
-        "name": "X-Home-Id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "HOME-441122"
-        },
-        "example": "HOME-441122"
-      },
       "Content-Type": {
         "name": "Content-Type",
         "in": "header",
@@ -225,9 +191,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "ae1b802f5f174681beb1fac5761815e457b7b8efb8c8464b"
+          "example": "c17dd32a09b84182bc94cebef177043271a4e397b92a4346"
         },
-        "example": "ae1b802f5f174681beb1fac5761815e457b7b8efb8c8464b"
+        "example": "c17dd32a09b84182bc94cebef177043271a4e397b92a4346"
       },
       "Authorization": {
         "name": "Authorization",
@@ -251,8 +217,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "bad_request",
-            "success"
+            "server_error"
           ]
         }
       }
@@ -272,9 +237,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "778dc709e2cf48018cbf2ca644a456922cb6f009ebfe4622"
+          "example": "1259115928c543b3b897ed09d3065f1adc51df4144e848ea"
         },
-        "example": "778dc709e2cf48018cbf2ca644a456922cb6f009ebfe4622"
+        "example": "1259115928c543b3b897ed09d3065f1adc51df4144e848ea"
       },
       "Content-Type": {
         "style": "simple",

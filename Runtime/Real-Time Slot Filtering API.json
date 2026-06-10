@@ -2,8 +2,8 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Real-Time Slot Filtering API",
-    "description": "This API allows users to filter available real-time slots within specific zones for a particular lot. It provides functionalities to customize the request based on vehicle type and track the request's context using correlation IDs. The API is designed to enhance the slot search experience, delivering efficient zone-based availability insights.",
-    "termsOfService": "Use of this API is governed by our terms of service, available at https://www.example.com/terms. By using this API, you agree to adhere to our policies regarding data usage and appropriate conduct.",
+    "description": "The Real-Time Slot Filtering API allows users to efficiently filter and retrieve available parking slots in real-time for the specified lot, considering various parameters such as radius, time frame, electric vehicle charging availability, and vehicle type. This API aims to enhance user experience by providing tailored parking solutions.",
+    "termsOfService": "https://www.example.com/terms-and-conditions",
     "contact": {
       "name": "Support Team",
       "url": "https://www.example.com/support",
@@ -28,15 +28,27 @@
     }
   ],
   "paths": {
-    "/lots/LOT-NONEXISTENT-ZZZ/slots/available/realtime/zones/filter": {
+    "/lots/LOT-DOWNTOWN-A/slots/available/realtime/zones/filter": {
       "get": {
         "tags": [
-          "Slots"
+          "Parking Slots"
         ],
-        "summary": "Retrieve Available Slots for Zones",
-        "description": "This operation allows users to retrieve real-time availability of slots filtered by zones for a specified lot. Users can provide parameters such as vehicle type and parent span ID to customize their query. The expected outcome is a list of available slots that meet the filtering criteria provided in the request.",
-        "operationId": "retrieveAvailableSlotsForZones",
+        "summary": "Retrieve Available Parking Slots",
+        "description": "This operation retrieves real-time availability of parking slots in the specified zones for the lot designated as 'LOT-DOWNTOWN-A'. Users can specify various filters such as radius, time range, electric vehicle charging options, and vehicle type. The expected outcome is a list of available slots that match the provided criteria.",
+        "operationId": "retrieveAvailableParkingSlots",
         "parameters": [
+          {
+            "$ref": "#/components/parameters/radius"
+          },
+          {
+            "$ref": "#/components/parameters/endTime"
+          },
+          {
+            "$ref": "#/components/parameters/startTime"
+          },
+          {
+            "$ref": "#/components/parameters/evCharging"
+          },
           {
             "$ref": "#/components/parameters/vehicleType"
           },
@@ -54,14 +66,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RetrieveAvailableSlotsForZonesRequest"
+                "$ref": "#/components/schemas/RetrieveAvailableParkingSlotsRequest"
               }
             }
           }
         },
         "responses": {
-          "404": {
-            "description": "Requested lot not found",
+          "200": {
+            "description": "Available slots retrieved successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -71,12 +83,15 @@
               },
               "Content-Type": {
                 "$ref": "#/components/headers/Content-Type"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RetrieveAvailableSlotsForZonesResponse_404"
+                  "$ref": "#/components/schemas/RetrieveAvailableParkingSlotsResponse_200"
                 }
               }
             }
@@ -92,40 +107,198 @@
   },
   "components": {
     "schemas": {
-      "RetrieveAvailableSlotsForZonesRequest": {
+      "RetrieveAvailableParkingSlotsRequest": {
         "type": "string",
         "example": ""
       },
-      "RetrieveAvailableSlotsForZonesResponse_404": {
+      "RetrieveAvailableParkingSlotsResponse_200": {
         "type": "object",
         "properties": {
-          "error": {
+          "lotId": {
             "type": "string",
-            "example": "PARKING_LOT_NOT_FOUND"
+            "example": "LOT-DOWNTOWN-A"
           },
-          "code": {
+          "lotName": {
+            "type": "string",
+            "example": "Downtown Parking A"
+          },
+          "totalSlots": {
             "type": "integer",
             "format": "int32",
-            "example": 404
+            "example": 320
           },
-          "message": {
-            "type": "string",
-            "example": "Parking lot LOT-NONEXISTENT-ZZZ does not exist or is not operational."
+          "availableSlots": {
+            "type": "integer",
+            "format": "int32",
+            "example": 87
           },
-          "timestamp": {
+          "zones": {
+            "type": "array",
+            "example": [
+              {
+                "zoneId": "ZONE-A1",
+                "floor": 1,
+                "availableSlots": 12,
+                "rate": 5.0,
+                "slotTypes": [
+                  "STANDARD",
+                  "COMPACT"
+                ]
+              },
+              {
+                "zoneId": "ZONE-B2",
+                "floor": 2,
+                "availableSlots": 35,
+                "rate": 4.5,
+                "slotTypes": [
+                  "STANDARD",
+                  "SUV"
+                ]
+              },
+              {
+                "zoneId": "ZONE-C3",
+                "floor": 3,
+                "availableSlots": 40,
+                "rate": 3.5,
+                "slotTypes": [
+                  "COMPACT",
+                  "MOTORCYCLE"
+                ]
+              }
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "zoneId": {
+                  "type": "string",
+                  "example": "m2sjSNX"
+                },
+                "floor": {
+                  "type": "integer",
+                  "format": "int32",
+                  "example": 33
+                },
+                "availableSlots": {
+                  "type": "integer",
+                  "format": "int32",
+                  "example": 20
+                },
+                "rate": {
+                  "type": "number",
+                  "example": 38.02
+                },
+                "slotTypes": {
+                  "type": "array",
+                  "example": "[ \"aljfunhh\", \"ehrqpml\" ]",
+                  "items": {
+                    "type": "string",
+                    "example": "aljfunhh"
+                  }
+                }
+              },
+              "example": "{\n  \"zoneId\" : \"m2sjSNX\",\n  \"floor\" : 33,\n  \"availableSlots\" : 20,\n  \"rate\" : 38.02,\n  \"slotTypes\" : [ \"aljfunhh\", \"ehrqpml\" ]\n}"
+            }
+          },
+          "currency": {
             "type": "string",
-            "example": "2026-06-08T10:00:00Z"
+            "example": "USD"
+          },
+          "lastUpdated": {
+            "type": "string",
+            "example": "2026-06-08T09:59:45Z"
           }
         },
         "example": {
-          "error": "PARKING_LOT_NOT_FOUND",
-          "code": 404,
-          "message": "Parking lot LOT-NONEXISTENT-ZZZ does not exist or is not operational.",
-          "timestamp": "2026-06-08T10:00:00Z"
+          "lotId": "LOT-DOWNTOWN-A",
+          "lotName": "Downtown Parking A",
+          "totalSlots": 320,
+          "availableSlots": 87,
+          "zones": [
+            {
+              "zoneId": "ZONE-A1",
+              "floor": 1,
+              "availableSlots": 12,
+              "rate": 5.0,
+              "slotTypes": [
+                "STANDARD",
+                "COMPACT"
+              ]
+            },
+            {
+              "zoneId": "ZONE-B2",
+              "floor": 2,
+              "availableSlots": 35,
+              "rate": 4.5,
+              "slotTypes": [
+                "STANDARD",
+                "SUV"
+              ]
+            },
+            {
+              "zoneId": "ZONE-C3",
+              "floor": 3,
+              "availableSlots": 40,
+              "rate": 3.5,
+              "slotTypes": [
+                "COMPACT",
+                "MOTORCYCLE"
+              ]
+            }
+          ],
+          "currency": "USD",
+          "lastUpdated": "2026-06-08T09:59:45Z"
         }
       }
     },
     "parameters": {
+      "radius": {
+        "name": "radius",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "ykIj"
+        },
+        "example": "ykIj"
+      },
+      "endTime": {
+        "name": "endTime",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "JKeACzH8799EXbiiqGOq"
+        },
+        "example": "JKeACzH8799EXbiiqGOq"
+      },
+      "startTime": {
+        "name": "startTime",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "B8VI1qUFAQONRC1LzuKN"
+        },
+        "example": "B8VI1qUFAQONRC1LzuKN"
+      },
+      "evCharging": {
+        "name": "evCharging",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "cynjw"
+        },
+        "example": "cynjw"
+      },
       "vehicleType": {
         "name": "vehicleType",
         "in": "query",
@@ -134,9 +307,9 @@
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "niaew"
+          "example": "peiis"
         },
-        "example": "niaew"
+        "example": "peiis"
       },
       "parentspanid": {
         "name": "parentspanid",
@@ -146,9 +319,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "1932f785a9314983bdcec39dbcc7ea2c3b2c8ae77efd4bbb"
+          "example": "e55b91864be942b789660739f1b143022fece6aefca74c09"
         },
-        "example": "1932f785a9314983bdcec39dbcc7ea2c3b2c8ae77efd4bbb"
+        "example": "e55b91864be942b789660739f1b143022fece6aefca74c09"
       },
       "Authorization": {
         "name": "Authorization",
@@ -172,7 +345,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "not_found"
+            "success"
           ]
         }
       }
@@ -192,9 +365,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "2b0831e9de18484a8bde9577ec1357d0b7dfc1a111d24bee"
+          "example": "2ac0a128492e4b9aaa960d3d3c109bcea3386a08ec814fe9"
         },
-        "example": "2b0831e9de18484a8bde9577ec1357d0b7dfc1a111d24bee"
+        "example": "2ac0a128492e4b9aaa960d3d3c109bcea3386a08ec814fe9"
       },
       "Content-Type": {
         "style": "simple",
@@ -204,6 +377,15 @@
           "example": "application/json"
         },
         "example": "application/json"
+      },
+      "Cache-Control": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "max-age=15"
+        },
+        "example": "max-age=15"
       }
     }
   }
