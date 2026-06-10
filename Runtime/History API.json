@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v2/logistics",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/healthcare",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,16 +18,25 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v2/logistics"
+      "x-basePath": "/v1/healthcare"
     }
   ],
   "paths": {
-    "/shipments/tracking/794644790969/status/events/history": {
+    "/patients/PAT-112233/records/medical/prescriptions/history": {
       "get": {
-        "operationId": "GET_shipments_tracking_794644790969_status_events_history",
+        "operationId": "GET_patients_PAT-112233_records_medical_prescriptions_history",
         "parameters": [
           {
-            "$ref": "#/components/parameters/includeHistory"
+            "$ref": "#/components/parameters/toDate"
+          },
+          {
+            "$ref": "#/components/parameters/fromDate"
+          },
+          {
+            "$ref": "#/components/parameters/X-Patient-Id"
+          },
+          {
+            "$ref": "#/components/parameters/recordType"
           },
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -40,7 +49,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GET_shipments_tracking_794644790969_status_events_historyRequest"
+                "$ref": "#/components/schemas/GET_patients_PAT-112233_records_medical_prescriptions_historyRequest"
               }
             }
           }
@@ -57,15 +66,33 @@
               },
               "Content-Type": {
                 "$ref": "#/components/headers/Content-Type"
-              },
-              "Cache-Control": {
-                "$ref": "#/components/headers/Cache-Control"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GET_shipments_tracking_794644790969_status_events_historyResponse_200"
+                  "$ref": "#/components/schemas/GET_patients_PAT-112233_records_medical_prescriptions_historyResponse_200"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400Description",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GET_patients_PAT-112233_records_medical_prescriptions_historyResponse_400"
                 }
               }
             }
@@ -81,173 +108,230 @@
   },
   "components": {
     "schemas": {
-      "GET_shipments_tracking_794644790969_status_events_historyRequest": {
-        "type": "string",
-        "example": ""
-      },
-      "GET_shipments_tracking_794644790969_status_events_historyResponse_200": {
+      "GET_patients_PAT-112233_records_medical_prescriptions_historyResponse_200": {
         "type": "object",
         "properties": {
-          "trackingNumber": {
+          "patientId": {
             "type": "string",
-            "example": "794644790969"
+            "example": "PAT-112233"
           },
-          "carrier": {
+          "patientName": {
             "type": "string",
-            "example": "FEDEX"
+            "example": "Robert Chen"
           },
-          "currentStatus": {
-            "type": "string",
-            "example": "IN_TRANSIT"
-          },
-          "estimatedDelivery": {
-            "type": "string",
-            "example": "2026-06-11"
-          },
-          "origin": {
-            "type": "object",
-            "properties": {
-              "city": {
-                "type": "string",
-                "example": "rfntix"
-              },
-              "state": {
-                "type": "string",
-                "example": "ww"
-              }
-            },
-            "example": {
-              "city": "Newark",
-              "state": "NJ"
-            }
-          },
-          "destination": {
-            "type": "object",
-            "properties": {
-              "city": {
-                "type": "string",
-                "example": "hrcynrq"
-              },
-              "state": {
-                "type": "string",
-                "example": "nd"
-              }
-            },
-            "example": {
-              "city": "Seattle",
-              "state": "WA"
-            }
-          },
-          "events": {
+          "records": {
             "type": "array",
             "example": [
               {
-                "timestamp": "2026-06-08T08:00:00Z",
-                "status": "PICKED_UP",
-                "location": "Newark NJ Facility",
-                "description": "Package picked up"
+                "prescriptionId": "RX-20260301",
+                "doctorName": "Dr. Sarah Williams",
+                "date": "2026-03-01",
+                "medications": [
+                  {
+                    "name": "Metoprolol",
+                    "dosage": "50mg",
+                    "frequency": "TWICE_DAILY",
+                    "duration": 30
+                  }
+                ],
+                "diagnosis": "Hypertension",
+                "followUpDate": "2026-04-01"
               },
               {
-                "timestamp": "2026-06-08T14:00:00Z",
-                "status": "IN_TRANSIT",
-                "location": "Philadelphia PA Hub",
-                "description": "Departed FedEx hub"
+                "prescriptionId": "RX-20260501",
+                "doctorName": "Dr. Sarah Williams",
+                "date": "2026-05-01",
+                "medications": [
+                  {
+                    "name": "Metoprolol",
+                    "dosage": "50mg",
+                    "frequency": "TWICE_DAILY",
+                    "duration": 60
+                  }
+                ],
+                "diagnosis": "Hypertension - Follow up",
+                "followUpDate": "2026-07-01"
               }
             ],
             "items": {
               "type": "object",
               "properties": {
-                "timestamp": {
+                "prescriptionId": {
                   "type": "string",
-                  "example": "TJTjormAwtRGDoMSQWmO"
+                  "example": "vYpssWZ9NoU"
                 },
-                "status": {
+                "doctorName": {
                   "type": "string",
-                  "example": "nitggLOpd"
+                  "example": "b=jz,!s'#0mtQSt:l^"
                 },
-                "location": {
+                "date": {
                   "type": "string",
-                  "example": "mdmxmagucfpyulipps"
+                  "example": "g+Pz[C^{Ah"
                 },
-                "description": {
+                "medications": {
+                  "type": "array",
+                  "example": "[ {\n  \"name\" : \"knxizlzyro\",\n  \"dosage\" : \"YVJy\",\n  \"frequency\" : \"KROU3*p|A<^\",\n  \"duration\" : 27\n} ]",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "knxizlzyro"
+                      },
+                      "dosage": {
+                        "type": "string",
+                        "example": "YVJy"
+                      },
+                      "frequency": {
+                        "type": "string",
+                        "example": "KROU3*p|A<^"
+                      },
+                      "duration": {
+                        "type": "integer",
+                        "format": "int32",
+                        "example": 27
+                      }
+                    },
+                    "example": "{\n  \"name\" : \"knxizlzyro\",\n  \"dosage\" : \"YVJy\",\n  \"frequency\" : \"KROU3*p|A<^\",\n  \"duration\" : 27\n}"
+                  }
+                },
+                "diagnosis": {
                   "type": "string",
-                  "example": "fcqwjgxbbpyllnjkf"
+                  "example": "rnykjqgqxtps"
+                },
+                "followUpDate": {
+                  "type": "string",
+                  "example": "T(ag9=^lgm"
                 }
               },
-              "example": "{\n  \"timestamp\" : \"TJTjormAwtRGDoMSQWmO\",\n  \"status\" : \"nitggLOpd\",\n  \"location\" : \"mdmxmagucfpyulipps\",\n  \"description\" : \"fcqwjgxbbpyllnjkf\"\n}"
+              "example": "{\n  \"prescriptionId\" : \"vYpssWZ9NoU\",\n  \"doctorName\" : \"b=jz,!s'#0mtQSt:l^\",\n  \"date\" : \"g+Pz[C^{Ah\",\n  \"medications\" : [ {\n    \"name\" : \"knxizlzyro\",\n    \"dosage\" : \"YVJy\",\n    \"frequency\" : \"KROU3*p|A<^\",\n    \"duration\" : 27\n  } ],\n  \"diagnosis\" : \"rnykjqgqxtps\",\n  \"followUpDate\" : \"T(ag9=^lgm\"\n}"
             }
           },
-          "packageInfo": {
-            "type": "object",
-            "properties": {
-              "weight": {
-                "type": "number",
-                "example": 96.91
-              },
-              "dimensions": {
-                "type": "string",
-                "example": "XGmsxD0LZE4"
-              },
-              "pieces": {
-                "type": "integer",
-                "format": "int32",
-                "example": 28
-              }
-            },
-            "example": {
-              "weight": 1.3,
-              "dimensions": "20x15x10 cm",
-              "pieces": 2
-            }
+          "totalRecords": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
           }
         },
         "example": {
-          "trackingNumber": "794644790969",
-          "carrier": "FEDEX",
-          "currentStatus": "IN_TRANSIT",
-          "estimatedDelivery": "2026-06-11",
-          "origin": {
-            "city": "Newark",
-            "state": "NJ"
-          },
-          "destination": {
-            "city": "Seattle",
-            "state": "WA"
-          },
-          "events": [
+          "patientId": "PAT-112233",
+          "patientName": "Robert Chen",
+          "records": [
             {
-              "timestamp": "2026-06-08T08:00:00Z",
-              "status": "PICKED_UP",
-              "location": "Newark NJ Facility",
-              "description": "Package picked up"
+              "prescriptionId": "RX-20260301",
+              "doctorName": "Dr. Sarah Williams",
+              "date": "2026-03-01",
+              "medications": [
+                {
+                  "name": "Metoprolol",
+                  "dosage": "50mg",
+                  "frequency": "TWICE_DAILY",
+                  "duration": 30
+                }
+              ],
+              "diagnosis": "Hypertension",
+              "followUpDate": "2026-04-01"
             },
             {
-              "timestamp": "2026-06-08T14:00:00Z",
-              "status": "IN_TRANSIT",
-              "location": "Philadelphia PA Hub",
-              "description": "Departed FedEx hub"
+              "prescriptionId": "RX-20260501",
+              "doctorName": "Dr. Sarah Williams",
+              "date": "2026-05-01",
+              "medications": [
+                {
+                  "name": "Metoprolol",
+                  "dosage": "50mg",
+                  "frequency": "TWICE_DAILY",
+                  "duration": 60
+                }
+              ],
+              "diagnosis": "Hypertension - Follow up",
+              "followUpDate": "2026-07-01"
             }
           ],
-          "packageInfo": {
-            "weight": 1.3,
-            "dimensions": "20x15x10 cm",
-            "pieces": 2
+          "totalRecords": 2
+        }
+      },
+      "GET_patients_PAT-112233_records_medical_prescriptions_historyRequest": {
+        "type": "string",
+        "example": ""
+      },
+      "GET_patients_PAT-112233_records_medical_prescriptions_historyResponse_400": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "INVALID_RECORD_TYPE"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "recordType must be one of: PRESCRIPTION, LAB_REPORT, DISCHARGE_SUMMARY, IMAGING"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
           }
+        },
+        "example": {
+          "error": "INVALID_RECORD_TYPE",
+          "code": 400,
+          "message": "recordType must be one of: PRESCRIPTION, LAB_REPORT, DISCHARGE_SUMMARY, IMAGING",
+          "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "includeHistory": {
-        "name": "includeHistory",
+      "toDate": {
+        "name": "toDate",
         "in": "query",
         "required": false,
         "style": "form",
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "kjax"
+          "example": "Jg=c:EeRyL"
         },
-        "example": "kjax"
+        "example": "Jg=c:EeRyL"
+      },
+      "fromDate": {
+        "name": "fromDate",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "qs.]a@KY^A"
+        },
+        "example": "qs.]a@KY^A"
+      },
+      "X-Patient-Id": {
+        "name": "X-Patient-Id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "PAT-112233"
+        },
+        "example": "PAT-112233"
+      },
+      "recordType": {
+        "name": "recordType",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "JO{q84]]8u&4"
+        },
+        "example": "JO{q84]]8u&4"
       },
       "parentspanid": {
         "name": "parentspanid",
@@ -257,9 +341,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "cd05651da539491843bee2ef66264fa2"
+          "example": "299e72a223d14dae18e404d4e6ee454b"
         },
-        "example": "cd05651da539491843bee2ef66264fa2"
+        "example": "299e72a223d14dae18e404d4e6ee454b"
       },
       "Authorization": {
         "name": "Authorization",
@@ -269,9 +353,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer user-access-token-valid"
+          "example": "Bearer patient-auth-token-valid"
         },
-        "example": "Bearer user-access-token-valid"
+        "example": "Bearer patient-auth-token-valid"
       }
     },
     "headers": {
@@ -289,9 +373,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "286c83b81316489d6d2630ea689c4a13"
+          "example": "3aec47504e904b12935268a48bba4b52"
         },
-        "example": "286c83b81316489d6d2630ea689c4a13"
+        "example": "3aec47504e904b12935268a48bba4b52"
       },
       "Content-Type": {
         "style": "simple",
@@ -301,15 +385,6 @@
           "example": "application/json"
         },
         "example": "application/json"
-      },
-      "Cache-Control": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "max-age=60"
-        },
-        "example": "max-age=60"
       }
     }
   }

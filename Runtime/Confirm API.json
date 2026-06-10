@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/insurance",
+      "url": "https://stage-data-gujl.apiwiz.io/v2/rideshare",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,14 +18,17 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/insurance"
+      "x-basePath": "/v2/rideshare"
     }
   ],
   "paths": {
-    "/policies/POL-INS-20260608-8812/beneficiary/nominee/update/personal/details/confirm": {
-      "put": {
-        "operationId": "PUT_policies_POL-INS-20260608-8812_beneficiary_nominee_update_personal_details_confirm",
+    "/rides/schedule/advance/booking/rider/preferences/confirm": {
+      "post": {
+        "operationId": "POST_rides_schedule_advance_booking_rider_preferences_confirm",
         "parameters": [
+          {
+            "$ref": "#/components/parameters/X-Rider-Id"
+          },
           {
             "$ref": "#/components/parameters/Content-Type"
           },
@@ -34,23 +37,20 @@
           },
           {
             "$ref": "#/components/parameters/Authorization"
-          },
-          {
-            "$ref": "#/components/parameters/X-Customer-Id"
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PUT_policies_POL-INS-20260608-8812_beneficiary_nominee_update_personal_details_confirmRequest"
+                "$ref": "#/components/schemas/POST_rides_schedule_advance_booking_rider_preferences_confirmRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Resource updated successfully",
+          "400": {
+            "description": "400Description",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -65,7 +65,28 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PUT_policies_POL-INS-20260608-8812_beneficiary_nominee_update_personal_details_confirmResponse_200"
+                  "$ref": "#/components/schemas/POST_rides_schedule_advance_booking_rider_preferences_confirmResponse_400"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Resource created successfully",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/POST_rides_schedule_advance_booking_rider_preferences_confirmResponse_200"
                 }
               }
             }
@@ -81,46 +102,197 @@
   },
   "components": {
     "schemas": {
-      "PUT_policies_POL-INS-20260608-8812_beneficiary_nominee_update_personal_details_confirmRequest": {
+      "POST_rides_schedule_advance_booking_rider_preferences_confirmResponse_400": {
         "type": "object",
         "properties": {
-          "nomineeName": {
+          "error": {
             "type": "string",
-            "example": "fuycbggdovgqw"
+            "example": "SCHEDULE_VALIDATION_FAILED"
           },
-          "nomineeRelation": {
-            "type": "string",
-            "example": "mkajdq"
-          },
-          "nomineeDob": {
-            "type": "string",
-            "example": "K>h^yvmLb^"
-          },
-          "nomineeShare": {
+          "code": {
             "type": "integer",
             "format": "int32",
-            "example": 79
+            "example": 400
           },
-          "nomineeContactNumber": {
+          "details": {
+            "type": "array",
+            "example": [
+              "scheduledTime must be at least 30 minutes in the future",
+              "pickupLocation is required",
+              "dropLocation is required"
+            ],
+            "items": {
+              "type": "string",
+              "example": "NhwLES5KqEiTgE6osuVWhuSY28wqDXvIS4GaJm91HCNhonFsnf2hoMA"
+            }
+          },
+          "timestamp": {
             "type": "string",
-            "example": "@AxSy\"S*=(#c"
-          },
-          "nomineeAadhaar": {
-            "type": "string",
-            "example": "crvS&{u>at55m1"
-          },
-          "appointeeName": {
-            "type": "string"
+            "example": "2026-06-08T10:00:00Z"
           }
         },
-        "example": "{\n  \"nomineeName\" : \"fuycbggdovgqw\",\n  \"nomineeRelation\" : \"mkajdq\",\n  \"nomineeDob\" : \"K>h^yvmLb^\",\n  \"nomineeShare\" : 79,\n  \"nomineeContactNumber\" : \"@AxSy\\\"S*=(#c\",\n  \"nomineeAadhaar\" : \"crvS&{u>at55m1\",\n  \"appointeeName\" : null\n}"
+        "example": {
+          "error": "SCHEDULE_VALIDATION_FAILED",
+          "code": 400,
+          "details": [
+            "scheduledTime must be at least 30 minutes in the future",
+            "pickupLocation is required",
+            "dropLocation is required"
+          ],
+          "timestamp": "2026-06-08T10:00:00Z"
+        }
       },
-      "PUT_policies_POL-INS-20260608-8812_beneficiary_nominee_update_personal_details_confirmResponse_200": {
+      "POST_rides_schedule_advance_booking_rider_preferences_confirmRequest": {
         "type": "object",
-        "example": {}
+        "properties": {
+          "riderId": {
+            "type": "string",
+            "example": "9SlmME6yijpU"
+          },
+          "rideType": {
+            "type": "string",
+            "example": "kcmsnap"
+          },
+          "pickupLocation": {
+            "type": "object",
+            "properties": {
+              "address": {
+                "type": "string",
+                "example": "rshtTG8cYWxOcTlqW"
+              },
+              "lat": {
+                "type": "number",
+                "example": 57.96
+              },
+              "lng": {
+                "type": "number",
+                "example": 54.18
+              }
+            },
+            "example": "{\n  \"address\" : \"rshtTG8cYWxOcTlqW\",\n  \"lat\" : 57.96,\n  \"lng\" : 54.18\n}"
+          },
+          "dropLocation": {
+            "type": "object",
+            "properties": {
+              "address": {
+                "type": "string",
+                "example": "dqukzjfgwax"
+              },
+              "lat": {
+                "type": "number",
+                "example": 39.44
+              },
+              "lng": {
+                "type": "number",
+                "example": 84.29
+              }
+            },
+            "example": "{\n  \"address\" : \"dqukzjfgwax\",\n  \"lat\" : 39.44,\n  \"lng\" : 84.29\n}"
+          },
+          "scheduledTime": {
+            "type": "string",
+            "example": "hOJWBMnjH0bsFo9s9czX"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "example": "slckzz"
+          },
+          "notifyBefore": {
+            "type": "integer",
+            "format": "int32",
+            "example": 41
+          },
+          "notes": {
+            "type": "string",
+            "example": "Z4Nf*gqzs5es2%c&5ls3*I[1pwzFZ=%Y^}|&yb0"
+          }
+        },
+        "example": "{\n  \"riderId\" : \"9SlmME6yijpU\",\n  \"rideType\" : \"kcmsnap\",\n  \"pickupLocation\" : {\n    \"address\" : \"rshtTG8cYWxOcTlqW\",\n    \"lat\" : 57.96,\n    \"lng\" : 54.18\n  },\n  \"dropLocation\" : {\n    \"address\" : \"dqukzjfgwax\",\n    \"lat\" : 39.44,\n    \"lng\" : 84.29\n  },\n  \"scheduledTime\" : \"hOJWBMnjH0bsFo9s9czX\",\n  \"paymentMethod\" : \"slckzz\",\n  \"notifyBefore\" : 41,\n  \"notes\" : \"Z4Nf*gqzs5es2%c&5ls3*I[1pwzFZ=%Y^}|&yb0\"\n}"
+      },
+      "POST_rides_schedule_advance_booking_rider_preferences_confirmResponse_200": {
+        "type": "object",
+        "properties": {
+          "scheduleId": {
+            "type": "string",
+            "example": "SCHED-20260608-4411"
+          },
+          "status": {
+            "type": "string",
+            "example": "SCHEDULED"
+          },
+          "rideType": {
+            "type": "string",
+            "example": "PREMIUM"
+          },
+          "scheduledPickup": {
+            "type": "string",
+            "example": "2026-06-09T06:00:00Z"
+          },
+          "estimatedFare": {
+            "type": "object",
+            "properties": {
+              "min": {
+                "type": "number",
+                "example": 26.39
+              },
+              "max": {
+                "type": "number",
+                "example": 19.16
+              },
+              "currency": {
+                "type": "string",
+                "example": "cvn"
+              }
+            },
+            "example": {
+              "min": 28.0,
+              "max": 35.0,
+              "currency": "USD"
+            }
+          },
+          "notifyBefore": {
+            "type": "integer",
+            "format": "int32",
+            "example": 30
+          },
+          "cancellationDeadline": {
+            "type": "string",
+            "example": "2026-06-09T05:30:00Z"
+          },
+          "message": {
+            "type": "string",
+            "example": "Ride scheduled successfully"
+          }
+        },
+        "example": {
+          "scheduleId": "SCHED-20260608-4411",
+          "status": "SCHEDULED",
+          "rideType": "PREMIUM",
+          "scheduledPickup": "2026-06-09T06:00:00Z",
+          "estimatedFare": {
+            "min": 28.0,
+            "max": 35.0,
+            "currency": "USD"
+          },
+          "notifyBefore": 30,
+          "cancellationDeadline": "2026-06-09T05:30:00Z",
+          "message": "Ride scheduled successfully"
+        }
       }
     },
     "parameters": {
+      "X-Rider-Id": {
+        "name": "X-Rider-Id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "RIDER-334455"
+        },
+        "example": "RIDER-334455"
+      },
       "Content-Type": {
         "name": "Content-Type",
         "in": "header",
@@ -141,9 +313,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "688c0ae3bc814b7895e3055d8b87177b436a109680084763"
+          "example": "342e4f67b66048bba816f493b072d8cdf172be24687044d4"
         },
-        "example": "688c0ae3bc814b7895e3055d8b87177b436a109680084763"
+        "example": "342e4f67b66048bba816f493b072d8cdf172be24687044d4"
       },
       "Authorization": {
         "name": "Authorization",
@@ -153,21 +325,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer ins-customer-token"
+          "example": "Bearer rider-auth-token"
         },
-        "example": "Bearer ins-customer-token"
-      },
-      "X-Customer-Id": {
-        "name": "X-Customer-Id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "CUST-INS-334"
-        },
-        "example": "CUST-INS-334"
+        "example": "Bearer rider-auth-token"
       }
     },
     "headers": {
@@ -185,9 +345,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "ce069d7af6774e519649f0a8752f92d8d88c0f0083334897"
+          "example": "e84a81dfe8fd4fd0b6937d7fc410408699f74d452dc24570"
         },
-        "example": "ce069d7af6774e519649f0a8752f92d8d88c0f0083334897"
+        "example": "e84a81dfe8fd4fd0b6937d7fc410408699f74d452dc24570"
       },
       "Content-Type": {
         "style": "simple",
