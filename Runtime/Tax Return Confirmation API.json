@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Confirm API",
-    "description": "Confirm API",
+    "title": "Tax Return Confirmation API",
+    "description": "Tax Return Confirmation API",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -11,7 +11,6 @@
   "servers": [
     {
       "url": "https://stage-data-gujl.apiwiz.io/v1/government",
-      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
@@ -27,19 +26,19 @@
         "operationId": "POST_tax_individual_return_annual_filing_fy2025_submit_confirm",
         "parameters": [
           {
-            "$ref": "#/components/parameters/Content-Type"
+            "$ref": "#/components/parameters/X-Citizen-Id"
           },
           {
-            "$ref": "#/components/parameters/X-Citizen-Id"
+            "$ref": "#/components/parameters/X-Filing-Agent"
+          },
+          {
+            "$ref": "#/components/parameters/Content-Type"
           },
           {
             "$ref": "#/components/parameters/parentspanid"
           },
           {
             "$ref": "#/components/parameters/Authorization"
-          },
-          {
-            "$ref": "#/components/parameters/X-Filing-Agent"
           }
         ],
         "requestBody": {
@@ -73,27 +72,6 @@
               }
             }
           },
-          "400": {
-            "description": "400Description",
-            "headers": {
-              "Date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "X-Trace-Id": {
-                "$ref": "#/components/headers/X-Trace-Id"
-              },
-              "Content-Type": {
-                "$ref": "#/components/headers/Content-Type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/POST_tax_individual_return_annual_filing_fy2025_submit_confirmResponse_400"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Resource created successfully",
             "headers": {
@@ -114,6 +92,27 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "400Description",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/POST_tax_individual_return_annual_filing_fy2025_submit_confirmResponse_400"
+                }
+              }
+            }
           }
         },
         "callbacks": {},
@@ -130,8 +129,9 @@
         "type": "object",
         "properties": {
           "error": {
-            "type": "string",
-            "example": "IRS_GATEWAY_ERROR"
+            "type": "integer",
+            "format": "int32",
+            "example": 43822
           },
           "code": {
             "type": "integer",
@@ -139,12 +139,14 @@
             "example": 500
           },
           "message": {
-            "type": "string",
-            "example": "IRS processing system is temporarily unavailable. Your return has been saved and will be auto-submitted when the service resumes."
+            "type": "integer",
+            "format": "int32",
+            "example": 9469
           },
           "incidentId": {
-            "type": "string",
-            "example": "INC-GOV-2026-0041"
+            "type": "integer",
+            "format": "int32",
+            "example": 25053
           },
           "estimatedResolution": {
             "type": "string",
@@ -156,60 +158,13 @@
           }
         },
         "example": {
-          "error": "IRS_GATEWAY_ERROR",
+          "error": 43822,
           "code": 500,
-          "message": "IRS processing system is temporarily unavailable. Your return has been saved and will be auto-submitted when the service resumes.",
-          "incidentId": "INC-GOV-2026-0041",
+          "message": 9469,
+          "incidentId": 25053,
           "estimatedResolution": "2026-06-08T12:00:00Z",
           "timestamp": "2026-06-08T10:00:00Z"
         }
-      },
-      "POST_tax_individual_return_annual_filing_fy2025_submit_confirmResponse_400": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "example": "TAX_FILING_VALIDATION_FAILED"
-          },
-          "code": {
-            "type": "integer",
-            "format": "int32",
-            "example": 400
-          },
-          "details": {
-            "type": "array",
-            "example": [
-              "filingStatus must be one of: SINGLE, MARRIED_JOINT, MARRIED_SEPARATE, HEAD_OF_HOUSEHOLD",
-              "grossIncome cannot be negative",
-              "eSignature is required",
-              "A return for taxYear 2025 has already been filed by this citizen \u2014 please submit an amendment instead",
-              "bankAccount details are required for direct deposit"
-            ],
-            "items": {
-              "type": "string",
-              "example": "1vC/Dd45ery$#uaL>;+Lu>%Y,6@,BFFG/Xm+68N;wBMAU}/Fu&X||&6lfy.IQS8_EgG'c;cA\"pw6mOL#{spe:e|"
-            }
-          },
-          "timestamp": {
-            "type": "string",
-            "example": "2026-06-08T10:00:00Z"
-          }
-        },
-        "example": {
-          "error": "TAX_FILING_VALIDATION_FAILED",
-          "code": 400,
-          "details": [
-            "filingStatus must be one of: SINGLE, MARRIED_JOINT, MARRIED_SEPARATE, HEAD_OF_HOUSEHOLD",
-            "grossIncome cannot be negative",
-            "eSignature is required",
-            "A return for taxYear 2025 has already been filed by this citizen \u2014 please submit an amendment instead",
-            "bankAccount details are required for direct deposit"
-          ],
-          "timestamp": "2026-06-08T10:00:00Z"
-        }
-      },
-      "POST_tax_individual_return_annual_filing_fy2025_submit_confirmRequest": {
-        "type": "object"
       },
       "POST_tax_individual_return_annual_filing_fy2025_submit_confirmResponse_200": {
         "type": "object",
@@ -256,16 +211,19 @@
             "example": "DIRECT_DEPOSIT"
           },
           "estimatedRefundDate": {
-            "type": "string",
-            "example": "2026-06-29"
+            "type": "integer",
+            "format": "int32",
+            "example": 34996
           },
           "acknowledgementCode": {
-            "type": "string",
-            "example": "ACK-IRS-2026-88221"
+            "type": "integer",
+            "format": "int32",
+            "example": 1736
           },
           "message": {
-            "type": "string",
-            "example": "Tax return submitted and accepted successfully"
+            "type": "integer",
+            "format": "int32",
+            "example": 22990
           }
         },
         "example": {
@@ -278,25 +236,89 @@
           "totalPayments": 37000,
           "refundAmount": 8686,
           "refundMethod": "DIRECT_DEPOSIT",
-          "estimatedRefundDate": "2026-06-29",
-          "acknowledgementCode": "ACK-IRS-2026-88221",
-          "message": "Tax return submitted and accepted successfully"
+          "estimatedRefundDate": 34996,
+          "acknowledgementCode": 1736,
+          "message": 22990
+        }
+      },
+      "POST_tax_individual_return_annual_filing_fy2025_submit_confirmRequest": {
+        "type": "object",
+        "properties": {
+          "citizenId": {
+            "type": "integer",
+            "format": "int32",
+            "example": 75
+          },
+          "taxYear": {
+            "type": "integer",
+            "format": "int32",
+            "example": 88
+          },
+          "filingStatus": {
+            "type": "integer",
+            "format": "int32",
+            "example": 52
+          },
+          "grossIncome": {
+            "type": "integer",
+            "format": "int32",
+            "example": 32
+          },
+          "eSignature": {
+            "type": "string",
+            "example": ""
+          }
+        },
+        "example": "{\n  \"citizenId\" : 75,\n  \"taxYear\" : 88,\n  \"filingStatus\" : 52,\n  \"grossIncome\" : 32,\n  \"eSignature\" : \"\"\n}"
+      },
+      "POST_tax_individual_return_annual_filing_fy2025_submit_confirmResponse_400": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "integer",
+            "format": "int32",
+            "example": 23417
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 400
+          },
+          "details": {
+            "type": "array",
+            "example": [
+              "filingStatus must be one of: SINGLE, MARRIED_JOINT, MARRIED_SEPARATE, HEAD_OF_HOUSEHOLD",
+              "grossIncome cannot be negative",
+              "eSignature is required",
+              "A return for taxYear 2025 has already been filed by this citizen \u2014 please submit an amendment instead",
+              "bankAccount details are required for direct deposit"
+            ],
+            "items": {
+              "type": "string",
+              "example": "Nm]K$|XRGqUJ%\"eg,BIrH^9kU=l8n!QM,1=5$d0'rEtQ;!u;+z@Wh$^,,$hr@x@Q<Yjq,zYW2dD,Y(v}dAj^hiJ"
+            }
+          },
+          "timestamp": {
+            "type": "integer",
+            "format": "int32",
+            "example": 63872
+          }
+        },
+        "example": {
+          "error": 23417,
+          "code": 400,
+          "details": [
+            "filingStatus must be one of: SINGLE, MARRIED_JOINT, MARRIED_SEPARATE, HEAD_OF_HOUSEHOLD",
+            "grossIncome cannot be negative",
+            "eSignature is required",
+            "A return for taxYear 2025 has already been filed by this citizen \u2014 please submit an amendment instead",
+            "bankAccount details are required for direct deposit"
+          ],
+          "timestamp": 63872
         }
       }
     },
     "parameters": {
-      "Content-Type": {
-        "name": "Content-Type",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "application/json"
-        },
-        "example": "application/json"
-      },
       "X-Citizen-Id": {
         "name": "X-Citizen-Id",
         "in": "header",
@@ -309,6 +331,30 @@
         },
         "example": "CIT-SSN-HASH-9921"
       },
+      "X-Filing-Agent": {
+        "name": "X-Filing-Agent",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "SELF"
+        },
+        "example": "SELF"
+      },
+      "Content-Type": {
+        "name": "Content-Type",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      },
       "parentspanid": {
         "name": "parentspanid",
         "in": "header",
@@ -317,9 +363,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "d216ad406707435cabec1e00fa49f2a22abf61153563423e"
+          "example": "23956c1b4c7f43409fa782f6928c95405abb4adbf1bf4d3c"
         },
-        "example": "d216ad406707435cabec1e00fa49f2a22abf61153563423e"
+        "example": "23956c1b4c7f43409fa782f6928c95405abb4adbf1bf4d3c"
       },
       "Authorization": {
         "name": "Authorization",
@@ -332,18 +378,6 @@
           "example": "Bearer citizen-auth-token"
         },
         "example": "Bearer citizen-auth-token"
-      },
-      "X-Filing-Agent": {
-        "name": "X-Filing-Agent",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "SELF"
-        },
-        "example": "SELF"
       }
     },
     "headers": {
@@ -361,9 +395,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "b320c6a4c58144568723034147421254bffb8682f590400e"
+          "example": "9558095f2f0e445189ffe131505959408742dd965ae94e47"
         },
-        "example": "b320c6a4c58144568723034147421254bffb8682f590400e"
+        "example": "9558095f2f0e445189ffe131505959408742dd965ae94e47"
       },
       "Content-Type": {
         "style": "simple",
