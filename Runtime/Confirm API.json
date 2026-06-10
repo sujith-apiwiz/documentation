@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v2/rideshare",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/parking",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,16 +18,19 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v2/rideshare"
+      "x-basePath": "/v1/parking"
     }
   ],
   "paths": {
-    "/rides/schedule/advance/booking/rider/preferences/confirm": {
+    "/lots/zones/slots/reservation/vehicle/payment/confirm": {
       "post": {
-        "operationId": "POST_rides_schedule_advance_booking_rider_preferences_confirm",
+        "operationId": "POST_lots_zones_slots_reservation_vehicle_payment_confirm",
         "parameters": [
           {
-            "$ref": "#/components/parameters/X-Rider-Id"
+            "$ref": "#/components/parameters/X-Driver-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Version"
           },
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -43,14 +46,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/POST_rides_schedule_advance_booking_rider_preferences_confirmRequest"
+                "$ref": "#/components/schemas/POST_lots_zones_slots_reservation_vehicle_payment_confirmRequest"
               }
             }
           }
         },
         "responses": {
-          "400": {
-            "description": "400Description",
+          "500": {
+            "description": "500Description",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -65,7 +68,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/POST_rides_schedule_advance_booking_rider_preferences_confirmResponse_400"
+                  "$ref": "#/components/schemas/POST_lots_zones_slots_reservation_vehicle_payment_confirmResponse_500"
                 }
               }
             }
@@ -86,7 +89,28 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/POST_rides_schedule_advance_booking_rider_preferences_confirmResponse_200"
+                  "$ref": "#/components/schemas/POST_lots_zones_slots_reservation_vehicle_payment_confirmResponse_200"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400Description",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/POST_lots_zones_slots_reservation_vehicle_payment_confirmResponse_400"
                 }
               }
             }
@@ -102,12 +126,173 @@
   },
   "components": {
     "schemas": {
-      "POST_rides_schedule_advance_booking_rider_preferences_confirmResponse_400": {
+      "POST_lots_zones_slots_reservation_vehicle_payment_confirmResponse_500": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "SCHEDULE_VALIDATION_FAILED"
+            "example": "SLOT_MANAGEMENT_SYSTEM_ERROR"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 500
+          },
+          "message": {
+            "type": "string",
+            "example": "Real-time slot availability service is unreachable. Reservation could not be confirmed."
+          },
+          "incidentId": {
+            "type": "string",
+            "example": "INC-PARK-2026-0155"
+          },
+          "retryAfter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 30
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
+          }
+        },
+        "example": {
+          "error": "SLOT_MANAGEMENT_SYSTEM_ERROR",
+          "code": 500,
+          "message": "Real-time slot availability service is unreachable. Reservation could not be confirmed.",
+          "incidentId": "INC-PARK-2026-0155",
+          "retryAfter": 30,
+          "timestamp": "2026-06-08T10:00:00Z"
+        }
+      },
+      "POST_lots_zones_slots_reservation_vehicle_payment_confirmResponse_200": {
+        "type": "object",
+        "properties": {
+          "reservationId": {
+            "type": "string",
+            "example": "PARK-RES-20260608-7712"
+          },
+          "status": {
+            "type": "string",
+            "example": "CONFIRMED"
+          },
+          "slotId": {
+            "type": "string",
+            "example": "SLOT-B2-044"
+          },
+          "slotNumber": {
+            "type": "string",
+            "example": "B2-044"
+          },
+          "lotName": {
+            "type": "string",
+            "example": "Downtown Parking A"
+          },
+          "zoneId": {
+            "type": "string",
+            "example": "ZONE-B2"
+          },
+          "floor": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "startTime": {
+            "type": "string",
+            "example": "2026-06-08T11:00:00Z"
+          },
+          "endTime": {
+            "type": "string",
+            "example": "2026-06-08T14:00:00Z"
+          },
+          "duration": {
+            "type": "string",
+            "example": "3 hours"
+          },
+          "rate": {
+            "type": "number",
+            "example": 4.5
+          },
+          "total": {
+            "type": "number",
+            "example": 13.5
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "qrCode": {
+            "type": "string",
+            "example": "https://qr.smartpark.io/PARK-RES-20260608-7712"
+          },
+          "entryPin": {
+            "type": "string",
+            "example": "4821"
+          },
+          "message": {
+            "type": "string",
+            "example": "Parking slot reserved successfully"
+          }
+        },
+        "example": {
+          "reservationId": "PARK-RES-20260608-7712",
+          "status": "CONFIRMED",
+          "slotId": "SLOT-B2-044",
+          "slotNumber": "B2-044",
+          "lotName": "Downtown Parking A",
+          "zoneId": "ZONE-B2",
+          "floor": 2,
+          "startTime": "2026-06-08T11:00:00Z",
+          "endTime": "2026-06-08T14:00:00Z",
+          "duration": "3 hours",
+          "rate": 4.5,
+          "total": 13.5,
+          "currency": "USD",
+          "qrCode": "https://qr.smartpark.io/PARK-RES-20260608-7712",
+          "entryPin": "4821",
+          "message": "Parking slot reserved successfully"
+        }
+      },
+      "POST_lots_zones_slots_reservation_vehicle_payment_confirmRequest": {
+        "type": "object",
+        "properties": {
+          "driverId": {
+            "type": "string",
+            "example": "LZMAbTkOKnxj"
+          },
+          "lotId": {
+            "type": "string",
+            "example": "u2WftVn$d<BA{7"
+          },
+          "zoneId": {
+            "type": "string",
+            "example": "1ASAsx0M#Z&+"
+          },
+          "slotType": {
+            "type": "string",
+            "example": "uryhblvt"
+          },
+          "vehicleNumber": {
+            "type": "string",
+            "example": "ggugsSiH"
+          },
+          "startTime": {
+            "type": "string",
+            "example": "9y4S2PFR6YJKawJsgkO1"
+          },
+          "endTime": {
+            "type": "string",
+            "example": "TNvO10Wfuq4hnrDUw4YX"
+          }
+        },
+        "example": "{\n  \"driverId\" : \"LZMAbTkOKnxj\",\n  \"lotId\" : \"u2WftVn$d<BA{7\",\n  \"zoneId\" : \"1ASAsx0M#Z&+\",\n  \"slotType\" : \"uryhblvt\",\n  \"vehicleNumber\" : \"ggugsSiH\",\n  \"startTime\" : \"9y4S2PFR6YJKawJsgkO1\",\n  \"endTime\" : \"TNvO10Wfuq4hnrDUw4YX\"\n}"
+      },
+      "POST_lots_zones_slots_reservation_vehicle_payment_confirmResponse_400": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "RESERVATION_INVALID"
           },
           "code": {
             "type": "integer",
@@ -117,13 +302,14 @@
           "details": {
             "type": "array",
             "example": [
-              "scheduledTime must be at least 30 minutes in the future",
-              "pickupLocation is required",
-              "dropLocation is required"
+              "endTime must be after startTime",
+              "Zone ZONE-EV-ONLY is restricted to EV vehicles only",
+              "paymentMethod is required",
+              "vehicleType is required"
             ],
             "items": {
               "type": "string",
-              "example": "NhwLES5KqEiTgE6osuVWhuSY28wqDXvIS4GaJm91HCNhonFsnf2hoMA"
+              "example": "hbqcodhokkdhhnccvffhnefnhdpyppf"
             }
           },
           "timestamp": {
@@ -132,166 +318,42 @@
           }
         },
         "example": {
-          "error": "SCHEDULE_VALIDATION_FAILED",
+          "error": "RESERVATION_INVALID",
           "code": 400,
           "details": [
-            "scheduledTime must be at least 30 minutes in the future",
-            "pickupLocation is required",
-            "dropLocation is required"
+            "endTime must be after startTime",
+            "Zone ZONE-EV-ONLY is restricted to EV vehicles only",
+            "paymentMethod is required",
+            "vehicleType is required"
           ],
           "timestamp": "2026-06-08T10:00:00Z"
-        }
-      },
-      "POST_rides_schedule_advance_booking_rider_preferences_confirmRequest": {
-        "type": "object",
-        "properties": {
-          "riderId": {
-            "type": "string",
-            "example": "9SlmME6yijpU"
-          },
-          "rideType": {
-            "type": "string",
-            "example": "kcmsnap"
-          },
-          "pickupLocation": {
-            "type": "object",
-            "properties": {
-              "address": {
-                "type": "string",
-                "example": "rshtTG8cYWxOcTlqW"
-              },
-              "lat": {
-                "type": "number",
-                "example": 57.96
-              },
-              "lng": {
-                "type": "number",
-                "example": 54.18
-              }
-            },
-            "example": "{\n  \"address\" : \"rshtTG8cYWxOcTlqW\",\n  \"lat\" : 57.96,\n  \"lng\" : 54.18\n}"
-          },
-          "dropLocation": {
-            "type": "object",
-            "properties": {
-              "address": {
-                "type": "string",
-                "example": "dqukzjfgwax"
-              },
-              "lat": {
-                "type": "number",
-                "example": 39.44
-              },
-              "lng": {
-                "type": "number",
-                "example": 84.29
-              }
-            },
-            "example": "{\n  \"address\" : \"dqukzjfgwax\",\n  \"lat\" : 39.44,\n  \"lng\" : 84.29\n}"
-          },
-          "scheduledTime": {
-            "type": "string",
-            "example": "hOJWBMnjH0bsFo9s9czX"
-          },
-          "paymentMethod": {
-            "type": "string",
-            "example": "slckzz"
-          },
-          "notifyBefore": {
-            "type": "integer",
-            "format": "int32",
-            "example": 41
-          },
-          "notes": {
-            "type": "string",
-            "example": "Z4Nf*gqzs5es2%c&5ls3*I[1pwzFZ=%Y^}|&yb0"
-          }
-        },
-        "example": "{\n  \"riderId\" : \"9SlmME6yijpU\",\n  \"rideType\" : \"kcmsnap\",\n  \"pickupLocation\" : {\n    \"address\" : \"rshtTG8cYWxOcTlqW\",\n    \"lat\" : 57.96,\n    \"lng\" : 54.18\n  },\n  \"dropLocation\" : {\n    \"address\" : \"dqukzjfgwax\",\n    \"lat\" : 39.44,\n    \"lng\" : 84.29\n  },\n  \"scheduledTime\" : \"hOJWBMnjH0bsFo9s9czX\",\n  \"paymentMethod\" : \"slckzz\",\n  \"notifyBefore\" : 41,\n  \"notes\" : \"Z4Nf*gqzs5es2%c&5ls3*I[1pwzFZ=%Y^}|&yb0\"\n}"
-      },
-      "POST_rides_schedule_advance_booking_rider_preferences_confirmResponse_200": {
-        "type": "object",
-        "properties": {
-          "scheduleId": {
-            "type": "string",
-            "example": "SCHED-20260608-4411"
-          },
-          "status": {
-            "type": "string",
-            "example": "SCHEDULED"
-          },
-          "rideType": {
-            "type": "string",
-            "example": "PREMIUM"
-          },
-          "scheduledPickup": {
-            "type": "string",
-            "example": "2026-06-09T06:00:00Z"
-          },
-          "estimatedFare": {
-            "type": "object",
-            "properties": {
-              "min": {
-                "type": "number",
-                "example": 26.39
-              },
-              "max": {
-                "type": "number",
-                "example": 19.16
-              },
-              "currency": {
-                "type": "string",
-                "example": "cvn"
-              }
-            },
-            "example": {
-              "min": 28.0,
-              "max": 35.0,
-              "currency": "USD"
-            }
-          },
-          "notifyBefore": {
-            "type": "integer",
-            "format": "int32",
-            "example": 30
-          },
-          "cancellationDeadline": {
-            "type": "string",
-            "example": "2026-06-09T05:30:00Z"
-          },
-          "message": {
-            "type": "string",
-            "example": "Ride scheduled successfully"
-          }
-        },
-        "example": {
-          "scheduleId": "SCHED-20260608-4411",
-          "status": "SCHEDULED",
-          "rideType": "PREMIUM",
-          "scheduledPickup": "2026-06-09T06:00:00Z",
-          "estimatedFare": {
-            "min": 28.0,
-            "max": 35.0,
-            "currency": "USD"
-          },
-          "notifyBefore": 30,
-          "cancellationDeadline": "2026-06-09T05:30:00Z",
-          "message": "Ride scheduled successfully"
         }
       }
     },
     "parameters": {
-      "X-Rider-Id": {
-        "name": "X-Rider-Id",
+      "X-Driver-Id": {
+        "name": "X-Driver-Id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "RIDER-334455"
+          "example": "DRV-PARK-441"
         },
-        "example": "RIDER-334455"
+        "example": "DRV-PARK-441"
+      },
+      "X-App-Version": {
+        "name": "X-App-Version",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "2.3.0"
+        },
+        "example": "2.3.0"
       },
       "Content-Type": {
         "name": "Content-Type",
@@ -313,9 +375,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "342e4f67b66048bba816f493b072d8cdf172be24687044d4"
+          "example": "6e95dff969fd45799a08660c1d793aa78929533decc34703"
         },
-        "example": "342e4f67b66048bba816f493b072d8cdf172be24687044d4"
+        "example": "6e95dff969fd45799a08660c1d793aa78929533decc34703"
       },
       "Authorization": {
         "name": "Authorization",
@@ -325,9 +387,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer rider-auth-token"
+          "example": "Bearer driver-auth-token"
         },
-        "example": "Bearer rider-auth-token"
+        "example": "Bearer driver-auth-token"
       }
     },
     "headers": {
@@ -345,9 +407,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "e84a81dfe8fd4fd0b6937d7fc410408699f74d452dc24570"
+          "example": "5469e5f370cf4407a6f669c498ad66c06228e8a23c404021"
         },
-        "example": "e84a81dfe8fd4fd0b6937d7fc410408699f74d452dc24570"
+        "example": "5469e5f370cf4407a6f669c498ad66c06228e8a23c404021"
       },
       "Content-Type": {
         "style": "simple",
