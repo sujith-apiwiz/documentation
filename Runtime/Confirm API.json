@@ -22,9 +22,9 @@
     }
   ],
   "paths": {
-    "/lots/zones/slots/reservation/vehicle/payment/confirm": {
-      "post": {
-        "operationId": "POST_lots_zones_slots_reservation_vehicle_payment_confirm",
+    "/reservations/PARK-RES-20260608-7712/extend/duration/payment/confirm": {
+      "put": {
+        "operationId": "PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirm",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-Driver-Id"
@@ -37,16 +37,13 @@
           },
           {
             "$ref": "#/components/parameters/Authorization"
-          },
-          {
-            "$ref": "#/components/parameters/X-App-Version"
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/POST_lots_zones_slots_reservation_vehicle_payment_confirmRequest"
+                "$ref": "#/components/schemas/PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmRequest"
               }
             }
           }
@@ -68,34 +65,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/POST_lots_zones_slots_reservation_vehicle_payment_confirmResponse_400"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "500Description",
-            "headers": {
-              "Date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "X-Trace-Id": {
-                "$ref": "#/components/headers/X-Trace-Id"
-              },
-              "Content-Type": {
-                "$ref": "#/components/headers/Content-Type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/POST_lots_zones_slots_reservation_vehicle_payment_confirmResponse_500"
+                  "$ref": "#/components/schemas/PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmResponse_400"
                 }
               }
             }
           },
           "200": {
-            "description": "Resource created successfully",
+            "description": "Resource updated successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -110,7 +86,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/POST_lots_zones_slots_reservation_vehicle_payment_confirmResponse_200"
+                  "$ref": "#/components/schemas/PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmResponse_200"
                 }
               }
             }
@@ -126,12 +102,12 @@
   },
   "components": {
     "schemas": {
-      "POST_lots_zones_slots_reservation_vehicle_payment_confirmResponse_400": {
+      "PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmResponse_400": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "RESERVATION_INVALID"
+            "example": "EXTENSION_INVALID"
           },
           "code": {
             "type": "integer",
@@ -141,14 +117,13 @@
           "details": {
             "type": "array",
             "example": [
-              "endTime must be after startTime",
-              "Zone ZONE-EV-ONLY is restricted to EV vehicles only",
-              "paymentMethod is required",
-              "vehicleType is required"
+              "Maximum extension is 6 hours per reservation",
+              "Slot SLOT-B2-044 is pre-booked by another vehicle from 2026-06-08T17:00:00Z",
+              "paymentMethod is required"
             ],
             "items": {
               "type": "string",
-              "example": "juwkiobgazowsurchoqkepolqufltky"
+              "example": "oNzoDzfEbBSg0uSpTMtlY9fArrlGkMB0dCETINszDjCK"
             }
           },
           "timestamp": {
@@ -157,113 +132,46 @@
           }
         },
         "example": {
-          "error": "RESERVATION_INVALID",
+          "error": "EXTENSION_INVALID",
           "code": 400,
           "details": [
-            "endTime must be after startTime",
-            "Zone ZONE-EV-ONLY is restricted to EV vehicles only",
-            "paymentMethod is required",
-            "vehicleType is required"
+            "Maximum extension is 6 hours per reservation",
+            "Slot SLOT-B2-044 is pre-booked by another vehicle from 2026-06-08T17:00:00Z",
+            "paymentMethod is required"
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
       },
-      "POST_lots_zones_slots_reservation_vehicle_payment_confirmResponse_500": {
+      "PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmRequest": {
         "type": "object",
         "properties": {
-          "error": {
+          "reservationId": {
             "type": "string",
-            "example": "SLOT_MANAGEMENT_SYSTEM_ERROR"
+            "example": "HlPkH8f50ABcxBChhD9Gpu"
           },
-          "code": {
+          "extendByHours": {
             "type": "integer",
             "format": "int32",
-            "example": 500
-          },
-          "message": {
-            "type": "string",
-            "example": "Real-time slot availability service is unreachable. Reservation could not be confirmed."
-          },
-          "incidentId": {
-            "type": "string",
-            "example": "INC-PARK-2026-0155"
-          },
-          "retryAfter": {
-            "type": "integer",
-            "format": "int32",
-            "example": 30
-          },
-          "timestamp": {
-            "type": "string",
-            "example": "2026-06-08T10:00:00Z"
-          }
-        },
-        "example": {
-          "error": "SLOT_MANAGEMENT_SYSTEM_ERROR",
-          "code": 500,
-          "message": "Real-time slot availability service is unreachable. Reservation could not be confirmed.",
-          "incidentId": "INC-PARK-2026-0155",
-          "retryAfter": 30,
-          "timestamp": "2026-06-08T10:00:00Z"
-        }
-      },
-      "POST_lots_zones_slots_reservation_vehicle_payment_confirmRequest": {
-        "type": "object",
-        "properties": {
-          "driverId": {
-            "type": "string",
-            "example": "5HT0iQ5b5Tn2"
-          },
-          "lotId": {
-            "type": "string",
-            "example": "^=e<8Z*7DgH2_J"
-          },
-          "zoneId": {
-            "type": "string",
-            "example": "I4T3lFe"
-          },
-          "slotType": {
-            "type": "string",
-            "example": "mmudutgr"
-          },
-          "vehicleNumber": {
-            "type": "string",
-            "example": "91pwasva"
-          },
-          "vehicleType": {
-            "type": "string",
-            "example": "iktba"
-          },
-          "startTime": {
-            "type": "string",
-            "example": "99hn02b5QZtqVEn5aW4n"
-          },
-          "endTime": {
-            "type": "string",
-            "example": "Wf7arq44mTDJaRmTS4R3"
+            "example": 47
           },
           "paymentMethod": {
             "type": "object",
             "properties": {
               "type": {
                 "type": "string",
-                "example": "gfbyfo"
+                "example": "wtzlxj"
               },
               "walletId": {
                 "type": "string",
-                "example": "JRCr1B9btRon"
+                "example": "OSLaMid5yfy6"
               }
             },
-            "example": "{\n  \"type\" : \"gfbyfo\",\n  \"walletId\" : \"JRCr1B9btRon\"\n}"
-          },
-          "evCharging": {
-            "type": "boolean",
-            "example": false
+            "example": "{\n  \"type\" : \"wtzlxj\",\n  \"walletId\" : \"OSLaMid5yfy6\"\n}"
           }
         },
-        "example": "{\n  \"driverId\" : \"5HT0iQ5b5Tn2\",\n  \"lotId\" : \"^=e<8Z*7DgH2_J\",\n  \"zoneId\" : \"I4T3lFe\",\n  \"slotType\" : \"mmudutgr\",\n  \"vehicleNumber\" : \"91pwasva\",\n  \"vehicleType\" : \"iktba\",\n  \"startTime\" : \"99hn02b5QZtqVEn5aW4n\",\n  \"endTime\" : \"Wf7arq44mTDJaRmTS4R3\",\n  \"paymentMethod\" : {\n    \"type\" : \"gfbyfo\",\n    \"walletId\" : \"JRCr1B9btRon\"\n  },\n  \"evCharging\" : false\n}"
+        "example": "{\n  \"reservationId\" : \"HlPkH8f50ABcxBChhD9Gpu\",\n  \"extendByHours\" : 47,\n  \"paymentMethod\" : {\n    \"type\" : \"wtzlxj\",\n    \"walletId\" : \"OSLaMid5yfy6\"\n  }\n}"
       },
-      "POST_lots_zones_slots_reservation_vehicle_payment_confirmResponse_200": {
+      "PUT_reservations_PARK-RES-20260608-7712_extend_duration_payment_confirmResponse_200": {
         "type": "object",
         "properties": {
           "reservationId": {
@@ -272,83 +180,37 @@
           },
           "status": {
             "type": "string",
-            "example": "CONFIRMED"
+            "example": "EXTENDED"
           },
-          "slotId": {
+          "newEndTime": {
             "type": "string",
-            "example": "SLOT-B2-044"
+            "example": "2026-06-08T16:00:00Z"
           },
-          "slotNumber": {
-            "type": "string",
-            "example": "B2-044"
-          },
-          "lotName": {
-            "type": "string",
-            "example": "Downtown Parking A"
-          },
-          "zoneId": {
-            "type": "string",
-            "example": "ZONE-B2"
-          },
-          "floor": {
-            "type": "integer",
-            "format": "int32",
-            "example": 2
-          },
-          "startTime": {
-            "type": "string",
-            "example": "2026-06-08T11:00:00Z"
-          },
-          "endTime": {
-            "type": "string",
-            "example": "2026-06-08T14:00:00Z"
-          },
-          "duration": {
-            "type": "string",
-            "example": "3 hours"
-          },
-          "rate": {
+          "additionalCharge": {
             "type": "number",
-            "example": 4.5
+            "example": 9.0
           },
-          "total": {
+          "totalCharge": {
             "type": "number",
-            "example": 13.5
+            "example": 22.5
           },
           "currency": {
             "type": "string",
             "example": "USD"
           },
-          "qrCode": {
-            "type": "string",
-            "example": "https://qr.smartpark.io/PARK-RES-20260608-7712"
-          },
-          "entryPin": {
-            "type": "string",
-            "example": "4821"
-          },
           "message": {
             "type": "string",
-            "example": "Parking slot reserved successfully"
+            "example": "Parking reservation extended successfully"
           }
         },
         "example": {
           "reservationId": "PARK-RES-20260608-7712",
-          "status": "CONFIRMED",
-          "slotId": "SLOT-B2-044",
-          "slotNumber": "B2-044",
-          "lotName": "Downtown Parking A",
-          "zoneId": "ZONE-B2",
-          "floor": 2,
-          "startTime": "2026-06-08T11:00:00Z",
-          "endTime": "2026-06-08T14:00:00Z",
-          "duration": "3 hours",
-          "rate": 4.5,
-          "total": 13.5,
+          "status": "EXTENDED",
+          "newEndTime": "2026-06-08T16:00:00Z",
+          "additionalCharge": 9.0,
+          "totalCharge": 22.5,
           "currency": "USD",
-          "qrCode": "https://qr.smartpark.io/PARK-RES-20260608-7712",
-          "entryPin": "4821",
-          "message": "Parking slot reserved successfully"
+          "message": "Parking reservation extended successfully"
         }
       }
     },
@@ -385,9 +247,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6768413a167e417ea9569c6b18389f27e275f3431b7e4d78"
+          "example": "fabd96c3836c4a05b4ee0daf1960da4e8f12ef44e333408c"
         },
-        "example": "6768413a167e417ea9569c6b18389f27e275f3431b7e4d78"
+        "example": "fabd96c3836c4a05b4ee0daf1960da4e8f12ef44e333408c"
       },
       "Authorization": {
         "name": "Authorization",
@@ -400,18 +262,6 @@
           "example": "Bearer driver-auth-token"
         },
         "example": "Bearer driver-auth-token"
-      },
-      "X-App-Version": {
-        "name": "X-App-Version",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "2.3.0"
-        },
-        "example": "2.3.0"
       }
     },
     "headers": {
@@ -429,9 +279,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "56d1f3290b8b4f5eb4cdf2685a19398b4986bf59a46a4f2c"
+          "example": "436b915c393843efa294ab95f0efd96397b2d79fdeeb4333"
         },
-        "example": "56d1f3290b8b4f5eb4cdf2685a19398b4986bf59a46a4f2c"
+        "example": "436b915c393843efa294ab95f0efd96397b2d79fdeeb4333"
       },
       "Content-Type": {
         "style": "simple",
