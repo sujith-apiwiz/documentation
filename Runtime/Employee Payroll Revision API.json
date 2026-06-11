@@ -1,11 +1,11 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Personalized Product Recommendations API",
-    "description": "The Personalized Product Recommendations API provides users with tailored product suggestions based on their preferences and behavior. This API leverages user data to curate a unique feed of recommended products, enhancing the shopping experience and driving engagement.",
-    "termsOfService": "https://www.example.com/terms-of-service",
+    "title": "Employee Payroll Revision API",
+    "description": "This API facilitates the approval and application of payroll compensation revisions for employees. It allows authorized users to send requests to approve and apply changes to an employee's payroll compensation records, ensuring accurate and up-to-date financial information.",
+    "termsOfService": "https://www.example.com/terms",
     "contact": {
-      "name": "API Support Team",
+      "name": "Support Team",
       "url": "https://www.example.com/support",
       "email": "support@example.com"
     },
@@ -13,7 +13,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v3/ecommerce",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/hr",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -21,24 +21,21 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v3/ecommerce"
+      "x-basePath": "/v1/hr"
     }
   ],
   "paths": {
-    "/users/USR-112233/recommendations/products/personalized/feed": {
-      "get": {
+    "/employees/EMP-112233/payroll/compensation/revision/approve/apply": {
+      "put": {
         "tags": [
-          "Recommendations"
+          "Payroll"
         ],
-        "summary": "Retrieve Personalized Product Recommendations",
-        "description": "This operation fetches personalized product recommendations for the user identified by USR-112233. By providing relevant parameters such as algorithm type, limit, and parent span ID, clients can customize the recommendations to suit their needs. The expected outcome is a curated list of product recommendations to enhance the user's shopping experience.",
-        "operationId": "retrievePersonalizedProductRecommendations",
+        "summary": "Approve Compensation Revision",
+        "description": "This endpoint allows the approval of a compensation revision for a specific employee. Upon receiving the necessary parameters and request body, the compensation revision will be validated and either approved or rejected based on the provided data. Successful approval results in an updated compensation record for the employee.",
+        "operationId": "approveCompensationRevision",
         "parameters": [
           {
-            "$ref": "#/components/parameters/algo"
-          },
-          {
-            "$ref": "#/components/parameters/limit"
+            "$ref": "#/components/parameters/Content-Type"
           },
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -54,7 +51,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RetrievePersonalizedProductRecommendationsRequest"
+                "$ref": "#/components/schemas/ApproveCompensationRevisionRequest"
               }
             }
           }
@@ -76,7 +73,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RetrievePersonalizedProductRecommendationsResponse_500"
+                  "$ref": "#/components/schemas/ApproveCompensationRevisionResponse_500"
                 }
               }
             }
@@ -92,16 +89,44 @@
   },
   "components": {
     "schemas": {
-      "RetrievePersonalizedProductRecommendationsRequest": {
-        "type": "string",
-        "example": ""
+      "ApproveCompensationRevisionRequest": {
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "example": "lpRU6VmZMC"
+          },
+          "revisionType": {
+            "type": "string",
+            "example": "P?C\"B}HA$A_6;^"
+          },
+          "currentSalary": {
+            "type": "integer",
+            "format": "int32",
+            "example": 67
+          },
+          "newSalary": {
+            "type": "integer",
+            "format": "int32",
+            "example": 88
+          },
+          "currency": {
+            "type": "string",
+            "example": "dwz"
+          },
+          "effectiveDate": {
+            "type": "string",
+            "example": "9f2;AJ\"k\","
+          }
+        },
+        "example": "{\n  \"employeeId\" : \"lpRU6VmZMC\",\n  \"revisionType\" : \"P?C\\\"B}HA$A_6;^\",\n  \"currentSalary\" : 67,\n  \"newSalary\" : 88,\n  \"currency\" : \"dwz\",\n  \"effectiveDate\" : \"9f2;AJ\\\"k\\\",\"\n}"
       },
-      "RetrievePersonalizedProductRecommendationsResponse_500": {
+      "ApproveCompensationRevisionResponse_500": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "RECOMMENDATION_ENGINE_ERROR"
+            "example": "PAYROLL_SYSTEM_ERROR"
           },
           "code": {
             "type": "integer",
@@ -110,11 +135,11 @@
           },
           "message": {
             "type": "string",
-            "example": "ML recommendation service is temporarily unavailable. Falling back to trending products."
+            "example": "Payroll processing system encountered an unexpected error. Revision has been queued for manual processing."
           },
           "incidentId": {
             "type": "string",
-            "example": "INC-SHOP-2026-0802"
+            "example": "INC-HR-2026-0522"
           },
           "timestamp": {
             "type": "string",
@@ -122,38 +147,26 @@
           }
         },
         "example": {
-          "error": "RECOMMENDATION_ENGINE_ERROR",
+          "error": "PAYROLL_SYSTEM_ERROR",
           "code": 500,
-          "message": "ML recommendation service is temporarily unavailable. Falling back to trending products.",
-          "incidentId": "INC-SHOP-2026-0802",
+          "message": "Payroll processing system encountered an unexpected error. Revision has been queued for manual processing.",
+          "incidentId": "INC-HR-2026-0522",
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "algo": {
-        "name": "algo",
-        "in": "query",
+      "Content-Type": {
+        "name": "Content-Type",
+        "in": "header",
         "required": false,
-        "style": "form",
-        "explode": true,
+        "style": "simple",
+        "explode": false,
         "schema": {
           "type": "string",
-          "example": "-lA:HsB*>tBFX"
+          "example": "application/json"
         },
-        "example": "-lA:HsB*>tBFX"
-      },
-      "limit": {
-        "name": "limit",
-        "in": "query",
-        "required": false,
-        "style": "form",
-        "explode": true,
-        "schema": {
-          "type": "string",
-          "example": "22"
-        },
-        "example": "22"
+        "example": "application/json"
       },
       "parentspanid": {
         "name": "parentspanid",
@@ -163,9 +176,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "ecf37206ee72488dab8f6db517ae4605"
+          "example": "8b03e991d96d45b4fbb9fd68e63d409e"
         },
-        "example": "ecf37206ee72488dab8f6db517ae4605"
+        "example": "8b03e991d96d45b4fbb9fd68e63d409e"
       },
       "Authorization": {
         "name": "Authorization",
@@ -175,9 +188,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer user-access-token-valid"
+          "example": "Bearer hr-admin-token-valid"
         },
-        "example": "Bearer user-access-token-valid"
+        "example": "Bearer hr-admin-token-valid"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -209,9 +222,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "4324c34386d64934052d1a2ab1604d1e"
+          "example": "dc1341fb09ae465739ff9407ba6744e7"
         },
-        "example": "4324c34386d64934052d1a2ab1604d1e"
+        "example": "dc1341fb09ae465739ff9407ba6744e7"
       },
       "Content-Type": {
         "style": "simple",

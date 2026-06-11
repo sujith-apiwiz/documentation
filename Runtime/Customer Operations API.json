@@ -1,19 +1,19 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Personalized Product Recommendations API",
-    "description": "The Personalized Product Recommendations API provides users with tailored product suggestions based on their preferences and behavior. This API leverages user data to curate a unique feed of recommended products, enhancing the shopping experience and driving engagement.",
-    "termsOfService": "https://www.example.com/terms-of-service",
+    "title": "Customer Operations API",
+    "description": "This API enables seamless access to customer data and operations, facilitating efficient management and retrieval of customer-related information for enhanced user interaction and support.",
+    "termsOfService": "https://example.com/terms-and-conditions",
     "contact": {
-      "name": "API Support Team",
-      "url": "https://www.example.com/support",
+      "name": "Customer Support Team",
+      "url": "https://support.example.com",
       "email": "support@example.com"
     },
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v3/ecommerce",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/customers",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -21,24 +21,21 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v3/ecommerce"
+      "x-basePath": "/v1/customers"
     }
   ],
   "paths": {
-    "/users/USR-112233/recommendations/products/personalized/feed": {
+    "/CUS-100458": {
       "get": {
         "tags": [
-          "Recommendations"
+          "Customers"
         ],
-        "summary": "Retrieve Personalized Product Recommendations",
-        "description": "This operation fetches personalized product recommendations for the user identified by USR-112233. By providing relevant parameters such as algorithm type, limit, and parent span ID, clients can customize the recommendations to suit their needs. The expected outcome is a curated list of product recommendations to enhance the user's shopping experience.",
-        "operationId": "retrievePersonalizedProductRecommendations",
+        "summary": "Retrieve Customer Details",
+        "description": "This operation fetches detailed information about the specified customer identified by the unique ID. It expects the necessary authentication credentials and optional headers to be included in the request. On success, a complete profile of the customer will be returned, allowing for further processing or display to the user.",
+        "operationId": "retrieveCustomerDetails",
         "parameters": [
           {
-            "$ref": "#/components/parameters/algo"
-          },
-          {
-            "$ref": "#/components/parameters/limit"
+            "$ref": "#/components/parameters/Content-Type"
           },
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -54,14 +51,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RetrievePersonalizedProductRecommendationsRequest"
+                "$ref": "#/components/schemas/RetrieveCustomerDetailsRequest"
               }
             }
           }
         },
         "responses": {
-          "500": {
-            "description": "Internal server error occurred",
+          "200": {
+            "description": "Customer details retrieved successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -76,7 +73,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RetrievePersonalizedProductRecommendationsResponse_500"
+                  "$ref": "#/components/schemas/RetrieveCustomerDetailsResponse_200"
                 }
               }
             }
@@ -92,68 +89,75 @@
   },
   "components": {
     "schemas": {
-      "RetrievePersonalizedProductRecommendationsRequest": {
+      "RetrieveCustomerDetailsRequest": {
         "type": "string",
         "example": ""
       },
-      "RetrievePersonalizedProductRecommendationsResponse_500": {
+      "RetrieveCustomerDetailsResponse_200": {
         "type": "object",
         "properties": {
-          "error": {
+          "customerId": {
             "type": "string",
-            "example": "RECOMMENDATION_ENGINE_ERROR"
+            "example": "CUS-100458"
           },
-          "code": {
-            "type": "integer",
-            "format": "int32",
-            "example": 500
-          },
-          "message": {
+          "firstName": {
             "type": "string",
-            "example": "ML recommendation service is temporarily unavailable. Falling back to trending products."
+            "example": "John"
           },
-          "incidentId": {
+          "lastName": {
             "type": "string",
-            "example": "INC-SHOP-2026-0802"
+            "example": "Doe"
           },
-          "timestamp": {
+          "email": {
             "type": "string",
-            "example": "2026-06-08T10:00:00Z"
+            "example": "john.doe@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+12065551234"
+          },
+          "country": {
+            "type": "string",
+            "example": "US"
+          },
+          "status": {
+            "type": "string",
+            "example": "ACTIVE"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2026-04-15T10:25:30Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2026-06-02T14:13:58Z"
           }
         },
         "example": {
-          "error": "RECOMMENDATION_ENGINE_ERROR",
-          "code": 500,
-          "message": "ML recommendation service is temporarily unavailable. Falling back to trending products.",
-          "incidentId": "INC-SHOP-2026-0802",
-          "timestamp": "2026-06-08T10:00:00Z"
+          "customerId": "CUS-100458",
+          "firstName": "John",
+          "lastName": "Doe",
+          "email": "john.doe@example.com",
+          "phone": "+12065551234",
+          "country": "US",
+          "status": "ACTIVE",
+          "createdAt": "2026-04-15T10:25:30Z",
+          "updatedAt": "2026-06-02T14:13:58Z"
         }
       }
     },
     "parameters": {
-      "algo": {
-        "name": "algo",
-        "in": "query",
+      "Content-Type": {
+        "name": "Content-Type",
+        "in": "header",
         "required": false,
-        "style": "form",
-        "explode": true,
+        "style": "simple",
+        "explode": false,
         "schema": {
           "type": "string",
-          "example": "-lA:HsB*>tBFX"
+          "example": "application/json"
         },
-        "example": "-lA:HsB*>tBFX"
-      },
-      "limit": {
-        "name": "limit",
-        "in": "query",
-        "required": false,
-        "style": "form",
-        "explode": true,
-        "schema": {
-          "type": "string",
-          "example": "22"
-        },
-        "example": "22"
+        "example": "application/json"
       },
       "parentspanid": {
         "name": "parentspanid",
@@ -163,9 +167,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "ecf37206ee72488dab8f6db517ae4605"
+          "example": "c8d1f4a93e7b4c5a8f2d6e1b9c734af2"
         },
-        "example": "ecf37206ee72488dab8f6db517ae4605"
+        "example": "c8d1f4a93e7b4c5a8f2d6e1b9c734af2"
       },
       "Authorization": {
         "name": "Authorization",
@@ -175,9 +179,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer user-access-token-valid"
+          "example": "Bearer valid-admin-token"
         },
-        "example": "Bearer user-access-token-valid"
+        "example": "Bearer valid-admin-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -189,7 +193,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "server_error"
+            "success"
           ]
         }
       }
@@ -200,18 +204,18 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Mon, 08 Jun 2026 10:00:00 GMT"
+          "example": "Tue, 02 Jun 2026 14:13:58 GMT"
         },
-        "example": "Mon, 08 Jun 2026 10:00:00 GMT"
+        "example": "Tue, 02 Jun 2026 14:13:58 GMT"
       },
       "X-Trace-Id": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "4324c34386d64934052d1a2ab1604d1e"
+          "example": "c8d1f4a93e7b4c5a8f2d6e1b9c734af2"
         },
-        "example": "4324c34386d64934052d1a2ab1604d1e"
+        "example": "c8d1f4a93e7b4c5a8f2d6e1b9c734af2"
       },
       "Content-Type": {
         "style": "simple",

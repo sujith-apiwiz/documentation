@@ -1,19 +1,19 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Personalized Product Recommendations API",
-    "description": "The Personalized Product Recommendations API provides users with tailored product suggestions based on their preferences and behavior. This API leverages user data to curate a unique feed of recommended products, enhancing the shopping experience and driving engagement.",
-    "termsOfService": "https://www.example.com/terms-of-service",
+    "title": "Booking Refunds API",
+    "description": "The Booking Refunds API allows clients to manage refund processes for canceled bookings. This API provides endpoints to initiate refunds for passengers following the cancellation of their bookings, ensuring a seamless experience for both service providers and customers. It includes operation to initiate refunds and manage refund reasons.",
+    "termsOfService": "By using this API, you agree to comply with our service policies. For more details, please visit the terms of service section on our website.",
     "contact": {
-      "name": "API Support Team",
-      "url": "https://www.example.com/support",
-      "email": "support@example.com"
+      "name": "Customer Support",
+      "url": "https://www.bookingapi.example.com/support",
+      "email": "support@bookingapi.example.com"
     },
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v3/ecommerce",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/airline",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -21,24 +21,21 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v3/ecommerce"
+      "x-basePath": "/v1/airline"
     }
   ],
   "paths": {
-    "/users/USR-112233/recommendations/products/personalized/feed": {
-      "get": {
+    "/bookings/BKG-112233/cancel/passenger/refund/initiate": {
+      "delete": {
         "tags": [
-          "Recommendations"
+          "Bookings"
         ],
-        "summary": "Retrieve Personalized Product Recommendations",
-        "description": "This operation fetches personalized product recommendations for the user identified by USR-112233. By providing relevant parameters such as algorithm type, limit, and parent span ID, clients can customize the recommendations to suit their needs. The expected outcome is a curated list of product recommendations to enhance the user's shopping experience.",
-        "operationId": "retrievePersonalizedProductRecommendations",
+        "summary": "Initiate Passenger Refund Cancellation",
+        "description": "This operation allows you to cancel a requested refund for a specific passenger associated with the booking BKG-112233. It requires a reason for the cancellation and may include additional headers for processing. Upon successful execution, the refund request will be canceled effectively.",
+        "operationId": "initiatePassengerRefundCancellation",
         "parameters": [
           {
-            "$ref": "#/components/parameters/algo"
-          },
-          {
-            "$ref": "#/components/parameters/limit"
+            "$ref": "#/components/parameters/reason"
           },
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -54,7 +51,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RetrievePersonalizedProductRecommendationsRequest"
+                "$ref": "#/components/schemas/InitiatePassengerRefundCancellationRequest"
               }
             }
           }
@@ -76,7 +73,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RetrievePersonalizedProductRecommendationsResponse_500"
+                  "$ref": "#/components/schemas/InitiatePassengerRefundCancellationResponse_500"
                 }
               }
             }
@@ -92,16 +89,16 @@
   },
   "components": {
     "schemas": {
-      "RetrievePersonalizedProductRecommendationsRequest": {
+      "InitiatePassengerRefundCancellationRequest": {
         "type": "string",
         "example": ""
       },
-      "RetrievePersonalizedProductRecommendationsResponse_500": {
+      "InitiatePassengerRefundCancellationResponse_500": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "RECOMMENDATION_ENGINE_ERROR"
+            "example": "INTERNAL_SERVER_ERROR"
           },
           "code": {
             "type": "integer",
@@ -110,11 +107,16 @@
           },
           "message": {
             "type": "string",
-            "example": "ML recommendation service is temporarily unavailable. Falling back to trending products."
+            "example": "Refund gateway timeout. Booking cancellation recorded but refund processing failed."
           },
           "incidentId": {
             "type": "string",
-            "example": "INC-SHOP-2026-0802"
+            "example": "INC-20260608-0099"
+          },
+          "retryAfter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 60
           },
           "timestamp": {
             "type": "string",
@@ -122,38 +124,27 @@
           }
         },
         "example": {
-          "error": "RECOMMENDATION_ENGINE_ERROR",
+          "error": "INTERNAL_SERVER_ERROR",
           "code": 500,
-          "message": "ML recommendation service is temporarily unavailable. Falling back to trending products.",
-          "incidentId": "INC-SHOP-2026-0802",
+          "message": "Refund gateway timeout. Booking cancellation recorded but refund processing failed.",
+          "incidentId": "INC-20260608-0099",
+          "retryAfter": 60,
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "algo": {
-        "name": "algo",
+      "reason": {
+        "name": "reason",
         "in": "query",
         "required": false,
         "style": "form",
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "-lA:HsB*>tBFX"
+          "example": "tE:aZ{U?3T[HFxIA4"
         },
-        "example": "-lA:HsB*>tBFX"
-      },
-      "limit": {
-        "name": "limit",
-        "in": "query",
-        "required": false,
-        "style": "form",
-        "explode": true,
-        "schema": {
-          "type": "string",
-          "example": "22"
-        },
-        "example": "22"
+        "example": "tE:aZ{U?3T[HFxIA4"
       },
       "parentspanid": {
         "name": "parentspanid",
@@ -163,9 +154,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "ecf37206ee72488dab8f6db517ae4605"
+          "example": "b8d770cdbc99423d22ffc5cb946b4fd6"
         },
-        "example": "ecf37206ee72488dab8f6db517ae4605"
+        "example": "b8d770cdbc99423d22ffc5cb946b4fd6"
       },
       "Authorization": {
         "name": "Authorization",
@@ -175,9 +166,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer user-access-token-valid"
+          "example": "Bearer valid-travel-agent-token"
         },
-        "example": "Bearer user-access-token-valid"
+        "example": "Bearer valid-travel-agent-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -209,9 +200,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "4324c34386d64934052d1a2ab1604d1e"
+          "example": "6b7d4aa5ff164fd73d045c6cfafd4727"
         },
-        "example": "4324c34386d64934052d1a2ab1604d1e"
+        "example": "6b7d4aa5ff164fd73d045c6cfafd4727"
       },
       "Content-Type": {
         "style": "simple",
