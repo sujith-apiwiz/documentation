@@ -1,8 +1,14 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Customer Refund Policy API",
-    "description": "The Customer Refund Policy API allows users to initiate and manage refund requests for orders, ensuring a streamlined process for customers seeking cancellations. This API provides endpoints for handling refund initiation based on various parameters, facilitating efficient order management.",
+    "title": "Real-time Delivery Location API",
+    "description": "The Real-time Delivery Location API provides endpoints for tracking the real-time locations of delivery agents associated with specific orders. This API enables businesses to enhance customer experience by offering up-to-date delivery information and improving operational efficiency.",
+    "termsOfService": "https://www.example.com/terms",
+    "contact": {
+      "name": "Support Team",
+      "url": "https://www.example.com/support",
+      "email": "support@example.com"
+    },
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -22,21 +28,15 @@
     }
   ],
   "paths": {
-    "/orders/FD-ORD-20260608-9010/cancel/customer/refund/policy/initiate": {
-      "delete": {
+    "/orders/FD-ORD-INVALID-0000/delivery/tracking/realtime/agent/location": {
+      "get": {
         "tags": [
-          "Orders"
+          "Delivery Tracking"
         ],
-        "summary": "Initiate Refund Cancellation",
-        "description": "This operation allows the user to initiate the cancellation of a refund policy associated with a specific order. The request requires a reason for cancellation, the user ID, and other necessary context to ensure accurate processing. Upon successful completion, the system processes the request and returns a success response indicating that the refund policy has been cancelled.",
-        "operationId": "initiateRefundCancellation",
+        "summary": "Retrieve Real-Time Agent Location",
+        "description": "This operation fetches the current location of the delivery agent for a specific order. The client needs to provide the order ID as a parameter and include the necessary authorization credentials. The successful response will provide real-time location data of the delivery agent assigned to the specified order.",
+        "operationId": "retrieveRealtimeAgentLocation",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/reason"
-          },
-          {
-            "$ref": "#/components/parameters/X-User-Id"
-          },
           {
             "$ref": "#/components/parameters/parentspanid"
           },
@@ -51,14 +51,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/InitiateRefundCancellationRequest"
+                "$ref": "#/components/schemas/RetrieveRealtimeAgentLocationRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Refund cancellation processed successfully",
+          "404": {
+            "description": "Order not found or invalid",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -73,7 +73,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InitiateRefundCancellationResponse_200"
+                  "$ref": "#/components/schemas/RetrieveRealtimeAgentLocationResponse_404"
                 }
               }
             }
@@ -89,78 +89,40 @@
   },
   "components": {
     "schemas": {
-      "InitiateRefundCancellationRequest": {
+      "RetrieveRealtimeAgentLocationRequest": {
         "type": "string",
         "example": ""
       },
-      "InitiateRefundCancellationResponse_200": {
+      "RetrieveRealtimeAgentLocationResponse_404": {
         "type": "object",
         "properties": {
-          "orderId": {
+          "error": {
             "type": "string",
-            "example": "FD-ORD-20260608-9010"
+            "example": "ORDER_NOT_FOUND"
           },
-          "cancellationStatus": {
-            "type": "string",
-            "example": "CANCELLED"
-          },
-          "refundAmount": {
-            "type": "number",
-            "example": 28.86
-          },
-          "refundMethod": {
-            "type": "string",
-            "example": "ORIGINAL_PAYMENT"
-          },
-          "refundEta": {
-            "type": "string",
-            "example": "2-3 business days"
-          },
-          "cancellationFee": {
-            "type": "number",
-            "example": 0.0
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 404
           },
           "message": {
             "type": "string",
-            "example": "Order cancelled and full refund initiated"
+            "example": "Order FD-ORD-INVALID-0000 not found or does not belong to this customer."
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
           }
         },
         "example": {
-          "orderId": "FD-ORD-20260608-9010",
-          "cancellationStatus": "CANCELLED",
-          "refundAmount": 28.86,
-          "refundMethod": "ORIGINAL_PAYMENT",
-          "refundEta": "2-3 business days",
-          "cancellationFee": 0.0,
-          "message": "Order cancelled and full refund initiated"
+          "error": "ORDER_NOT_FOUND",
+          "code": 404,
+          "message": "Order FD-ORD-INVALID-0000 not found or does not belong to this customer.",
+          "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "reason": {
-        "name": "reason",
-        "in": "query",
-        "required": false,
-        "style": "form",
-        "explode": true,
-        "schema": {
-          "type": "string",
-          "example": "E8V(aQh;C9KcaD^"
-        },
-        "example": "E8V(aQh;C9KcaD^"
-      },
-      "X-User-Id": {
-        "name": "X-User-Id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "USR-FOOD-5521"
-        },
-        "example": "USR-FOOD-5521"
-      },
       "parentspanid": {
         "name": "parentspanid",
         "in": "header",
@@ -169,9 +131,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "e9df81bef5964195b4019e15075b7a72004dff2dc3364cb4"
+          "example": "67b59b79eb474abd97407516b53d1f68d58b89c17d564b1e"
         },
-        "example": "e9df81bef5964195b4019e15075b7a72004dff2dc3364cb4"
+        "example": "67b59b79eb474abd97407516b53d1f68d58b89c17d564b1e"
       },
       "Authorization": {
         "name": "Authorization",
@@ -195,7 +157,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "success"
+            "not_found"
           ]
         }
       }
@@ -215,9 +177,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "e9443587245e44ae83d9e04842e8529ecc98df049e414683"
+          "example": "f948bcdb36554bb4a33db6bb7be35c6f66cf039d41ae4f27"
         },
-        "example": "e9443587245e44ae83d9e04842e8529ecc98df049e414683"
+        "example": "f948bcdb36554bb4a33db6bb7be35c6f66cf039d41ae4f27"
       },
       "Content-Type": {
         "style": "simple",

@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Customer Refund Policy API",
-    "description": "The Customer Refund Policy API allows users to initiate and manage refund requests for orders, ensuring a streamlined process for customers seeking cancellations. This API provides endpoints for handling refund initiation based on various parameters, facilitating efficient order management.",
+    "title": "Beneficiary Confirmation API",
+    "description": "The Beneficiary Confirmation API enables users to confirm updates to the personal details of nominees associated with insurance policies. This API ensures that critical beneficiary information is accurately managed and validated within the system, streamlining the process and enhancing user experience.",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v2/food",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/insurance",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,24 +18,21 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v2/food"
+      "x-basePath": "/v1/insurance"
     }
   ],
   "paths": {
-    "/orders/FD-ORD-20260608-9010/cancel/customer/refund/policy/initiate": {
-      "delete": {
+    "/policies/POL-INS-20260601-7722/beneficiary/nominee/update/personal/details/confirm": {
+      "put": {
         "tags": [
-          "Orders"
+          "Policies"
         ],
-        "summary": "Initiate Refund Cancellation",
-        "description": "This operation allows the user to initiate the cancellation of a refund policy associated with a specific order. The request requires a reason for cancellation, the user ID, and other necessary context to ensure accurate processing. Upon successful completion, the system processes the request and returns a success response indicating that the refund policy has been cancelled.",
-        "operationId": "initiateRefundCancellation",
+        "summary": "Confirm Personal Details Update",
+        "description": "This operation allows users to confirm the update of personal details for a nominee associated with a specific insurance policy. Users must provide the necessary authorization and content type parameters, along with the updated personal detail information in JSON format. Upon successful execution, the nominee's personal details will be updated accordingly.",
+        "operationId": "confirmPersonalDetailsUpdate",
         "parameters": [
           {
-            "$ref": "#/components/parameters/reason"
-          },
-          {
-            "$ref": "#/components/parameters/X-User-Id"
+            "$ref": "#/components/parameters/Content-Type"
           },
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -51,14 +48,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/InitiateRefundCancellationRequest"
+                "$ref": "#/components/schemas/ConfirmPersonalDetailsUpdateRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Refund cancellation processed successfully",
+          "500": {
+            "description": "Internal server error occurred",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -73,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InitiateRefundCancellationResponse_200"
+                  "$ref": "#/components/schemas/ConfirmPersonalDetailsUpdateResponse_500"
                 }
               }
             }
@@ -89,77 +86,77 @@
   },
   "components": {
     "schemas": {
-      "InitiateRefundCancellationRequest": {
-        "type": "string",
-        "example": ""
-      },
-      "InitiateRefundCancellationResponse_200": {
+      "ConfirmPersonalDetailsUpdateRequest": {
         "type": "object",
         "properties": {
-          "orderId": {
+          "nomineeName": {
             "type": "string",
-            "example": "FD-ORD-20260608-9010"
+            "example": "vwgguiiwj"
           },
-          "cancellationStatus": {
+          "nomineeRelation": {
             "type": "string",
-            "example": "CANCELLED"
+            "example": "wbvrs"
           },
-          "refundAmount": {
-            "type": "number",
-            "example": 28.86
-          },
-          "refundMethod": {
+          "nomineeShare": {
+            "type": "integer",
+            "format": "int32",
+            "example": 28
+          }
+        },
+        "example": "{\n  \"nomineeName\" : \"vwgguiiwj\",\n  \"nomineeRelation\" : \"wbvrs\",\n  \"nomineeShare\" : 28\n}"
+      },
+      "ConfirmPersonalDetailsUpdateResponse_500": {
+        "type": "object",
+        "properties": {
+          "error": {
             "type": "string",
-            "example": "ORIGINAL_PAYMENT"
+            "example": "ENDORSEMENT_SERVICE_ERROR"
           },
-          "refundEta": {
-            "type": "string",
-            "example": "2-3 business days"
-          },
-          "cancellationFee": {
-            "type": "number",
-            "example": 0.0
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 500
           },
           "message": {
             "type": "string",
-            "example": "Order cancelled and full refund initiated"
+            "example": "Policy endorsement service failed to process the update. Changes rolled back."
+          },
+          "incidentId": {
+            "type": "string",
+            "example": "INC-INS-2026-0611"
+          },
+          "retryAfter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 45
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
           }
         },
         "example": {
-          "orderId": "FD-ORD-20260608-9010",
-          "cancellationStatus": "CANCELLED",
-          "refundAmount": 28.86,
-          "refundMethod": "ORIGINAL_PAYMENT",
-          "refundEta": "2-3 business days",
-          "cancellationFee": 0.0,
-          "message": "Order cancelled and full refund initiated"
+          "error": "ENDORSEMENT_SERVICE_ERROR",
+          "code": 500,
+          "message": "Policy endorsement service failed to process the update. Changes rolled back.",
+          "incidentId": "INC-INS-2026-0611",
+          "retryAfter": 45,
+          "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "reason": {
-        "name": "reason",
-        "in": "query",
-        "required": false,
-        "style": "form",
-        "explode": true,
-        "schema": {
-          "type": "string",
-          "example": "E8V(aQh;C9KcaD^"
-        },
-        "example": "E8V(aQh;C9KcaD^"
-      },
-      "X-User-Id": {
-        "name": "X-User-Id",
+      "Content-Type": {
+        "name": "Content-Type",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "USR-FOOD-5521"
+          "example": "application/json"
         },
-        "example": "USR-FOOD-5521"
+        "example": "application/json"
       },
       "parentspanid": {
         "name": "parentspanid",
@@ -169,9 +166,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "e9df81bef5964195b4019e15075b7a72004dff2dc3364cb4"
+          "example": "18a53d7021724636ad8a08b069696f15c99ee7a24b0947c4"
         },
-        "example": "e9df81bef5964195b4019e15075b7a72004dff2dc3364cb4"
+        "example": "18a53d7021724636ad8a08b069696f15c99ee7a24b0947c4"
       },
       "Authorization": {
         "name": "Authorization",
@@ -181,9 +178,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer customer-food-token"
+          "example": "Bearer ins-customer-token"
         },
-        "example": "Bearer customer-food-token"
+        "example": "Bearer ins-customer-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -195,7 +192,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "success"
+            "server_error"
           ]
         }
       }
@@ -215,9 +212,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "e9443587245e44ae83d9e04842e8529ecc98df049e414683"
+          "example": "d4c72a517be34aefb0fe92537a5b017101cf20f85d90498a"
         },
-        "example": "e9443587245e44ae83d9e04842e8529ecc98df049e414683"
+        "example": "d4c72a517be34aefb0fe92537a5b017101cf20f85d90498a"
       },
       "Content-Type": {
         "style": "simple",

@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Customer Refund Policy API",
-    "description": "The Customer Refund Policy API allows users to initiate and manage refund requests for orders, ensuring a streamlined process for customers seeking cancellations. This API provides endpoints for handling refund initiation based on various parameters, facilitating efficient order management.",
+    "title": "Real-Time Slot Filter API",
+    "description": "This API provides endpoints for filtering and retrieving real-time availability of slots in designated zones for specific lots. It allows users to query available slots based on specified vehicle types and track request processes through unique identifiers. Designed for efficiency and optimal resources management, this API is essential for businesses managing real-time slot data.",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v2/food",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/parking",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,24 +18,21 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v2/food"
+      "x-basePath": "/v1/parking"
     }
   ],
   "paths": {
-    "/orders/FD-ORD-20260608-9010/cancel/customer/refund/policy/initiate": {
-      "delete": {
+    "/lots/LOT-NONEXISTENT-ZZZ/slots/available/realtime/zones/filter": {
+      "get": {
         "tags": [
-          "Orders"
+          "Slots"
         ],
-        "summary": "Initiate Refund Cancellation",
-        "description": "This operation allows the user to initiate the cancellation of a refund policy associated with a specific order. The request requires a reason for cancellation, the user ID, and other necessary context to ensure accurate processing. Upon successful completion, the system processes the request and returns a success response indicating that the refund policy has been cancelled.",
-        "operationId": "initiateRefundCancellation",
+        "summary": "Retrieve Available Slots by Filter",
+        "description": "This operation allows clients to retrieve real-time available slots filtered by specific criteria for a given lot. The expected inputs include parameters such as vehicle type and parent span ID, which help to refine the search results. The outcome will provide a filtered list of available slots based on the provided criteria.",
+        "operationId": "retrieveAvailableSlotsByFilter",
         "parameters": [
           {
-            "$ref": "#/components/parameters/reason"
-          },
-          {
-            "$ref": "#/components/parameters/X-User-Id"
+            "$ref": "#/components/parameters/vehicleType"
           },
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -51,14 +48,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/InitiateRefundCancellationRequest"
+                "$ref": "#/components/schemas/RetrieveAvailableSlotsByFilterRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Refund cancellation processed successfully",
+          "404": {
+            "description": "Requested resource not found",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -73,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InitiateRefundCancellationResponse_200"
+                  "$ref": "#/components/schemas/RetrieveAvailableSlotsByFilterResponse_404"
                 }
               }
             }
@@ -89,77 +86,51 @@
   },
   "components": {
     "schemas": {
-      "InitiateRefundCancellationRequest": {
+      "RetrieveAvailableSlotsByFilterRequest": {
         "type": "string",
         "example": ""
       },
-      "InitiateRefundCancellationResponse_200": {
+      "RetrieveAvailableSlotsByFilterResponse_404": {
         "type": "object",
         "properties": {
-          "orderId": {
+          "error": {
             "type": "string",
-            "example": "FD-ORD-20260608-9010"
+            "example": "PARKING_LOT_NOT_FOUND"
           },
-          "cancellationStatus": {
-            "type": "string",
-            "example": "CANCELLED"
-          },
-          "refundAmount": {
-            "type": "number",
-            "example": 28.86
-          },
-          "refundMethod": {
-            "type": "string",
-            "example": "ORIGINAL_PAYMENT"
-          },
-          "refundEta": {
-            "type": "string",
-            "example": "2-3 business days"
-          },
-          "cancellationFee": {
-            "type": "number",
-            "example": 0.0
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 404
           },
           "message": {
             "type": "string",
-            "example": "Order cancelled and full refund initiated"
+            "example": "Parking lot LOT-NONEXISTENT-ZZZ does not exist or is not operational."
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
           }
         },
         "example": {
-          "orderId": "FD-ORD-20260608-9010",
-          "cancellationStatus": "CANCELLED",
-          "refundAmount": 28.86,
-          "refundMethod": "ORIGINAL_PAYMENT",
-          "refundEta": "2-3 business days",
-          "cancellationFee": 0.0,
-          "message": "Order cancelled and full refund initiated"
+          "error": "PARKING_LOT_NOT_FOUND",
+          "code": 404,
+          "message": "Parking lot LOT-NONEXISTENT-ZZZ does not exist or is not operational.",
+          "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "reason": {
-        "name": "reason",
+      "vehicleType": {
+        "name": "vehicleType",
         "in": "query",
         "required": false,
         "style": "form",
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "E8V(aQh;C9KcaD^"
+          "example": "zjvie"
         },
-        "example": "E8V(aQh;C9KcaD^"
-      },
-      "X-User-Id": {
-        "name": "X-User-Id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "USR-FOOD-5521"
-        },
-        "example": "USR-FOOD-5521"
+        "example": "zjvie"
       },
       "parentspanid": {
         "name": "parentspanid",
@@ -169,9 +140,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "e9df81bef5964195b4019e15075b7a72004dff2dc3364cb4"
+          "example": "1932f785a9314983bdcec39dbcc7ea2c3b2c8ae77efd4bbb"
         },
-        "example": "e9df81bef5964195b4019e15075b7a72004dff2dc3364cb4"
+        "example": "1932f785a9314983bdcec39dbcc7ea2c3b2c8ae77efd4bbb"
       },
       "Authorization": {
         "name": "Authorization",
@@ -181,9 +152,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer customer-food-token"
+          "example": "Bearer driver-auth-token"
         },
-        "example": "Bearer customer-food-token"
+        "example": "Bearer driver-auth-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -195,7 +166,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "success"
+            "not_found"
           ]
         }
       }
@@ -215,9 +186,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "e9443587245e44ae83d9e04842e8529ecc98df049e414683"
+          "example": "2b0831e9de18484a8bde9577ec1357d0b7dfc1a111d24bee"
         },
-        "example": "e9443587245e44ae83d9e04842e8529ecc98df049e414683"
+        "example": "2b0831e9de18484a8bde9577ec1357d0b7dfc1a111d24bee"
       },
       "Content-Type": {
         "style": "simple",
