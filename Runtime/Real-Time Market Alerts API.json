@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "User Watchlist Management API",
-    "description": "The User Watchlist Management API allows users to efficiently create and manage their watchlists, providing functionalities to add, update, and retrieve items based on user preferences. This API caters to applications requiring watchlist capabilities, enabling seamless integration for personalized user experiences.",
+    "title": "Real-Time Market Alerts API",
+    "description": "The Real-Time Market Alerts API provides a robust interface for users to receive immediate notifications regarding market changes and events. Integrate with our service to stay updated on critical market insights, ensuring that you never miss an important alert that can impact your trading decisions.",
     "version": "1.0"
   },
   "servers": [
@@ -19,14 +19,14 @@
     }
   ],
   "paths": {
-    "/watchlist": {
+    "/market-alerts": {
       "post": {
         "tags": [
-          "Watchlist"
+          "Market Alerts"
         ],
-        "summary": "Add Item to Watchlist",
-        "description": "This operation allows users to add an item to their watchlist. The request must contain the necessary parameters, including account identification and the content to be added. Upon successful execution, the item will be stored in the user's watchlist, enabling easy tracking and management of their interests.",
-        "operationId": "addItemToWatchlist",
+        "summary": "Create Market Alert",
+        "description": "This operation allows users to create a market alert based on specified criteria. The input must include required parameters such as account ID and content type, in addition to a detailed alert configuration in the request body. Upon successful creation, the alert will be registered and ready for monitoring market changes.",
+        "operationId": "createMarketAlert",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-Channel"
@@ -54,14 +54,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AddItemToWatchlistRequest"
+                "$ref": "#/components/schemas/CreateMarketAlertRequest"
               }
             }
           }
         },
         "responses": {
           "500": {
-            "description": "Internal server error occurred",
+            "description": "Internal server error",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -82,13 +82,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AddItemToWatchlistResponse_500"
+                  "$ref": "#/components/schemas/CreateMarketAlertResponse_500"
                 }
               }
             }
           },
           "200": {
-            "description": "Item added to watchlist successfully",
+            "description": "Market alert created successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -112,7 +112,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AddItemToWatchlistResponse_200"
+                  "$ref": "#/components/schemas/CreateMarketAlertResponse_200"
                 }
               }
             }
@@ -139,7 +139,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AddItemToWatchlistResponse_400"
+                  "$ref": "#/components/schemas/CreateMarketAlertResponse_400"
                 }
               }
             }
@@ -155,7 +155,7 @@
   },
   "components": {
     "schemas": {
-      "AddItemToWatchlistResponse_500": {
+      "CreateMarketAlertResponse_500": {
         "type": "object",
         "properties": {
           "errorCode": {
@@ -164,74 +164,62 @@
           },
           "message": {
             "type": "string",
-            "example": "Failed to create watchlist"
+            "example": "Failed to create market alert"
           },
           "details": {
             "type": "string",
-            "example": "An unexpected backend service error occurred while creating the watchlist."
+            "example": "Alert processing service encountered an unexpected backend error."
           },
           "service": {
             "type": "string",
-            "example": "WatchlistService"
+            "example": "MarketAlertService"
           },
           "incidentId": {
             "type": "string",
-            "example": "INC-88001"
+            "example": "INC-99002"
           },
           "supportTicketId": {
             "type": "string",
-            "example": "SUP-60002"
+            "example": "SUP-80002"
           },
           "traceId": {
             "type": "string",
-            "example": "e95a7c21d84b4f6ea31c29d7f84ab612"
+            "example": "e52c91a74d8f4b6ea31d29c87ab45f61"
           }
         },
         "example": {
           "errorCode": "INTERNAL_SERVER_ERROR",
-          "message": "Failed to create watchlist",
-          "details": "An unexpected backend service error occurred while creating the watchlist.",
-          "service": "WatchlistService",
-          "incidentId": "INC-88001",
-          "supportTicketId": "SUP-60002",
-          "traceId": "e95a7c21d84b4f6ea31c29d7f84ab612"
+          "message": "Failed to create market alert",
+          "details": "Alert processing service encountered an unexpected backend error.",
+          "service": "MarketAlertService",
+          "incidentId": "INC-99002",
+          "supportTicketId": "SUP-80002",
+          "traceId": "e52c91a74d8f4b6ea31d29c87ab45f61"
         }
       },
-      "AddItemToWatchlistResponse_200": {
+      "CreateMarketAlertResponse_200": {
         "type": "object",
         "properties": {
-          "watchlistId": {
+          "alertId": {
             "type": "string",
-            "example": "WL-10001"
-          },
-          "watchlistName": {
-            "type": "string",
-            "example": "Tech Growth"
+            "example": "ALT-50001"
           },
           "symbol": {
             "type": "string",
-            "example": "NVDA"
+            "example": "TSLA"
           },
-          "exchange": {
+          "alertType": {
             "type": "string",
-            "example": "NASDAQ"
+            "example": "PRICE_ABOVE"
           },
-          "alertEnabled": {
-            "type": "boolean",
-            "example": true
-          },
-          "targetPrice": {
+          "targetValue": {
             "type": "integer",
             "format": "int32",
-            "example": 1500
+            "example": 400
           },
           "status": {
             "type": "string",
             "example": "ACTIVE"
-          },
-          "createdAt": {
-            "type": "string",
-            "example": "2026-06-08T12:00:00Z"
           },
           "notificationChannel": {
             "type": "string",
@@ -241,120 +229,133 @@
             "type": "string",
             "example": "HIGH"
           },
+          "createdAt": {
+            "type": "string",
+            "example": "2026-06-08T12:00:00Z"
+          },
+          "validUntil": {
+            "type": "string",
+            "example": "2026-12-31"
+          },
+          "triggerCount": {
+            "type": "integer",
+            "format": "int32",
+            "example": 0
+          },
           "message": {
             "type": "string",
-            "example": "Watchlist created successfully"
+            "example": "Market alert created successfully"
           }
         },
         "example": {
-          "watchlistId": "WL-10001",
-          "watchlistName": "Tech Growth",
-          "symbol": "NVDA",
-          "exchange": "NASDAQ",
-          "alertEnabled": true,
-          "targetPrice": 1500,
+          "alertId": "ALT-50001",
+          "symbol": "TSLA",
+          "alertType": "PRICE_ABOVE",
+          "targetValue": 400,
           "status": "ACTIVE",
-          "createdAt": "2026-06-08T12:00:00Z",
           "notificationChannel": "EMAIL",
           "priority": "HIGH",
-          "message": "Watchlist created successfully"
+          "createdAt": "2026-06-08T12:00:00Z",
+          "validUntil": "2026-12-31",
+          "triggerCount": 0,
+          "message": "Market alert created successfully"
         }
       },
-      "AddItemToWatchlistRequest": {
+      "CreateMarketAlertRequest": {
         "type": "object",
         "properties": {
-          "watchlistName": {
-            "type": "string",
-            "example": ""
-          },
           "symbol": {
             "type": "string",
-            "example": "pdzv"
+            "example": "vumd"
+          },
+          "alertType": {
+            "type": "string",
+            "example": "O)Y&kVRMt0@"
+          },
+          "targetValue": {
+            "type": "integer",
+            "format": "int32",
+            "example": 75
           },
           "exchange": {
             "type": "string",
-            "example": "euvsww"
-          },
-          "alertEnabled": {
-            "type": "boolean",
-            "example": false
-          },
-          "targetPrice": {
-            "type": "integer",
-            "format": "int32",
-            "example": 73
-          },
-          "portfolioId": {
-            "type": "string",
-            "example": "RkXeGUP"
-          },
-          "category": {
-            "type": "string",
-            "example": "fgbz"
-          },
-          "currency": {
-            "type": "string",
-            "example": "qlq"
-          },
-          "deviceType": {
-            "type": "string",
-            "example": "spl"
-          },
-          "clientReference": {
-            "type": "string",
-            "example": "hx18m8Hp7O"
+            "example": "nbdmah"
           },
           "notificationChannel": {
             "type": "string",
-            "example": "gcjet"
+            "example": "ashuf"
+          },
+          "portfolioId": {
+            "type": "string",
+            "example": "WSHelNR"
+          },
+          "clientReference": {
+            "type": "string",
+            "example": "gKeiMUzahGFV3"
           },
           "priority": {
             "type": "string",
-            "example": "bjog"
+            "example": "ptej"
+          },
+          "currency": {
+            "type": "string",
+            "example": "lua"
+          },
+          "validUntil": {
+            "type": "string",
+            "example": "\"}oi6%[v4Y"
+          },
+          "repeatFrequency": {
+            "type": "string",
+            "example": "megba"
+          },
+          "deviceType": {
+            "type": "string",
+            "example": "yfc"
           }
         },
-        "example": "{\n  \"watchlistName\" : \"\",\n  \"symbol\" : \"pdzv\",\n  \"exchange\" : \"euvsww\",\n  \"alertEnabled\" : false,\n  \"targetPrice\" : 73,\n  \"portfolioId\" : \"RkXeGUP\",\n  \"category\" : \"fgbz\",\n  \"currency\" : \"qlq\",\n  \"deviceType\" : \"spl\",\n  \"clientReference\" : \"hx18m8Hp7O\",\n  \"notificationChannel\" : \"gcjet\",\n  \"priority\" : \"bjog\"\n}"
+        "example": "{\n  \"symbol\" : \"vumd\",\n  \"alertType\" : \"O)Y&kVRMt0@\",\n  \"targetValue\" : 75,\n  \"exchange\" : \"nbdmah\",\n  \"notificationChannel\" : \"ashuf\",\n  \"portfolioId\" : \"WSHelNR\",\n  \"clientReference\" : \"gKeiMUzahGFV3\",\n  \"priority\" : \"ptej\",\n  \"currency\" : \"lua\",\n  \"validUntil\" : \"\\\"}oi6%[v4Y\",\n  \"repeatFrequency\" : \"megba\",\n  \"deviceType\" : \"yfc\"\n}"
       },
-      "AddItemToWatchlistResponse_400": {
+      "CreateMarketAlertResponse_400": {
         "type": "object",
         "properties": {
           "errorCode": {
             "type": "string",
-            "example": "INVALID_WATCHLIST_REQUEST"
+            "example": "INVALID_ALERT_REQUEST"
           },
           "message": {
             "type": "string",
-            "example": "Watchlist validation failed"
+            "example": "Alert validation failed"
           },
           "details": {
             "type": "string",
-            "example": "Watchlist name cannot be empty."
+            "example": "Target value must be greater than zero."
           },
           "field": {
             "type": "string",
-            "example": "watchlistName"
+            "example": "targetValue"
           },
           "providedValue": {
             "type": "string",
-            "example": ""
+            "example": "-400"
           },
           "supportTicketId": {
             "type": "string",
-            "example": "SUP-60001"
+            "example": "SUP-80001"
           },
           "traceId": {
             "type": "string",
-            "example": "d82f6a19c4e34b7f91d25a8c73eb461f"
+            "example": "c71d92f84a3e4b6fc25d18e79ab34f62"
           }
         },
         "example": {
-          "errorCode": "INVALID_WATCHLIST_REQUEST",
-          "message": "Watchlist validation failed",
-          "details": "Watchlist name cannot be empty.",
-          "field": "watchlistName",
-          "providedValue": "",
-          "supportTicketId": "SUP-60001",
-          "traceId": "d82f6a19c4e34b7f91d25a8c73eb461f"
+          "errorCode": "INVALID_ALERT_REQUEST",
+          "message": "Alert validation failed",
+          "details": "Target value must be greater than zero.",
+          "field": "targetValue",
+          "providedValue": "-400",
+          "supportTicketId": "SUP-80001",
+          "traceId": "c71d92f84a3e4b6fc25d18e79ab34f62"
         }
       }
     },
@@ -403,9 +404,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "d82f6a19c4e34b7f91d25a8c73eb461f"
+          "example": "c71d92f84a3e4b6fc25d18e79ab34f62"
         },
-        "example": "d82f6a19c4e34b7f91d25a8c73eb461f"
+        "example": "c71d92f84a3e4b6fc25d18e79ab34f62"
       },
       "Authorization": {
         "name": "Authorization",
@@ -463,9 +464,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "d82f6a19c4e34b7f91d25a8c73eb461f"
+          "example": "c71d92f84a3e4b6fc25d18e79ab34f62"
         },
-        "example": "d82f6a19c4e34b7f91d25a8c73eb461f"
+        "example": "c71d92f84a3e4b6fc25d18e79ab34f62"
       },
       "Content-Type": {
         "style": "simple",
@@ -481,9 +482,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "REQ-600002"
+          "example": "REQ-800002"
         },
-        "example": "REQ-600002"
+        "example": "REQ-800002"
       },
       "Cache-Control": {
         "style": "simple",
@@ -499,9 +500,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "/v1/watchlist/WL-10001"
+          "example": "/v1/market-alerts/ALT-50001"
         },
-        "example": "/v1/watchlist/WL-10001"
+        "example": "/v1/market-alerts/ALT-50001"
       }
     }
   }

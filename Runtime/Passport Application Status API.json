@@ -1,11 +1,11 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Device Data Wipe API",
-    "description": "This API facilitates the secure removal and deregistration of IoT device data from user homes. It allows users to manage their devices by permanently wiping data associated with specified devices in their home environment. This ensures privacy and helps maintain data hygiene and compliance with data management practices.",
-    "termsOfService": "By using this API, you agree to comply with our privacy policy and terms of service outlined at https://www.example.com/terms.",
+    "title": "Passport Application Status API",
+    "description": "This API provides detailed tracking information for passport applications, allowing users to retrieve the timeline and status updates of their applications. It enables efficient monitoring of progress through various stages of the application process.",
+    "termsOfService": "https://www.example.com/terms",
     "contact": {
-      "name": "Support Team",
+      "name": "Customer Support",
       "url": "https://www.example.com/support",
       "email": "support@example.com"
     },
@@ -16,7 +16,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/smarthome",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/government",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -24,28 +24,19 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/smarthome"
+      "x-basePath": "/v1/government"
     }
   ],
   "paths": {
-    "/homes/HOME-441122/devices/DEV-IOT-20260501-3301/remove/deregister/data/wipe": {
-      "delete": {
+    "/passport/application/PASS-APP-20260301-5500/status/tracking/timeline/detail": {
+      "get": {
         "tags": [
-          "Devices"
+          "Passport Applications"
         ],
-        "summary": "Remove Device and Wipe Data",
-        "description": "This operation allows you to deregister a device from the specified home and permanently delete all associated data. The request requires specific parameters detailing the device and its home context, as well as the wipe action. Upon successful execution, all data tied to the device will be cleared, and the device will no longer be accessible within the system.",
-        "operationId": "removeDeviceAndWipeData",
+        "summary": "Retrieve Passport Application Status Timeline",
+        "description": "This operation provides detailed tracking information for a specific passport application identified by its application ID. Users can expect to input the necessary authorization tokens and parent span ID to retrieve the timeline details. The outcome will be a comprehensive status update that illustrates the progression of the passport application through various stages.",
+        "operationId": "retrievePassportApplicationStatusTimeline",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/wipeData"
-          },
-          {
-            "$ref": "#/components/parameters/reassignRules"
-          },
-          {
-            "$ref": "#/components/parameters/X-Home-Id"
-          },
           {
             "$ref": "#/components/parameters/parentspanid"
           },
@@ -60,14 +51,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RemoveDeviceAndWipeDataRequest"
+                "$ref": "#/components/schemas/RetrievePassportApplicationStatusTimelineRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Data wiped and device removed",
+          "500": {
+            "description": "Internal server error occurred",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -82,7 +73,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RemoveDeviceAndWipeDataResponse_200"
+                  "$ref": "#/components/schemas/RetrievePassportApplicationStatusTimelineResponse_500"
                 }
               }
             }
@@ -98,52 +89,50 @@
   },
   "components": {
     "schemas": {
-      "RemoveDeviceAndWipeDataRequest": {
+      "RetrievePassportApplicationStatusTimelineRequest": {
         "type": "string",
         "example": ""
       },
-      "RemoveDeviceAndWipeDataResponse_200": {
+      "RetrievePassportApplicationStatusTimelineResponse_500": {
         "type": "object",
-        "example": {}
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "PASSPORT_SYSTEM_MAINTENANCE"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 500
+          },
+          "message": {
+            "type": "string",
+            "example": "Passport tracking system is undergoing scheduled maintenance."
+          },
+          "maintenanceWindow": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z to 2026-06-08T11:30:00Z"
+          },
+          "incidentId": {
+            "type": "string",
+            "example": "INC-GOV-2026-0099"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
+          }
+        },
+        "example": {
+          "error": "PASSPORT_SYSTEM_MAINTENANCE",
+          "code": 500,
+          "message": "Passport tracking system is undergoing scheduled maintenance.",
+          "maintenanceWindow": "2026-06-08T10:00:00Z to 2026-06-08T11:30:00Z",
+          "incidentId": "INC-GOV-2026-0099",
+          "timestamp": "2026-06-08T10:00:00Z"
+        }
       }
     },
     "parameters": {
-      "wipeData": {
-        "name": "wipeData",
-        "in": "query",
-        "required": false,
-        "style": "form",
-        "explode": true,
-        "schema": {
-          "type": "string",
-          "example": "ksbd"
-        },
-        "example": "ksbd"
-      },
-      "reassignRules": {
-        "name": "reassignRules",
-        "in": "query",
-        "required": false,
-        "style": "form",
-        "explode": true,
-        "schema": {
-          "type": "string",
-          "example": "zrtpx"
-        },
-        "example": "zrtpx"
-      },
-      "X-Home-Id": {
-        "name": "X-Home-Id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "HOME-441122"
-        },
-        "example": "HOME-441122"
-      },
       "parentspanid": {
         "name": "parentspanid",
         "in": "header",
@@ -152,9 +141,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "b642d3e360d9473190d451a63cd49f9f97d064b55972469d"
+          "example": "d11e5fa014464cf2bf24fcf74cc115eee78fd3db5cf947f8"
         },
-        "example": "b642d3e360d9473190d451a63cd49f9f97d064b55972469d"
+        "example": "d11e5fa014464cf2bf24fcf74cc115eee78fd3db5cf947f8"
       },
       "Authorization": {
         "name": "Authorization",
@@ -164,9 +153,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer homeowner-auth-token"
+          "example": "Bearer citizen-auth-token"
         },
-        "example": "Bearer homeowner-auth-token"
+        "example": "Bearer citizen-auth-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -178,7 +167,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "success"
+            "server_error"
           ]
         }
       }
@@ -198,9 +187,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "c763eebd45534bee86c8565f46f51fdbde708580f6c74f91"
+          "example": "b88460aa17e54312a4e1d992458e02367a083bae16194547"
         },
-        "example": "c763eebd45534bee86c8565f46f51fdbde708580f6c74f91"
+        "example": "b88460aa17e54312a4e1d992458e02367a083bae16194547"
       },
       "Content-Type": {
         "style": "simple",

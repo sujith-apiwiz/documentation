@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "User Watchlist Management API",
-    "description": "The User Watchlist Management API allows users to efficiently create and manage their watchlists, providing functionalities to add, update, and retrieve items based on user preferences. This API caters to applications requiring watchlist capabilities, enabling seamless integration for personalized user experiences.",
+    "title": "Product Purchase API",
+    "description": "The Product Purchase API allows clients to perform purchase transactions seamlessly. It provides endpoints for submitting buy requests, handling successful transactions, and managing errors. Ideal for e-commerce applications aiming to streamline their purchasing process.",
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/orders",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -15,18 +15,18 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1"
+      "x-basePath": "/v1/orders"
     }
   ],
   "paths": {
-    "/watchlist": {
+    "/buy": {
       "post": {
         "tags": [
-          "Watchlist"
+          "Transactions"
         ],
-        "summary": "Add Item to Watchlist",
-        "description": "This operation allows users to add an item to their watchlist. The request must contain the necessary parameters, including account identification and the content to be added. Upon successful execution, the item will be stored in the user's watchlist, enabling easy tracking and management of their interests.",
-        "operationId": "addItemToWatchlist",
+        "summary": "Initiate Purchase",
+        "description": "This operation allows users to initiate a purchase transaction. Users must provide specific details such as account identifiers and transaction parameters in the request body. Upon successful completion, the operation will return information about the transaction along with a confirmation of the purchase.",
+        "operationId": "initiatePurchase",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-Channel"
@@ -54,14 +54,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AddItemToWatchlistRequest"
+                "$ref": "#/components/schemas/InitiatePurchaseRequest"
               }
             }
           }
         },
         "responses": {
-          "500": {
-            "description": "Internal server error occurred",
+          "400": {
+            "description": "Invalid request parameters",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -82,13 +82,40 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AddItemToWatchlistResponse_500"
+                  "$ref": "#/components/schemas/InitiatePurchaseResponse_400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitiatePurchaseResponse_500"
                 }
               }
             }
           },
           "200": {
-            "description": "Item added to watchlist successfully",
+            "description": "Purchase processed successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -112,34 +139,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AddItemToWatchlistResponse_200"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request parameters",
-            "headers": {
-              "Date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "X-Trace-Id": {
-                "$ref": "#/components/headers/X-Trace-Id"
-              },
-              "Content-Type": {
-                "$ref": "#/components/headers/Content-Type"
-              },
-              "X-Request-Id": {
-                "$ref": "#/components/headers/X-Request-Id"
-              },
-              "Cache-Control": {
-                "$ref": "#/components/headers/Cache-Control"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AddItemToWatchlistResponse_400"
+                  "$ref": "#/components/schemas/InitiatePurchaseResponse_200"
                 }
               }
             }
@@ -155,7 +155,49 @@
   },
   "components": {
     "schemas": {
-      "AddItemToWatchlistResponse_500": {
+      "InitiatePurchaseResponse_400": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "example": "INVALID_ORDER_REQUEST"
+          },
+          "message": {
+            "type": "string",
+            "example": "Order validation failed"
+          },
+          "details": {
+            "type": "string",
+            "example": "Quantity must be greater than zero."
+          },
+          "field": {
+            "type": "string",
+            "example": "quantity"
+          },
+          "providedValue": {
+            "type": "string",
+            "example": "-100"
+          },
+          "supportTicketId": {
+            "type": "string",
+            "example": "SUP-90001"
+          },
+          "traceId": {
+            "type": "string",
+            "example": "d73f91a84b2c4e6fa95d18c72e34ab6f"
+          }
+        },
+        "example": {
+          "errorCode": "INVALID_ORDER_REQUEST",
+          "message": "Order validation failed",
+          "details": "Quantity must be greater than zero.",
+          "field": "quantity",
+          "providedValue": "-100",
+          "supportTicketId": "SUP-90001",
+          "traceId": "d73f91a84b2c4e6fa95d18c72e34ab6f"
+        }
+      },
+      "InitiatePurchaseResponse_500": {
         "type": "object",
         "properties": {
           "errorCode": {
@@ -164,197 +206,161 @@
           },
           "message": {
             "type": "string",
-            "example": "Failed to create watchlist"
+            "example": "Failed to process buy order"
           },
           "details": {
             "type": "string",
-            "example": "An unexpected backend service error occurred while creating the watchlist."
+            "example": "An unexpected database error occurred while processing the trade."
           },
           "service": {
             "type": "string",
-            "example": "WatchlistService"
+            "example": "OrderExecutionService"
           },
           "incidentId": {
             "type": "string",
-            "example": "INC-88001"
+            "example": "INC-78001"
           },
           "supportTicketId": {
             "type": "string",
-            "example": "SUP-60002"
+            "example": "SUP-90002"
           },
           "traceId": {
             "type": "string",
-            "example": "e95a7c21d84b4f6ea31c29d7f84ab612"
+            "example": "e84c1f92a7b34d5e9c61f28d73ab45c1"
           }
         },
         "example": {
           "errorCode": "INTERNAL_SERVER_ERROR",
-          "message": "Failed to create watchlist",
-          "details": "An unexpected backend service error occurred while creating the watchlist.",
-          "service": "WatchlistService",
-          "incidentId": "INC-88001",
-          "supportTicketId": "SUP-60002",
-          "traceId": "e95a7c21d84b4f6ea31c29d7f84ab612"
+          "message": "Failed to process buy order",
+          "details": "An unexpected database error occurred while processing the trade.",
+          "service": "OrderExecutionService",
+          "incidentId": "INC-78001",
+          "supportTicketId": "SUP-90002",
+          "traceId": "e84c1f92a7b34d5e9c61f28d73ab45c1"
         }
       },
-      "AddItemToWatchlistResponse_200": {
+      "InitiatePurchaseRequest": {
         "type": "object",
         "properties": {
-          "watchlistId": {
+          "symbol": {
             "type": "string",
-            "example": "WL-10001"
+            "example": "wfks"
           },
-          "watchlistName": {
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 79
+          },
+          "orderType": {
             "type": "string",
-            "example": "Tech Growth"
+            "example": "mfbajx"
+          },
+          "price": {
+            "type": "number",
+            "example": 22.45
+          },
+          "exchange": {
+            "type": "string",
+            "example": "brdhre"
+          },
+          "portfolioId": {
+            "type": "string",
+            "example": "XK06BEn"
+          },
+          "clientReference": {
+            "type": "string",
+            "example": "LDmcteXgo8"
+          },
+          "timeInForce": {
+            "type": "string",
+            "example": "van"
+          },
+          "brokerCode": {
+            "type": "string",
+            "example": "iJmAica"
+          },
+          "investmentAccount": {
+            "type": "string",
+            "example": "sl1ReG2Ls"
+          },
+          "riskProfile": {
+            "type": "string",
+            "example": "vveuvpkz"
+          },
+          "deviceType": {
+            "type": "string",
+            "example": "ssp"
+          }
+        },
+        "example": "{\n  \"symbol\" : \"wfks\",\n  \"quantity\" : 79,\n  \"orderType\" : \"mfbajx\",\n  \"price\" : 22.45,\n  \"exchange\" : \"brdhre\",\n  \"portfolioId\" : \"XK06BEn\",\n  \"clientReference\" : \"LDmcteXgo8\",\n  \"timeInForce\" : \"van\",\n  \"brokerCode\" : \"iJmAica\",\n  \"investmentAccount\" : \"sl1ReG2Ls\",\n  \"riskProfile\" : \"vveuvpkz\",\n  \"deviceType\" : \"ssp\"\n}"
+      },
+      "InitiatePurchaseResponse_200": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "example": "ORD-500001"
           },
           "symbol": {
             "type": "string",
-            "example": "NVDA"
+            "example": "AAPL"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 100
+          },
+          "executedPrice": {
+            "type": "number",
+            "example": 215.75
+          },
+          "orderStatus": {
+            "type": "string",
+            "example": "FILLED"
+          },
+          "tradeId": {
+            "type": "string",
+            "example": "TRD-88001"
+          },
+          "portfolioId": {
+            "type": "string",
+            "example": "PF-1001"
+          },
+          "remainingQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 0
+          },
+          "settlementDate": {
+            "type": "string",
+            "example": "2026-06-10"
           },
           "exchange": {
             "type": "string",
             "example": "NASDAQ"
           },
-          "alertEnabled": {
-            "type": "boolean",
-            "example": true
-          },
-          "targetPrice": {
-            "type": "integer",
-            "format": "int32",
-            "example": 1500
-          },
-          "status": {
-            "type": "string",
-            "example": "ACTIVE"
-          },
-          "createdAt": {
-            "type": "string",
-            "example": "2026-06-08T12:00:00Z"
-          },
-          "notificationChannel": {
-            "type": "string",
-            "example": "EMAIL"
-          },
-          "priority": {
-            "type": "string",
-            "example": "HIGH"
+          "commission": {
+            "type": "number",
+            "example": 2.5
           },
           "message": {
             "type": "string",
-            "example": "Watchlist created successfully"
+            "example": "Buy order executed successfully"
           }
         },
         "example": {
-          "watchlistId": "WL-10001",
-          "watchlistName": "Tech Growth",
-          "symbol": "NVDA",
+          "orderId": "ORD-500001",
+          "symbol": "AAPL",
+          "quantity": 100,
+          "executedPrice": 215.75,
+          "orderStatus": "FILLED",
+          "tradeId": "TRD-88001",
+          "portfolioId": "PF-1001",
+          "remainingQuantity": 0,
+          "settlementDate": "2026-06-10",
           "exchange": "NASDAQ",
-          "alertEnabled": true,
-          "targetPrice": 1500,
-          "status": "ACTIVE",
-          "createdAt": "2026-06-08T12:00:00Z",
-          "notificationChannel": "EMAIL",
-          "priority": "HIGH",
-          "message": "Watchlist created successfully"
-        }
-      },
-      "AddItemToWatchlistRequest": {
-        "type": "object",
-        "properties": {
-          "watchlistName": {
-            "type": "string",
-            "example": ""
-          },
-          "symbol": {
-            "type": "string",
-            "example": "pdzv"
-          },
-          "exchange": {
-            "type": "string",
-            "example": "euvsww"
-          },
-          "alertEnabled": {
-            "type": "boolean",
-            "example": false
-          },
-          "targetPrice": {
-            "type": "integer",
-            "format": "int32",
-            "example": 73
-          },
-          "portfolioId": {
-            "type": "string",
-            "example": "RkXeGUP"
-          },
-          "category": {
-            "type": "string",
-            "example": "fgbz"
-          },
-          "currency": {
-            "type": "string",
-            "example": "qlq"
-          },
-          "deviceType": {
-            "type": "string",
-            "example": "spl"
-          },
-          "clientReference": {
-            "type": "string",
-            "example": "hx18m8Hp7O"
-          },
-          "notificationChannel": {
-            "type": "string",
-            "example": "gcjet"
-          },
-          "priority": {
-            "type": "string",
-            "example": "bjog"
-          }
-        },
-        "example": "{\n  \"watchlistName\" : \"\",\n  \"symbol\" : \"pdzv\",\n  \"exchange\" : \"euvsww\",\n  \"alertEnabled\" : false,\n  \"targetPrice\" : 73,\n  \"portfolioId\" : \"RkXeGUP\",\n  \"category\" : \"fgbz\",\n  \"currency\" : \"qlq\",\n  \"deviceType\" : \"spl\",\n  \"clientReference\" : \"hx18m8Hp7O\",\n  \"notificationChannel\" : \"gcjet\",\n  \"priority\" : \"bjog\"\n}"
-      },
-      "AddItemToWatchlistResponse_400": {
-        "type": "object",
-        "properties": {
-          "errorCode": {
-            "type": "string",
-            "example": "INVALID_WATCHLIST_REQUEST"
-          },
-          "message": {
-            "type": "string",
-            "example": "Watchlist validation failed"
-          },
-          "details": {
-            "type": "string",
-            "example": "Watchlist name cannot be empty."
-          },
-          "field": {
-            "type": "string",
-            "example": "watchlistName"
-          },
-          "providedValue": {
-            "type": "string",
-            "example": ""
-          },
-          "supportTicketId": {
-            "type": "string",
-            "example": "SUP-60001"
-          },
-          "traceId": {
-            "type": "string",
-            "example": "d82f6a19c4e34b7f91d25a8c73eb461f"
-          }
-        },
-        "example": {
-          "errorCode": "INVALID_WATCHLIST_REQUEST",
-          "message": "Watchlist validation failed",
-          "details": "Watchlist name cannot be empty.",
-          "field": "watchlistName",
-          "providedValue": "",
-          "supportTicketId": "SUP-60001",
-          "traceId": "d82f6a19c4e34b7f91d25a8c73eb461f"
+          "commission": 2.5,
+          "message": "Buy order executed successfully"
         }
       }
     },
@@ -403,9 +409,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "d82f6a19c4e34b7f91d25a8c73eb461f"
+          "example": "c91a72e84d3b4f6ab82e15c79f34d6a1"
         },
-        "example": "d82f6a19c4e34b7f91d25a8c73eb461f"
+        "example": "c91a72e84d3b4f6ab82e15c79f34d6a1"
       },
       "Authorization": {
         "name": "Authorization",
@@ -441,9 +447,9 @@
         "schema": {
           "type": "string",
           "enum": [
+            "bad_request",
             "server_error",
-            "success",
-            "bad_request"
+            "success"
           ]
         }
       }
@@ -463,9 +469,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "d82f6a19c4e34b7f91d25a8c73eb461f"
+          "example": "c91a72e84d3b4f6ab82e15c79f34d6a1"
         },
-        "example": "d82f6a19c4e34b7f91d25a8c73eb461f"
+        "example": "c91a72e84d3b4f6ab82e15c79f34d6a1"
       },
       "Content-Type": {
         "style": "simple",
@@ -481,9 +487,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "REQ-600002"
+          "example": "REQ-500001"
         },
-        "example": "REQ-600002"
+        "example": "REQ-500001"
       },
       "Cache-Control": {
         "style": "simple",
@@ -499,9 +505,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "/v1/watchlist/WL-10001"
+          "example": "/v1/orders/ORD-500001"
         },
-        "example": "/v1/watchlist/WL-10001"
+        "example": "/v1/orders/ORD-500001"
       }
     }
   }
