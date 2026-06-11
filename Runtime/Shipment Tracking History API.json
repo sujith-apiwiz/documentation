@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "User Watchlist Management API",
-    "description": "This API allows users to manage their watchlists by removing specific content from their saved lists. It provides an easy interface to maintain personalized viewing preferences, ensuring users can update their selections effortlessly.",
+    "title": "Shipment Tracking History API",
+    "description": "This API provides access to the historical status events of shipments, allowing users to track the progression of their shipments over time. It enables retrieval of detailed event histories for specific tracking numbers, ensuring transparency and insights into shipment logistics.",
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/streaming",
+      "url": "https://stage-data-gujl.apiwiz.io/v2/logistics",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -15,18 +15,18 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/streaming"
+      "x-basePath": "/v2/logistics"
     }
   ],
   "paths": {
-    "/users/USR-VFX-9921/watchlist/saved/content/MOV-NOT-IN-LIST/remove": {
-      "delete": {
+    "/shipments/tracking/000000000000/status/events/history": {
+      "get": {
         "tags": [
-          "Watchlist"
+          "Shipments"
         ],
-        "summary": "Remove Movie from User's Watchlist",
-        "description": "This operation allows users to remove a specific movie from their saved watchlist. To perform this action, the user must provide valid authorization and specify the movie to be removed. A successful response indicates the movie has been successfully removed from the user's watchlist.",
-        "operationId": "removeMovieFromUsersWatchlist",
+        "summary": "Retrieve Shipment Event History",
+        "description": "This operation allows you to retrieve the historical events associated with a specific shipment tracking number. You need to provide the parent span ID for tracing and the necessary authorization token. The outcome will be a detailed list of past events related to the shipment's status, which helps in understanding its journey.",
+        "operationId": "retrieveShipmentEventHistory",
         "parameters": [
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -42,14 +42,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RemoveMovieFromUsersWatchlistRequest"
+                "$ref": "#/components/schemas/RetrieveShipmentEventHistoryRequest"
               }
             }
           }
         },
         "responses": {
           "404": {
-            "description": "Requested movie not found",
+            "description": "Shipment tracking not found",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -64,7 +64,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RemoveMovieFromUsersWatchlistResponse_404"
+                  "$ref": "#/components/schemas/RetrieveShipmentEventHistoryResponse_404"
                 }
               }
             }
@@ -80,16 +80,16 @@
   },
   "components": {
     "schemas": {
-      "RemoveMovieFromUsersWatchlistRequest": {
+      "RetrieveShipmentEventHistoryRequest": {
         "type": "string",
         "example": ""
       },
-      "RemoveMovieFromUsersWatchlistResponse_404": {
+      "RetrieveShipmentEventHistoryResponse_404": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "CONTENT_NOT_IN_WATCHLIST"
+            "example": "TRACKING_NUMBER_NOT_FOUND"
           },
           "code": {
             "type": "integer",
@@ -98,7 +98,7 @@
           },
           "message": {
             "type": "string",
-            "example": "Content MOV-NOT-IN-LIST not found in user watchlist."
+            "example": "Tracking number 000000000000 not found. Please verify and try again."
           },
           "timestamp": {
             "type": "string",
@@ -106,9 +106,9 @@
           }
         },
         "example": {
-          "error": "CONTENT_NOT_IN_WATCHLIST",
+          "error": "TRACKING_NUMBER_NOT_FOUND",
           "code": 404,
-          "message": "Content MOV-NOT-IN-LIST not found in user watchlist.",
+          "message": "Tracking number 000000000000 not found. Please verify and try again.",
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
@@ -122,9 +122,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "cbcc3844a91f4c59a1f147327233f8588ddc86e9cacc484d"
+          "example": "f0ad9b7f9305417b0125650698db4ce6"
         },
-        "example": "cbcc3844a91f4c59a1f147327233f8588ddc86e9cacc484d"
+        "example": "f0ad9b7f9305417b0125650698db4ce6"
       },
       "Authorization": {
         "name": "Authorization",
@@ -134,9 +134,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer viewer-auth-token"
+          "example": "Bearer user-access-token-valid"
         },
-        "example": "Bearer viewer-auth-token"
+        "example": "Bearer user-access-token-valid"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -168,9 +168,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "5329ac9d6b2f4ce1880bcfb1ec21ff58c3c5d373c0eb426d"
+          "example": "70d8a23ad06d491806dda1f1544146d0"
         },
-        "example": "5329ac9d6b2f4ce1880bcfb1ec21ff58c3c5d373c0eb426d"
+        "example": "70d8a23ad06d491806dda1f1544146d0"
       },
       "Content-Type": {
         "style": "simple",
