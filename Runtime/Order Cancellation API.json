@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Beneficiary Confirmation API",
-    "description": "The Beneficiary Confirmation API enables users to confirm updates to the personal details of nominees associated with insurance policies. This API ensures that critical beneficiary information is accurately managed and validated within the system, streamlining the process and enhancing user experience.",
+    "title": "Order Cancellation API",
+    "description": "This API facilitates the initiation of the cancellation process for customer orders, specifically related to refund policies. It allows customers to request the cancellation of their orders and handle refunds effectively.",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/insurance",
+      "url": "https://stage-data-gujl.apiwiz.io/v2/food",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,21 +18,21 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/insurance"
+      "x-basePath": "/v2/food"
     }
   ],
   "paths": {
-    "/policies/POL-INS-20260601-7722/beneficiary/nominee/update/personal/details/confirm": {
-      "put": {
+    "/orders/FD-ORD-20260608-8822/cancel/customer/refund/policy/initiate": {
+      "delete": {
         "tags": [
-          "Policies"
+          "Orders"
         ],
-        "summary": "Confirm Personal Details Update",
-        "description": "This operation allows users to confirm the update of personal details for a nominee associated with a specific insurance policy. Users must provide the necessary authorization and content type parameters, along with the updated personal detail information in JSON format. Upon successful execution, the nominee's personal details will be updated accordingly.",
-        "operationId": "confirmPersonalDetailsUpdate",
+        "summary": "Cancel Order Refund Policy",
+        "description": "This operation initiates the cancellation of a refund policy for the specified order. The request must include a reason for the cancellation, and optional context data such as a parent span ID. Upon successful completion, the refund policy will be canceled, and any further actions related to this refund will be halted.",
+        "operationId": "cancelOrderRefundPolicy",
         "parameters": [
           {
-            "$ref": "#/components/parameters/Content-Type"
+            "$ref": "#/components/parameters/reason"
           },
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -48,7 +48,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConfirmPersonalDetailsUpdateRequest"
+                "$ref": "#/components/schemas/CancelOrderRefundPolicyRequest"
               }
             }
           }
@@ -70,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConfirmPersonalDetailsUpdateResponse_500"
+                  "$ref": "#/components/schemas/CancelOrderRefundPolicyResponse_500"
                 }
               }
             }
@@ -86,31 +86,16 @@
   },
   "components": {
     "schemas": {
-      "ConfirmPersonalDetailsUpdateRequest": {
-        "type": "object",
-        "properties": {
-          "nomineeName": {
-            "type": "string",
-            "example": "vwgguiiwj"
-          },
-          "nomineeRelation": {
-            "type": "string",
-            "example": "wbvrs"
-          },
-          "nomineeShare": {
-            "type": "integer",
-            "format": "int32",
-            "example": 28
-          }
-        },
-        "example": "{\n  \"nomineeName\" : \"vwgguiiwj\",\n  \"nomineeRelation\" : \"wbvrs\",\n  \"nomineeShare\" : 28\n}"
+      "CancelOrderRefundPolicyRequest": {
+        "type": "string",
+        "example": ""
       },
-      "ConfirmPersonalDetailsUpdateResponse_500": {
+      "CancelOrderRefundPolicyResponse_500": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "ENDORSEMENT_SERVICE_ERROR"
+            "example": "REFUND_SERVICE_ERROR"
           },
           "code": {
             "type": "integer",
@@ -119,16 +104,11 @@
           },
           "message": {
             "type": "string",
-            "example": "Policy endorsement service failed to process the update. Changes rolled back."
+            "example": "Order cancelled but refund processing failed due to payment gateway error. Refund will be manually processed within 24 hours."
           },
           "incidentId": {
             "type": "string",
-            "example": "INC-INS-2026-0611"
-          },
-          "retryAfter": {
-            "type": "integer",
-            "format": "int32",
-            "example": 45
+            "example": "INC-FOOD-2026-0410"
           },
           "timestamp": {
             "type": "string",
@@ -136,27 +116,26 @@
           }
         },
         "example": {
-          "error": "ENDORSEMENT_SERVICE_ERROR",
+          "error": "REFUND_SERVICE_ERROR",
           "code": 500,
-          "message": "Policy endorsement service failed to process the update. Changes rolled back.",
-          "incidentId": "INC-INS-2026-0611",
-          "retryAfter": 45,
+          "message": "Order cancelled but refund processing failed due to payment gateway error. Refund will be manually processed within 24 hours.",
+          "incidentId": "INC-FOOD-2026-0410",
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "Content-Type": {
-        "name": "Content-Type",
-        "in": "header",
+      "reason": {
+        "name": "reason",
+        "in": "query",
         "required": false,
-        "style": "simple",
-        "explode": false,
+        "style": "form",
+        "explode": true,
         "schema": {
           "type": "string",
-          "example": "application/json"
+          "example": "@pmbpo>#\"Rp"
         },
-        "example": "application/json"
+        "example": "@pmbpo>#\"Rp"
       },
       "parentspanid": {
         "name": "parentspanid",
@@ -166,9 +145,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "18a53d7021724636ad8a08b069696f15c99ee7a24b0947c4"
+          "example": "1c92fd3ee82a48b59c363ef7b2fbcc8973eb5c38a0124d1c"
         },
-        "example": "18a53d7021724636ad8a08b069696f15c99ee7a24b0947c4"
+        "example": "1c92fd3ee82a48b59c363ef7b2fbcc8973eb5c38a0124d1c"
       },
       "Authorization": {
         "name": "Authorization",
@@ -178,9 +157,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer ins-customer-token"
+          "example": "Bearer customer-food-token"
         },
-        "example": "Bearer ins-customer-token"
+        "example": "Bearer customer-food-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -212,9 +191,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "d4c72a517be34aefb0fe92537a5b017101cf20f85d90498a"
+          "example": "b77840a869fb4aa5b911d7fab525f53bc3441e00a1944d73"
         },
-        "example": "d4c72a517be34aefb0fe92537a5b017101cf20f85d90498a"
+        "example": "b77840a869fb4aa5b911d7fab525f53bc3441e00a1944d73"
       },
       "Content-Type": {
         "style": "simple",

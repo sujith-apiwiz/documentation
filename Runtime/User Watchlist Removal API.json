@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Device Data Wipe API",
-    "description": "This API allows users to securely wipe data from specific devices within a designated home environment. It facilitates the deregistration and removal of sensitive information, ensuring privacy and security for smart home users. Endpoint `/remove/deregister/data/wipe` is specifically designed for this purpose.",
+    "title": "User Watchlist Removal API",
+    "description": "This API allows users to remove specific content items from their watchlist. Utilizing the DELETE method, users can easily manage their watchlist and ensure it only contains the items they wish to keep. This API is designed to facilitate a streamlined user experience in managing saved content.",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/smarthome",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/streaming",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,19 +18,22 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/smarthome"
+      "x-basePath": "/v1/streaming"
     }
   ],
   "paths": {
-    "/homes/HOME-441122/devices/DEV-GATEWAY-HUB-001/remove/deregister/data/wipe": {
+    "/users/USR-VFX-9921/watchlist/saved/content/MOV-10005/remove": {
       "delete": {
         "tags": [
-          "Devices"
+          "Watchlist"
         ],
-        "summary": "Remove Device Data Wipe",
-        "description": "This operation allows users to initiate the data wipe process for a specific device within their home. By providing the necessary authorization and parent span ID, users can ensure that all data associated with the device is securely deleted. The expected outcome is a complete removal of the specified device's data, ensuring privacy and security.",
-        "operationId": "removeDeviceDataWipe",
+        "summary": "Remove Movie from Watchlist",
+        "description": "This operation removes a specified movie from a user's watchlist. It requires the user's authentication details and the unique identifiers for the user and movie. Upon successful completion, the movie will no longer be part of the user's saved content.",
+        "operationId": "removeMovieFromWatchlist",
         "parameters": [
+          {
+            "$ref": "#/components/parameters/X-User-Id"
+          },
           {
             "$ref": "#/components/parameters/parentspanid"
           },
@@ -45,14 +48,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RemoveDeviceDataWipeRequest"
+                "$ref": "#/components/schemas/RemoveMovieFromWatchlistRequest"
               }
             }
           }
         },
         "responses": {
-          "400": {
-            "description": "Invalid request parameters",
+          "200": {
+            "description": "Movie removed successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -67,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RemoveDeviceDataWipeResponse_400"
+                  "$ref": "#/components/schemas/RemoveMovieFromWatchlistResponse_200"
                 }
               }
             }
@@ -83,46 +86,28 @@
   },
   "components": {
     "schemas": {
-      "RemoveDeviceDataWipeRequest": {
+      "RemoveMovieFromWatchlistRequest": {
         "type": "string",
         "example": ""
       },
-      "RemoveDeviceDataWipeResponse_400": {
+      "RemoveMovieFromWatchlistResponse_200": {
         "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "example": "DEVICE_REMOVAL_BLOCKED"
-          },
-          "code": {
-            "type": "integer",
-            "format": "int32",
-            "example": 400
-          },
-          "message": {
-            "type": "string",
-            "example": "Cannot remove the primary hub device while other devices are connected. Please remove all child devices first."
-          },
-          "connectedDevices": {
-            "type": "integer",
-            "format": "int32",
-            "example": 8
-          },
-          "timestamp": {
-            "type": "string",
-            "example": "2026-06-08T10:00:00Z"
-          }
-        },
-        "example": {
-          "error": "DEVICE_REMOVAL_BLOCKED",
-          "code": 400,
-          "message": "Cannot remove the primary hub device while other devices are connected. Please remove all child devices first.",
-          "connectedDevices": 8,
-          "timestamp": "2026-06-08T10:00:00Z"
-        }
+        "example": {}
       }
     },
     "parameters": {
+      "X-User-Id": {
+        "name": "X-User-Id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "USR-VFX-9921"
+        },
+        "example": "USR-VFX-9921"
+      },
       "parentspanid": {
         "name": "parentspanid",
         "in": "header",
@@ -131,9 +116,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "4413c851083344389adf4ae976717625854ca8f949504556"
+          "example": "bba766d350844f7eb13a3ca12f5f6a247e0dfe2ad6074454"
         },
-        "example": "4413c851083344389adf4ae976717625854ca8f949504556"
+        "example": "bba766d350844f7eb13a3ca12f5f6a247e0dfe2ad6074454"
       },
       "Authorization": {
         "name": "Authorization",
@@ -143,9 +128,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer homeowner-auth-token"
+          "example": "Bearer viewer-auth-token"
         },
-        "example": "Bearer homeowner-auth-token"
+        "example": "Bearer viewer-auth-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -157,7 +142,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "bad_request"
+            "success"
           ]
         }
       }
@@ -177,9 +162,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "e2275956ae1848f9bafbca0d3321748bb0b19c3440e54e72"
+          "example": "5158ffc041354722800e75ac50768e40d4d5bbd5c2ed4ca3"
         },
-        "example": "e2275956ae1848f9bafbca0d3321748bb0b19c3440e54e72"
+        "example": "5158ffc041354722800e75ac50768e40d4d5bbd5c2ed4ca3"
       },
       "Content-Type": {
         "style": "simple",

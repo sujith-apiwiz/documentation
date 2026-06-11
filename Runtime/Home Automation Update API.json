@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Beneficiary Confirmation API",
-    "description": "The Beneficiary Confirmation API enables users to confirm updates to the personal details of nominees associated with insurance policies. This API ensures that critical beneficiary information is accurately managed and validated within the system, streamlining the process and enhancing user experience.",
+    "title": "Home Automation Update API",
+    "description": "This API allows users to update automation rules for smart devices within their home. It facilitates the triggering and scheduling of device updates while ensuring robust error handling and response management.",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/insurance",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/smarthome",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,18 +18,18 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/insurance"
+      "x-basePath": "/v1/smarthome"
     }
   ],
   "paths": {
-    "/policies/POL-INS-20260601-7722/beneficiary/nominee/update/personal/details/confirm": {
+    "/homes/HOME-441122/automation/rules/RULE-AUTO-9900/schedule/trigger/device/update": {
       "put": {
         "tags": [
-          "Policies"
+          "Automation"
         ],
-        "summary": "Confirm Personal Details Update",
-        "description": "This operation allows users to confirm the update of personal details for a nominee associated with a specific insurance policy. Users must provide the necessary authorization and content type parameters, along with the updated personal detail information in JSON format. Upon successful execution, the nominee's personal details will be updated accordingly.",
-        "operationId": "confirmPersonalDetailsUpdate",
+        "summary": "Update Device Trigger Schedule",
+        "description": "This operation updates the schedule for a specified device trigger within an automation rule. It requires the identification of the home, automation rule, and the device involved. Upon successful completion, this request will adjust the trigger settings accordingly, ensuring the specified device operates as configured.",
+        "operationId": "updateDeviceTriggerSchedule",
         "parameters": [
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -48,7 +48,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConfirmPersonalDetailsUpdateRequest"
+                "$ref": "#/components/schemas/UpdateDeviceTriggerScheduleRequest"
               }
             }
           }
@@ -70,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConfirmPersonalDetailsUpdateResponse_500"
+                  "$ref": "#/components/schemas/UpdateDeviceTriggerScheduleResponse_500"
                 }
               }
             }
@@ -86,31 +86,50 @@
   },
   "components": {
     "schemas": {
-      "ConfirmPersonalDetailsUpdateRequest": {
+      "UpdateDeviceTriggerScheduleRequest": {
         "type": "object",
         "properties": {
-          "nomineeName": {
+          "ruleName": {
             "type": "string",
-            "example": "vwgguiiwj"
+            "example": "rbguedjkjxusicya"
           },
-          "nomineeRelation": {
-            "type": "string",
-            "example": "wbvrs"
+          "trigger": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "qdoakn"
+              }
+            },
+            "example": "{\n  \"type\" : \"qdoakn\"\n}"
           },
-          "nomineeShare": {
-            "type": "integer",
-            "format": "int32",
-            "example": 28
+          "actions": {
+            "type": "array",
+            "example": "[ {\n  \"deviceId\" : \"MRWK66r6owp9\",\n  \"command\" : \"zvkx\"\n} ]",
+            "items": {
+              "type": "object",
+              "properties": {
+                "deviceId": {
+                  "type": "string",
+                  "example": "MRWK66r6owp9"
+                },
+                "command": {
+                  "type": "string",
+                  "example": "zvkx"
+                }
+              },
+              "example": "{\n  \"deviceId\" : \"MRWK66r6owp9\",\n  \"command\" : \"zvkx\"\n}"
+            }
           }
         },
-        "example": "{\n  \"nomineeName\" : \"vwgguiiwj\",\n  \"nomineeRelation\" : \"wbvrs\",\n  \"nomineeShare\" : 28\n}"
+        "example": "{\n  \"ruleName\" : \"rbguedjkjxusicya\",\n  \"trigger\" : {\n    \"type\" : \"qdoakn\"\n  },\n  \"actions\" : [ {\n    \"deviceId\" : \"MRWK66r6owp9\",\n    \"command\" : \"zvkx\"\n  } ]\n}"
       },
-      "ConfirmPersonalDetailsUpdateResponse_500": {
+      "UpdateDeviceTriggerScheduleResponse_500": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "ENDORSEMENT_SERVICE_ERROR"
+            "example": "DEVICE_MESH_SYNC_ERROR"
           },
           "code": {
             "type": "integer",
@@ -119,16 +138,16 @@
           },
           "message": {
             "type": "string",
-            "example": "Policy endorsement service failed to process the update. Changes rolled back."
+            "example": "Smart home hub is unreachable. Rule saved but device sync failed."
           },
           "incidentId": {
             "type": "string",
-            "example": "INC-INS-2026-0611"
+            "example": "INC-IOT-2026-0220"
           },
           "retryAfter": {
             "type": "integer",
             "format": "int32",
-            "example": 45
+            "example": 30
           },
           "timestamp": {
             "type": "string",
@@ -136,11 +155,11 @@
           }
         },
         "example": {
-          "error": "ENDORSEMENT_SERVICE_ERROR",
+          "error": "DEVICE_MESH_SYNC_ERROR",
           "code": 500,
-          "message": "Policy endorsement service failed to process the update. Changes rolled back.",
-          "incidentId": "INC-INS-2026-0611",
-          "retryAfter": 45,
+          "message": "Smart home hub is unreachable. Rule saved but device sync failed.",
+          "incidentId": "INC-IOT-2026-0220",
+          "retryAfter": 30,
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
@@ -166,9 +185,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "18a53d7021724636ad8a08b069696f15c99ee7a24b0947c4"
+          "example": "c17dd32a09b84182bc94cebef177043271a4e397b92a4346"
         },
-        "example": "18a53d7021724636ad8a08b069696f15c99ee7a24b0947c4"
+        "example": "c17dd32a09b84182bc94cebef177043271a4e397b92a4346"
       },
       "Authorization": {
         "name": "Authorization",
@@ -178,9 +197,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer ins-customer-token"
+          "example": "Bearer homeowner-auth-token"
         },
-        "example": "Bearer ins-customer-token"
+        "example": "Bearer homeowner-auth-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -212,9 +231,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "d4c72a517be34aefb0fe92537a5b017101cf20f85d90498a"
+          "example": "1259115928c543b3b897ed09d3065f1adc51df4144e848ea"
         },
-        "example": "d4c72a517be34aefb0fe92537a5b017101cf20f85d90498a"
+        "example": "1259115928c543b3b897ed09d3065f1adc51df4144e848ea"
       },
       "Content-Type": {
         "style": "simple",
