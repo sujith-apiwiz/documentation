@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Personalized Content Feed API",
-    "description": "The Personalized Content Feed API provides users with customized content recommendations tailored to their preferences. This API allows for the retrieval of personalized feed items, enhancing user engagement and experience. Utilize this API to access dynamic and relevant content based on individual user behavior and interests.",
-    "termsOfService": "By using this API, you agree to abide by the following terms of service, ensuring responsible use of personalized content and compliance with user privacy regulations. For more details, visit our terms of service page.",
+    "title": "Watchlist Content Removal API",
+    "description": "This API allows users to remove specific content from their watchlist. By using this endpoint, you can manage your saved content efficiently, ensuring that your watchlist reflects your current preferences. The API requires authentication and provides appropriate responses for various scenarios, including handling cases where the content may not be found.",
+    "termsOfService": "https://yourdomain.com/terms-and-conditions",
     "contact": {
       "name": "Support Team",
-      "url": "https://www.example.com/support",
-      "email": "support@example.com"
+      "url": "https://support.yourdomain.com",
+      "email": "support@yourdomain.com"
     },
     "version": "1.0",
     "extensions": {
@@ -28,18 +28,15 @@
     }
   ],
   "paths": {
-    "/users/USR-VFX-1100/recommendations/content/personalized/homepage/feed": {
-      "get": {
+    "/users/USR-VFX-9921/watchlist/saved/content/MOV-NOT-IN-LIST/remove": {
+      "delete": {
         "tags": [
-          "Recommendations"
+          "Watchlist"
         ],
-        "summary": "Fetch Personalized Homepage Feed",
-        "description": "This operation retrieves a personalized content feed for the specified user. The user is identified by their unique user ID, and the request can include parameters to filter the type of content. The expected outcome is a curated list of relevant recommendations tailored for the user's preferences.",
-        "operationId": "fetchPersonalizedHomepageFeed",
+        "summary": "Remove Movie from Watchlist",
+        "description": "This operation allows users to remove a specific movie from their saved watchlist. The user needs to provide authentication and the relevant movie ID. Upon successful execution, the movie will no longer appear in the user\u2019s watchlist.",
+        "operationId": "removeMovieFromWatchlist",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/contentType"
-          },
           {
             "$ref": "#/components/parameters/parentspanid"
           },
@@ -54,14 +51,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/FetchPersonalizedHomepageFeedRequest"
+                "$ref": "#/components/schemas/RemoveMovieFromWatchlistRequest"
               }
             }
           }
         },
         "responses": {
-          "500": {
-            "description": "Internal server error occurred",
+          "404": {
+            "description": "Movie not found in watchlist",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -76,7 +73,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FetchPersonalizedHomepageFeedResponse_500"
+                  "$ref": "#/components/schemas/RemoveMovieFromWatchlistResponse_404"
                 }
               }
             }
@@ -92,29 +89,25 @@
   },
   "components": {
     "schemas": {
-      "FetchPersonalizedHomepageFeedRequest": {
+      "RemoveMovieFromWatchlistRequest": {
         "type": "string",
         "example": ""
       },
-      "FetchPersonalizedHomepageFeedResponse_500": {
+      "RemoveMovieFromWatchlistResponse_404": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "RECOMMENDATION_ENGINE_TIMEOUT"
+            "example": "CONTENT_NOT_IN_WATCHLIST"
           },
           "code": {
             "type": "integer",
             "format": "int32",
-            "example": 500
+            "example": 404
           },
           "message": {
             "type": "string",
-            "example": "ML recommendation service timed out. Serving trending content as fallback."
-          },
-          "incidentId": {
-            "type": "string",
-            "example": "INC-STRM-2026-0711"
+            "example": "Content MOV-NOT-IN-LIST not found in user watchlist."
           },
           "timestamp": {
             "type": "string",
@@ -122,27 +115,14 @@
           }
         },
         "example": {
-          "error": "RECOMMENDATION_ENGINE_TIMEOUT",
-          "code": 500,
-          "message": "ML recommendation service timed out. Serving trending content as fallback.",
-          "incidentId": "INC-STRM-2026-0711",
+          "error": "CONTENT_NOT_IN_WATCHLIST",
+          "code": 404,
+          "message": "Content MOV-NOT-IN-LIST not found in user watchlist.",
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "contentType": {
-        "name": "contentType",
-        "in": "query",
-        "required": false,
-        "style": "form",
-        "explode": true,
-        "schema": {
-          "type": "string",
-          "example": "lzu"
-        },
-        "example": "lzu"
-      },
       "parentspanid": {
         "name": "parentspanid",
         "in": "header",
@@ -151,9 +131,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6b31eb71aa3c454da349420005154f493c97f9fe12ed431d"
+          "example": "cbcc3844a91f4c59a1f147327233f8588ddc86e9cacc484d"
         },
-        "example": "6b31eb71aa3c454da349420005154f493c97f9fe12ed431d"
+        "example": "cbcc3844a91f4c59a1f147327233f8588ddc86e9cacc484d"
       },
       "Authorization": {
         "name": "Authorization",
@@ -177,7 +157,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "server_error"
+            "not_found"
           ]
         }
       }
@@ -197,9 +177,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f3e72e549f904b459e90eaed5d7ee9af88a8159d17a54273"
+          "example": "5329ac9d6b2f4ce1880bcfb1ec21ff58c3c5d373c0eb426d"
         },
-        "example": "f3e72e549f904b459e90eaed5d7ee9af88a8159d17a54273"
+        "example": "5329ac9d6b2f4ce1880bcfb1ec21ff58c3c5d373c0eb426d"
       },
       "Content-Type": {
         "style": "simple",

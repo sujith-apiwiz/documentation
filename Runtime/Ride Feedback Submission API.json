@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Restaurant Delivery Rating API",
-    "description": "This API allows users to submit ratings for the delivery agents associated with their restaurant orders. It facilitates a seamless process for customers to provide feedback, helping restaurants improve their service quality and delivery experience. The API supports parameterized requests requiring user identification and feedback content, with responsive error handling to ensure a smooth integration.",
+    "title": "Ride Feedback Submission API",
+    "description": "This API allows users to submit feedback and rating tags for their ride experiences. It provides an interface for riders to communicate their thoughts on drivers, enhancing the overall quality of service. The API facilitates the submission of feedback in a structured format, ensuring that valuable insights are captured and can be analyzed for service improvements.",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v2/food",
+      "url": "https://stage-data-gujl.apiwiz.io/v2/rideshare",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,21 +18,21 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v2/food"
+      "x-basePath": "/v2/rideshare"
     }
   ],
   "paths": {
-    "/orders/FD-ORD-20260607-5510/review/restaurant/delivery/agent/rating/submit": {
-      "post": {
+    "/rides/RIDE-20260607-5511/driver/rating/feedback/tags/submit": {
+      "put": {
         "tags": [
-          "Orders"
+          "Feedback"
         ],
-        "summary": "Submit Delivery Agent Rating",
-        "description": "This operation allows users to submit a rating for the delivery agent associated with their order. Users must provide their unique identifier and the rating value in the request body. Upon successful submission, the service will acknowledge the rating, allowing for improved delivery experience feedback.",
-        "operationId": "submitDeliveryAgentRating",
+        "summary": "Submit Driver Feedback Tags",
+        "description": "This operation allows riders to submit feedback tags regarding their recent ride with a driver. The request requires the rider's identification and a JSON body containing the feedback tags associated with the specific ride. Upon successful submission, the feedback is processed, and a confirmation response is provided.",
+        "operationId": "submitDriverFeedbackTags",
         "parameters": [
           {
-            "$ref": "#/components/parameters/X-User-Id"
+            "$ref": "#/components/parameters/X-Rider-Id"
           },
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -51,7 +51,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SubmitDeliveryAgentRatingRequest"
+                "$ref": "#/components/schemas/SubmitDriverFeedbackTagsRequest"
               }
             }
           }
@@ -73,13 +73,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubmitDeliveryAgentRatingResponse_400"
+                  "$ref": "#/components/schemas/SubmitDriverFeedbackTagsResponse_400"
                 }
               }
             }
           },
           "200": {
-            "description": "Rating submitted successfully",
+            "description": "Feedback tags submitted successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -94,7 +94,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubmitDeliveryAgentRatingResponse_200"
+                  "$ref": "#/components/schemas/SubmitDriverFeedbackTagsResponse_200"
                 }
               }
             }
@@ -110,12 +110,12 @@
   },
   "components": {
     "schemas": {
-      "SubmitDeliveryAgentRatingResponse_400": {
+      "SubmitDriverFeedbackTagsResponse_400": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "REVIEW_VALIDATION_FAILED"
+            "example": "RATING_INVALID"
           },
           "code": {
             "type": "integer",
@@ -125,14 +125,13 @@
           "details": {
             "type": "array",
             "example": [
-              "restaurantRating must be between 1 and 5",
-              "overallComment must be at least 10 characters",
-              "deliveryRating is required",
-              "A review for this order has already been submitted"
+              "driverRating must be between 1 and 5",
+              "comment must be at least 10 characters",
+              "Rating window has expired for this ride (must rate within 48 hours)"
             ],
             "items": {
               "type": "string",
-              "example": "aepmInUzFMxudLT0R5XPx4cMeBzWPQtYsM6Of5N8"
+              "example": "ipH339HV8BOcfro8hFeLmHYZ96UnDZtWHJOt"
             }
           },
           "timestamp": {
@@ -141,66 +140,64 @@
           }
         },
         "example": {
-          "error": "REVIEW_VALIDATION_FAILED",
+          "error": "RATING_INVALID",
           "code": 400,
           "details": [
-            "restaurantRating must be between 1 and 5",
-            "overallComment must be at least 10 characters",
-            "deliveryRating is required",
-            "A review for this order has already been submitted"
+            "driverRating must be between 1 and 5",
+            "comment must be at least 10 characters",
+            "Rating window has expired for this ride (must rate within 48 hours)"
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
       },
-      "SubmitDeliveryAgentRatingRequest": {
-        "type": "object"
-      },
-      "SubmitDeliveryAgentRatingResponse_200": {
+      "SubmitDriverFeedbackTagsRequest": {
         "type": "object",
         "properties": {
-          "reviewId": {
+          "rideId": {
             "type": "string",
-            "example": "REV-20260608-4421"
+            "example": "TQZfbrVEAxV7pIc890"
           },
-          "orderId": {
-            "type": "string",
-            "example": "FD-ORD-20260607-5510"
-          },
-          "status": {
-            "type": "string",
-            "example": "PUBLISHED"
-          },
-          "rewardPointsEarned": {
+          "driverRating": {
             "type": "integer",
             "format": "int32",
-            "example": 50
+            "example": 13
           },
-          "message": {
+          "comment": {
             "type": "string",
-            "example": "Thank you for your review!"
+            "example": "GIW7Bh=y[MhSo{=s>R9=W>x>rkM%4l&*)3n+E{Z3>nIj412i"
+          },
+          "tags": {
+            "type": "array",
+            "example": "[ \"HK]+YUjZzT?^{dKzPZ\", \"rHcq^}RaS\", \"E||aY$\\\"\", \"IXff#Rp0w)@Y\" ]",
+            "items": {
+              "type": "string",
+              "example": "HK]+YUjZzT?^{dKzPZ"
+            }
+          },
+          "tip": {
+            "type": "number",
+            "example": 56.01
           }
         },
-        "example": {
-          "reviewId": "REV-20260608-4421",
-          "orderId": "FD-ORD-20260607-5510",
-          "status": "PUBLISHED",
-          "rewardPointsEarned": 50,
-          "message": "Thank you for your review!"
-        }
+        "example": "{\n  \"rideId\" : \"TQZfbrVEAxV7pIc890\",\n  \"driverRating\" : 13,\n  \"comment\" : \"GIW7Bh=y[MhSo{=s>R9=W>x>rkM%4l&*)3n+E{Z3>nIj412i\",\n  \"tags\" : [ \"HK]+YUjZzT?^{dKzPZ\", \"rHcq^}RaS\", \"E||aY$\\\"\", \"IXff#Rp0w)@Y\" ],\n  \"tip\" : 56.01\n}"
+      },
+      "SubmitDriverFeedbackTagsResponse_200": {
+        "type": "object",
+        "example": {}
       }
     },
     "parameters": {
-      "X-User-Id": {
-        "name": "X-User-Id",
+      "X-Rider-Id": {
+        "name": "X-Rider-Id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "USR-FOOD-5521"
+          "example": "RIDER-334455"
         },
-        "example": "USR-FOOD-5521"
+        "example": "RIDER-334455"
       },
       "Content-Type": {
         "name": "Content-Type",
@@ -222,9 +219,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "3bbbdd6f012c40949d31e9571440833ae6db87670aa5466d"
+          "example": "6d055eadd32345e18e776e37964457cbff26dd666b2e407f"
         },
-        "example": "3bbbdd6f012c40949d31e9571440833ae6db87670aa5466d"
+        "example": "6d055eadd32345e18e776e37964457cbff26dd666b2e407f"
       },
       "Authorization": {
         "name": "Authorization",
@@ -234,9 +231,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer customer-food-token"
+          "example": "Bearer rider-auth-token"
         },
-        "example": "Bearer customer-food-token"
+        "example": "Bearer rider-auth-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -269,9 +266,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f41341e520474fe48020fa096db18309837d83cef0ad413f"
+          "example": "dd96d05b6ab24443918874628c0fca240236c3d7303e4b4f"
         },
-        "example": "f41341e520474fe48020fa096db18309837d83cef0ad413f"
+        "example": "dd96d05b6ab24443918874628c0fca240236c3d7303e4b4f"
       },
       "Content-Type": {
         "style": "simple",

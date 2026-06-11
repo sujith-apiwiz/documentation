@@ -1,22 +1,19 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Personalized Content Feed API",
-    "description": "The Personalized Content Feed API provides users with customized content recommendations tailored to their preferences. This API allows for the retrieval of personalized feed items, enhancing user engagement and experience. Utilize this API to access dynamic and relevant content based on individual user behavior and interests.",
-    "termsOfService": "By using this API, you agree to abide by the following terms of service, ensuring responsible use of personalized content and compliance with user privacy regulations. For more details, visit our terms of service page.",
+    "title": "Realtime Zone Filtering API",
+    "description": "This API provides a mechanism to filter available slots in real-time based on specified parameters and vehicle types. It is designed to enhance the management and accessibility of slot data, allowing users to efficiently retrieve and interact with live zone availability information.",
+    "termsOfService": "https://example.com/terms",
     "contact": {
       "name": "Support Team",
-      "url": "https://www.example.com/support",
+      "url": "https://example.com/support",
       "email": "support@example.com"
     },
-    "version": "1.0",
-    "extensions": {
-      "x-oas-type": "Runtime"
-    }
+    "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/streaming",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/parking",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -24,21 +21,21 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/streaming"
+      "x-basePath": "/v1/parking"
     }
   ],
   "paths": {
-    "/users/USR-VFX-1100/recommendations/content/personalized/homepage/feed": {
+    "/lots/LOT-NONEXISTENT-ZZZ/slots/available/realtime/zones/filter": {
       "get": {
         "tags": [
-          "Recommendations"
+          "Slots"
         ],
-        "summary": "Fetch Personalized Homepage Feed",
-        "description": "This operation retrieves a personalized content feed for the specified user. The user is identified by their unique user ID, and the request can include parameters to filter the type of content. The expected outcome is a curated list of relevant recommendations tailored for the user's preferences.",
-        "operationId": "fetchPersonalizedHomepageFeed",
+        "summary": "Retrieve Available Slots for Lot",
+        "description": "This operation allows you to retrieve the real-time availability of slots for a specified lot. It accepts parameters including vehicle type and a parent span ID to filter the results effectively. The expected outcome is a list of available slots grouped by zones, or an appropriate error response if the lot does not exist.",
+        "operationId": "retrieveAvailableSlotsForLot",
         "parameters": [
           {
-            "$ref": "#/components/parameters/contentType"
+            "$ref": "#/components/parameters/vehicleType"
           },
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -54,14 +51,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/FetchPersonalizedHomepageFeedRequest"
+                "$ref": "#/components/schemas/RetrieveAvailableSlotsForLotRequest"
               }
             }
           }
         },
         "responses": {
-          "500": {
-            "description": "Internal server error occurred",
+          "404": {
+            "description": "Specified lot not found",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -76,7 +73,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FetchPersonalizedHomepageFeedResponse_500"
+                  "$ref": "#/components/schemas/RetrieveAvailableSlotsForLotResponse_404"
                 }
               }
             }
@@ -92,29 +89,25 @@
   },
   "components": {
     "schemas": {
-      "FetchPersonalizedHomepageFeedRequest": {
+      "RetrieveAvailableSlotsForLotRequest": {
         "type": "string",
         "example": ""
       },
-      "FetchPersonalizedHomepageFeedResponse_500": {
+      "RetrieveAvailableSlotsForLotResponse_404": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "RECOMMENDATION_ENGINE_TIMEOUT"
+            "example": "PARKING_LOT_NOT_FOUND"
           },
           "code": {
             "type": "integer",
             "format": "int32",
-            "example": 500
+            "example": 404
           },
           "message": {
             "type": "string",
-            "example": "ML recommendation service timed out. Serving trending content as fallback."
-          },
-          "incidentId": {
-            "type": "string",
-            "example": "INC-STRM-2026-0711"
+            "example": "Parking lot LOT-NONEXISTENT-ZZZ does not exist or is not operational."
           },
           "timestamp": {
             "type": "string",
@@ -122,26 +115,25 @@
           }
         },
         "example": {
-          "error": "RECOMMENDATION_ENGINE_TIMEOUT",
-          "code": 500,
-          "message": "ML recommendation service timed out. Serving trending content as fallback.",
-          "incidentId": "INC-STRM-2026-0711",
+          "error": "PARKING_LOT_NOT_FOUND",
+          "code": 404,
+          "message": "Parking lot LOT-NONEXISTENT-ZZZ does not exist or is not operational.",
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "contentType": {
-        "name": "contentType",
+      "vehicleType": {
+        "name": "vehicleType",
         "in": "query",
         "required": false,
         "style": "form",
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "lzu"
+          "example": "bgsoe"
         },
-        "example": "lzu"
+        "example": "bgsoe"
       },
       "parentspanid": {
         "name": "parentspanid",
@@ -151,9 +143,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6b31eb71aa3c454da349420005154f493c97f9fe12ed431d"
+          "example": "1932f785a9314983bdcec39dbcc7ea2c3b2c8ae77efd4bbb"
         },
-        "example": "6b31eb71aa3c454da349420005154f493c97f9fe12ed431d"
+        "example": "1932f785a9314983bdcec39dbcc7ea2c3b2c8ae77efd4bbb"
       },
       "Authorization": {
         "name": "Authorization",
@@ -163,9 +155,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer viewer-auth-token"
+          "example": "Bearer driver-auth-token"
         },
-        "example": "Bearer viewer-auth-token"
+        "example": "Bearer driver-auth-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -177,7 +169,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "server_error"
+            "not_found"
           ]
         }
       }
@@ -197,9 +189,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f3e72e549f904b459e90eaed5d7ee9af88a8159d17a54273"
+          "example": "2b0831e9de18484a8bde9577ec1357d0b7dfc1a111d24bee"
         },
-        "example": "f3e72e549f904b459e90eaed5d7ee9af88a8159d17a54273"
+        "example": "2b0831e9de18484a8bde9577ec1357d0b7dfc1a111d24bee"
       },
       "Content-Type": {
         "style": "simple",

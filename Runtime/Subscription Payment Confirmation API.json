@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Restaurant Delivery Rating API",
-    "description": "This API allows users to submit ratings for the delivery agents associated with their restaurant orders. It facilitates a seamless process for customers to provide feedback, helping restaurants improve their service quality and delivery experience. The API supports parameterized requests requiring user identification and feedback content, with responsive error handling to ensure a smooth integration.",
+    "title": "Subscription Payment Confirmation API",
+    "description": "The Subscription Payment Confirmation API allows users to confirm the activation of billing cycles for subscriptions. It simplifies the process of managing subscription payments and ensures seamless billing operations. Use this API to trigger confirmation actions programmatically, enhancing user control over their subscription status.",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v2/food",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/streaming",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,18 +18,18 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v2/food"
+      "x-basePath": "/v1/streaming"
     }
   ],
   "paths": {
-    "/orders/FD-ORD-20260607-5510/review/restaurant/delivery/agent/rating/submit": {
+    "/subscriptions/plan/payment/billing/cycle/activate/confirm": {
       "post": {
         "tags": [
-          "Orders"
+          "Subscriptions"
         ],
-        "summary": "Submit Delivery Agent Rating",
-        "description": "This operation allows users to submit a rating for the delivery agent associated with their order. Users must provide their unique identifier and the rating value in the request body. Upon successful submission, the service will acknowledge the rating, allowing for improved delivery experience feedback.",
-        "operationId": "submitDeliveryAgentRating",
+        "summary": "Confirm Billing Cycle Activation",
+        "description": "This operation confirms the activation of a billing cycle for a specific subscription plan. The request requires unique user identification and appropriate authentication headers. Upon successful confirmation, the system will activate the billing cycle, allowing for subsequent payments according to the plan's schedule.",
+        "operationId": "confirmBillingCycleActivation",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-User-Id"
@@ -44,6 +44,9 @@
             "$ref": "#/components/parameters/Authorization"
           },
           {
+            "$ref": "#/components/parameters/X-Device-Type"
+          },
+          {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
@@ -51,7 +54,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SubmitDeliveryAgentRatingRequest"
+                "$ref": "#/components/schemas/ConfirmBillingCycleActivationRequest"
               }
             }
           }
@@ -73,13 +76,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubmitDeliveryAgentRatingResponse_400"
+                  "$ref": "#/components/schemas/ConfirmBillingCycleActivationResponse_400"
                 }
               }
             }
           },
           "200": {
-            "description": "Rating submitted successfully",
+            "description": "Billing cycle activated successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -94,7 +97,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubmitDeliveryAgentRatingResponse_200"
+                  "$ref": "#/components/schemas/ConfirmBillingCycleActivationResponse_200"
                 }
               }
             }
@@ -110,12 +113,12 @@
   },
   "components": {
     "schemas": {
-      "SubmitDeliveryAgentRatingResponse_400": {
+      "ConfirmBillingCycleActivationResponse_400": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "REVIEW_VALIDATION_FAILED"
+            "example": "SUBSCRIPTION_INVALID"
           },
           "code": {
             "type": "integer",
@@ -125,14 +128,14 @@
           "details": {
             "type": "array",
             "example": [
-              "restaurantRating must be between 1 and 5",
-              "overallComment must be at least 10 characters",
-              "deliveryRating is required",
-              "A review for this order has already been submitted"
+              "planId PLAN-INVALID does not exist",
+              "billingCycle must be MONTHLY or ANNUAL",
+              "paymentMethod is required",
+              "User already has an active subscription. Please upgrade or cancel existing plan."
             ],
             "items": {
               "type": "string",
-              "example": "aepmInUzFMxudLT0R5XPx4cMeBzWPQtYsM6Of5N8"
+              "example": "I(Iuddw$:m;Tyvs{jMGh<Dwkm'v^J@<=a^"
             }
           },
           "timestamp": {
@@ -141,52 +144,23 @@
           }
         },
         "example": {
-          "error": "REVIEW_VALIDATION_FAILED",
+          "error": "SUBSCRIPTION_INVALID",
           "code": 400,
           "details": [
-            "restaurantRating must be between 1 and 5",
-            "overallComment must be at least 10 characters",
-            "deliveryRating is required",
-            "A review for this order has already been submitted"
+            "planId PLAN-INVALID does not exist",
+            "billingCycle must be MONTHLY or ANNUAL",
+            "paymentMethod is required",
+            "User already has an active subscription. Please upgrade or cancel existing plan."
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
       },
-      "SubmitDeliveryAgentRatingRequest": {
+      "ConfirmBillingCycleActivationRequest": {
         "type": "object"
       },
-      "SubmitDeliveryAgentRatingResponse_200": {
+      "ConfirmBillingCycleActivationResponse_200": {
         "type": "object",
-        "properties": {
-          "reviewId": {
-            "type": "string",
-            "example": "REV-20260608-4421"
-          },
-          "orderId": {
-            "type": "string",
-            "example": "FD-ORD-20260607-5510"
-          },
-          "status": {
-            "type": "string",
-            "example": "PUBLISHED"
-          },
-          "rewardPointsEarned": {
-            "type": "integer",
-            "format": "int32",
-            "example": 50
-          },
-          "message": {
-            "type": "string",
-            "example": "Thank you for your review!"
-          }
-        },
-        "example": {
-          "reviewId": "REV-20260608-4421",
-          "orderId": "FD-ORD-20260607-5510",
-          "status": "PUBLISHED",
-          "rewardPointsEarned": 50,
-          "message": "Thank you for your review!"
-        }
+        "example": {}
       }
     },
     "parameters": {
@@ -198,9 +172,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "USR-FOOD-5521"
+          "example": "USR-VFX-9921"
         },
-        "example": "USR-FOOD-5521"
+        "example": "USR-VFX-9921"
       },
       "Content-Type": {
         "name": "Content-Type",
@@ -222,9 +196,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "3bbbdd6f012c40949d31e9571440833ae6db87670aa5466d"
+          "example": "5da3e5b671e54e8b945819861cd7422ddea8557e3b3e46a5"
         },
-        "example": "3bbbdd6f012c40949d31e9571440833ae6db87670aa5466d"
+        "example": "5da3e5b671e54e8b945819861cd7422ddea8557e3b3e46a5"
       },
       "Authorization": {
         "name": "Authorization",
@@ -234,9 +208,21 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer customer-food-token"
+          "example": "Bearer viewer-auth-token"
         },
-        "example": "Bearer customer-food-token"
+        "example": "Bearer viewer-auth-token"
+      },
+      "X-Device-Type": {
+        "name": "X-Device-Type",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "SMART_TV"
+        },
+        "example": "SMART_TV"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -269,9 +255,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f41341e520474fe48020fa096db18309837d83cef0ad413f"
+          "example": "c943cd3dc42e41a48cb9bef866cf9d76e7417c6fc3364286"
         },
-        "example": "f41341e520474fe48020fa096db18309837d83cef0ad413f"
+        "example": "c943cd3dc42e41a48cb9bef866cf9d76e7417c6fc3364286"
       },
       "Content-Type": {
         "style": "simple",
