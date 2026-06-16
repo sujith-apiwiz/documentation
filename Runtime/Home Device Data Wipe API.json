@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "User Watchlist Removal API",
-    "description": "The User Watchlist Removal API allows users to efficiently manage their multimedia content by removing specified items from their personalized watchlists. This API supports enhanced user experience by providing a straightforward mechanism to modify saved content preferences.",
+    "title": "Home Device Data Wipe API",
+    "description": "This API allows users to securely wipe data from specific devices within their smart home ecosystem. It ensures that all sensitive information is permanently removed, adhering to security best practices. Users can initiate a data wipe for devices by providing the necessary parameters and authorization.",
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/streaming",
+      "url": "https://stage-data-gujl.apiwiz.io",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -15,18 +15,18 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/streaming"
+      "x-basePath": "/"
     }
   ],
   "paths": {
-    "/users/USR-VFX-9921/watchlist/saved/content/MOV-NOT-IN-LIST/remove": {
+    "/v1/smarthome/homes/HOME-441122/devices/DEV-GATEWAY-HUB-001/remove/deregister/data/wipe": {
       "delete": {
         "tags": [
-          "Watchlist"
+          "Device Management"
         ],
-        "summary": "Remove Movie from Watchlist",
-        "description": "This operation allows users to remove a specific movie from their saved watchlist. The request requires the user's unique identifier and the movie's identifier that needs to be removed. Upon successful execution, the specified movie will no longer appear in the user's watchlist, confirming efficient management of saved content.",
-        "operationId": "removeMovieFromWatchlist",
+        "summary": "Deregister Device and Wipe Data",
+        "description": "This operation deregisters the specified device from the home system and wipes all associated data. It requires the relevant authentication parameters and, upon successful completion, ensures that the device is thoroughly removed from the system without any residual information. The outcome is a clean removal of the device, safeguarding user privacy and data integrity.",
+        "operationId": "deregisterDeviceAndWipeData",
         "parameters": [
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -42,14 +42,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RemoveMovieFromWatchlistRequest"
+                "$ref": "#/components/schemas/DeregisterDeviceAndWipeDataRequest"
               }
             }
           }
         },
         "responses": {
-          "404": {
-            "description": "Movie not found in watchlist",
+          "400": {
+            "description": "Invalid request parameters",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -64,7 +64,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RemoveMovieFromWatchlistResponse_404"
+                  "$ref": "#/components/schemas/DeregisterDeviceAndWipeDataResponse_400"
                 }
               }
             }
@@ -80,25 +80,30 @@
   },
   "components": {
     "schemas": {
-      "RemoveMovieFromWatchlistRequest": {
+      "DeregisterDeviceAndWipeDataRequest": {
         "type": "string",
-        "example": ""
+        "example": "{}"
       },
-      "RemoveMovieFromWatchlistResponse_404": {
+      "DeregisterDeviceAndWipeDataResponse_400": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "CONTENT_NOT_IN_WATCHLIST"
+            "example": "DEVICE_REMOVAL_BLOCKED"
           },
           "code": {
             "type": "integer",
             "format": "int32",
-            "example": 404
+            "example": 400
           },
           "message": {
             "type": "string",
-            "example": "Content MOV-NOT-IN-LIST not found in user watchlist."
+            "example": "Cannot remove the primary hub device while other devices are connected. Please remove all child devices first."
+          },
+          "connectedDevices": {
+            "type": "integer",
+            "format": "int32",
+            "example": 8
           },
           "timestamp": {
             "type": "string",
@@ -106,9 +111,10 @@
           }
         },
         "example": {
-          "error": "CONTENT_NOT_IN_WATCHLIST",
-          "code": 404,
-          "message": "Content MOV-NOT-IN-LIST not found in user watchlist.",
+          "error": "DEVICE_REMOVAL_BLOCKED",
+          "code": 400,
+          "message": "Cannot remove the primary hub device while other devices are connected. Please remove all child devices first.",
+          "connectedDevices": 8,
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
@@ -122,9 +128,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "cbcc3844a91f4c59a1f147327233f8588ddc86e9cacc484d"
+          "example": "4413c851083344389adf4ae976717625854ca8f949504556"
         },
-        "example": "cbcc3844a91f4c59a1f147327233f8588ddc86e9cacc484d"
+        "example": "4413c851083344389adf4ae976717625854ca8f949504556"
       },
       "Authorization": {
         "name": "Authorization",
@@ -134,9 +140,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer viewer-auth-token"
+          "example": "Bearer homeowner-auth-token"
         },
-        "example": "Bearer viewer-auth-token"
+        "example": "Bearer homeowner-auth-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -148,7 +154,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "not_found"
+            "bad_request"
           ]
         }
       }
@@ -168,9 +174,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "5329ac9d6b2f4ce1880bcfb1ec21ff58c3c5d373c0eb426d"
+          "example": "e2275956ae1848f9bafbca0d3321748bb0b19c3440e54e72"
         },
-        "example": "5329ac9d6b2f4ce1880bcfb1ec21ff58c3c5d373c0eb426d"
+        "example": "e2275956ae1848f9bafbca0d3321748bb0b19c3440e54e72"
       },
       "Content-Type": {
         "style": "simple",

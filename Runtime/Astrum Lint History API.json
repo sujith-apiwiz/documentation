@@ -1,22 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Astrum Rule Management API",
-    "description": "The Astrum Rule Management API provides a comprehensive interface for managing and retrieving rule sets used within the Astrum system. This API allows users to fetch rule data based on various parameters, ensuring a flexible and efficient interaction with the rule engine. Ideal for developers seeking to integrate dynamic rule handling functionality into their applications.",
-    "termsOfService": "https://www.astrum.com/terms",
-    "contact": {
-      "name": "Astrum Support",
-      "url": "https://www.astrum.com/support",
-      "email": "support@astrum.com"
-    },
-    "version": "1.0",
-    "extensions": {
-      "x-oas-type": "Runtime"
-    }
+    "title": "Astrum Lint History API",
+    "description": "The Astrum Lint History API provides access to historical data related to lint operations within the Astrum system. This allows users to retrieve detailed insights on previous linted data outputs, including statuses and various metadata, facilitating better monitoring and analysis of lint results over time.",
+    "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/itorix/v1",
+      "url": "https://stage-data-gujl.apiwiz.io",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -24,27 +15,24 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/itorix/v1"
+      "x-basePath": "/"
     }
   ],
   "paths": {
-    "/astrum/rule-set": {
+    "/itorix/v1/astrum/lint/history": {
       "get": {
         "tags": [
-          "Rule Sets"
+          "Lint History"
         ],
-        "summary": "Retrieve Rule Set",
-        "description": "This operation retrieves the current rule set for the specified gateway type. It accepts various parameters, including timestamps and identifiers, to ensure the correct context and filtering of data. The expected outcome is a detailed rule set that adheres to the specified criteria, which can be utilized for further processing or evaluation.",
-        "operationId": "retrieveRuleSet",
+        "summary": "Retrieve Lint History",
+        "description": "This operation fetches the lint history for a specific entity based on the provided filtering parameters. Users can specify criteria such as status, page size, and various headers to receive a filtered set of historical lint data. The outcome will be a structured response containing the requested lint history details, enabling further analysis or reporting.",
+        "operationId": "retrieveLintHistory",
         "parameters": [
           {
-            "$ref": "#/components/parameters/gatewaytype"
+            "$ref": "#/components/parameters/status"
           },
           {
-            "$ref": "#/components/parameters/requesttimestamp"
-          },
-          {
-            "$ref": "#/components/parameters/responsetimestamp"
+            "$ref": "#/components/parameters/pageSize"
           },
           {
             "$ref": "#/components/parameters/pragma"
@@ -68,6 +56,9 @@
             "$ref": "#/components/parameters/jsessionid"
           },
           {
+            "$ref": "#/components/parameters/gatewaytype"
+          },
+          {
             "$ref": "#/components/parameters/cache-control"
           },
           {
@@ -86,7 +77,13 @@
             "$ref": "#/components/parameters/accept-language"
           },
           {
+            "$ref": "#/components/parameters/requesttimestamp"
+          },
+          {
             "$ref": "#/components/parameters/sec-ch-ua-mobile"
+          },
+          {
+            "$ref": "#/components/parameters/responsetimestamp"
           },
           {
             "$ref": "#/components/parameters/sec-ch-ua-platform"
@@ -96,8 +93,29 @@
           }
         ],
         "responses": {
+          "503": {
+            "description": "Service temporarily unavailable",
+            "headers": {
+              "date": {
+                "$ref": "#/components/headers/date"
+              },
+              "server": {
+                "$ref": "#/components/headers/server"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveLintHistoryResponse_503"
+                }
+              }
+            }
+          },
           "403": {
-            "description": "Access is forbidden for this request",
+            "description": "Forbidden access to the resource",
             "headers": {
               "date": {
                 "$ref": "#/components/headers/date"
@@ -139,28 +157,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RetrieveRuleSetResponse_403"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Service is temporarily unavailable",
-            "headers": {
-              "date": {
-                "$ref": "#/components/headers/date"
-              },
-              "server": {
-                "$ref": "#/components/headers/server"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RetrieveRuleSetResponse_503"
+                  "$ref": "#/components/schemas/RetrieveLintHistoryResponse_403"
                 }
               }
             }
@@ -176,51 +173,39 @@
   },
   "components": {
     "schemas": {
-      "RetrieveRuleSetResponse_403": {
+      "RetrieveLintHistoryResponse_503": {
         "type": "object",
         "example": {}
       },
-      "RetrieveRuleSetResponse_503": {
+      "RetrieveLintHistoryResponse_403": {
         "type": "object",
         "example": {}
       }
     },
     "parameters": {
-      "gatewaytype": {
-        "name": "gatewaytype",
-        "in": "header",
+      "status": {
+        "name": "status",
+        "in": "query",
         "required": false,
-        "style": "simple",
-        "explode": false,
+        "style": "form",
+        "explode": true,
         "schema": {
           "type": "string",
-          "example": "API_MONITOR"
+          "example": "mcojhtidh"
         },
-        "example": "API_MONITOR"
+        "example": "mcojhtidh"
       },
-      "requesttimestamp": {
-        "name": "requesttimestamp",
-        "in": "header",
+      "pageSize": {
+        "name": "pageSize",
+        "in": "query",
         "required": false,
-        "style": "simple",
-        "explode": false,
+        "style": "form",
+        "explode": true,
         "schema": {
           "type": "string",
-          "example": "1780989356618"
+          "example": "2"
         },
-        "example": "1780989356618"
-      },
-      "responsetimestamp": {
-        "name": "responsetimestamp",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "1780989356705"
-        },
-        "example": "1780989356705"
+        "example": "2"
       },
       "pragma": {
         "name": "pragma",
@@ -306,6 +291,18 @@
         },
         "example": "6900815ab4f5167022b891a7"
       },
+      "gatewaytype": {
+        "name": "gatewaytype",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "API_MONITOR"
+        },
+        "example": "API_MONITOR"
+      },
       "cache-control": {
         "name": "cache-control",
         "in": "header",
@@ -326,9 +323,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "z3O5TF9Jcg9S59Ez"
+          "example": "Xjn2dThoOdttMZBw"
         },
-        "example": "z3O5TF9Jcg9S59Ez"
+        "example": "Xjn2dThoOdttMZBw"
       },
       "sec-fetch-dest": {
         "name": "sec-fetch-dest",
@@ -378,6 +375,18 @@
         },
         "example": "en-GB,en;q=0.9"
       },
+      "requesttimestamp": {
+        "name": "requesttimestamp",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "1780989356590"
+        },
+        "example": "1780989356590"
+      },
       "sec-ch-ua-mobile": {
         "name": "sec-ch-ua-mobile",
         "in": "header",
@@ -389,6 +398,18 @@
           "example": "?0"
         },
         "example": "?0"
+      },
+      "responsetimestamp": {
+        "name": "responsetimestamp",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "1780989356617"
+        },
+        "example": "1780989356617"
       },
       "sec-ch-ua-platform": {
         "name": "sec-ch-ua-platform",
@@ -412,8 +433,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "forbidden",
-            "service_unavailable"
+            "service_unavailable",
+            "forbidden"
           ]
         }
       }
@@ -424,9 +445,27 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Fri, 05 Jun 2026 09:44:31 GMT"
+          "example": "Tue, 09 Jun 2026 07:15:55 GMT"
         },
-        "example": "Fri, 05 Jun 2026 09:44:31 GMT"
+        "example": "Tue, 09 Jun 2026 07:15:55 GMT"
+      },
+      "server": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "istio-envoy"
+        },
+        "example": "istio-envoy"
+      },
+      "content-type": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "text/plain"
+        },
+        "example": "text/plain"
       },
       "vary": {
         "style": "simple",
@@ -445,15 +484,6 @@
           "example": "no-cache"
         },
         "example": "no-cache"
-      },
-      "server": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "istio-envoy"
-        },
-        "example": "istio-envoy"
       },
       "expires": {
         "style": "simple",
@@ -526,15 +556,6 @@
           "example": "0"
         },
         "example": "0"
-      },
-      "content-type": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "text/plain"
-        },
-        "example": "text/plain"
       }
     }
   }

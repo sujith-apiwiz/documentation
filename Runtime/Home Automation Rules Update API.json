@@ -1,13 +1,16 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Beneficiary Nominee Confirmation API",
-    "description": "This API allows users to confirm updates to the personal details of beneficiaries' nominees associated with insurance policies. It streamlines the process of managing nominee information, ensuring that users can efficiently update and verify necessary details for beneficiaries linked to their policies.",
-    "version": "1.0"
+    "title": "Home Automation Rules Update API",
+    "description": "This API allows users to update scheduling triggers for automation rules within home automation systems. It enables seamless management of device triggers for enhanced user control and automation flexibility.",
+    "version": "1.0",
+    "extensions": {
+      "x-oas-type": "Runtime"
+    }
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/insurance",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/smarthome",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -15,18 +18,18 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/insurance"
+      "x-basePath": "/v1/smarthome"
     }
   ],
   "paths": {
-    "/policies/POL-INS-EXPIRED-001/beneficiary/nominee/update/personal/details/confirm": {
+    "/homes/HOME-441122/automation/rules/RULE-AUTO-9900/schedule/trigger/device/update": {
       "put": {
         "tags": [
-          "Beneficiary Management"
+          "Automation"
         ],
-        "summary": "Confirm Beneficiary Nominee Personal Details Update",
-        "description": "This operation confirms the update of personal details for a beneficiary nominee associated with the specified policy. The caller must provide valid authorization credentials and the updated personal details in the request body to process the confirmation. A successful confirmation will result in the beneficiary nominee's details being updated accordingly.",
-        "operationId": "confirmBeneficiaryNomineePersonalDetailsUpdate",
+        "summary": "Update Device Trigger Schedule",
+        "description": "This operation updates the device trigger schedule for a specific automation rule in the specified home. It requires the necessary input parameters in the request body to identify the rule and the new schedule settings. Upon successful execution, the device trigger schedule will be updated accordingly.",
+        "operationId": "updateDeviceTriggerSchedule",
         "parameters": [
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -45,14 +48,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConfirmBeneficiaryNomineePersonalDetailsUpdateRequest"
+                "$ref": "#/components/schemas/UpdateDeviceTriggerScheduleRequest"
               }
             }
           }
         },
         "responses": {
-          "400": {
-            "description": "Invalid request parameters provided",
+          "500": {
+            "description": "Internal server error occurred",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -67,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConfirmBeneficiaryNomineePersonalDetailsUpdateResponse_400"
+                  "$ref": "#/components/schemas/UpdateDeviceTriggerScheduleResponse_500"
                 }
               }
             }
@@ -83,45 +86,68 @@
   },
   "components": {
     "schemas": {
-      "ConfirmBeneficiaryNomineePersonalDetailsUpdateRequest": {
+      "UpdateDeviceTriggerScheduleRequest": {
         "type": "object",
         "properties": {
-          "nomineeShare": {
-            "type": "integer",
-            "format": "int32",
-            "example": 63
-          },
-          "nomineeRelation": {
+          "ruleName": {
             "type": "string",
-            "example": "Q<@BsC\"?Blp7>KW]"
+            "example": "nthitlbojogkhvjw"
+          },
+          "trigger": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "xdcbay"
+              }
+            },
+            "example": "{\n  \"type\" : \"xdcbay\"\n}"
+          },
+          "actions": {
+            "type": "array",
+            "example": "[ {\n  \"deviceId\" : \"Lz1rWVowbevW\",\n  \"command\" : \"icow\"\n} ]",
+            "items": {
+              "type": "object",
+              "properties": {
+                "deviceId": {
+                  "type": "string",
+                  "example": "Lz1rWVowbevW"
+                },
+                "command": {
+                  "type": "string",
+                  "example": "icow"
+                }
+              },
+              "example": "{\n  \"deviceId\" : \"Lz1rWVowbevW\",\n  \"command\" : \"icow\"\n}"
+            }
           }
         },
-        "example": "{\n  \"nomineeShare\" : 63,\n  \"nomineeRelation\" : \"Q<@BsC\\\"?Blp7>KW]\"\n}"
+        "example": "{\n  \"ruleName\" : \"nthitlbojogkhvjw\",\n  \"trigger\" : {\n    \"type\" : \"xdcbay\"\n  },\n  \"actions\" : [ {\n    \"deviceId\" : \"Lz1rWVowbevW\",\n    \"command\" : \"icow\"\n  } ]\n}"
       },
-      "ConfirmBeneficiaryNomineePersonalDetailsUpdateResponse_400": {
+      "UpdateDeviceTriggerScheduleResponse_500": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "POLICY_UPDATE_FAILED"
+            "example": "DEVICE_MESH_SYNC_ERROR"
           },
           "code": {
             "type": "integer",
             "format": "int32",
-            "example": 400
+            "example": 500
           },
-          "details": {
-            "type": "array",
-            "example": [
-              "Policy POL-INS-EXPIRED-001 is expired and cannot be updated",
-              "nomineeShare must be between 1 and 100",
-              "nomineeRelation must be one of: SPOUSE, CHILD, PARENT, SIBLING",
-              "nomineeName is required"
-            ],
-            "items": {
-              "type": "string",
-              "example": "MUiIVMCaGWylNMZjBf5FmA9N3YcdUxAj5YtyX2lW5DXUeawVDQA48zbdm1k"
-            }
+          "message": {
+            "type": "string",
+            "example": "Smart home hub is unreachable. Rule saved but device sync failed."
+          },
+          "incidentId": {
+            "type": "string",
+            "example": "INC-IOT-2026-0220"
+          },
+          "retryAfter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 30
           },
           "timestamp": {
             "type": "string",
@@ -129,14 +155,11 @@
           }
         },
         "example": {
-          "error": "POLICY_UPDATE_FAILED",
-          "code": 400,
-          "details": [
-            "Policy POL-INS-EXPIRED-001 is expired and cannot be updated",
-            "nomineeShare must be between 1 and 100",
-            "nomineeRelation must be one of: SPOUSE, CHILD, PARENT, SIBLING",
-            "nomineeName is required"
-          ],
+          "error": "DEVICE_MESH_SYNC_ERROR",
+          "code": 500,
+          "message": "Smart home hub is unreachable. Rule saved but device sync failed.",
+          "incidentId": "INC-IOT-2026-0220",
+          "retryAfter": 30,
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
@@ -162,9 +185,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "34d203491f6e4b89988a3ba2c935a8f1f5090e0348414a35"
+          "example": "c17dd32a09b84182bc94cebef177043271a4e397b92a4346"
         },
-        "example": "34d203491f6e4b89988a3ba2c935a8f1f5090e0348414a35"
+        "example": "c17dd32a09b84182bc94cebef177043271a4e397b92a4346"
       },
       "Authorization": {
         "name": "Authorization",
@@ -174,9 +197,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer ins-customer-token"
+          "example": "Bearer homeowner-auth-token"
         },
-        "example": "Bearer ins-customer-token"
+        "example": "Bearer homeowner-auth-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -188,7 +211,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "bad_request"
+            "server_error"
           ]
         }
       }
@@ -208,9 +231,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "7e75424f4e654baf9a55482d00db47a5da68a9d52a304b40"
+          "example": "1259115928c543b3b897ed09d3065f1adc51df4144e848ea"
         },
-        "example": "7e75424f4e654baf9a55482d00db47a5da68a9d52a304b40"
+        "example": "1259115928c543b3b897ed09d3065f1adc51df4144e848ea"
       },
       "Content-Type": {
         "style": "simple",

@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Subscription Payment Confirmation API",
-    "description": "This API allows users to confirm the activation of their subscription payment billing cycles. It provides a straightforward interface for processing confirmation requests related to subscription plans, ensuring that the billing cycles are properly activated and managed.",
+    "title": "Warehouse Stock Approval API",
+    "description": "This API facilitates the execution of stock write-off approvals in the specified warehouse, allowing users to manage and audit damaged goods efficiently. It provides endpoints for executing approvals, tracking requests, and handling responses effectively.",
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/streaming",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/inventory",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -15,24 +15,24 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/streaming"
+      "x-basePath": "/v1/inventory"
     }
   ],
   "paths": {
-    "/subscriptions/plan/payment/billing/cycle/activate/confirm": {
-      "post": {
+    "/warehouse/WH-NORTH-003/stock/writeoff/damaged/approval/audit/execute": {
+      "delete": {
         "tags": [
-          "Subscriptions"
+          "Warehouse Management"
         ],
-        "summary": "Confirm Billing Cycle Activation",
-        "description": "This operation confirms the activation of a billing cycle associated with a subscription plan. It expects inputs such as user identification, device type, and authorization credentials within the headers, along with a request body containing the necessary activation details. Upon successful confirmation, the user will receive a response indicating that the billing cycle has been activated.",
-        "operationId": "confirmBillingCycleActivation",
+        "summary": "Execute Damage Write-off Approval",
+        "description": "This operation allows users to execute the final approval process for damaged stock write-offs in the North Warehouse. It requires the appropriate authorization and approval ID to process the request successfully. Upon execution, the damaged items will be marked as written off and updated in the inventory records.",
+        "operationId": "executeDamageWriteoffApproval",
         "parameters": [
           {
-            "$ref": "#/components/parameters/X-User-Id"
+            "$ref": "#/components/parameters/X-Approval-Id"
           },
           {
-            "$ref": "#/components/parameters/X-Device-Type"
+            "$ref": "#/components/parameters/X-Warehouse-Id"
           },
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -51,14 +51,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConfirmBillingCycleActivationRequest"
+                "$ref": "#/components/schemas/ExecuteDamageWriteoffApprovalRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Billing cycle activated successfully",
+            "description": "Request processed successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -73,7 +73,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConfirmBillingCycleActivationResponse_200"
+                  "$ref": "#/components/schemas/ExecuteDamageWriteoffApprovalResponse_200"
                 }
               }
             }
@@ -94,7 +94,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConfirmBillingCycleActivationResponse_400"
+                  "$ref": "#/components/schemas/ExecuteDamageWriteoffApprovalResponse_400"
                 }
               }
             }
@@ -110,34 +110,53 @@
   },
   "components": {
     "schemas": {
-      "ConfirmBillingCycleActivationResponse_200": {
+      "ExecuteDamageWriteoffApprovalResponse_200": {
         "type": "object",
         "example": {}
       },
-      "ConfirmBillingCycleActivationRequest": {
+      "ExecuteDamageWriteoffApprovalRequest": {
         "type": "object",
         "properties": {
-          "userId": {
+          "warehouseId": {
             "type": "string",
-            "example": "QiBAqyMSuZzE"
+            "example": "AZQSU1ZHTEP5"
           },
-          "planId": {
-            "type": "string",
-            "example": "F4\"m4HW34GN7"
+          "items": {
+            "type": "array",
+            "example": "[ {\n  \"sku\" : \"uOaPokJhguFk1\",\n  \"quantity\" : 41,\n  \"reason\" : \"\"\n} ]",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sku": {
+                  "type": "string",
+                  "example": "uOaPokJhguFk1"
+                },
+                "quantity": {
+                  "type": "integer",
+                  "format": "int32",
+                  "example": 41
+                },
+                "reason": {
+                  "type": "string",
+                  "example": ""
+                }
+              },
+              "example": "{\n  \"sku\" : \"uOaPokJhguFk1\",\n  \"quantity\" : 41,\n  \"reason\" : \"\"\n}"
+            }
           },
-          "billingCycle": {
+          "date": {
             "type": "string",
-            "example": "jdrktd"
+            "example": "v08cwt\"?L]"
           }
         },
-        "example": "{\n  \"userId\" : \"QiBAqyMSuZzE\",\n  \"planId\" : \"F4\\\"m4HW34GN7\",\n  \"billingCycle\" : \"jdrktd\"\n}"
+        "example": "{\n  \"warehouseId\" : \"AZQSU1ZHTEP5\",\n  \"items\" : [ {\n    \"sku\" : \"uOaPokJhguFk1\",\n    \"quantity\" : 41,\n    \"reason\" : \"\"\n  } ],\n  \"date\" : \"v08cwt\\\"?L]\"\n}"
       },
-      "ConfirmBillingCycleActivationResponse_400": {
+      "ExecuteDamageWriteoffApprovalResponse_400": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "SUBSCRIPTION_INVALID"
+            "example": "WRITEOFF_VALIDATION_FAILED"
           },
           "code": {
             "type": "integer",
@@ -147,14 +166,14 @@
           "details": {
             "type": "array",
             "example": [
-              "planId PLAN-INVALID does not exist",
-              "billingCycle must be MONTHLY or ANNUAL",
-              "paymentMethod is required",
-              "User already has an active subscription. Please upgrade or cancel existing plan."
+              "Write-off quantity 300 exceeds available stock of 200 for SKU-ELEC-1002",
+              "reason is required",
+              "approvalId is required for write-offs above 5 units",
+              "damage description is required"
             ],
             "items": {
               "type": "string",
-              "example": "ijsFi<Nn$|^hB0lYU9j}2-/xl}}mLhiLe3"
+              "example": "ZgAIBXb26onltn2v2secXnX4BjCAOUnCx0Y9mqebkSoPGd0xaParxVIuHK5TJZUoKytfQFH"
             }
           },
           "timestamp": {
@@ -163,42 +182,42 @@
           }
         },
         "example": {
-          "error": "SUBSCRIPTION_INVALID",
+          "error": "WRITEOFF_VALIDATION_FAILED",
           "code": 400,
           "details": [
-            "planId PLAN-INVALID does not exist",
-            "billingCycle must be MONTHLY or ANNUAL",
-            "paymentMethod is required",
-            "User already has an active subscription. Please upgrade or cancel existing plan."
+            "Write-off quantity 300 exceeds available stock of 200 for SKU-ELEC-1002",
+            "reason is required",
+            "approvalId is required for write-offs above 5 units",
+            "damage description is required"
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "X-User-Id": {
-        "name": "X-User-Id",
+      "X-Approval-Id": {
+        "name": "X-Approval-Id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "USR-VFX-9921"
+          "example": "APRV-WO-3311"
         },
-        "example": "USR-VFX-9921"
+        "example": "APRV-WO-3311"
       },
-      "X-Device-Type": {
-        "name": "X-Device-Type",
+      "X-Warehouse-Id": {
+        "name": "X-Warehouse-Id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "SMART_TV"
+          "example": "WH-NORTH-003"
         },
-        "example": "SMART_TV"
+        "example": "WH-NORTH-003"
       },
       "Content-Type": {
         "name": "Content-Type",
@@ -220,9 +239,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "d39f0052b56b48338ff667479c19a8a9b27c6392b0d847a3"
+          "example": "5376c676e9ff48ce887e70d33a63dec1207c97af29f34b69"
         },
-        "example": "d39f0052b56b48338ff667479c19a8a9b27c6392b0d847a3"
+        "example": "5376c676e9ff48ce887e70d33a63dec1207c97af29f34b69"
       },
       "Authorization": {
         "name": "Authorization",
@@ -232,9 +251,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer viewer-auth-token"
+          "example": "Bearer warehouse-mgr-token"
         },
-        "example": "Bearer viewer-auth-token"
+        "example": "Bearer warehouse-mgr-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -267,9 +286,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6e6872f04e304c5a910308fb27ed2db16ef4a31213f141c2"
+          "example": "34ed6c090cab4f188027b87b0d9b74ea02c4667b7c4942b9"
         },
-        "example": "6e6872f04e304c5a910308fb27ed2db16ef4a31213f141c2"
+        "example": "34ed6c090cab4f188027b87b0d9b74ea02c4667b7c4942b9"
       },
       "Content-Type": {
         "style": "simple",

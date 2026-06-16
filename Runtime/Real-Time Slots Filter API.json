@@ -1,13 +1,18 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "User Watchlist Removal API",
-    "description": "The User Watchlist Removal API allows users to efficiently manage their multimedia content by removing specified items from their personalized watchlists. This API supports enhanced user experience by providing a straightforward mechanism to modify saved content preferences.",
+    "title": "Real-Time Slots Filter API",
+    "description": "This API allows users to filter and retrieve real-time availability of slots in specified zones for lots. It provides endpoints to access detailed slot information dynamically, enabling effective management of slot resources and enhanced decision-making capabilities.",
+    "contact": {
+      "name": "Support Team",
+      "url": "https://support.example.com",
+      "email": "support@example.com"
+    },
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/streaming",
+      "url": "https://stage-data-gujl.apiwiz.io",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -15,19 +20,22 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/streaming"
+      "x-basePath": "/"
     }
   ],
   "paths": {
-    "/users/USR-VFX-9921/watchlist/saved/content/MOV-NOT-IN-LIST/remove": {
-      "delete": {
+    "/v1/parking/lots/LOT-NONEXISTENT-ZZZ/slots/available/realtime/zones/filter": {
+      "get": {
         "tags": [
-          "Watchlist"
+          "Slot Availability"
         ],
-        "summary": "Remove Movie from Watchlist",
-        "description": "This operation allows users to remove a specific movie from their saved watchlist. The request requires the user's unique identifier and the movie's identifier that needs to be removed. Upon successful execution, the specified movie will no longer appear in the user's watchlist, confirming efficient management of saved content.",
-        "operationId": "removeMovieFromWatchlist",
+        "summary": "Retrieve Available Slots by Zone",
+        "description": "This operation fetches real-time available slots for a specific lot, filtered by zone. The user should provide a vehicle type and an optional parent span ID. Upon successful execution, a list of available slots will be returned for the specified criteria.",
+        "operationId": "retrieveAvailableSlotsByZone",
         "parameters": [
+          {
+            "$ref": "#/components/parameters/vehicleType"
+          },
           {
             "$ref": "#/components/parameters/parentspanid"
           },
@@ -42,14 +50,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RemoveMovieFromWatchlistRequest"
+                "$ref": "#/components/schemas/RetrieveAvailableSlotsByZoneRequest"
               }
             }
           }
         },
         "responses": {
           "404": {
-            "description": "Movie not found in watchlist",
+            "description": "Requested lot not found",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -64,7 +72,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RemoveMovieFromWatchlistResponse_404"
+                  "$ref": "#/components/schemas/RetrieveAvailableSlotsByZoneResponse_404"
                 }
               }
             }
@@ -80,16 +88,16 @@
   },
   "components": {
     "schemas": {
-      "RemoveMovieFromWatchlistRequest": {
+      "RetrieveAvailableSlotsByZoneRequest": {
         "type": "string",
-        "example": ""
+        "example": "{}"
       },
-      "RemoveMovieFromWatchlistResponse_404": {
+      "RetrieveAvailableSlotsByZoneResponse_404": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "CONTENT_NOT_IN_WATCHLIST"
+            "example": "PARKING_LOT_NOT_FOUND"
           },
           "code": {
             "type": "integer",
@@ -98,7 +106,7 @@
           },
           "message": {
             "type": "string",
-            "example": "Content MOV-NOT-IN-LIST not found in user watchlist."
+            "example": "Parking lot LOT-NONEXISTENT-ZZZ does not exist or is not operational."
           },
           "timestamp": {
             "type": "string",
@@ -106,14 +114,26 @@
           }
         },
         "example": {
-          "error": "CONTENT_NOT_IN_WATCHLIST",
+          "error": "PARKING_LOT_NOT_FOUND",
           "code": 404,
-          "message": "Content MOV-NOT-IN-LIST not found in user watchlist.",
+          "message": "Parking lot LOT-NONEXISTENT-ZZZ does not exist or is not operational.",
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
+      "vehicleType": {
+        "name": "vehicleType",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "tzsjn"
+        },
+        "example": "tzsjn"
+      },
       "parentspanid": {
         "name": "parentspanid",
         "in": "header",
@@ -122,9 +142,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "cbcc3844a91f4c59a1f147327233f8588ddc86e9cacc484d"
+          "example": "1932f785a9314983bdcec39dbcc7ea2c3b2c8ae77efd4bbb"
         },
-        "example": "cbcc3844a91f4c59a1f147327233f8588ddc86e9cacc484d"
+        "example": "1932f785a9314983bdcec39dbcc7ea2c3b2c8ae77efd4bbb"
       },
       "Authorization": {
         "name": "Authorization",
@@ -134,9 +154,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer viewer-auth-token"
+          "example": "Bearer driver-auth-token"
         },
-        "example": "Bearer viewer-auth-token"
+        "example": "Bearer driver-auth-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -168,9 +188,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "5329ac9d6b2f4ce1880bcfb1ec21ff58c3c5d373c0eb426d"
+          "example": "2b0831e9de18484a8bde9577ec1357d0b7dfc1a111d24bee"
         },
-        "example": "5329ac9d6b2f4ce1880bcfb1ec21ff58c3c5d373c0eb426d"
+        "example": "2b0831e9de18484a8bde9577ec1357d0b7dfc1a111d24bee"
       },
       "Content-Type": {
         "style": "simple",

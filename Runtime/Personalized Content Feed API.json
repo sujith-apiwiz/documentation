@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Personalized Content Feed API",
-    "description": "The Personalized Content Feed API provides dynamic and tailored content recommendations for users, enabling a personalized homepage experience based on user preferences and behavior. With this API, clients can request and retrieve user-specific content feeds, enhancing engagement and user satisfaction.",
+    "description": "The Personalized Content Feed API allows users to retrieve customized content recommendations for their homepage. By leveraging user-specific preferences and viewing history, this API delivers tailored content that enhances user engagement and satisfaction. Users can specify various parameters such as language, content type, and limit to refine their feed, ensuring a personalized experience.",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -22,17 +22,29 @@
     }
   ],
   "paths": {
-    "/users/USR-VFX-1100/recommendations/content/personalized/homepage/feed": {
+    "/users/USR-VFX-9921/recommendations/content/personalized/homepage/feed": {
       "get": {
         "tags": [
           "Recommendations"
         ],
-        "summary": "Retrieve Personalized Homepage Feed",
-        "description": "This operation fetches the personalized homepage feed for a specific user, providing tailored content recommendations based on user preferences and behavior. You will need to provide the user ID, content type, and an optional parent span ID as input parameters. The expected output is a curated list of recommended content items that align with the user's interests.",
-        "operationId": "retrievePersonalizedHomepageFeed",
+        "summary": "Retrieve Personalized Homepage Recommendations",
+        "description": "This operation fetches personalized content recommendations for the user identified by USR-VFX-9921. The API accepts several parameters, including language preferences, a limit on the number of recommendations, and content types. The expected outcome is a list of personalized recommendations tailored to the user's preferences.",
+        "operationId": "retrievePersonalizedHomepageRecommendations",
         "parameters": [
           {
+            "$ref": "#/components/parameters/lang"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
             "$ref": "#/components/parameters/contentType"
+          },
+          {
+            "$ref": "#/components/parameters/includeTrailer"
+          },
+          {
+            "$ref": "#/components/parameters/X-User-Id"
           },
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -48,14 +60,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RetrievePersonalizedHomepageFeedRequest"
+                "$ref": "#/components/schemas/RetrievePersonalizedHomepageRecommendationsRequest"
               }
             }
           }
         },
         "responses": {
-          "500": {
-            "description": "Internal server error occurred",
+          "200": {
+            "description": "Recommendations retrieved successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -65,12 +77,15 @@
               },
               "Content-Type": {
                 "$ref": "#/components/headers/Content-Type"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RetrievePersonalizedHomepageFeedResponse_500"
+                  "$ref": "#/components/schemas/RetrievePersonalizedHomepageRecommendationsResponse_200"
                 }
               }
             }
@@ -86,45 +101,192 @@
   },
   "components": {
     "schemas": {
-      "RetrievePersonalizedHomepageFeedRequest": {
+      "RetrievePersonalizedHomepageRecommendationsRequest": {
         "type": "string",
         "example": ""
       },
-      "RetrievePersonalizedHomepageFeedResponse_500": {
+      "RetrievePersonalizedHomepageRecommendationsResponse_200": {
         "type": "object",
         "properties": {
-          "error": {
+          "userId": {
             "type": "string",
-            "example": "RECOMMENDATION_ENGINE_TIMEOUT"
+            "example": "USR-VFX-9921"
           },
-          "code": {
-            "type": "integer",
-            "format": "int32",
-            "example": 500
+          "recommendations": {
+            "type": "array",
+            "example": [
+              {
+                "contentId": "MOV-10011",
+                "title": "Stellar Horizons",
+                "type": "MOVIE",
+                "genre": [
+                  "SCI-FI",
+                  "ACTION"
+                ],
+                "rating": 8.4,
+                "duration": "2h 18m",
+                "releaseYear": 2026,
+                "trailerUrl": "https://cdn.viewflix.com/trailers/stellar-horizons.mp4",
+                "matchScore": 0.97
+              },
+              {
+                "contentId": "SER-20022",
+                "title": "The Dark Algorithm",
+                "type": "SERIES",
+                "genre": [
+                  "THRILLER",
+                  "TECH"
+                ],
+                "rating": 9.1,
+                "seasons": 2,
+                "episodes": 16,
+                "releaseYear": 2025,
+                "matchScore": 0.94
+              },
+              {
+                "contentId": "MOV-10022",
+                "title": "Echoes of Tomorrow",
+                "type": "MOVIE",
+                "genre": [
+                  "DRAMA"
+                ],
+                "rating": 7.9,
+                "duration": "1h 52m",
+                "releaseYear": 2026,
+                "matchScore": 0.91
+              }
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "contentId": {
+                  "type": "string",
+                  "example": "nzM7391fq"
+                },
+                "title": {
+                  "type": "string",
+                  "example": "yzafrtllxafbxbqk"
+                },
+                "type": {
+                  "type": "string",
+                  "example": "balia"
+                },
+                "genre": {
+                  "type": "array",
+                  "example": "[ \",'w<rQ\", \"zhiajo\" ]",
+                  "items": {
+                    "type": "string",
+                    "example": ",'w<rQ"
+                  }
+                },
+                "rating": {
+                  "type": "number",
+                  "example": 66.67
+                },
+                "duration": {
+                  "type": "string",
+                  "example": "95GFU0"
+                },
+                "releaseYear": {
+                  "type": "integer",
+                  "format": "int32",
+                  "example": 52
+                },
+                "trailerUrl": {
+                  "type": "string",
+                  "example": "yrKCMGe048EmicOFUH4i8l3RP82I9DxTbu9Y6hJe48GVkus8IN3x35"
+                },
+                "matchScore": {
+                  "type": "number",
+                  "example": 55.34
+                }
+              },
+              "example": "{\n  \"contentId\" : \"nzM7391fq\",\n  \"title\" : \"yzafrtllxafbxbqk\",\n  \"type\" : \"balia\",\n  \"genre\" : [ \",'w<rQ\", \"zhiajo\" ],\n  \"rating\" : 66.67,\n  \"duration\" : \"95GFU0\",\n  \"releaseYear\" : 52,\n  \"trailerUrl\" : \"yrKCMGe048EmicOFUH4i8l3RP82I9DxTbu9Y6hJe48GVkus8IN3x35\",\n  \"matchScore\" : 55.34\n}"
+            }
           },
-          "message": {
-            "type": "string",
-            "example": "ML recommendation service timed out. Serving trending content as fallback."
-          },
-          "incidentId": {
-            "type": "string",
-            "example": "INC-STRM-2026-0711"
-          },
-          "timestamp": {
+          "generatedAt": {
             "type": "string",
             "example": "2026-06-08T10:00:00Z"
+          },
+          "algo": {
+            "type": "string",
+            "example": "DEEP_COLLABORATIVE"
           }
         },
         "example": {
-          "error": "RECOMMENDATION_ENGINE_TIMEOUT",
-          "code": 500,
-          "message": "ML recommendation service timed out. Serving trending content as fallback.",
-          "incidentId": "INC-STRM-2026-0711",
-          "timestamp": "2026-06-08T10:00:00Z"
+          "userId": "USR-VFX-9921",
+          "recommendations": [
+            {
+              "contentId": "MOV-10011",
+              "title": "Stellar Horizons",
+              "type": "MOVIE",
+              "genre": [
+                "SCI-FI",
+                "ACTION"
+              ],
+              "rating": 8.4,
+              "duration": "2h 18m",
+              "releaseYear": 2026,
+              "trailerUrl": "https://cdn.viewflix.com/trailers/stellar-horizons.mp4",
+              "matchScore": 0.97
+            },
+            {
+              "contentId": "SER-20022",
+              "title": "The Dark Algorithm",
+              "type": "SERIES",
+              "genre": [
+                "THRILLER",
+                "TECH"
+              ],
+              "rating": 9.1,
+              "seasons": 2,
+              "episodes": 16,
+              "releaseYear": 2025,
+              "matchScore": 0.94
+            },
+            {
+              "contentId": "MOV-10022",
+              "title": "Echoes of Tomorrow",
+              "type": "MOVIE",
+              "genre": [
+                "DRAMA"
+              ],
+              "rating": 7.9,
+              "duration": "1h 52m",
+              "releaseYear": 2026,
+              "matchScore": 0.91
+            }
+          ],
+          "generatedAt": "2026-06-08T10:00:00Z",
+          "algo": "DEEP_COLLABORATIVE"
         }
       }
     },
     "parameters": {
+      "lang": {
+        "name": "lang",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "ah"
+        },
+        "example": "ah"
+      },
+      "limit": {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "6"
+        },
+        "example": "6"
+      },
       "contentType": {
         "name": "contentType",
         "in": "query",
@@ -133,9 +295,33 @@
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "tjb"
+          "example": "]t1Z#y:jtG5A"
         },
-        "example": "tjb"
+        "example": "]t1Z#y:jtG5A"
+      },
+      "includeTrailer": {
+        "name": "includeTrailer",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "vpwh"
+        },
+        "example": "vpwh"
+      },
+      "X-User-Id": {
+        "name": "X-User-Id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "USR-VFX-9921"
+        },
+        "example": "USR-VFX-9921"
       },
       "parentspanid": {
         "name": "parentspanid",
@@ -145,9 +331,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6b31eb71aa3c454da349420005154f493c97f9fe12ed431d"
+          "example": "00a0bbf371394c5ca2a120ecf1b1c32f0ad10a5e58b3461b"
         },
-        "example": "6b31eb71aa3c454da349420005154f493c97f9fe12ed431d"
+        "example": "00a0bbf371394c5ca2a120ecf1b1c32f0ad10a5e58b3461b"
       },
       "Authorization": {
         "name": "Authorization",
@@ -171,7 +357,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "server_error"
+            "success"
           ]
         }
       }
@@ -191,9 +377,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f3e72e549f904b459e90eaed5d7ee9af88a8159d17a54273"
+          "example": "b120cc43b30e40508cddea41668bfde0b6f4aaae5dd24c6a"
         },
-        "example": "f3e72e549f904b459e90eaed5d7ee9af88a8159d17a54273"
+        "example": "b120cc43b30e40508cddea41668bfde0b6f4aaae5dd24c6a"
       },
       "Content-Type": {
         "style": "simple",
@@ -203,6 +389,15 @@
           "example": "application/json"
         },
         "example": "application/json"
+      },
+      "Cache-Control": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "max-age=600"
+        },
+        "example": "max-age=600"
       }
     }
   }

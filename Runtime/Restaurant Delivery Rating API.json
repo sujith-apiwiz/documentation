@@ -1,14 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Reservation Payment Confirmation API",
-    "description": "This API facilitates the confirmation of payments when extending the duration of reservations, ensuring a seamless user experience for managing bookings. It allows for efficient processing of payment confirmations to enhance service delivery in reservation management.",
-    "termsOfService": "https://www.example.com/terms",
-    "contact": {
-      "name": "Support Team",
-      "url": "https://www.example.com/support",
-      "email": "support@example.com"
-    },
+    "title": "Restaurant Delivery Rating API",
+    "description": "This API allows users to submit ratings for the delivery agents associated with their restaurant orders. It facilitates a seamless process for customers to provide feedback, helping restaurants improve their service quality and delivery experience. The API supports parameterized requests requiring user identification and feedback content, with responsive error handling to ensure a smooth integration.",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -16,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/parking",
+      "url": "https://stage-data-gujl.apiwiz.io/v2/food",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -24,21 +18,21 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/parking"
+      "x-basePath": "/v2/food"
     }
   ],
   "paths": {
-    "/reservations/PARK-RES-20260608-7712/extend/duration/payment/confirm": {
-      "put": {
+    "/orders/FD-ORD-20260607-5510/review/restaurant/delivery/agent/rating/submit": {
+      "post": {
         "tags": [
-          "Reservations"
+          "Orders"
         ],
-        "summary": "Confirm Payment for Extended Reservation Duration",
-        "description": "This operation finalizes the payment for extending the duration of a specific reservation. The request must include a valid authorization token and relevant details for processing the payment. Upon successful execution, it confirms the payment and extends the reservation duration accordingly.",
-        "operationId": "confirmPaymentForExtendedReservationDuration",
+        "summary": "Submit Delivery Agent Rating",
+        "description": "This operation allows users to submit a rating for the delivery agent associated with their order. Users must provide their unique identifier and the rating value in the request body. Upon successful submission, the service will acknowledge the rating, allowing for improved delivery experience feedback.",
+        "operationId": "submitDeliveryAgentRating",
         "parameters": [
           {
-            "$ref": "#/components/parameters/X-Driver-Id"
+            "$ref": "#/components/parameters/X-User-Id"
           },
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -57,7 +51,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConfirmPaymentForExtendedReservationDurationRequest"
+                "$ref": "#/components/schemas/SubmitDeliveryAgentRatingRequest"
               }
             }
           }
@@ -79,13 +73,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConfirmPaymentForExtendedReservationDurationResponse_400"
+                  "$ref": "#/components/schemas/SubmitDeliveryAgentRatingResponse_400"
                 }
               }
             }
           },
           "200": {
-            "description": "Payment confirmation successful",
+            "description": "Rating submitted successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -100,7 +94,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConfirmPaymentForExtendedReservationDurationResponse_200"
+                  "$ref": "#/components/schemas/SubmitDeliveryAgentRatingResponse_200"
                 }
               }
             }
@@ -116,12 +110,12 @@
   },
   "components": {
     "schemas": {
-      "ConfirmPaymentForExtendedReservationDurationResponse_400": {
+      "SubmitDeliveryAgentRatingResponse_400": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "EXTENSION_INVALID"
+            "example": "REVIEW_VALIDATION_FAILED"
           },
           "code": {
             "type": "integer",
@@ -131,13 +125,14 @@
           "details": {
             "type": "array",
             "example": [
-              "Maximum extension is 6 hours per reservation",
-              "Slot SLOT-B2-044 is pre-booked by another vehicle from 2026-06-08T17:00:00Z",
-              "paymentMethod is required"
+              "restaurantRating must be between 1 and 5",
+              "overallComment must be at least 10 characters",
+              "deliveryRating is required",
+              "A review for this order has already been submitted"
             ],
             "items": {
               "type": "string",
-              "example": "uOL1dBkqMz3cZnwIkFtTFzzKiERp6D8eYSP1h7g875PC"
+              "example": "aepmInUzFMxudLT0R5XPx4cMeBzWPQtYsM6Of5N8"
             }
           },
           "timestamp": {
@@ -146,100 +141,66 @@
           }
         },
         "example": {
-          "error": "EXTENSION_INVALID",
+          "error": "REVIEW_VALIDATION_FAILED",
           "code": 400,
           "details": [
-            "Maximum extension is 6 hours per reservation",
-            "Slot SLOT-B2-044 is pre-booked by another vehicle from 2026-06-08T17:00:00Z",
-            "paymentMethod is required"
+            "restaurantRating must be between 1 and 5",
+            "overallComment must be at least 10 characters",
+            "deliveryRating is required",
+            "A review for this order has already been submitted"
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
       },
-      "ConfirmPaymentForExtendedReservationDurationRequest": {
-        "type": "object",
-        "properties": {
-          "reservationId": {
-            "type": "string",
-            "example": "HXMSszCyKctwmC5iDwnznm"
-          },
-          "extendByHours": {
-            "type": "integer",
-            "format": "int32",
-            "example": 51
-          },
-          "paymentMethod": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "example": "uqnpiu"
-              },
-              "walletId": {
-                "type": "string",
-                "example": "ZUU4pGVYoGtH"
-              }
-            },
-            "example": "{\n  \"type\" : \"uqnpiu\",\n  \"walletId\" : \"ZUU4pGVYoGtH\"\n}"
-          }
-        },
-        "example": "{\n  \"reservationId\" : \"HXMSszCyKctwmC5iDwnznm\",\n  \"extendByHours\" : 51,\n  \"paymentMethod\" : {\n    \"type\" : \"uqnpiu\",\n    \"walletId\" : \"ZUU4pGVYoGtH\"\n  }\n}"
+      "SubmitDeliveryAgentRatingRequest": {
+        "type": "object"
       },
-      "ConfirmPaymentForExtendedReservationDurationResponse_200": {
+      "SubmitDeliveryAgentRatingResponse_200": {
         "type": "object",
         "properties": {
-          "reservationId": {
+          "reviewId": {
             "type": "string",
-            "example": "PARK-RES-20260608-7712"
+            "example": "REV-20260608-4421"
+          },
+          "orderId": {
+            "type": "string",
+            "example": "FD-ORD-20260607-5510"
           },
           "status": {
             "type": "string",
-            "example": "EXTENDED"
+            "example": "PUBLISHED"
           },
-          "newEndTime": {
-            "type": "string",
-            "example": "2026-06-08T16:00:00Z"
-          },
-          "additionalCharge": {
-            "type": "number",
-            "example": 9.0
-          },
-          "totalCharge": {
-            "type": "number",
-            "example": 22.5
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD"
+          "rewardPointsEarned": {
+            "type": "integer",
+            "format": "int32",
+            "example": 50
           },
           "message": {
             "type": "string",
-            "example": "Parking reservation extended successfully"
+            "example": "Thank you for your review!"
           }
         },
         "example": {
-          "reservationId": "PARK-RES-20260608-7712",
-          "status": "EXTENDED",
-          "newEndTime": "2026-06-08T16:00:00Z",
-          "additionalCharge": 9.0,
-          "totalCharge": 22.5,
-          "currency": "USD",
-          "message": "Parking reservation extended successfully"
+          "reviewId": "REV-20260608-4421",
+          "orderId": "FD-ORD-20260607-5510",
+          "status": "PUBLISHED",
+          "rewardPointsEarned": 50,
+          "message": "Thank you for your review!"
         }
       }
     },
     "parameters": {
-      "X-Driver-Id": {
-        "name": "X-Driver-Id",
+      "X-User-Id": {
+        "name": "X-User-Id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "DRV-PARK-441"
+          "example": "USR-FOOD-5521"
         },
-        "example": "DRV-PARK-441"
+        "example": "USR-FOOD-5521"
       },
       "Content-Type": {
         "name": "Content-Type",
@@ -261,9 +222,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "fabd96c3836c4a05b4ee0daf1960da4e8f12ef44e333408c"
+          "example": "3bbbdd6f012c40949d31e9571440833ae6db87670aa5466d"
         },
-        "example": "fabd96c3836c4a05b4ee0daf1960da4e8f12ef44e333408c"
+        "example": "3bbbdd6f012c40949d31e9571440833ae6db87670aa5466d"
       },
       "Authorization": {
         "name": "Authorization",
@@ -273,9 +234,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer driver-auth-token"
+          "example": "Bearer customer-food-token"
         },
-        "example": "Bearer driver-auth-token"
+        "example": "Bearer customer-food-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -308,9 +269,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "436b915c393843efa294ab95f0efd96397b2d79fdeeb4333"
+          "example": "f41341e520474fe48020fa096db18309837d83cef0ad413f"
         },
-        "example": "436b915c393843efa294ab95f0efd96397b2d79fdeeb4333"
+        "example": "f41341e520474fe48020fa096db18309837d83cef0ad413f"
       },
       "Content-Type": {
         "style": "simple",
