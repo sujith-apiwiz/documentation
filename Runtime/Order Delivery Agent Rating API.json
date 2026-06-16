@@ -1,16 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Home Automation Device Update API",
-    "description": "This API facilitates the updating of device trigger schedules within a smart home automation system. It allows users to manage and modify automation rules by triggering device updates, ensuring seamless integration and operation of home devices.",
-    "version": "1.0",
-    "extensions": {
-      "x-oas-type": "Runtime"
-    }
+    "title": "Order Delivery Agent Rating API",
+    "description": "This API allows users to submit ratings for delivery agents involved in their restaurant orders. It provides a simple interface for recording feedback, which is essential for improving service quality and customer satisfaction. By using this API, users can contribute to the overall rating system for delivery agents based on their experiences.",
+    "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/smarthome",
+      "url": "https://stage-data-gujl.apiwiz.io",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,21 +15,21 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/smarthome"
+      "x-basePath": "/"
     }
   ],
   "paths": {
-    "/homes/HOME-441122/automation/rules/RULE-AUTO-8821/schedule/trigger/device/update": {
-      "put": {
+    "/v2/food/orders/FD-ORD-20260607-5510/review/restaurant/delivery/agent/rating/submit": {
+      "post": {
         "tags": [
-          "Automation"
+          "Order Reviews"
         ],
-        "summary": "Update Device Trigger Schedule",
-        "description": "This operation updates the trigger schedule for a specific device within an automation rule in the home environment. The request requires the home ID, content type, and authorization details, along with the new settings for the device trigger schedule. A successful response confirms that the device trigger schedule has been updated.",
-        "operationId": "updateDeviceTriggerSchedule",
+        "summary": "Submit Delivery Agent Rating",
+        "description": "This operation allows users to submit a rating for the delivery agent associated with their order. The request requires the user's identification and a rating value to be provided in the request body. Upon successful submission, the system will acknowledge the receipt of the rating, enabling the enhancement of service quality through user feedback.",
+        "operationId": "submitDeliveryAgentRating",
         "parameters": [
           {
-            "$ref": "#/components/parameters/X-Home-Id"
+            "$ref": "#/components/parameters/X-User-Id"
           },
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -51,14 +48,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateDeviceTriggerScheduleRequest"
+                "$ref": "#/components/schemas/SubmitDeliveryAgentRatingRequest"
               }
             }
           }
         },
         "responses": {
-          "400": {
-            "description": "Invalid request parameters",
+          "200": {
+            "description": "Rating submitted successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -73,13 +70,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateDeviceTriggerScheduleResponse_400"
+                  "$ref": "#/components/schemas/SubmitDeliveryAgentRatingResponse_200"
                 }
               }
             }
           },
-          "200": {
-            "description": "Device trigger schedule updated successfully",
+          "400": {
+            "description": "Invalid rating submission parameters",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -94,7 +91,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateDeviceTriggerScheduleResponse_200"
+                  "$ref": "#/components/schemas/SubmitDeliveryAgentRatingResponse_400"
                 }
               }
             }
@@ -110,12 +107,68 @@
   },
   "components": {
     "schemas": {
-      "UpdateDeviceTriggerScheduleResponse_400": {
+      "SubmitDeliveryAgentRatingResponse_200": {
+        "type": "object",
+        "properties": {
+          "reviewId": {
+            "type": "string",
+            "example": "REV-20260608-4421"
+          },
+          "orderId": {
+            "type": "string",
+            "example": "FD-ORD-20260607-5510"
+          },
+          "status": {
+            "type": "string",
+            "example": "PUBLISHED"
+          },
+          "rewardPointsEarned": {
+            "type": "integer",
+            "format": "int32",
+            "example": 50
+          },
+          "message": {
+            "type": "string",
+            "example": "Thank you for your review!"
+          }
+        },
+        "example": {
+          "reviewId": "REV-20260608-4421",
+          "orderId": "FD-ORD-20260607-5510",
+          "status": "PUBLISHED",
+          "rewardPointsEarned": 50,
+          "message": "Thank you for your review!"
+        }
+      },
+      "SubmitDeliveryAgentRatingRequest": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "example": "FD-ORD-20260607-5510"
+          },
+          "restaurantRating": {
+            "type": "integer",
+            "format": "int32",
+            "example": 7
+          },
+          "overallComment": {
+            "type": "string",
+            "example": "x"
+          }
+        },
+        "example": {
+          "orderId": "FD-ORD-20260607-5510",
+          "restaurantRating": 7,
+          "overallComment": "x"
+        }
+      },
+      "SubmitDeliveryAgentRatingResponse_400": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "AUTOMATION_RULE_INVALID"
+            "example": "REVIEW_VALIDATION_FAILED"
           },
           "code": {
             "type": "integer",
@@ -125,13 +178,14 @@
           "details": {
             "type": "array",
             "example": [
-              "trigger.type must be one of: TIME, SUNRISE, SUNSET, SENSOR_THRESHOLD, GEOFENCE",
-              "actions array cannot be empty",
-              "ruleName is required"
+              "restaurantRating must be between 1 and 5",
+              "overallComment must be at least 10 characters",
+              "deliveryRating is required",
+              "A review for this order has already been submitted"
             ],
             "items": {
               "type": "string",
-              "example": "20;m2gA;n}?}.!Of!8N1K'QB^.^N?:jk/u<obS;SlmY!OhdvF8}|B6X@X:,2Q{WXw?];lIh5Q1F[mo"
+              "example": "k1fd5oPVtErA2axInkaEzti0pxkx8CAPXOLRL0Yc"
             }
           },
           "timestamp": {
@@ -140,70 +194,30 @@
           }
         },
         "example": {
-          "error": "AUTOMATION_RULE_INVALID",
+          "error": "REVIEW_VALIDATION_FAILED",
           "code": 400,
           "details": [
-            "trigger.type must be one of: TIME, SUNRISE, SUNSET, SENSOR_THRESHOLD, GEOFENCE",
-            "actions array cannot be empty",
-            "ruleName is required"
+            "restaurantRating must be between 1 and 5",
+            "overallComment must be at least 10 characters",
+            "deliveryRating is required",
+            "A review for this order has already been submitted"
           ],
           "timestamp": "2026-06-08T10:00:00Z"
-        }
-      },
-      "UpdateDeviceTriggerScheduleRequest": {
-        "type": "object"
-      },
-      "UpdateDeviceTriggerScheduleResponse_200": {
-        "type": "object",
-        "properties": {
-          "ruleId": {
-            "type": "string",
-            "example": "RULE-AUTO-8821"
-          },
-          "status": {
-            "type": "string",
-            "example": "UPDATED"
-          },
-          "ruleName": {
-            "type": "string",
-            "example": "Morning Cool Down"
-          },
-          "nextTrigger": {
-            "type": "string",
-            "example": "2026-06-09T07:00:00Z"
-          },
-          "devicesAffected": {
-            "type": "integer",
-            "format": "int32",
-            "example": 2
-          },
-          "message": {
-            "type": "string",
-            "example": "Automation rule updated successfully"
-          }
-        },
-        "example": {
-          "ruleId": "RULE-AUTO-8821",
-          "status": "UPDATED",
-          "ruleName": "Morning Cool Down",
-          "nextTrigger": "2026-06-09T07:00:00Z",
-          "devicesAffected": 2,
-          "message": "Automation rule updated successfully"
         }
       }
     },
     "parameters": {
-      "X-Home-Id": {
-        "name": "X-Home-Id",
+      "X-User-Id": {
+        "name": "X-User-Id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "HOME-441122"
+          "example": "USR-FOOD-5521"
         },
-        "example": "HOME-441122"
+        "example": "USR-FOOD-5521"
       },
       "Content-Type": {
         "name": "Content-Type",
@@ -225,9 +239,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "ae1b802f5f174681beb1fac5761815e457b7b8efb8c8464b"
+          "example": "2f15c4df168141e48454763ab6a5d8a0345ffd57203346c9"
         },
-        "example": "ae1b802f5f174681beb1fac5761815e457b7b8efb8c8464b"
+        "example": "2f15c4df168141e48454763ab6a5d8a0345ffd57203346c9"
       },
       "Authorization": {
         "name": "Authorization",
@@ -237,9 +251,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer homeowner-auth-token"
+          "example": "Bearer customer-food-token"
         },
-        "example": "Bearer homeowner-auth-token"
+        "example": "Bearer customer-food-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -251,8 +265,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "bad_request",
-            "success"
+            "success",
+            "bad_request"
           ]
         }
       }
@@ -272,9 +286,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "778dc709e2cf48018cbf2ca644a456922cb6f009ebfe4622"
+          "example": "260d3159d3544c48945bf3d5f517d6b1ba6b5e57ea2f48c8"
         },
-        "example": "778dc709e2cf48018cbf2ca644a456922cb6f009ebfe4622"
+        "example": "260d3159d3544c48945bf3d5f517d6b1ba6b5e57ea2f48c8"
       },
       "Content-Type": {
         "style": "simple",

@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Home Automation Device Update API",
-    "description": "This API facilitates the updating of device trigger schedules within a smart home automation system. It allows users to manage and modify automation rules by triggering device updates, ensuring seamless integration and operation of home devices.",
+    "title": "Ride Feedback Submission API",
+    "description": "This API allows users to submit feedback and rating tags for their ride experiences. It provides an interface for riders to communicate their thoughts on drivers, enhancing the overall quality of service. The API facilitates the submission of feedback in a structured format, ensuring that valuable insights are captured and can be analyzed for service improvements.",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/smarthome",
+      "url": "https://stage-data-gujl.apiwiz.io/v2/rideshare",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,21 +18,21 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/smarthome"
+      "x-basePath": "/v2/rideshare"
     }
   ],
   "paths": {
-    "/homes/HOME-441122/automation/rules/RULE-AUTO-8821/schedule/trigger/device/update": {
+    "/rides/RIDE-20260607-5511/driver/rating/feedback/tags/submit": {
       "put": {
         "tags": [
-          "Automation"
+          "Feedback"
         ],
-        "summary": "Update Device Trigger Schedule",
-        "description": "This operation updates the trigger schedule for a specific device within an automation rule in the home environment. The request requires the home ID, content type, and authorization details, along with the new settings for the device trigger schedule. A successful response confirms that the device trigger schedule has been updated.",
-        "operationId": "updateDeviceTriggerSchedule",
+        "summary": "Submit Driver Feedback Tags",
+        "description": "This operation allows riders to submit feedback tags regarding their recent ride with a driver. The request requires the rider's identification and a JSON body containing the feedback tags associated with the specific ride. Upon successful submission, the feedback is processed, and a confirmation response is provided.",
+        "operationId": "submitDriverFeedbackTags",
         "parameters": [
           {
-            "$ref": "#/components/parameters/X-Home-Id"
+            "$ref": "#/components/parameters/X-Rider-Id"
           },
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -51,7 +51,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateDeviceTriggerScheduleRequest"
+                "$ref": "#/components/schemas/SubmitDriverFeedbackTagsRequest"
               }
             }
           }
@@ -73,13 +73,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateDeviceTriggerScheduleResponse_400"
+                  "$ref": "#/components/schemas/SubmitDriverFeedbackTagsResponse_400"
                 }
               }
             }
           },
           "200": {
-            "description": "Device trigger schedule updated successfully",
+            "description": "Feedback tags submitted successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -94,7 +94,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateDeviceTriggerScheduleResponse_200"
+                  "$ref": "#/components/schemas/SubmitDriverFeedbackTagsResponse_200"
                 }
               }
             }
@@ -110,12 +110,12 @@
   },
   "components": {
     "schemas": {
-      "UpdateDeviceTriggerScheduleResponse_400": {
+      "SubmitDriverFeedbackTagsResponse_400": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "AUTOMATION_RULE_INVALID"
+            "example": "RATING_INVALID"
           },
           "code": {
             "type": "integer",
@@ -125,13 +125,13 @@
           "details": {
             "type": "array",
             "example": [
-              "trigger.type must be one of: TIME, SUNRISE, SUNSET, SENSOR_THRESHOLD, GEOFENCE",
-              "actions array cannot be empty",
-              "ruleName is required"
+              "driverRating must be between 1 and 5",
+              "comment must be at least 10 characters",
+              "Rating window has expired for this ride (must rate within 48 hours)"
             ],
             "items": {
               "type": "string",
-              "example": "20;m2gA;n}?}.!Of!8N1K'QB^.^N?:jk/u<obS;SlmY!OhdvF8}|B6X@X:,2Q{WXw?];lIh5Q1F[mo"
+              "example": "ipH339HV8BOcfro8hFeLmHYZ96UnDZtWHJOt"
             }
           },
           "timestamp": {
@@ -140,70 +140,64 @@
           }
         },
         "example": {
-          "error": "AUTOMATION_RULE_INVALID",
+          "error": "RATING_INVALID",
           "code": 400,
           "details": [
-            "trigger.type must be one of: TIME, SUNRISE, SUNSET, SENSOR_THRESHOLD, GEOFENCE",
-            "actions array cannot be empty",
-            "ruleName is required"
+            "driverRating must be between 1 and 5",
+            "comment must be at least 10 characters",
+            "Rating window has expired for this ride (must rate within 48 hours)"
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
       },
-      "UpdateDeviceTriggerScheduleRequest": {
-        "type": "object"
-      },
-      "UpdateDeviceTriggerScheduleResponse_200": {
+      "SubmitDriverFeedbackTagsRequest": {
         "type": "object",
         "properties": {
-          "ruleId": {
+          "rideId": {
             "type": "string",
-            "example": "RULE-AUTO-8821"
+            "example": "TQZfbrVEAxV7pIc890"
           },
-          "status": {
-            "type": "string",
-            "example": "UPDATED"
-          },
-          "ruleName": {
-            "type": "string",
-            "example": "Morning Cool Down"
-          },
-          "nextTrigger": {
-            "type": "string",
-            "example": "2026-06-09T07:00:00Z"
-          },
-          "devicesAffected": {
+          "driverRating": {
             "type": "integer",
             "format": "int32",
-            "example": 2
+            "example": 13
           },
-          "message": {
+          "comment": {
             "type": "string",
-            "example": "Automation rule updated successfully"
+            "example": "GIW7Bh=y[MhSo{=s>R9=W>x>rkM%4l&*)3n+E{Z3>nIj412i"
+          },
+          "tags": {
+            "type": "array",
+            "example": "[ \"HK]+YUjZzT?^{dKzPZ\", \"rHcq^}RaS\", \"E||aY$\\\"\", \"IXff#Rp0w)@Y\" ]",
+            "items": {
+              "type": "string",
+              "example": "HK]+YUjZzT?^{dKzPZ"
+            }
+          },
+          "tip": {
+            "type": "number",
+            "example": 56.01
           }
         },
-        "example": {
-          "ruleId": "RULE-AUTO-8821",
-          "status": "UPDATED",
-          "ruleName": "Morning Cool Down",
-          "nextTrigger": "2026-06-09T07:00:00Z",
-          "devicesAffected": 2,
-          "message": "Automation rule updated successfully"
-        }
+        "example": "{\n  \"rideId\" : \"TQZfbrVEAxV7pIc890\",\n  \"driverRating\" : 13,\n  \"comment\" : \"GIW7Bh=y[MhSo{=s>R9=W>x>rkM%4l&*)3n+E{Z3>nIj412i\",\n  \"tags\" : [ \"HK]+YUjZzT?^{dKzPZ\", \"rHcq^}RaS\", \"E||aY$\\\"\", \"IXff#Rp0w)@Y\" ],\n  \"tip\" : 56.01\n}"
+      },
+      "SubmitDriverFeedbackTagsResponse_200": {
+        "type": "object",
+        "example": {}
       }
     },
     "parameters": {
-      "X-Home-Id": {
-        "name": "X-Home-Id",
+      "X-Rider-Id": {
+        "name": "X-Rider-Id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "HOME-441122"
+          "example": "RIDER-334455"
         },
-        "example": "HOME-441122"
+        "example": "RIDER-334455"
       },
       "Content-Type": {
         "name": "Content-Type",
@@ -225,9 +219,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "ae1b802f5f174681beb1fac5761815e457b7b8efb8c8464b"
+          "example": "6d055eadd32345e18e776e37964457cbff26dd666b2e407f"
         },
-        "example": "ae1b802f5f174681beb1fac5761815e457b7b8efb8c8464b"
+        "example": "6d055eadd32345e18e776e37964457cbff26dd666b2e407f"
       },
       "Authorization": {
         "name": "Authorization",
@@ -237,9 +231,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer homeowner-auth-token"
+          "example": "Bearer rider-auth-token"
         },
-        "example": "Bearer homeowner-auth-token"
+        "example": "Bearer rider-auth-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -272,9 +266,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "778dc709e2cf48018cbf2ca644a456922cb6f009ebfe4622"
+          "example": "dd96d05b6ab24443918874628c0fca240236c3d7303e4b4f"
         },
-        "example": "778dc709e2cf48018cbf2ca644a456922cb6f009ebfe4622"
+        "example": "dd96d05b6ab24443918874628c0fca240236c3d7303e4b4f"
       },
       "Content-Type": {
         "style": "simple",

@@ -1,8 +1,14 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Home Automation Device Update API",
-    "description": "This API facilitates the updating of device trigger schedules within a smart home automation system. It allows users to manage and modify automation rules by triggering device updates, ensuring seamless integration and operation of home devices.",
+    "title": "Home Automation Rule Update API",
+    "description": "This API allows users to update the scheduling and triggering rules for devices connected to their home automation systems. It is designed to facilitate seamless management and optimization of automation rules, ensuring that devices operate as expected within user-defined parameters.",
+    "termsOfService": "https://www.homeautomation.com/terms",
+    "contact": {
+      "name": "Home Automation Support",
+      "url": "https://support.homeautomation.com",
+      "email": "support@homeautomation.com"
+    },
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -22,18 +28,15 @@
     }
   ],
   "paths": {
-    "/homes/HOME-441122/automation/rules/RULE-AUTO-8821/schedule/trigger/device/update": {
+    "/homes/HOME-441122/automation/rules/RULE-AUTO-9900/schedule/trigger/device/update": {
       "put": {
         "tags": [
           "Automation"
         ],
         "summary": "Update Device Trigger Schedule",
-        "description": "This operation updates the trigger schedule for a specific device within an automation rule in the home environment. The request requires the home ID, content type, and authorization details, along with the new settings for the device trigger schedule. A successful response confirms that the device trigger schedule has been updated.",
+        "description": "This operation updates the trigger schedule for a specific device in the automation rules configured for a home. It requires the device's unique identifier, the authorization token, and the necessary parameters in the request body. On successful execution, the updated schedule details will be returned.",
         "operationId": "updateDeviceTriggerSchedule",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/X-Home-Id"
-          },
           {
             "$ref": "#/components/parameters/Content-Type"
           },
@@ -57,8 +60,8 @@
           }
         },
         "responses": {
-          "400": {
-            "description": "Invalid request parameters",
+          "500": {
+            "description": "Internal server error occurred",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -73,28 +76,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateDeviceTriggerScheduleResponse_400"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Device trigger schedule updated successfully",
-            "headers": {
-              "Date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "X-Trace-Id": {
-                "$ref": "#/components/headers/X-Trace-Id"
-              },
-              "Content-Type": {
-                "$ref": "#/components/headers/Content-Type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateDeviceTriggerScheduleResponse_200"
+                  "$ref": "#/components/schemas/UpdateDeviceTriggerScheduleResponse_500"
                 }
               }
             }
@@ -110,29 +92,68 @@
   },
   "components": {
     "schemas": {
-      "UpdateDeviceTriggerScheduleResponse_400": {
+      "UpdateDeviceTriggerScheduleRequest": {
+        "type": "object",
+        "properties": {
+          "ruleName": {
+            "type": "string",
+            "example": "vexsimruvbargncd"
+          },
+          "trigger": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "grofrs"
+              }
+            },
+            "example": "{\n  \"type\" : \"grofrs\"\n}"
+          },
+          "actions": {
+            "type": "array",
+            "example": "[ {\n  \"deviceId\" : \"ygZb4S60MNTq\",\n  \"command\" : \"gpsj\"\n} ]",
+            "items": {
+              "type": "object",
+              "properties": {
+                "deviceId": {
+                  "type": "string",
+                  "example": "ygZb4S60MNTq"
+                },
+                "command": {
+                  "type": "string",
+                  "example": "gpsj"
+                }
+              },
+              "example": "{\n  \"deviceId\" : \"ygZb4S60MNTq\",\n  \"command\" : \"gpsj\"\n}"
+            }
+          }
+        },
+        "example": "{\n  \"ruleName\" : \"vexsimruvbargncd\",\n  \"trigger\" : {\n    \"type\" : \"grofrs\"\n  },\n  \"actions\" : [ {\n    \"deviceId\" : \"ygZb4S60MNTq\",\n    \"command\" : \"gpsj\"\n  } ]\n}"
+      },
+      "UpdateDeviceTriggerScheduleResponse_500": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "AUTOMATION_RULE_INVALID"
+            "example": "DEVICE_MESH_SYNC_ERROR"
           },
           "code": {
             "type": "integer",
             "format": "int32",
-            "example": 400
+            "example": 500
           },
-          "details": {
-            "type": "array",
-            "example": [
-              "trigger.type must be one of: TIME, SUNRISE, SUNSET, SENSOR_THRESHOLD, GEOFENCE",
-              "actions array cannot be empty",
-              "ruleName is required"
-            ],
-            "items": {
-              "type": "string",
-              "example": "20;m2gA;n}?}.!Of!8N1K'QB^.^N?:jk/u<obS;SlmY!OhdvF8}|B6X@X:,2Q{WXw?];lIh5Q1F[mo"
-            }
+          "message": {
+            "type": "string",
+            "example": "Smart home hub is unreachable. Rule saved but device sync failed."
+          },
+          "incidentId": {
+            "type": "string",
+            "example": "INC-IOT-2026-0220"
+          },
+          "retryAfter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 30
           },
           "timestamp": {
             "type": "string",
@@ -140,71 +161,16 @@
           }
         },
         "example": {
-          "error": "AUTOMATION_RULE_INVALID",
-          "code": 400,
-          "details": [
-            "trigger.type must be one of: TIME, SUNRISE, SUNSET, SENSOR_THRESHOLD, GEOFENCE",
-            "actions array cannot be empty",
-            "ruleName is required"
-          ],
+          "error": "DEVICE_MESH_SYNC_ERROR",
+          "code": 500,
+          "message": "Smart home hub is unreachable. Rule saved but device sync failed.",
+          "incidentId": "INC-IOT-2026-0220",
+          "retryAfter": 30,
           "timestamp": "2026-06-08T10:00:00Z"
-        }
-      },
-      "UpdateDeviceTriggerScheduleRequest": {
-        "type": "object"
-      },
-      "UpdateDeviceTriggerScheduleResponse_200": {
-        "type": "object",
-        "properties": {
-          "ruleId": {
-            "type": "string",
-            "example": "RULE-AUTO-8821"
-          },
-          "status": {
-            "type": "string",
-            "example": "UPDATED"
-          },
-          "ruleName": {
-            "type": "string",
-            "example": "Morning Cool Down"
-          },
-          "nextTrigger": {
-            "type": "string",
-            "example": "2026-06-09T07:00:00Z"
-          },
-          "devicesAffected": {
-            "type": "integer",
-            "format": "int32",
-            "example": 2
-          },
-          "message": {
-            "type": "string",
-            "example": "Automation rule updated successfully"
-          }
-        },
-        "example": {
-          "ruleId": "RULE-AUTO-8821",
-          "status": "UPDATED",
-          "ruleName": "Morning Cool Down",
-          "nextTrigger": "2026-06-09T07:00:00Z",
-          "devicesAffected": 2,
-          "message": "Automation rule updated successfully"
         }
       }
     },
     "parameters": {
-      "X-Home-Id": {
-        "name": "X-Home-Id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "HOME-441122"
-        },
-        "example": "HOME-441122"
-      },
       "Content-Type": {
         "name": "Content-Type",
         "in": "header",
@@ -225,9 +191,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "ae1b802f5f174681beb1fac5761815e457b7b8efb8c8464b"
+          "example": "c17dd32a09b84182bc94cebef177043271a4e397b92a4346"
         },
-        "example": "ae1b802f5f174681beb1fac5761815e457b7b8efb8c8464b"
+        "example": "c17dd32a09b84182bc94cebef177043271a4e397b92a4346"
       },
       "Authorization": {
         "name": "Authorization",
@@ -251,8 +217,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "bad_request",
-            "success"
+            "server_error"
           ]
         }
       }
@@ -272,9 +237,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "778dc709e2cf48018cbf2ca644a456922cb6f009ebfe4622"
+          "example": "1259115928c543b3b897ed09d3065f1adc51df4144e848ea"
         },
-        "example": "778dc709e2cf48018cbf2ca644a456922cb6f009ebfe4622"
+        "example": "1259115928c543b3b897ed09d3065f1adc51df4144e848ea"
       },
       "Content-Type": {
         "style": "simple",
