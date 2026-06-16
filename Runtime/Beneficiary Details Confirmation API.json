@@ -1,16 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Personalized Content Feed API",
-    "description": "The Personalized Content Feed API provides dynamic and tailored content recommendations for users, enabling a personalized homepage experience based on user preferences and behavior. With this API, clients can request and retrieve user-specific content feeds, enhancing engagement and user satisfaction.",
-    "version": "1.0",
-    "extensions": {
-      "x-oas-type": "Runtime"
-    }
+    "title": "Beneficiary Details Confirmation API",
+    "description": "This API is designed to facilitate the confirmation of updates to the personal details of nominees associated with insurance policies. By using this API, clients can submit confirmation requests to finalize changes to nominee information, ensuring accurate record-keeping and compliance with policy management standards.",
+    "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/streaming",
+      "url": "https://stage-data-gujl.apiwiz.io",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,21 +15,21 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/streaming"
+      "x-basePath": "/"
     }
   ],
   "paths": {
-    "/users/USR-VFX-1100/recommendations/content/personalized/homepage/feed": {
-      "get": {
+    "/v1/insurance/policies/POL-INS-20260601-7722/beneficiary/nominee/update/personal/details/confirm": {
+      "put": {
         "tags": [
-          "Recommendations"
+          "Beneficiary Nominee Updates"
         ],
-        "summary": "Retrieve Personalized Homepage Feed",
-        "description": "This operation fetches the personalized homepage feed for a specific user, providing tailored content recommendations based on user preferences and behavior. You will need to provide the user ID, content type, and an optional parent span ID as input parameters. The expected output is a curated list of recommended content items that align with the user's interests.",
-        "operationId": "retrievePersonalizedHomepageFeed",
+        "summary": "Confirm Beneficiary Nominee Details Update",
+        "description": "This operation allows the user to confirm the update of personal details for a beneficiary nominee associated with a specific insurance policy. The request should include the necessary authorization and content type in the headers. Upon successful confirmation, it is expected that the nominee's personal details will be updated in the system.",
+        "operationId": "confirmBeneficiaryNomineeDetailsUpdate",
         "parameters": [
           {
-            "$ref": "#/components/parameters/contentType"
+            "$ref": "#/components/parameters/Content-Type"
           },
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -48,7 +45,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RetrievePersonalizedHomepageFeedRequest"
+                "$ref": "#/components/schemas/ConfirmBeneficiaryNomineeDetailsUpdateRequest"
               }
             }
           }
@@ -70,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RetrievePersonalizedHomepageFeedResponse_500"
+                  "$ref": "#/components/schemas/ConfirmBeneficiaryNomineeDetailsUpdateResponse_500"
                 }
               }
             }
@@ -86,16 +83,35 @@
   },
   "components": {
     "schemas": {
-      "RetrievePersonalizedHomepageFeedRequest": {
-        "type": "string",
-        "example": ""
+      "ConfirmBeneficiaryNomineeDetailsUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "nomineeName": {
+            "type": "string",
+            "example": "Karen Lee"
+          },
+          "nomineeRelation": {
+            "type": "string",
+            "example": "CHILD"
+          },
+          "nomineeShare": {
+            "type": "integer",
+            "format": "int32",
+            "example": 100
+          }
+        },
+        "example": {
+          "nomineeName": "Karen Lee",
+          "nomineeRelation": "CHILD",
+          "nomineeShare": 100
+        }
       },
-      "RetrievePersonalizedHomepageFeedResponse_500": {
+      "ConfirmBeneficiaryNomineeDetailsUpdateResponse_500": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "RECOMMENDATION_ENGINE_TIMEOUT"
+            "example": "ENDORSEMENT_SERVICE_ERROR"
           },
           "code": {
             "type": "integer",
@@ -104,11 +120,16 @@
           },
           "message": {
             "type": "string",
-            "example": "ML recommendation service timed out. Serving trending content as fallback."
+            "example": "Policy endorsement service failed to process the update. Changes rolled back."
           },
           "incidentId": {
             "type": "string",
-            "example": "INC-STRM-2026-0711"
+            "example": "INC-INS-2026-0611"
+          },
+          "retryAfter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 45
           },
           "timestamp": {
             "type": "string",
@@ -116,26 +137,27 @@
           }
         },
         "example": {
-          "error": "RECOMMENDATION_ENGINE_TIMEOUT",
+          "error": "ENDORSEMENT_SERVICE_ERROR",
           "code": 500,
-          "message": "ML recommendation service timed out. Serving trending content as fallback.",
-          "incidentId": "INC-STRM-2026-0711",
+          "message": "Policy endorsement service failed to process the update. Changes rolled back.",
+          "incidentId": "INC-INS-2026-0611",
+          "retryAfter": 45,
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "contentType": {
-        "name": "contentType",
-        "in": "query",
+      "Content-Type": {
+        "name": "Content-Type",
+        "in": "header",
         "required": false,
-        "style": "form",
-        "explode": true,
+        "style": "simple",
+        "explode": false,
         "schema": {
           "type": "string",
-          "example": "tjb"
+          "example": "application/json"
         },
-        "example": "tjb"
+        "example": "application/json"
       },
       "parentspanid": {
         "name": "parentspanid",
@@ -145,9 +167,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6b31eb71aa3c454da349420005154f493c97f9fe12ed431d"
+          "example": "18a53d7021724636ad8a08b069696f15c99ee7a24b0947c4"
         },
-        "example": "6b31eb71aa3c454da349420005154f493c97f9fe12ed431d"
+        "example": "18a53d7021724636ad8a08b069696f15c99ee7a24b0947c4"
       },
       "Authorization": {
         "name": "Authorization",
@@ -157,9 +179,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer viewer-auth-token"
+          "example": "Bearer ins-customer-token"
         },
-        "example": "Bearer viewer-auth-token"
+        "example": "Bearer ins-customer-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -191,9 +213,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f3e72e549f904b459e90eaed5d7ee9af88a8159d17a54273"
+          "example": "d4c72a517be34aefb0fe92537a5b017101cf20f85d90498a"
         },
-        "example": "f3e72e549f904b459e90eaed5d7ee9af88a8159d17a54273"
+        "example": "d4c72a517be34aefb0fe92537a5b017101cf20f85d90498a"
       },
       "Content-Type": {
         "style": "simple",

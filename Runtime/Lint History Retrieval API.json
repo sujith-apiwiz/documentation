@@ -1,16 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Astrum Rule Management API",
-    "description": "The Astrum Rule Management API enables users to efficiently manage and retrieve rule sets essential for processing requests within the Astrum ecosystem. This API provides a comprehensive interface for querying rules based on various parameters, ensuring seamless integration and efficient handling of rule-based workflows.",
-    "version": "1.0",
-    "extensions": {
-      "x-oas-type": "Runtime"
-    }
+    "title": "Lint History Retrieval API",
+    "description": "The Lint History Retrieval API provides access to the historical data of linting operations for the Astrum service. Users can request specific entries based on various parameters, including status, pagination, and more. This API is designed for developers aiming to integrate linting history into their applications, offering a streamlined way to fetch essential historical data for analysis and reporting.",
+    "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/itorix/v1",
+      "url": "https://stage-data-gujl.apiwiz.io",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,27 +15,24 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/itorix/v1"
+      "x-basePath": "/"
     }
   ],
   "paths": {
-    "/astrum/rule-set": {
+    "/itorix/v1/astrum/lint/history": {
       "get": {
         "tags": [
-          "Rule Sets"
+          "Linting History"
         ],
-        "summary": "Retrieve Rule Set Information",
-        "description": "This operation retrieves the current rule set information based on specified input parameters. Clients must provide various parameters such as gateway type, request timestamp, and priority to filter the results effectively. The expected outcome is a detailed response containing the relevant rule set data or an appropriate error message if the request fails.",
-        "operationId": "retrieveRuleSetInformation",
+        "summary": "Retrieve Linting History",
+        "description": "This operation retrieves the linting history for the specified parameters. You can filter the results based on various attributes such as status, priority, and pagination. The expected output includes a list of past linting operations, along with their details, enabling users to analyze previous activities and outcomes.",
+        "operationId": "retrieveLintingHistory",
         "parameters": [
           {
-            "$ref": "#/components/parameters/gatewaytype"
+            "$ref": "#/components/parameters/status"
           },
           {
-            "$ref": "#/components/parameters/requesttimestamp"
-          },
-          {
-            "$ref": "#/components/parameters/responsetimestamp"
+            "$ref": "#/components/parameters/pageSize"
           },
           {
             "$ref": "#/components/parameters/pragma"
@@ -62,6 +56,9 @@
             "$ref": "#/components/parameters/jsessionid"
           },
           {
+            "$ref": "#/components/parameters/gatewaytype"
+          },
+          {
             "$ref": "#/components/parameters/cache-control"
           },
           {
@@ -80,7 +77,13 @@
             "$ref": "#/components/parameters/accept-language"
           },
           {
+            "$ref": "#/components/parameters/requesttimestamp"
+          },
+          {
             "$ref": "#/components/parameters/sec-ch-ua-mobile"
+          },
+          {
+            "$ref": "#/components/parameters/responsetimestamp"
           },
           {
             "$ref": "#/components/parameters/sec-ch-ua-platform"
@@ -90,8 +93,29 @@
           }
         ],
         "responses": {
+          "503": {
+            "description": "Service unavailable due to temporary issues",
+            "headers": {
+              "date": {
+                "$ref": "#/components/headers/date"
+              },
+              "server": {
+                "$ref": "#/components/headers/server"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveLintingHistoryResponse_503"
+                }
+              }
+            }
+          },
           "403": {
-            "description": "Access denied for the request",
+            "description": "Access denied due to insufficient permissions",
             "headers": {
               "date": {
                 "$ref": "#/components/headers/date"
@@ -133,28 +157,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RetrieveRuleSetInformationResponse_403"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Service temporarily unavailable",
-            "headers": {
-              "date": {
-                "$ref": "#/components/headers/date"
-              },
-              "server": {
-                "$ref": "#/components/headers/server"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RetrieveRuleSetInformationResponse_503"
+                  "$ref": "#/components/schemas/RetrieveLintingHistoryResponse_403"
                 }
               }
             }
@@ -170,51 +173,39 @@
   },
   "components": {
     "schemas": {
-      "RetrieveRuleSetInformationResponse_403": {
+      "RetrieveLintingHistoryResponse_503": {
         "type": "object",
         "example": {}
       },
-      "RetrieveRuleSetInformationResponse_503": {
+      "RetrieveLintingHistoryResponse_403": {
         "type": "object",
         "example": {}
       }
     },
     "parameters": {
-      "gatewaytype": {
-        "name": "gatewaytype",
-        "in": "header",
+      "status": {
+        "name": "status",
+        "in": "query",
         "required": false,
-        "style": "simple",
-        "explode": false,
+        "style": "form",
+        "explode": true,
         "schema": {
           "type": "string",
-          "example": "API_MONITOR"
+          "example": "xokwlzpie"
         },
-        "example": "API_MONITOR"
+        "example": "xokwlzpie"
       },
-      "requesttimestamp": {
-        "name": "requesttimestamp",
-        "in": "header",
+      "pageSize": {
+        "name": "pageSize",
+        "in": "query",
         "required": false,
-        "style": "simple",
-        "explode": false,
+        "style": "form",
+        "explode": true,
         "schema": {
           "type": "string",
-          "example": "1780989356618"
+          "example": "6"
         },
-        "example": "1780989356618"
-      },
-      "responsetimestamp": {
-        "name": "responsetimestamp",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "1780989356705"
-        },
-        "example": "1780989356705"
+        "example": "6"
       },
       "pragma": {
         "name": "pragma",
@@ -300,6 +291,18 @@
         },
         "example": "6900815ab4f5167022b891a7"
       },
+      "gatewaytype": {
+        "name": "gatewaytype",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "API_MONITOR"
+        },
+        "example": "API_MONITOR"
+      },
       "cache-control": {
         "name": "cache-control",
         "in": "header",
@@ -320,9 +323,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "z3O5TF9Jcg9S59Ez"
+          "example": "Xjn2dThoOdttMZBw"
         },
-        "example": "z3O5TF9Jcg9S59Ez"
+        "example": "Xjn2dThoOdttMZBw"
       },
       "sec-fetch-dest": {
         "name": "sec-fetch-dest",
@@ -372,6 +375,18 @@
         },
         "example": "en-GB,en;q=0.9"
       },
+      "requesttimestamp": {
+        "name": "requesttimestamp",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "1780989356590"
+        },
+        "example": "1780989356590"
+      },
       "sec-ch-ua-mobile": {
         "name": "sec-ch-ua-mobile",
         "in": "header",
@@ -383,6 +398,18 @@
           "example": "?0"
         },
         "example": "?0"
+      },
+      "responsetimestamp": {
+        "name": "responsetimestamp",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "1780989356617"
+        },
+        "example": "1780989356617"
       },
       "sec-ch-ua-platform": {
         "name": "sec-ch-ua-platform",
@@ -406,8 +433,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "forbidden",
-            "service_unavailable"
+            "service_unavailable",
+            "forbidden"
           ]
         }
       }
@@ -418,9 +445,27 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Fri, 05 Jun 2026 09:44:31 GMT"
+          "example": "Tue, 09 Jun 2026 07:15:55 GMT"
         },
-        "example": "Fri, 05 Jun 2026 09:44:31 GMT"
+        "example": "Tue, 09 Jun 2026 07:15:55 GMT"
+      },
+      "server": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "istio-envoy"
+        },
+        "example": "istio-envoy"
+      },
+      "content-type": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "text/plain"
+        },
+        "example": "text/plain"
       },
       "vary": {
         "style": "simple",
@@ -439,15 +484,6 @@
           "example": "no-cache"
         },
         "example": "no-cache"
-      },
-      "server": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "istio-envoy"
-        },
-        "example": "istio-envoy"
       },
       "expires": {
         "style": "simple",
@@ -520,15 +556,6 @@
           "example": "0"
         },
         "example": "0"
-      },
-      "content-type": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "text/plain"
-        },
-        "example": "text/plain"
       }
     }
   }
