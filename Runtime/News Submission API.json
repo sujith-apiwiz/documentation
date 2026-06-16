@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Stock Market News API",
-    "description": "The Stock Market News API provides developers with access to the latest news and information regarding stock market activities. It enables users to post and retrieve stock-related news articles, ensuring that they stay updated with the most relevant financial information. This API is ideal for financial analysts, investors, and application developers seeking to integrate market news into their platforms.",
+    "title": "News Submission API",
+    "description": "The News Submission API allows users to submit news articles and content to be processed and published. It supports various input formats and provides comprehensive responses to ensure successful submissions. Ideal for news aggregators, publishers, and content creators looking to streamline their article submission process.",
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/market",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -15,18 +15,18 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/"
+      "x-basePath": "/v1/market"
     }
   ],
   "paths": {
-    "/v1/market/news/stocks": {
+    "/news": {
       "post": {
         "tags": [
-          "Stock News"
+          "News"
         ],
-        "summary": "Submit Stock News",
-        "description": "This operation allows the client to submit stock-related news articles. Users need to provide relevant details such as the stock identifier and content in the request body, along with necessary headers like authorization and account ID. Successful submission will result in the creation of a new news entry related to stocks, confirming the operation's success.",
-        "operationId": "submitStockNews",
+        "summary": "Create News Article",
+        "description": "This operation allows users to create a new news article in the system. You are required to provide the article content in JSON format along with necessary metadata such as the account ID and desired language. Upon successful creation, a confirmation response will be returned, including the details of the newly created article.",
+        "operationId": "createNewsArticle",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-Channel"
@@ -54,14 +54,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SubmitStockNewsRequest"
+                "$ref": "#/components/schemas/CreateNewsArticleRequest"
               }
             }
           }
         },
         "responses": {
-          "400": {
-            "description": "Invalid request parameters",
+          "200": {
+            "description": "News article created successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -85,7 +85,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubmitStockNewsResponse_400"
+                  "$ref": "#/components/schemas/CreateNewsArticleResponse_200"
                 }
               }
             }
@@ -96,9 +96,6 @@
               "Date": {
                 "$ref": "#/components/headers/Date"
               },
-              "Location": {
-                "$ref": "#/components/headers/Location"
-              },
               "X-Trace-Id": {
                 "$ref": "#/components/headers/X-Trace-Id"
               },
@@ -115,19 +112,16 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubmitStockNewsResponse_500"
+                  "$ref": "#/components/schemas/CreateNewsArticleResponse_500"
                 }
               }
             }
           },
-          "200": {
-            "description": "Request processed successfully",
+          "400": {
+            "description": "Invalid request parameters",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
-              },
-              "Location": {
-                "$ref": "#/components/headers/Location"
               },
               "X-Trace-Id": {
                 "$ref": "#/components/headers/X-Trace-Id"
@@ -145,7 +139,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubmitStockNewsResponse_200"
+                  "$ref": "#/components/schemas/CreateNewsArticleResponse_400"
                 }
               }
             }
@@ -161,7 +155,7 @@
   },
   "components": {
     "schemas": {
-      "SubmitStockNewsResponse_400": {
+      "CreateNewsArticleResponse_200": {
         "type": "object",
         "properties": {
           "subscriptionId": {
@@ -201,7 +195,7 @@
             ],
             "items": {
               "type": "string",
-              "example": "fzgs"
+              "example": "xpuj"
             }
           },
           "notificationEnabled": {
@@ -230,221 +224,145 @@
           "message": "News subscription created successfully"
         }
       },
-      "SubmitStockNewsResponse_500": {
+      "CreateNewsArticleResponse_500": {
         "type": "object",
         "properties": {
-          "subscriptionId": {
+          "errorCode": {
             "type": "string",
-            "example": "NEWS-50001"
-          },
-          "subscriptionName": {
-            "type": "string",
-            "example": "Tech News Feed"
-          },
-          "category": {
-            "type": "string",
-            "example": "TECHNOLOGY"
-          },
-          "deliveryChannel": {
-            "type": "string",
-            "example": "EMAIL"
-          },
-          "frequency": {
-            "type": "string",
-            "example": "REAL_TIME"
-          },
-          "status": {
-            "type": "string",
-            "example": "ACTIVE"
-          },
-          "createdAt": {
-            "type": "string",
-            "example": "2026-06-08T12:00:00Z"
-          },
-          "symbols": {
-            "type": "array",
-            "example": [
-              "AAPL",
-              "MSFT",
-              "NVDA"
-            ],
-            "items": {
-              "type": "string",
-              "example": "quhe"
-            }
-          },
-          "notificationEnabled": {
-            "type": "boolean",
-            "example": true
+            "example": "INTERNAL_SERVER_ERROR"
           },
           "message": {
             "type": "string",
-            "example": "News subscription created successfully"
+            "example": "Failed to create news subscription"
+          },
+          "details": {
+            "type": "string",
+            "example": "News delivery service encountered an unexpected backend error."
+          },
+          "service": {
+            "type": "string",
+            "example": "MarketNewsService"
+          },
+          "incidentId": {
+            "type": "string",
+            "example": "INC-NEWS-001"
+          },
+          "supportTicketId": {
+            "type": "string",
+            "example": "SUP-NEWS-002"
+          },
+          "traceId": {
+            "type": "string",
+            "example": "d83e92a75c4f4b6ea31d28c99ab56f93"
           }
         },
         "example": {
-          "subscriptionId": "NEWS-50001",
-          "subscriptionName": "Tech News Feed",
-          "category": "TECHNOLOGY",
-          "deliveryChannel": "EMAIL",
-          "frequency": "REAL_TIME",
-          "status": "ACTIVE",
-          "createdAt": "2026-06-08T12:00:00Z",
-          "symbols": [
-            "AAPL",
-            "MSFT",
-            "NVDA"
-          ],
-          "notificationEnabled": true,
-          "message": "News subscription created successfully"
+          "errorCode": "INTERNAL_SERVER_ERROR",
+          "message": "Failed to create news subscription",
+          "details": "News delivery service encountered an unexpected backend error.",
+          "service": "MarketNewsService",
+          "incidentId": "INC-NEWS-001",
+          "supportTicketId": "SUP-NEWS-002",
+          "traceId": "d83e92a75c4f4b6ea31d28c99ab56f93"
         }
       },
-      "SubmitStockNewsRequest": {
+      "CreateNewsArticleRequest": {
         "type": "object",
         "properties": {
           "subscriptionName": {
             "type": "string",
-            "example": "Tech News Feed"
+            "example": ""
           },
           "category": {
             "type": "string",
-            "example": "TECHNOLOGY"
+            "example": "qyqcdcellh"
           },
           "symbols": {
             "type": "array",
-            "example": [
-              "AAPL",
-              "MSFT",
-              "NVDA"
-            ],
+            "example": "[]",
             "items": {
-              "type": "string",
-              "example": "tuxz"
+              "type": "string"
             }
           },
           "deliveryChannel": {
             "type": "string",
-            "example": "EMAIL"
+            "example": "usxsa"
           },
           "frequency": {
             "type": "string",
-            "example": "REAL_TIME"
+            "example": "89vl2<Wfd"
           },
           "language": {
             "type": "string",
-            "example": "EN"
+            "example": "dy"
           },
           "region": {
             "type": "string",
-            "example": "US"
+            "example": "sh"
           },
           "priority": {
             "type": "string",
-            "example": "HIGH"
+            "example": "ailq"
           },
           "clientReference": {
             "type": "string",
-            "example": "REF-NEWS-001"
+            "example": "t41MTqnIoZ3o"
           },
           "portfolioId": {
             "type": "string",
-            "example": "PF-1001"
+            "example": "1aE41r6"
           },
           "deviceType": {
             "type": "string",
-            "example": "WEB"
+            "example": "jdc"
           },
           "notificationEnabled": {
             "type": "boolean",
-            "example": true
+            "example": false
           }
         },
-        "example": {
-          "subscriptionName": "Tech News Feed",
-          "category": "TECHNOLOGY",
-          "symbols": [
-            "AAPL",
-            "MSFT",
-            "NVDA"
-          ],
-          "deliveryChannel": "EMAIL",
-          "frequency": "REAL_TIME",
-          "language": "EN",
-          "region": "US",
-          "priority": "HIGH",
-          "clientReference": "REF-NEWS-001",
-          "portfolioId": "PF-1001",
-          "deviceType": "WEB",
-          "notificationEnabled": true
-        }
+        "example": "{\n  \"subscriptionName\" : \"\",\n  \"category\" : \"qyqcdcellh\",\n  \"symbols\" : [ ],\n  \"deliveryChannel\" : \"usxsa\",\n  \"frequency\" : \"89vl2<Wfd\",\n  \"language\" : \"dy\",\n  \"region\" : \"sh\",\n  \"priority\" : \"ailq\",\n  \"clientReference\" : \"t41MTqnIoZ3o\",\n  \"portfolioId\" : \"1aE41r6\",\n  \"deviceType\" : \"jdc\",\n  \"notificationEnabled\" : false\n}"
       },
-      "SubmitStockNewsResponse_200": {
+      "CreateNewsArticleResponse_400": {
         "type": "object",
         "properties": {
-          "subscriptionId": {
+          "errorCode": {
             "type": "string",
-            "example": "NEWS-50001"
-          },
-          "subscriptionName": {
-            "type": "string",
-            "example": "Tech News Feed"
-          },
-          "category": {
-            "type": "string",
-            "example": "TECHNOLOGY"
-          },
-          "deliveryChannel": {
-            "type": "string",
-            "example": "EMAIL"
-          },
-          "frequency": {
-            "type": "string",
-            "example": "REAL_TIME"
-          },
-          "status": {
-            "type": "string",
-            "example": "ACTIVE"
-          },
-          "createdAt": {
-            "type": "string",
-            "example": "2026-06-08T12:00:00Z"
-          },
-          "symbols": {
-            "type": "array",
-            "example": [
-              "AAPL",
-              "MSFT",
-              "NVDA"
-            ],
-            "items": {
-              "type": "string",
-              "example": "gvwc"
-            }
-          },
-          "notificationEnabled": {
-            "type": "boolean",
-            "example": true
+            "example": "INVALID_NEWS_SUBSCRIPTION"
           },
           "message": {
             "type": "string",
-            "example": "News subscription created successfully"
+            "example": "News subscription validation failed"
+          },
+          "details": {
+            "type": "string",
+            "example": "Subscription name and symbols list are required."
+          },
+          "field": {
+            "type": "string",
+            "example": "subscriptionName"
+          },
+          "providedValue": {
+            "type": "string",
+            "example": ""
+          },
+          "supportTicketId": {
+            "type": "string",
+            "example": "SUP-NEWS-001"
+          },
+          "traceId": {
+            "type": "string",
+            "example": "a72c91d84f3b4e6ca15d29c77ab34f82"
           }
         },
         "example": {
-          "subscriptionId": "NEWS-50001",
-          "subscriptionName": "Tech News Feed",
-          "category": "TECHNOLOGY",
-          "deliveryChannel": "EMAIL",
-          "frequency": "REAL_TIME",
-          "status": "ACTIVE",
-          "createdAt": "2026-06-08T12:00:00Z",
-          "symbols": [
-            "AAPL",
-            "MSFT",
-            "NVDA"
-          ],
-          "notificationEnabled": true,
-          "message": "News subscription created successfully"
+          "errorCode": "INVALID_NEWS_SUBSCRIPTION",
+          "message": "News subscription validation failed",
+          "details": "Subscription name and symbols list are required.",
+          "field": "subscriptionName",
+          "providedValue": "",
+          "supportTicketId": "SUP-NEWS-001",
+          "traceId": "a72c91d84f3b4e6ca15d29c77ab34f82"
         }
       }
     },
@@ -493,9 +411,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f61d82a94c3e4b7fa25d19c88ab45f71"
+          "example": "a72c91d84f3b4e6ca15d29c77ab34f82"
         },
-        "example": "f61d82a94c3e4b7fa25d19c88ab45f71"
+        "example": "a72c91d84f3b4e6ca15d29c77ab34f82"
       },
       "Authorization": {
         "name": "Authorization",
@@ -531,9 +449,9 @@
         "schema": {
           "type": "string",
           "enum": [
-            "bad_request",
+            "success",
             "server_error",
-            "success"
+            "bad_request"
           ]
         }
       }
@@ -562,9 +480,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f61d82a94c3e4b7fa25d19c88ab45f71"
+          "example": "a72c91d84f3b4e6ca15d29c77ab34f82"
         },
-        "example": "f61d82a94c3e4b7fa25d19c88ab45f71"
+        "example": "a72c91d84f3b4e6ca15d29c77ab34f82"
       },
       "Content-Type": {
         "style": "simple",
@@ -580,9 +498,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "REQ-NEWS-001"
+          "example": "REQ-NEWS-002"
         },
-        "example": "REQ-NEWS-001"
+        "example": "REQ-NEWS-002"
       },
       "Cache-Control": {
         "style": "simple",
