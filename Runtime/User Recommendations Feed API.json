@@ -1,22 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Beneficiary Nominee Confirmation API",
-    "description": "This API allows for the confirmation of updates to personal details of a beneficiary nominee associated with a specified policy. It provides a straightforward method to ensure that changes have been validated before finalizing updates within the system, enhancing data integrity and reducing errors in beneficiary information management.",
-    "termsOfService": "https://www.example.com/terms",
-    "contact": {
-      "name": "Support Team",
-      "url": "https://www.example.com/support",
-      "email": "support@example.com"
-    },
-    "version": "1.0",
-    "extensions": {
-      "x-oas-type": "Runtime"
-    }
+    "title": "User Recommendations Feed API",
+    "description": "The User Recommendations Feed API provides personalized content recommendations tailored to individual users' preferences. It allows clients to retrieve a curated homepage feed that enhances user engagement and increases content visibility based on unique user data and interactions.",
+    "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/insurance",
+      "url": "https://stage-data-gujl.apiwiz.io",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -24,21 +15,21 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/insurance"
+      "x-basePath": "/"
     }
   ],
   "paths": {
-    "/policies/POL-INS-20260601-7722/beneficiary/nominee/update/personal/details/confirm": {
-      "put": {
+    "/v1/streaming/users/USR-VFX-1100/recommendations/content/personalized/homepage/feed": {
+      "get": {
         "tags": [
-          "Beneficiary Management"
+          "Content Recommendations"
         ],
-        "summary": "Confirm Beneficiary Nominee Details Update",
-        "description": "This operation confirms the update of personal details for a beneficiary nominee within a specified insurance policy. It requires the updated details in JSON format along with necessary identifiers. Upon a successful confirmation, the nominee's information will be updated in the system accordingly.",
-        "operationId": "confirmBeneficiaryNomineeDetailsUpdate",
+        "summary": "Retrieve Personalized Homepage Feed",
+        "description": "This operation fetches a personalized feed of content recommendations for the specified user. To successfully execute this request, the user ID and the content type must be provided as parameters. The expected outcome is a curated list of content that aligns with the user's preferences and browsing history.",
+        "operationId": "retrievePersonalizedHomepageFeed",
         "parameters": [
           {
-            "$ref": "#/components/parameters/Content-Type"
+            "$ref": "#/components/parameters/contentType"
           },
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -54,7 +45,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConfirmBeneficiaryNomineeDetailsUpdateRequest"
+                "$ref": "#/components/schemas/RetrievePersonalizedHomepageFeedRequest"
               }
             }
           }
@@ -76,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConfirmBeneficiaryNomineeDetailsUpdateResponse_500"
+                  "$ref": "#/components/schemas/RetrievePersonalizedHomepageFeedResponse_500"
                 }
               }
             }
@@ -92,31 +83,16 @@
   },
   "components": {
     "schemas": {
-      "ConfirmBeneficiaryNomineeDetailsUpdateRequest": {
-        "type": "object",
-        "properties": {
-          "nomineeName": {
-            "type": "string",
-            "example": "prmtlubjn"
-          },
-          "nomineeRelation": {
-            "type": "string",
-            "example": "ikjqx"
-          },
-          "nomineeShare": {
-            "type": "integer",
-            "format": "int32",
-            "example": 98
-          }
-        },
-        "example": "{\n  \"nomineeName\" : \"prmtlubjn\",\n  \"nomineeRelation\" : \"ikjqx\",\n  \"nomineeShare\" : 98\n}"
+      "RetrievePersonalizedHomepageFeedRequest": {
+        "type": "string",
+        "example": "{}"
       },
-      "ConfirmBeneficiaryNomineeDetailsUpdateResponse_500": {
+      "RetrievePersonalizedHomepageFeedResponse_500": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "ENDORSEMENT_SERVICE_ERROR"
+            "example": "RECOMMENDATION_ENGINE_TIMEOUT"
           },
           "code": {
             "type": "integer",
@@ -125,16 +101,11 @@
           },
           "message": {
             "type": "string",
-            "example": "Policy endorsement service failed to process the update. Changes rolled back."
+            "example": "ML recommendation service timed out. Serving trending content as fallback."
           },
           "incidentId": {
             "type": "string",
-            "example": "INC-INS-2026-0611"
-          },
-          "retryAfter": {
-            "type": "integer",
-            "format": "int32",
-            "example": 45
+            "example": "INC-STRM-2026-0711"
           },
           "timestamp": {
             "type": "string",
@@ -142,27 +113,26 @@
           }
         },
         "example": {
-          "error": "ENDORSEMENT_SERVICE_ERROR",
+          "error": "RECOMMENDATION_ENGINE_TIMEOUT",
           "code": 500,
-          "message": "Policy endorsement service failed to process the update. Changes rolled back.",
-          "incidentId": "INC-INS-2026-0611",
-          "retryAfter": 45,
+          "message": "ML recommendation service timed out. Serving trending content as fallback.",
+          "incidentId": "INC-STRM-2026-0711",
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "Content-Type": {
-        "name": "Content-Type",
-        "in": "header",
+      "contentType": {
+        "name": "contentType",
+        "in": "query",
         "required": false,
-        "style": "simple",
-        "explode": false,
+        "style": "form",
+        "explode": true,
         "schema": {
           "type": "string",
-          "example": "application/json"
+          "example": "dbf"
         },
-        "example": "application/json"
+        "example": "dbf"
       },
       "parentspanid": {
         "name": "parentspanid",
@@ -172,9 +142,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "18a53d7021724636ad8a08b069696f15c99ee7a24b0947c4"
+          "example": "6b31eb71aa3c454da349420005154f493c97f9fe12ed431d"
         },
-        "example": "18a53d7021724636ad8a08b069696f15c99ee7a24b0947c4"
+        "example": "6b31eb71aa3c454da349420005154f493c97f9fe12ed431d"
       },
       "Authorization": {
         "name": "Authorization",
@@ -184,9 +154,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer ins-customer-token"
+          "example": "Bearer viewer-auth-token"
         },
-        "example": "Bearer ins-customer-token"
+        "example": "Bearer viewer-auth-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -218,9 +188,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "d4c72a517be34aefb0fe92537a5b017101cf20f85d90498a"
+          "example": "f3e72e549f904b459e90eaed5d7ee9af88a8159d17a54273"
         },
-        "example": "d4c72a517be34aefb0fe92537a5b017101cf20f85d90498a"
+        "example": "f3e72e549f904b459e90eaed5d7ee9af88a8159d17a54273"
       },
       "Content-Type": {
         "style": "simple",
