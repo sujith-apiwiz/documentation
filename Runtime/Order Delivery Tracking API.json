@@ -1,16 +1,18 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Order Delivery Tracking API",
-    "description": "This API provides real-time tracking information for orders, allowing users to monitor the location of their delivery agents. It enables seamless integration with order management systems to enhance delivery visibility and optimize customer experience.",
-    "version": "1.0",
-    "extensions": {
-      "x-oas-type": "Runtime"
-    }
+    "title": "Real-Time Order Tracking API",
+    "description": "The Real-Time Order Tracking API provides capabilities to monitor the real-time location of delivery agents associated with specific orders. This API facilitates seamless tracking to enhance customer experience and operational efficiency. Users can retrieve the current location of the delivery agent for any given order, enabling timely updates and improved service.",
+    "contact": {
+      "name": "Support Team",
+      "url": "https://www.company.com/support",
+      "email": "support@company.com"
+    },
+    "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v2/food",
+      "url": "https://stage-data-gujl.apiwiz.io",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,18 +20,18 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v2/food"
+      "x-basePath": "/"
     }
   ],
   "paths": {
-    "/orders/FD-ORD-20260608-7741/delivery/tracking/realtime/agent/location": {
+    "/v2/food/orders/FD-ORD-INVALID-0000/delivery/tracking/realtime/agent/location": {
       "get": {
         "tags": [
           "Delivery Tracking"
         ],
-        "summary": "Retrieve Real-Time Delivery Agent Location",
-        "description": "This operation retrieves the real-time location of the delivery agent for the specified order. Clients must provide a valid authorization token along with a parent span ID for tracing. The response includes the current coordinates and status of the delivery agent, ensuring transparency in the delivery process.",
-        "operationId": "retrieveRealtimeDeliveryAgentLocation",
+        "summary": "Retrieve Real-Time Agent Location",
+        "description": "This operation retrieves the real-time location of the delivery agent for a specific order. It requires the order ID and authorization parameters to provide accurate tracking information. The expected outcome is a response containing the agent's current location, enhancing visibility into the delivery process.",
+        "operationId": "retrieveRealtimeAgentLocation",
         "parameters": [
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -45,14 +47,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RetrieveRealtimeDeliveryAgentLocationRequest"
+                "$ref": "#/components/schemas/RetrieveRealtimeAgentLocationRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Request processed successfully",
+          "404": {
+            "description": "Order not found",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -62,15 +64,12 @@
               },
               "Content-Type": {
                 "$ref": "#/components/headers/Content-Type"
-              },
-              "Cache-Control": {
-                "$ref": "#/components/headers/Cache-Control"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RetrieveRealtimeDeliveryAgentLocationResponse_200"
+                  "$ref": "#/components/schemas/RetrieveRealtimeAgentLocationResponse_404"
                 }
               }
             }
@@ -86,153 +85,36 @@
   },
   "components": {
     "schemas": {
-      "RetrieveRealtimeDeliveryAgentLocationRequest": {
+      "RetrieveRealtimeAgentLocationRequest": {
         "type": "string",
-        "example": ""
+        "example": "{}"
       },
-      "RetrieveRealtimeDeliveryAgentLocationResponse_200": {
+      "RetrieveRealtimeAgentLocationResponse_404": {
         "type": "object",
         "properties": {
-          "orderId": {
+          "error": {
             "type": "string",
-            "example": "FD-ORD-20260608-7741"
+            "example": "ORDER_NOT_FOUND"
           },
-          "status": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 404
+          },
+          "message": {
             "type": "string",
-            "example": "OUT_FOR_DELIVERY"
+            "example": "Order FD-ORD-INVALID-0000 not found or does not belong to this customer."
           },
-          "agentName": {
+          "timestamp": {
             "type": "string",
-            "example": "Carlos M."
-          },
-          "agentRating": {
-            "type": "number",
-            "example": 4.8
-          },
-          "agentPhone": {
-            "type": "string",
-            "example": "+12065550144"
-          },
-          "currentLocation": {
-            "type": "object",
-            "properties": {
-              "lat": {
-                "type": "number",
-                "example": 71.83
-              },
-              "lng": {
-                "type": "number",
-                "example": 59.88
-              }
-            },
-            "example": {
-              "lat": 47.611,
-              "lng": -122.342
-            }
-          },
-          "destinationLocation": {
-            "type": "object",
-            "properties": {
-              "lat": {
-                "type": "number",
-                "example": 98.54
-              },
-              "lng": {
-                "type": "number",
-                "example": 99.16
-              }
-            },
-            "example": {
-              "lat": 47.616,
-              "lng": -122.349
-            }
-          },
-          "estimatedArrival": {
-            "type": "string",
-            "example": "2026-06-08T10:38:00Z"
-          },
-          "distanceRemaining": {
-            "type": "string",
-            "example": "1.2 km"
-          },
-          "timeline": {
-            "type": "array",
-            "example": [
-              {
-                "status": "ORDER_PLACED",
-                "time": "2026-06-08T10:00:00Z"
-              },
-              {
-                "status": "RESTAURANT_ACCEPTED",
-                "time": "2026-06-08T10:03:00Z"
-              },
-              {
-                "status": "PREPARING",
-                "time": "2026-06-08T10:05:00Z"
-              },
-              {
-                "status": "PICKED_UP",
-                "time": "2026-06-08T10:22:00Z"
-              },
-              {
-                "status": "OUT_FOR_DELIVERY",
-                "time": "2026-06-08T10:22:00Z"
-              }
-            ],
-            "items": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "type": "string",
-                  "example": "KPxEo\"2dAey%"
-                },
-                "time": {
-                  "type": "string",
-                  "example": "e5WbTWcdj202nQgTcnT8"
-                }
-              },
-              "example": "{\n  \"status\" : \"KPxEo\\\"2dAey%\",\n  \"time\" : \"e5WbTWcdj202nQgTcnT8\"\n}"
-            }
+            "example": "2026-06-08T10:00:00Z"
           }
         },
         "example": {
-          "orderId": "FD-ORD-20260608-7741",
-          "status": "OUT_FOR_DELIVERY",
-          "agentName": "Carlos M.",
-          "agentRating": 4.8,
-          "agentPhone": "+12065550144",
-          "currentLocation": {
-            "lat": 47.611,
-            "lng": -122.342
-          },
-          "destinationLocation": {
-            "lat": 47.616,
-            "lng": -122.349
-          },
-          "estimatedArrival": "2026-06-08T10:38:00Z",
-          "distanceRemaining": "1.2 km",
-          "timeline": [
-            {
-              "status": "ORDER_PLACED",
-              "time": "2026-06-08T10:00:00Z"
-            },
-            {
-              "status": "RESTAURANT_ACCEPTED",
-              "time": "2026-06-08T10:03:00Z"
-            },
-            {
-              "status": "PREPARING",
-              "time": "2026-06-08T10:05:00Z"
-            },
-            {
-              "status": "PICKED_UP",
-              "time": "2026-06-08T10:22:00Z"
-            },
-            {
-              "status": "OUT_FOR_DELIVERY",
-              "time": "2026-06-08T10:22:00Z"
-            }
-          ]
+          "error": "ORDER_NOT_FOUND",
+          "code": 404,
+          "message": "Order FD-ORD-INVALID-0000 not found or does not belong to this customer.",
+          "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
@@ -245,9 +127,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "dab6cfe86d3c44b8803385059763718030e7e7e428d84924"
+          "example": "67b59b79eb474abd97407516b53d1f68d58b89c17d564b1e"
         },
-        "example": "dab6cfe86d3c44b8803385059763718030e7e7e428d84924"
+        "example": "67b59b79eb474abd97407516b53d1f68d58b89c17d564b1e"
       },
       "Authorization": {
         "name": "Authorization",
@@ -271,7 +153,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "success"
+            "not_found"
           ]
         }
       }
@@ -291,9 +173,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "445ad7ee7ef8415db0cfa45e7a7d9f905ea55f6b31cc4265"
+          "example": "f948bcdb36554bb4a33db6bb7be35c6f66cf039d41ae4f27"
         },
-        "example": "445ad7ee7ef8415db0cfa45e7a7d9f905ea55f6b31cc4265"
+        "example": "f948bcdb36554bb4a33db6bb7be35c6f66cf039d41ae4f27"
       },
       "Content-Type": {
         "style": "simple",
@@ -303,15 +185,6 @@
           "example": "application/json"
         },
         "example": "application/json"
-      },
-      "Cache-Control": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "max-age=10"
-        },
-        "example": "max-age=10"
       }
     }
   }
