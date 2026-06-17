@@ -1,0 +1,374 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Fund Transfer API",
+    "description": "The Fund Transfer API allows users to initiate and manage financial transfers securely and efficiently. It provides functionality for creating, processing, and validating transfer requests, ensuring compliance with industry standards and best practices.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://stage-data-gujl.apiwiz.io",
+      "description": "Sandbox server",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "Sandbox server",
+      "x-environmentName": "DEV",
+      "x-hide": false,
+      "x-environmentId": "688884305134cd49a9bcfec3",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/v1/payments/transfer": {
+      "post": {
+        "tags": [
+          "Fund Transfers"
+        ],
+        "summary": "Initiate Fund Transfer",
+        "description": "This operation allows users to initiate a fund transfer between accounts. The client must provide the necessary transfer details in the request body, including the amount and destination account. Upon successful processing, the API will confirm the transaction, returning a status indicating the success of the transfer.",
+        "operationId": "initiateFundTransfer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          },
+          {
+            "$ref": "#/components/parameters/Content-Type"
+          },
+          {
+            "$ref": "#/components/parameters/parentspanid"
+          },
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitiateFundTransferRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "403": {
+            "description": "Forbidden: Access denied",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitiateFundTransferResponse_403"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid transfer parameters",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitiateFundTransferResponse_400"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Transfer completed successfully",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitiateFundTransferResponse_200"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitiateFundTransferResponse_500"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "InitiateFundTransferResponse_403": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "example": "FORBIDDEN"
+          },
+          "message": {
+            "type": "string",
+            "example": "Access to the requested resource is denied"
+          },
+          "details": {
+            "type": "string",
+            "example": "The authenticated user does not have permission to perform payment transfers"
+          },
+          "traceId": {
+            "type": "string",
+            "example": "7a3d9e5c2f184b8d91c6e4a7f2b5d813"
+          }
+        },
+        "example": {
+          "errorCode": "FORBIDDEN",
+          "message": "Access to the requested resource is denied",
+          "details": "The authenticated user does not have permission to perform payment transfers",
+          "traceId": "7a3d9e5c2f184b8d91c6e4a7f2b5d813"
+        }
+      },
+      "InitiateFundTransferResponse_400": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "example": "INVALID_AMOUNT"
+          },
+          "message": {
+            "type": "string",
+            "example": "Transfer amount must be greater than zero"
+          },
+          "details": {
+            "type": "string",
+            "example": "The field 'amount' contains an invalid value: -250.75"
+          },
+          "traceId": {
+            "type": "string",
+            "example": "f4b81d7c9a2e46e6b5c3d8f1a7e9b245"
+          }
+        },
+        "example": {
+          "errorCode": "INVALID_AMOUNT",
+          "message": "Transfer amount must be greater than zero",
+          "details": "The field 'amount' contains an invalid value: -250.75",
+          "traceId": "f4b81d7c9a2e46e6b5c3d8f1a7e9b245"
+        }
+      },
+      "InitiateFundTransferResponse_200": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "example": "TXN-987654321"
+          },
+          "status": {
+            "type": "string",
+            "example": "SUCCESS"
+          },
+          "referenceId": {
+            "type": "string",
+            "example": "REF-567890123"
+          },
+          "amount": {
+            "type": "number",
+            "example": 250.75
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "processedAt": {
+            "type": "string",
+            "example": "2026-05-18T06:08:00Z"
+          },
+          "message": {
+            "type": "string",
+            "example": "Funds transferred successfully"
+          }
+        },
+        "example": {
+          "transactionId": "TXN-987654321",
+          "status": "SUCCESS",
+          "referenceId": "REF-567890123",
+          "amount": 250.75,
+          "currency": "USD",
+          "processedAt": "2026-05-18T06:08:00Z",
+          "message": "Funds transferred successfully"
+        }
+      },
+      "InitiateFundTransferRequest": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "example": "TXN-778899001"
+          },
+          "sourceAccount": {
+            "type": "string",
+            "example": "ACC123456789"
+          },
+          "destinationAccount": {
+            "type": "string",
+            "example": "ACC987654321"
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "amount": {
+            "type": "number",
+            "example": 1250.0
+          },
+          "description": {
+            "type": "string",
+            "example": "Vendor Settlement"
+          }
+        },
+        "example": {
+          "transactionId": "TXN-778899001",
+          "sourceAccount": "ACC123456789",
+          "destinationAccount": "ACC987654321",
+          "currency": "USD",
+          "amount": 1250.0,
+          "description": "Vendor Settlement"
+        }
+      },
+      "InitiateFundTransferResponse_500": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "example": "INTERNAL_SERVER_ERROR"
+          },
+          "message": {
+            "type": "string",
+            "example": "An unexpected error occurred while processing the transaction"
+          },
+          "details": {
+            "type": "string",
+            "example": "Failed to persist transaction record due to database connection timeout"
+          },
+          "traceId": {
+            "type": "string",
+            "example": "c9e27f14b6d8432a8f51e7d394ab6c18"
+          }
+        },
+        "example": {
+          "errorCode": "INTERNAL_SERVER_ERROR",
+          "message": "An unexpected error occurred while processing the transaction",
+          "details": "Failed to persist transaction record due to database connection timeout",
+          "traceId": "c9e27f14b6d8432a8f51e7d394ab6c18"
+        }
+      }
+    },
+    "parameters": {
+      "Authorization": {
+        "name": "Authorization",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "Bearer invalid-or-expired-token"
+        },
+        "example": "Bearer invalid-or-expired-token"
+      },
+      "Content-Type": {
+        "name": "Content-Type",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      },
+      "parentspanid": {
+        "name": "parentspanid",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "c9e27f14b6d8432a8f51e7d394ab6c18"
+        },
+        "example": "c9e27f14b6d8432a8f51e7d394ab6c18"
+      },
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "forbidden",
+            "bad_request",
+            "success",
+            "server_error"
+          ]
+        }
+      }
+    },
+    "headers": {
+      "Date": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "Mon, 18 May 2026 06:11:54 GMT"
+        },
+        "example": "Mon, 18 May 2026 06:11:54 GMT"
+      },
+      "Content-Type": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      }
+    }
+  }
+}
