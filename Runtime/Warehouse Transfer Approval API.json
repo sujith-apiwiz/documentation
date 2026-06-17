@@ -1,0 +1,430 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Warehouse Transfer Approval API",
+    "description": "This API facilitates the initiation of stock transfers between warehouses, ensuring proper approval procedures are followed. It allows users to submit necessary information for initiating the transfer and enables seamless tracking and management of stock movements.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://stage-data-gujl.apiwiz.io",
+      "description": "Sandbox server",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "Sandbox server",
+      "x-environmentName": "DEV",
+      "x-hide": false,
+      "x-environmentId": "688884305134cd49a9bcfec3",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/v1/inventory/stock/transfer/warehouse/source/destination/approval/initiate": {
+      "put": {
+        "tags": [
+          "Stock Transfers"
+        ],
+        "summary": "Initiate Stock Transfer Approval",
+        "description": "This operation initiates the approval process for a stock transfer between specified warehouse locations. The request requires unique identifiers for both the approval and the warehouses involved, along with the necessary information in the request body. Successfully processing the request will update the transfer status and provide the necessary approval confirmation.",
+        "operationId": "initiateStockTransferApproval",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-Approval-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-Warehouse-Id"
+          },
+          {
+            "$ref": "#/components/parameters/Content-Type"
+          },
+          {
+            "$ref": "#/components/parameters/parentspanid"
+          },
+          {
+            "$ref": "#/components/parameters/Authorization"
+          },
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitiateStockTransferApprovalRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Approval initiated successfully",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitiateStockTransferApprovalResponse_200"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitiateStockTransferApprovalResponse_500"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitiateStockTransferApprovalResponse_400"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "InitiateStockTransferApprovalResponse_200": {
+        "type": "object",
+        "properties": {
+          "transferId": {
+            "type": "string",
+            "example": "TRFR-20260608-5531"
+          },
+          "status": {
+            "type": "string",
+            "example": "APPROVED"
+          },
+          "sourceWarehouse": {
+            "type": "string",
+            "example": "WH-NORTH-003"
+          },
+          "destinationWarehouse": {
+            "type": "string",
+            "example": "WH-SOUTH-007"
+          },
+          "itemsToTransfer": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "totalUnits": {
+            "type": "integer",
+            "format": "int32",
+            "example": 70
+          },
+          "scheduledDate": {
+            "type": "string",
+            "example": "2026-06-09"
+          },
+          "estimatedArrival": {
+            "type": "string",
+            "example": "2026-06-10"
+          },
+          "shippingLabel": {
+            "type": "string",
+            "example": "https://labels.stocksys.com/TRFR-20260608-5531.pdf"
+          },
+          "message": {
+            "type": "string",
+            "example": "Stock transfer approved and scheduled"
+          }
+        },
+        "example": {
+          "transferId": "TRFR-20260608-5531",
+          "status": "APPROVED",
+          "sourceWarehouse": "WH-NORTH-003",
+          "destinationWarehouse": "WH-SOUTH-007",
+          "itemsToTransfer": 2,
+          "totalUnits": 70,
+          "scheduledDate": "2026-06-09",
+          "estimatedArrival": "2026-06-10",
+          "shippingLabel": "https://labels.stocksys.com/TRFR-20260608-5531.pdf",
+          "message": "Stock transfer approved and scheduled"
+        }
+      },
+      "InitiateStockTransferApprovalResponse_500": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "WMS_INTEGRATION_ERROR"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 500
+          },
+          "message": {
+            "type": "string",
+            "example": "Warehouse Management System integration failed. Transfer recorded but stock reservation not confirmed."
+          },
+          "incidentId": {
+            "type": "string",
+            "example": "INC-INV-2026-0299"
+          },
+          "retryAfter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 60
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
+          }
+        },
+        "example": {
+          "error": "WMS_INTEGRATION_ERROR",
+          "code": 500,
+          "message": "Warehouse Management System integration failed. Transfer recorded but stock reservation not confirmed.",
+          "incidentId": "INC-INV-2026-0299",
+          "retryAfter": 60,
+          "timestamp": "2026-06-08T10:00:00Z"
+        }
+      },
+      "InitiateStockTransferApprovalRequest": {
+        "type": "object",
+        "properties": {
+          "sourceWarehouseId": {
+            "type": "string",
+            "example": "WH-NORTH-003"
+          },
+          "destinationWarehouseId": {
+            "type": "string",
+            "example": "WH-NORTH-003"
+          },
+          "items": {
+            "type": "array",
+            "example": [
+              {
+                "sku": "SKU-ELEC-1001",
+                "quantity": 500
+              }
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "sku": {
+                  "type": "string",
+                  "example": "yUizillcxna4F"
+                },
+                "quantity": {
+                  "type": "integer",
+                  "format": "int32",
+                  "example": 28
+                }
+              },
+              "example": "{\n  \"sku\" : \"yUizillcxna4F\",\n  \"quantity\" : 28\n}"
+            }
+          }
+        },
+        "example": {
+          "sourceWarehouseId": "WH-NORTH-003",
+          "destinationWarehouseId": "WH-NORTH-003",
+          "items": [
+            {
+              "sku": "SKU-ELEC-1001",
+              "quantity": 500
+            }
+          ]
+        }
+      },
+      "InitiateStockTransferApprovalResponse_400": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "TRANSFER_VALIDATION_FAILED"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 400
+          },
+          "details": {
+            "type": "array",
+            "example": [
+              "Source and destination warehouse cannot be the same",
+              "Transfer quantity 500 exceeds available stock of 48 for SKU-ELEC-1001",
+              "approvalId is required for transfers above 30 units",
+              "scheduledDate is required"
+            ],
+            "items": {
+              "type": "string",
+              "example": "mrgppqxwjgaswwjsxevbcmgqlqfxbuhzlfbimjhwutqmvbynqss"
+            }
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
+          }
+        },
+        "example": {
+          "error": "TRANSFER_VALIDATION_FAILED",
+          "code": 400,
+          "details": [
+            "Source and destination warehouse cannot be the same",
+            "Transfer quantity 500 exceeds available stock of 48 for SKU-ELEC-1001",
+            "approvalId is required for transfers above 30 units",
+            "scheduledDate is required"
+          ],
+          "timestamp": "2026-06-08T10:00:00Z"
+        }
+      }
+    },
+    "parameters": {
+      "X-Approval-Id": {
+        "name": "X-Approval-Id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "APRV-INV-7721"
+        },
+        "example": "APRV-INV-7721"
+      },
+      "X-Warehouse-Id": {
+        "name": "X-Warehouse-Id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "WH-NORTH-003"
+        },
+        "example": "WH-NORTH-003"
+      },
+      "Content-Type": {
+        "name": "Content-Type",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      },
+      "parentspanid": {
+        "name": "parentspanid",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "8a9840a1f6db448fab4a4bd97ddc5e40b4b232796bef4600"
+        },
+        "example": "8a9840a1f6db448fab4a4bd97ddc5e40b4b232796bef4600"
+      },
+      "Authorization": {
+        "name": "Authorization",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "Bearer warehouse-mgr-token"
+        },
+        "example": "Bearer warehouse-mgr-token"
+      },
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "success",
+            "server_error",
+            "bad_request"
+          ]
+        }
+      }
+    },
+    "headers": {
+      "Date": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "Mon, 08 Jun 2026 10:00:00 GMT"
+        },
+        "example": "Mon, 08 Jun 2026 10:00:00 GMT"
+      },
+      "X-Trace-Id": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "25435636b34f4040a144291ec7acd1145323ef6a6fb94294"
+        },
+        "example": "25435636b34f4040a144291ec7acd1145323ef6a6fb94294"
+      },
+      "Content-Type": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      }
+    }
+  }
+}

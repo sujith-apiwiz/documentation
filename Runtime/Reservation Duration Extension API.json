@@ -1,0 +1,306 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Reservation Duration Extension API",
+    "description": "This API enables users to confirm payment for extending the duration of their reservations. It facilitates the entire process from initiation to confirmation, ensuring a seamless user experience for managing reservation timelines.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://stage-data-gujl.apiwiz.io",
+      "description": "Sandbox server",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "Sandbox server",
+      "x-environmentName": "DEV",
+      "x-hide": false,
+      "x-environmentId": "688884305134cd49a9bcfec3",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/v1/parking/reservations/{reservationId}/extend/duration/payment/confirm": {
+      "put": {
+        "tags": [
+          "Reservation Extensions"
+        ],
+        "summary": "Confirm Payment for Duration Extension",
+        "description": "This operation allows users to confirm payment for extending the duration of an existing reservation. It requires parameters such as driver ID and authorization headers, along with a request body containing payment details. Upon successful processing, the reservation's duration will be extended and a confirmation response will be returned.",
+        "operationId": "confirmPaymentForDurationExtension",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-Driver-Id"
+          },
+          {
+            "$ref": "#/components/parameters/Content-Type"
+          },
+          {
+            "$ref": "#/components/parameters/parentspanid"
+          },
+          {
+            "$ref": "#/components/parameters/Authorization"
+          },
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmPaymentForDurationExtensionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment confirmation successful",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmPaymentForDurationExtensionResponse_200"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payment request parameters",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmPaymentForDurationExtensionResponse_400"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "ConfirmPaymentForDurationExtensionResponse_200": {
+        "type": "object",
+        "properties": {
+          "reservationId": {
+            "type": "string",
+            "example": "PARK-RES-20260608-7712"
+          },
+          "status": {
+            "type": "string",
+            "example": "EXTENDED"
+          },
+          "newEndTime": {
+            "type": "string",
+            "example": "2026-06-08T16:00:00Z"
+          },
+          "additionalCharge": {
+            "type": "number",
+            "example": 9.0
+          },
+          "totalCharge": {
+            "type": "number",
+            "example": 22.5
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "message": {
+            "type": "string",
+            "example": "Parking reservation extended successfully"
+          }
+        },
+        "example": {
+          "reservationId": "PARK-RES-20260608-7712",
+          "status": "EXTENDED",
+          "newEndTime": "2026-06-08T16:00:00Z",
+          "additionalCharge": 9.0,
+          "totalCharge": 22.5,
+          "currency": "USD",
+          "message": "Parking reservation extended successfully"
+        }
+      },
+      "ConfirmPaymentForDurationExtensionRequest": {
+        "type": "object",
+        "properties": {
+          "reservationId": {
+            "type": "string",
+            "example": "PARK-RES-20260608-7712"
+          },
+          "extendByHours": {
+            "type": "integer",
+            "format": "int32",
+            "example": 24
+          }
+        },
+        "example": {
+          "reservationId": "PARK-RES-20260608-7712",
+          "extendByHours": 24
+        }
+      },
+      "ConfirmPaymentForDurationExtensionResponse_400": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "EXTENSION_INVALID"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 400
+          },
+          "details": {
+            "type": "array",
+            "example": [
+              "Maximum extension is 6 hours per reservation",
+              "Slot SLOT-B2-044 is pre-booked by another vehicle from 2026-06-08T17:00:00Z",
+              "paymentMethod is required"
+            ],
+            "items": {
+              "type": "string",
+              "example": "fMedq5ift06BOOxdPC5YDEMZivqM1M255J2tQq1u0E8Z"
+            }
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
+          }
+        },
+        "example": {
+          "error": "EXTENSION_INVALID",
+          "code": 400,
+          "details": [
+            "Maximum extension is 6 hours per reservation",
+            "Slot SLOT-B2-044 is pre-booked by another vehicle from 2026-06-08T17:00:00Z",
+            "paymentMethod is required"
+          ],
+          "timestamp": "2026-06-08T10:00:00Z"
+        }
+      }
+    },
+    "parameters": {
+      "X-Driver-Id": {
+        "name": "X-Driver-Id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "DRV-PARK-441"
+        },
+        "example": "DRV-PARK-441"
+      },
+      "Content-Type": {
+        "name": "Content-Type",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      },
+      "parentspanid": {
+        "name": "parentspanid",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "a251f11485bc44e5a4e3738bc997144837d78260d87d4bd3"
+        },
+        "example": "a251f11485bc44e5a4e3738bc997144837d78260d87d4bd3"
+      },
+      "Authorization": {
+        "name": "Authorization",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "Bearer driver-auth-token"
+        },
+        "example": "Bearer driver-auth-token"
+      },
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "success",
+            "bad_request"
+          ]
+        }
+      }
+    },
+    "headers": {
+      "Date": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "Mon, 08 Jun 2026 10:00:00 GMT"
+        },
+        "example": "Mon, 08 Jun 2026 10:00:00 GMT"
+      },
+      "X-Trace-Id": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "33c6147db1d24e48a6ae7553abbe49b5a91b75c7971f4942"
+        },
+        "example": "33c6147db1d24e48a6ae7553abbe49b5a91b75c7971f4942"
+      },
+      "Content-Type": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      }
+    }
+  }
+}
