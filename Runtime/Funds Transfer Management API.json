@@ -2,18 +2,12 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Funds Transfer Management API",
-    "description": "The Funds Transfer Management API enables seamless and secure processing of monetary transfers between accounts. It provides functionalities to initiate transfers, manage transaction priorities, and supports various operation parameters to optimize performance. Ideal for financial institutions and fintech platforms seeking to integrate robust transfer capabilities within their applications.",
-    "termsOfService": "This API is governed by the Example Service Terms. By using this API, you agree to comply with all applicable laws and regulations. For more details, visit our terms page.",
-    "contact": {
-      "name": "Support Team",
-      "url": "https://example.com/support",
-      "email": "support@example.com"
-    },
+    "description": "The Funds Transfer Management API allows users to execute and manage fund transfers seamlessly. This API provides various functionalities to initiate transfers, check the status of transfers, and handle transaction priorities. It is designed to be user-friendly, ensuring secure and efficient operations for financial interactions.",
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/direct-payments",
+      "url": "https://stage-data-gujl.apiwiz.io",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -21,17 +15,17 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/direct-payments"
+      "x-basePath": "/"
     }
   ],
   "paths": {
-    "/transfer": {
+    "/v1/direct-payments/transfer": {
       "post": {
         "tags": [
-          "Transfers"
+          "Fund Transfers"
         ],
         "summary": "Initiate Fund Transfer",
-        "description": "This operation initiates a fund transfer between specified accounts. It requires the details of the transfer such as the sender's and recipient's information, the amount, and any relevant metadata. Successful execution will return a confirmation of the transaction, enabling tracking and further actions if necessary.",
+        "description": "This operation enables a user to initiate a fund transfer between accounts. It requires specific details such as the amount, sender, and recipient information in the request body. Upon successful execution, the transfer will be processed, and a confirmation response will be returned to the user.",
         "operationId": "initiateFundTransfer",
         "parameters": [
           {
@@ -117,6 +111,24 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "Transfer completed successfully",
+            "headers": {
+              "x-log-id": {
+                "$ref": "#/components/headers/x-log-id"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitiateFundTransferResponse_200"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Invalid request parameters",
             "headers": {
@@ -134,24 +146,6 @@
                 }
               }
             }
-          },
-          "200": {
-            "description": "Request processed successfully",
-            "headers": {
-              "x-log-id": {
-                "$ref": "#/components/headers/x-log-id"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InitiateFundTransferResponse_200"
-                }
-              }
-            }
           }
         },
         "callbacks": {},
@@ -164,6 +158,40 @@
   },
   "components": {
     "schemas": {
+      "InitiateFundTransferResponse_200": {
+        "type": "object",
+        "properties": {
+          "partnerSessionId": {
+            "type": "string",
+            "example": "DF195633-E743-4E1A-B4865D5EA95FB21F"
+          },
+          "status": {
+            "type": "string",
+            "example": "Success"
+          },
+          "code": {
+            "type": "string",
+            "example": "000"
+          }
+        },
+        "example": {
+          "partnerSessionId": "DF195633-E743-4E1A-B4865D5EA95FB21F",
+          "status": "Success",
+          "code": "000"
+        }
+      },
+      "InitiateFundTransferRequest": {
+        "type": "object",
+        "properties": {
+          "partnerCode": {
+            "type": "string",
+            "example": "BANKARDa"
+          }
+        },
+        "example": {
+          "partnerCode": "BANKARDa"
+        }
+      },
       "InitiateFundTransferResponse_400": {
         "type": "object",
         "properties": {
@@ -189,38 +217,6 @@
           "status": "FAILED",
           "code": "400",
           "description": "BadRequest: Enter a valid User"
-        }
-      },
-      "InitiateFundTransferRequest": {
-        "type": "object",
-        "properties": {
-          "partnerCode": {
-            "type": "string",
-            "example": "kmkqsco"
-          }
-        },
-        "example": "{\n  \"partnerCode\" : \"kmkqsco\"\n}"
-      },
-      "InitiateFundTransferResponse_200": {
-        "type": "object",
-        "properties": {
-          "partnerSessionId": {
-            "type": "string",
-            "example": "DF195633-E743-4E1A-B4865D5EA95FB21F"
-          },
-          "status": {
-            "type": "string",
-            "example": "Success"
-          },
-          "code": {
-            "type": "string",
-            "example": "000"
-          }
-        },
-        "example": {
-          "partnerSessionId": "DF195633-E743-4E1A-B4865D5EA95FB21F",
-          "status": "Success",
-          "code": "000"
         }
       }
     },
@@ -281,9 +277,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f4978e0ae3af4379"
+          "example": "210a904bb9bb5c8b"
         },
-        "example": "f4978e0ae3af4379"
+        "example": "210a904bb9bb5c8b"
       },
       "content-type": {
         "name": "content-type",
@@ -317,9 +313,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "1f78062d70c9a21bf4978e0ae3af4379"
+          "example": "e457e8e701d02f38210a904bb9bb5c8b"
         },
-        "example": "1f78062d70c9a21bf4978e0ae3af4379"
+        "example": "e457e8e701d02f38210a904bb9bb5c8b"
       },
       "x-request-id": {
         "name": "x-request-id",
@@ -329,9 +325,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f5d5ea89-173d-4226-a4c5-c1dd683ed265"
+          "example": "d931dcb4-9b4d-4d36-b46d-a26ac217d3dd"
         },
-        "example": "f5d5ea89-173d-4226-a4c5-c1dd683ed265"
+        "example": "d931dcb4-9b4d-4d36-b46d-a26ac217d3dd"
       },
       "sec-fetch-dest": {
         "name": "sec-fetch-dest",
@@ -511,8 +507,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "bad_request",
-            "success"
+            "success",
+            "bad_request"
           ]
         }
       }
@@ -523,9 +519,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6a1d261301d29a24f2bb8c96"
+          "example": "6a1d261a01d29a24f2bb8c9c"
         },
-        "example": "6a1d261301d29a24f2bb8c96"
+        "example": "6a1d261a01d29a24f2bb8c9c"
       },
       "content-type": {
         "style": "simple",
