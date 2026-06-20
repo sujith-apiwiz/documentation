@@ -1,16 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Subscription Billing Confirmation API",
-    "description": "This API is designed to facilitate the confirmation of billing cycles within subscription plans. It allows users to authenticate their requests and ensure seamless processing of billing activities. With detailed error reporting and header-based context tracking, it aims to provide a reliable integration point for managing subscription billing confirmations.",
-    "version": "1.0",
-    "extensions": {
-      "x-oas-type": "Runtime"
-    }
+    "title": "Playback Progress Session API",
+    "description": "This API facilitates the creation and synchronization of playback progress sessions on various devices. It allows users to resume their content seamlessly, ensuring a smooth and uninterrupted viewing experience across different platforms. Utilizing this API, developers can manage playback states effectively, enhancing user satisfaction in media consumption.",
+    "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/streaming",
+      "url": "https://stage-data-gujl.apiwiz.io",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -18,24 +15,24 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/streaming"
+      "x-basePath": "/"
     }
   ],
   "paths": {
-    "/subscriptions/plan/payment/billing/cycle/activate/confirm": {
+    "/v1/streaming/playback/content/progress/sync/device/resume/session/create": {
       "post": {
         "tags": [
-          "Subscriptions"
+          "Playback Sessions"
         ],
-        "summary": "Confirm Billing Cycle Activation",
-        "description": "This operation confirms the activation of a billing cycle for a subscription plan. It requires the user's ID and device type as part of the request header, along with a JSON body defining the activation parameters. If successful, the operation will return a success message indicating the billing cycle has been activated.",
-        "operationId": "confirmBillingCycleActivation",
+        "summary": "Create Playback Resume Session",
+        "description": "This operation initiates a playback session resume for a specific device. It requires the user's ID, device ID, and other context information in the request headers. Upon successful creation, the system responds with the details of the newly created session, enabling users to continue their playback seamlessly.",
+        "operationId": "createPlaybackResumeSession",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-User-Id"
           },
           {
-            "$ref": "#/components/parameters/X-Device-Type"
+            "$ref": "#/components/parameters/X-Device-Id"
           },
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -54,14 +51,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConfirmBillingCycleActivationRequest"
+                "$ref": "#/components/schemas/CreatePlaybackResumeSessionRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Billing cycle activated successfully",
+            "description": "Playback session resumed successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -76,7 +73,28 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConfirmBillingCycleActivationResponse_200"
+                  "$ref": "#/components/schemas/CreatePlaybackResumeSessionResponse_200"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error occurred",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlaybackResumeSessionResponse_500"
                 }
               }
             }
@@ -97,7 +115,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConfirmBillingCycleActivationResponse_400"
+                  "$ref": "#/components/schemas/CreatePlaybackResumeSessionResponse_400"
                 }
               }
             }
@@ -113,34 +131,78 @@
   },
   "components": {
     "schemas": {
-      "ConfirmBillingCycleActivationResponse_200": {
+      "CreatePlaybackResumeSessionResponse_200": {
         "type": "object",
         "example": {}
       },
-      "ConfirmBillingCycleActivationRequest": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "string",
-            "example": "RsDCleo96a1v"
-          },
-          "planId": {
-            "type": "string",
-            "example": "&qfi#+#Wi&!,"
-          },
-          "billingCycle": {
-            "type": "string",
-            "example": "vccdpw"
-          }
-        },
-        "example": "{\n  \"userId\" : \"RsDCleo96a1v\",\n  \"planId\" : \"&qfi#+#Wi&!,\",\n  \"billingCycle\" : \"vccdpw\"\n}"
-      },
-      "ConfirmBillingCycleActivationResponse_400": {
+      "CreatePlaybackResumeSessionResponse_500": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "SUBSCRIPTION_INVALID"
+            "example": "CDN_STREAM_UNAVAILABLE"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 500
+          },
+          "message": {
+            "type": "string",
+            "example": "Content delivery network is experiencing high latency. Please retry or switch to a lower quality."
+          },
+          "incidentId": {
+            "type": "string",
+            "example": "INC-STRM-2026-0822"
+          },
+          "retryAfter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 20
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
+          }
+        },
+        "example": {
+          "error": "CDN_STREAM_UNAVAILABLE",
+          "code": 500,
+          "message": "Content delivery network is experiencing high latency. Please retry or switch to a lower quality.",
+          "incidentId": "INC-STRM-2026-0822",
+          "retryAfter": 20,
+          "timestamp": "2026-06-08T10:00:00Z"
+        }
+      },
+      "CreatePlaybackResumeSessionRequest": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "example": "USR-VFX-9921"
+          },
+          "contentId": {
+            "type": "string",
+            "example": "MOV-UNAVAIL-999"
+          },
+          "progressSeconds": {
+            "type": "integer",
+            "format": "int32",
+            "example": 9999999
+          }
+        },
+        "example": {
+          "userId": "USR-VFX-9921",
+          "contentId": "MOV-UNAVAIL-999",
+          "progressSeconds": 9999999
+        }
+      },
+      "CreatePlaybackResumeSessionResponse_400": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "PLAYBACK_SESSION_FAILED"
           },
           "code": {
             "type": "integer",
@@ -150,14 +212,14 @@
           "details": {
             "type": "array",
             "example": [
-              "planId PLAN-INVALID does not exist",
-              "billingCycle must be MONTHLY or ANNUAL",
-              "paymentMethod is required",
-              "User already has an active subscription. Please upgrade or cancel existing plan."
+              "Content MOV-UNAVAIL-999 is not available in your region",
+              "progressSeconds exceeds content duration",
+              "deviceId is required",
+              "User has reached maximum simultaneous stream limit of 4"
             ],
             "items": {
               "type": "string",
-              "example": "%r{=8!6Wu;CEJN$=hK,R-sa^s:JS>|<9o?"
+              "example": "oc6kI7uQXKbvCEzpKPxPI7f8mIe3ZTvEMgRM5xhiFtkJ4vOvFFGoBqk"
             }
           },
           "timestamp": {
@@ -166,13 +228,13 @@
           }
         },
         "example": {
-          "error": "SUBSCRIPTION_INVALID",
+          "error": "PLAYBACK_SESSION_FAILED",
           "code": 400,
           "details": [
-            "planId PLAN-INVALID does not exist",
-            "billingCycle must be MONTHLY or ANNUAL",
-            "paymentMethod is required",
-            "User already has an active subscription. Please upgrade or cancel existing plan."
+            "Content MOV-UNAVAIL-999 is not available in your region",
+            "progressSeconds exceeds content duration",
+            "deviceId is required",
+            "User has reached maximum simultaneous stream limit of 4"
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
@@ -191,17 +253,17 @@
         },
         "example": "USR-VFX-9921"
       },
-      "X-Device-Type": {
-        "name": "X-Device-Type",
+      "X-Device-Id": {
+        "name": "X-Device-Id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "SMART_TV"
+          "example": "DEVICE-TV-8821"
         },
-        "example": "SMART_TV"
+        "example": "DEVICE-TV-8821"
       },
       "Content-Type": {
         "name": "Content-Type",
@@ -223,9 +285,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "d39f0052b56b48338ff667479c19a8a9b27c6392b0d847a3"
+          "example": "f2637db6ec1e449ebedbd9051a78dd9e024acc0487b74a52"
         },
-        "example": "d39f0052b56b48338ff667479c19a8a9b27c6392b0d847a3"
+        "example": "f2637db6ec1e449ebedbd9051a78dd9e024acc0487b74a52"
       },
       "Authorization": {
         "name": "Authorization",
@@ -250,6 +312,7 @@
           "type": "string",
           "enum": [
             "success",
+            "server_error",
             "bad_request"
           ]
         }
@@ -270,9 +333,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6e6872f04e304c5a910308fb27ed2db16ef4a31213f141c2"
+          "example": "4d58fe11a1ae4469972c9f676a4e1ad637132cae78104209"
         },
-        "example": "6e6872f04e304c5a910308fb27ed2db16ef4a31213f141c2"
+        "example": "4d58fe11a1ae4469972c9f676a4e1ad637132cae78104209"
       },
       "Content-Type": {
         "style": "simple",

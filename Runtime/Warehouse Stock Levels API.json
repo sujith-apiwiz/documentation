@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Warehouse Stock Levels API",
-    "description": "This API provides real-time reporting of stock levels within warehouses, allowing users to retrieve SKU category information efficiently. It supports various parameters for customized queries including valuation options, report generation, and low stock filters. Ideal for inventory management and logistics optimization.",
+    "description": "The Warehouse Stock Levels API provides real-time insights into stock levels categorized by SKU in various warehouse locations. This API allows users to query stock information, including low stock alerts and valuation details, enabling efficient inventory management and decision-making.",
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -25,18 +25,12 @@
     "/warehouse/WH-NORTH-003/stock/levels/report/sku/category/realtime": {
       "get": {
         "tags": [
-          "Inventory Management"
+          "Stock Levels"
         ],
-        "summary": "Retrieve Real-time SKU Stock Levels",
-        "description": "This operation retrieves real-time stock levels for specific SKUs within a designated warehouse, providing insights into current inventory status. Users can specify parameters such as category, valuation inclusion, and low stock filters to customize the report. The expected outcome is a detailed report of stock levels, allowing for better inventory management and operational decisions.",
-        "operationId": "retrieveRealtimeSkuStockLevels",
+        "summary": "Retrieve Real-time Stock Levels by SKU Category",
+        "description": "This operation allows users to retrieve real-time stock level reports for specific SKU categories within the specified warehouse. Users can filter the results based on various parameters, including pages, category, low stock items, and valuation inclusion. The expected outcome is a detailed report containing stock levels for the requested SKU categories, which can assist in inventory management and decision-making.",
+        "operationId": "retrieveRealtimeStockLevelsBySkuCategory",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/includeValuation"
-          },
-          {
-            "$ref": "#/components/parameters/generateFullReport"
-          },
           {
             "$ref": "#/components/parameters/page"
           },
@@ -50,13 +44,19 @@
             "$ref": "#/components/parameters/lowStockOnly"
           },
           {
+            "$ref": "#/components/parameters/X-Warehouse-Id"
+          },
+          {
+            "$ref": "#/components/parameters/includeValuation"
+          },
+          {
+            "$ref": "#/components/parameters/generateFullReport"
+          },
+          {
             "$ref": "#/components/parameters/parentspanid"
           },
           {
             "$ref": "#/components/parameters/Authorization"
-          },
-          {
-            "$ref": "#/components/parameters/X-Warehouse-Id"
           },
           {
             "$ref": "#/components/parameters/x-mock-response"
@@ -66,33 +66,12 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RetrieveRealtimeSkuStockLevelsRequest"
+                "$ref": "#/components/schemas/RetrieveRealtimeStockLevelsBySkuCategoryRequest"
               }
             }
           }
         },
         "responses": {
-          "500": {
-            "description": "Internal server error occurred",
-            "headers": {
-              "Date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "X-Trace-Id": {
-                "$ref": "#/components/headers/X-Trace-Id"
-              },
-              "Content-Type": {
-                "$ref": "#/components/headers/Content-Type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RetrieveRealtimeSkuStockLevelsResponse_500"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Request processed successfully",
             "headers": {
@@ -112,7 +91,28 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RetrieveRealtimeSkuStockLevelsResponse_200"
+                  "$ref": "#/components/schemas/RetrieveRealtimeStockLevelsBySkuCategoryResponse_200"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveRealtimeStockLevelsBySkuCategoryResponse_500"
                 }
               }
             }
@@ -128,44 +128,7 @@
   },
   "components": {
     "schemas": {
-      "RetrieveRealtimeSkuStockLevelsResponse_500": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "example": "REPORT_GENERATION_TIMEOUT"
-          },
-          "code": {
-            "type": "integer",
-            "format": "int32",
-            "example": 500
-          },
-          "message": {
-            "type": "string",
-            "example": "Full inventory valuation report timed out due to large dataset. Use scheduled reports for full warehouse exports."
-          },
-          "incidentId": {
-            "type": "string",
-            "example": "INC-INV-2026-0188"
-          },
-          "timestamp": {
-            "type": "string",
-            "example": "2026-06-08T10:00:00Z"
-          }
-        },
-        "example": {
-          "error": "REPORT_GENERATION_TIMEOUT",
-          "code": 500,
-          "message": "Full inventory valuation report timed out due to large dataset. Use scheduled reports for full warehouse exports.",
-          "incidentId": "INC-INV-2026-0188",
-          "timestamp": "2026-06-08T10:00:00Z"
-        }
-      },
-      "RetrieveRealtimeSkuStockLevelsRequest": {
-        "type": "string",
-        "example": ""
-      },
-      "RetrieveRealtimeSkuStockLevelsResponse_200": {
+      "RetrieveRealtimeStockLevelsBySkuCategoryResponse_200": {
         "type": "object",
         "properties": {
           "warehouseId": {
@@ -186,30 +149,30 @@
               "totalSkus": {
                 "type": "integer",
                 "format": "int32",
-                "example": 20
+                "example": 86
               },
               "totalUnits": {
                 "type": "integer",
                 "format": "int32",
-                "example": 44
+                "example": 88
               },
               "lowStockSkus": {
                 "type": "integer",
                 "format": "int32",
-                "example": 75
+                "example": 89
               },
               "outOfStockSkus": {
                 "type": "integer",
                 "format": "int32",
-                "example": 64
+                "example": 58
               },
               "totalInventoryValue": {
                 "type": "number",
-                "example": 59.38
+                "example": 69.61
               },
               "currency": {
                 "type": "string",
-                "example": "ojc"
+                "example": "mvw"
               }
             },
             "example": {
@@ -257,37 +220,37 @@
               "properties": {
                 "sku": {
                   "type": "string",
-                  "example": "ZgZLdG9NJRTtE"
+                  "example": "pewB5UrlIcxg0"
                 },
                 "description": {
                   "type": "string",
-                  "example": "dn9fElfQLC8U8jCWRFP"
+                  "example": "1elCsSsIViSEDf1DOyp"
                 },
                 "quantityOnHand": {
                   "type": "integer",
                   "format": "int32",
-                  "example": 24
+                  "example": 43
                 },
                 "reorderPoint": {
                   "type": "integer",
                   "format": "int32",
-                  "example": 41
+                  "example": 71
                 },
                 "reorderQty": {
                   "type": "integer",
                   "format": "int32",
-                  "example": 66
+                  "example": 37
                 },
                 "status": {
                   "type": "string",
-                  "example": "lNh?eMd:"
+                  "example": "ifl0(VDM"
                 },
                 "location": {
                   "type": "string",
-                  "example": "r1rDB17D25"
+                  "example": "F1V5uge2cC"
                 }
               },
-              "example": "{\n  \"sku\" : \"ZgZLdG9NJRTtE\",\n  \"description\" : \"dn9fElfQLC8U8jCWRFP\",\n  \"quantityOnHand\" : 24,\n  \"reorderPoint\" : 41,\n  \"reorderQty\" : 66,\n  \"status\" : \"lNh?eMd:\",\n  \"location\" : \"r1rDB17D25\"\n}"
+              "example": "{\n  \"sku\" : \"pewB5UrlIcxg0\",\n  \"description\" : \"1elCsSsIViSEDf1DOyp\",\n  \"quantityOnHand\" : 43,\n  \"reorderPoint\" : 71,\n  \"reorderQty\" : 37,\n  \"status\" : \"ifl0(VDM\",\n  \"location\" : \"F1V5uge2cC\"\n}"
             }
           },
           "page": {
@@ -351,33 +314,46 @@
           "pageSize": 20,
           "totalSkusInCategory": 142
         }
+      },
+      "RetrieveRealtimeStockLevelsBySkuCategoryRequest": {
+        "type": "string",
+        "example": ""
+      },
+      "RetrieveRealtimeStockLevelsBySkuCategoryResponse_500": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "REPORT_GENERATION_TIMEOUT"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 500
+          },
+          "message": {
+            "type": "string",
+            "example": "Full inventory valuation report timed out due to large dataset. Use scheduled reports for full warehouse exports."
+          },
+          "incidentId": {
+            "type": "string",
+            "example": "INC-INV-2026-0188"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
+          }
+        },
+        "example": {
+          "error": "REPORT_GENERATION_TIMEOUT",
+          "code": 500,
+          "message": "Full inventory valuation report timed out due to large dataset. Use scheduled reports for full warehouse exports.",
+          "incidentId": "INC-INV-2026-0188",
+          "timestamp": "2026-06-08T10:00:00Z"
+        }
       }
     },
     "parameters": {
-      "includeValuation": {
-        "name": "includeValuation",
-        "in": "query",
-        "required": false,
-        "style": "form",
-        "explode": true,
-        "schema": {
-          "type": "string",
-          "example": "rhmc"
-        },
-        "example": "rhmc"
-      },
-      "generateFullReport": {
-        "name": "generateFullReport",
-        "in": "query",
-        "required": false,
-        "style": "form",
-        "explode": true,
-        "schema": {
-          "type": "string",
-          "example": "rhmj"
-        },
-        "example": "rhmj"
-      },
       "page": {
         "name": "page",
         "in": "query",
@@ -398,9 +374,9 @@
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "wupxtybimoc"
+          "example": "pcwvyndabcb"
         },
-        "example": "wupxtybimoc"
+        "example": "pcwvyndabcb"
       },
       "pageSize": {
         "name": "pageSize",
@@ -410,9 +386,9 @@
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "59"
+          "example": "24"
         },
-        "example": "59"
+        "example": "24"
       },
       "lowStockOnly": {
         "name": "lowStockOnly",
@@ -422,33 +398,9 @@
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "gbrmc"
+          "example": "fnjxz"
         },
-        "example": "gbrmc"
-      },
-      "parentspanid": {
-        "name": "parentspanid",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "5e8c245510fa4ddf96d41ab69b31c505da750f16d7ab4ee5"
-        },
-        "example": "5e8c245510fa4ddf96d41ab69b31c505da750f16d7ab4ee5"
-      },
-      "Authorization": {
-        "name": "Authorization",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "Bearer warehouse-mgr-token"
-        },
-        "example": "Bearer warehouse-mgr-token"
+        "example": "fnjxz"
       },
       "X-Warehouse-Id": {
         "name": "X-Warehouse-Id",
@@ -462,6 +414,54 @@
         },
         "example": "WH-NORTH-003"
       },
+      "includeValuation": {
+        "name": "includeValuation",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "wnnx"
+        },
+        "example": "wnnx"
+      },
+      "generateFullReport": {
+        "name": "generateFullReport",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "guul"
+        },
+        "example": "guul"
+      },
+      "parentspanid": {
+        "name": "parentspanid",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "db6b3049ae3a4585bcc070055539a59ed856a18baa784d6d"
+        },
+        "example": "db6b3049ae3a4585bcc070055539a59ed856a18baa784d6d"
+      },
+      "Authorization": {
+        "name": "Authorization",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "Bearer warehouse-mgr-token"
+        },
+        "example": "Bearer warehouse-mgr-token"
+      },
       "x-mock-response": {
         "name": "x-mock-response",
         "in": "header",
@@ -472,8 +472,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "server_error",
-            "success"
+            "success",
+            "server_error"
           ]
         }
       }
@@ -493,9 +493,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "ddf1bc56e00a46df866b5793f630f76f53629cbfd21148d5"
+          "example": "624f6a748e984c7da120bfc3c4e6d692ee2a302fd59b4e5d"
         },
-        "example": "ddf1bc56e00a46df866b5793f630f76f53629cbfd21148d5"
+        "example": "624f6a748e984c7da120bfc3c4e6d692ee2a302fd59b4e5d"
       },
       "Content-Type": {
         "style": "simple",

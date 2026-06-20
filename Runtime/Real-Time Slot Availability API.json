@@ -1,10 +1,10 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Personalized Recommendations API",
-    "description": "The Personalized Recommendations API allows users to retrieve tailored content suggestions for their homepage feed based on their preferences and interactions. This API provides an efficient way to enhance user engagement by delivering personalized content recommendations.",
+    "title": "Real-Time Slot Availability API",
+    "description": "The Real-Time Slot Availability API allows consumers to filter and retrieve information about available slots in a specified lot in real-time. It supports various parameters for accurate data retrieval and integration into systems that depend on slot availability. This API is designed to enhance operational efficiency and provide up-to-date information for better decision-making.",
     "contact": {
-      "name": "Support Team",
+      "name": "API Support Team",
       "url": "https://www.example.com/support",
       "email": "support@example.com"
     },
@@ -24,17 +24,17 @@
     }
   ],
   "paths": {
-    "/v1/streaming/users/USR-VFX-1100/recommendations/content/personalized/homepage/feed": {
+    "/v1/parking/lots/{lotId}/slots/available/realtime/zones/filter": {
       "get": {
         "tags": [
-          "Personalized Recommendations"
+          "Slot Availability"
         ],
-        "summary": "Retrieve Personalized Content Feed",
-        "description": "This operation fetches a personalized content feed for a specific user identified by their unique user ID. You need to provide the content type and parent span ID as query parameters, along with authorization for access. Upon successful execution, this will return the user's tailored content recommendations for their homepage.",
-        "operationId": "retrievePersonalizedContentFeed",
+        "summary": "Retrieve Available Slots By Zone",
+        "description": "This operation retrieves real-time availability of slots within specified zones for a given lot. Clients can filter the available slots using parameters such as vehicle type and parent span ID. The expected outcome is a comprehensive list of slots that meet the defined criteria, allowing for informed decision-making regarding slot allocation.",
+        "operationId": "retrieveAvailableSlotsByZone",
         "parameters": [
           {
-            "$ref": "#/components/parameters/contentType"
+            "$ref": "#/components/parameters/vehicleType"
           },
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -50,14 +50,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RetrievePersonalizedContentFeedRequest"
+                "$ref": "#/components/schemas/RetrieveAvailableSlotsByZoneRequest"
               }
             }
           }
         },
         "responses": {
-          "500": {
-            "description": "Internal server error occurred",
+          "404": {
+            "description": "Specified lot not found",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -72,7 +72,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RetrievePersonalizedContentFeedResponse_500"
+                  "$ref": "#/components/schemas/RetrieveAvailableSlotsByZoneResponse_404"
                 }
               }
             }
@@ -88,29 +88,25 @@
   },
   "components": {
     "schemas": {
-      "RetrievePersonalizedContentFeedRequest": {
+      "RetrieveAvailableSlotsByZoneRequest": {
         "type": "string",
         "example": "{}"
       },
-      "RetrievePersonalizedContentFeedResponse_500": {
+      "RetrieveAvailableSlotsByZoneResponse_404": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "RECOMMENDATION_ENGINE_TIMEOUT"
+            "example": "PARKING_LOT_NOT_FOUND"
           },
           "code": {
             "type": "integer",
             "format": "int32",
-            "example": 500
+            "example": 404
           },
           "message": {
             "type": "string",
-            "example": "ML recommendation service timed out. Serving trending content as fallback."
-          },
-          "incidentId": {
-            "type": "string",
-            "example": "INC-STRM-2026-0711"
+            "example": "Parking lot LOT-NONEXISTENT-ZZZ does not exist or is not operational."
           },
           "timestamp": {
             "type": "string",
@@ -118,26 +114,25 @@
           }
         },
         "example": {
-          "error": "RECOMMENDATION_ENGINE_TIMEOUT",
-          "code": 500,
-          "message": "ML recommendation service timed out. Serving trending content as fallback.",
-          "incidentId": "INC-STRM-2026-0711",
+          "error": "PARKING_LOT_NOT_FOUND",
+          "code": 404,
+          "message": "Parking lot LOT-NONEXISTENT-ZZZ does not exist or is not operational.",
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "contentType": {
-        "name": "contentType",
+      "vehicleType": {
+        "name": "vehicleType",
         "in": "query",
         "required": false,
         "style": "form",
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "lsw"
+          "example": "zntvu"
         },
-        "example": "lsw"
+        "example": "zntvu"
       },
       "parentspanid": {
         "name": "parentspanid",
@@ -147,9 +142,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6b31eb71aa3c454da349420005154f493c97f9fe12ed431d"
+          "example": "1932f785a9314983bdcec39dbcc7ea2c3b2c8ae77efd4bbb"
         },
-        "example": "6b31eb71aa3c454da349420005154f493c97f9fe12ed431d"
+        "example": "1932f785a9314983bdcec39dbcc7ea2c3b2c8ae77efd4bbb"
       },
       "Authorization": {
         "name": "Authorization",
@@ -159,9 +154,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer viewer-auth-token"
+          "example": "Bearer driver-auth-token"
         },
-        "example": "Bearer viewer-auth-token"
+        "example": "Bearer driver-auth-token"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -173,7 +168,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "server_error"
+            "not_found"
           ]
         }
       }
@@ -193,9 +188,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f3e72e549f904b459e90eaed5d7ee9af88a8159d17a54273"
+          "example": "2b0831e9de18484a8bde9577ec1357d0b7dfc1a111d24bee"
         },
-        "example": "f3e72e549f904b459e90eaed5d7ee9af88a8159d17a54273"
+        "example": "2b0831e9de18484a8bde9577ec1357d0b7dfc1a111d24bee"
       },
       "Content-Type": {
         "style": "simple",
