@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Personal Loan Eligibility API",
-    "description": "This API allows customers to submit applications for personal loan eligibility, enabling financial institutions to assess and process requests efficiently. It ensures a standardized method for submitting customer information and receiving feedback on eligibility status.",
+    "title": "Warehouse Shipment Dispatch API",
+    "description": "The Warehouse Shipment Dispatch API facilitates the efficient management and processing of outbound shipment manifests by integrating with carrier services. This API allows users to dispatch items from a warehouse, ensuring streamlined logistics and real-time tracking of shipments. Utilize this service to enhance operational efficiency and improve delivery times.",
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v2/banking",
+      "url": "https://stage-data-gujl.apiwiz.io",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -15,21 +15,24 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v2/banking"
+      "x-basePath": "/"
     }
   ],
   "paths": {
-    "/loans/personal/application/customer/eligibility/submit": {
+    "/v2/logistics/shipments/warehouse/outbound/manifest/carrier/dispatch": {
       "post": {
         "tags": [
-          "Loans"
+          "Outbound Shipments"
         ],
-        "summary": "Submit Customer Eligibility Application",
-        "description": "This operation allows users to submit a personal loan eligibility application on behalf of a customer. It expects specific inputs in JSON format that contain the customer's details and eligibility criteria. The outcome of this submission will determine the eligibility status of the customer for a personal loan.",
-        "operationId": "submitCustomerEligibilityApplication",
+        "summary": "Dispatch Outbound Shipment Manifest",
+        "description": "This operation initiates the dispatch process for an outbound shipment manifest associated with a specific carrier from the warehouse. It expects details about the shipment in the request body, including relevant identifiers and authorization information. The outcome is a successful dispatch confirmation, provided the inputs are valid and the request is correctly authorized.",
+        "operationId": "dispatchOutboundShipmentManifest",
         "parameters": [
           {
-            "$ref": "#/components/parameters/X-Customer-Id"
+            "$ref": "#/components/parameters/X-Client-Code"
+          },
+          {
+            "$ref": "#/components/parameters/X-Warehouse-Id"
           },
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -48,14 +51,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SubmitCustomerEligibilityApplicationRequest"
+                "$ref": "#/components/schemas/DispatchOutboundShipmentManifestRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Eligibility application submitted successfully",
+            "description": "Dispatch completed successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -70,13 +73,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubmitCustomerEligibilityApplicationResponse_200"
+                  "$ref": "#/components/schemas/DispatchOutboundShipmentManifestResponse_200"
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid request parameters provided",
+            "description": "Invalid request parameters",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -91,7 +94,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubmitCustomerEligibilityApplicationResponse_400"
+                  "$ref": "#/components/schemas/DispatchOutboundShipmentManifestResponse_400"
                 }
               }
             }
@@ -107,116 +110,104 @@
   },
   "components": {
     "schemas": {
-      "SubmitCustomerEligibilityApplicationResponse_200": {
+      "DispatchOutboundShipmentManifestResponse_200": {
         "type": "object",
         "properties": {
-          "applicationId": {
+          "shipmentId": {
             "type": "string",
-            "example": "LOAN-APP-20260608-5512"
+            "example": "SHIP-20260608-9921"
+          },
+          "trackingNumber": {
+            "type": "string",
+            "example": "794644790969"
+          },
+          "carrier": {
+            "type": "string",
+            "example": "FEDEX"
+          },
+          "serviceType": {
+            "type": "string",
+            "example": "GROUND"
           },
           "status": {
             "type": "string",
-            "example": "PRE_APPROVED"
+            "example": "LABEL_CREATED"
           },
-          "approvedAmount": {
-            "type": "integer",
-            "format": "int32",
-            "example": 50000
+          "estimatedDelivery": {
+            "type": "string",
+            "example": "2026-06-11"
+          },
+          "labelUrl": {
+            "type": "string",
+            "example": "https://labels.supplyco.com/SHIP-20260608-9921.pdf"
+          },
+          "totalWeight": {
+            "type": "number",
+            "example": 1.3
+          },
+          "shippingCost": {
+            "type": "number",
+            "example": 8.75
           },
           "currency": {
             "type": "string",
             "example": "USD"
           },
-          "interestRate": {
-            "type": "number",
-            "example": 10.5
-          },
-          "tenureMonths": {
-            "type": "integer",
-            "format": "int32",
-            "example": 36
-          },
-          "monthlyEmi": {
-            "type": "number",
-            "example": 1625.89
-          },
-          "processingFee": {
-            "type": "integer",
-            "format": "int32",
-            "example": 1000
-          },
-          "disbursementAccount": {
-            "type": "string",
-            "example": "ACC-100200300"
-          },
-          "offerValidUntil": {
-            "type": "string",
-            "example": "2026-06-22"
-          },
-          "nextStep": {
-            "type": "string",
-            "example": "DOCUMENT_UPLOAD"
-          },
           "message": {
             "type": "string",
-            "example": "Congratulations! Your loan application is pre-approved."
+            "example": "Shipment created and label generated successfully"
           }
         },
         "example": {
-          "applicationId": "LOAN-APP-20260608-5512",
-          "status": "PRE_APPROVED",
-          "approvedAmount": 50000,
+          "shipmentId": "SHIP-20260608-9921",
+          "trackingNumber": "794644790969",
+          "carrier": "FEDEX",
+          "serviceType": "GROUND",
+          "status": "LABEL_CREATED",
+          "estimatedDelivery": "2026-06-11",
+          "labelUrl": "https://labels.supplyco.com/SHIP-20260608-9921.pdf",
+          "totalWeight": 1.3,
+          "shippingCost": 8.75,
           "currency": "USD",
-          "interestRate": 10.5,
-          "tenureMonths": 36,
-          "monthlyEmi": 1625.89,
-          "processingFee": 1000,
-          "disbursementAccount": "ACC-100200300",
-          "offerValidUntil": "2026-06-22",
-          "nextStep": "DOCUMENT_UPLOAD",
-          "message": "Congratulations! Your loan application is pre-approved."
+          "message": "Shipment created and label generated successfully"
         }
       },
-      "SubmitCustomerEligibilityApplicationRequest": {
+      "DispatchOutboundShipmentManifestRequest": {
         "type": "object",
         "properties": {
-          "customerId": {
+          "orderId": {
             "type": "string",
-            "example": "awceyWJPyUs"
+            "example": "ORD-20260608-44821"
           },
-          "loanType": {
+          "warehouseId": {
             "type": "string",
-            "example": "iqfkzkns"
+            "example": "WH-WEST-999"
           },
-          "requestedAmount": {
-            "type": "integer",
-            "format": "int32",
-            "example": 54
+          "carrier": {
+            "type": "string",
+            "example": "INVALID_CARRIER"
           },
-          "tenureMonths": {
-            "type": "integer",
-            "format": "int32",
-            "example": 96
-          },
-          "annualIncome": {
-            "type": "integer",
-            "format": "int32",
-            "example": 48
-          },
-          "creditScore": {
-            "type": "integer",
-            "format": "int32",
-            "example": 13
+          "items": {
+            "type": "array",
+            "example": [],
+            "items": {
+              "type": "string"
+            }
           }
         },
-        "example": "{\n  \"customerId\" : \"awceyWJPyUs\",\n  \"loanType\" : \"iqfkzkns\",\n  \"requestedAmount\" : 54,\n  \"tenureMonths\" : 96,\n  \"annualIncome\" : 48,\n  \"creditScore\" : 13\n}"
+        "example": {
+          "orderId": "ORD-20260608-44821",
+          "warehouseId": "WH-WEST-999",
+          "carrier": "INVALID_CARRIER",
+          "items": []
+        }
       },
-      "SubmitCustomerEligibilityApplicationResponse_400": {
+      "DispatchOutboundShipmentManifestResponse_400": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "LOAN_ELIGIBILITY_FAILED"
+            "example": "SHIPMENT_VALIDATION_ERROR"
           },
           "code": {
             "type": "integer",
@@ -226,13 +217,14 @@
           "details": {
             "type": "array",
             "example": [
-              "Credit score below minimum threshold of 650",
-              "Requested amount exceeds 5x annual income limit",
-              "Minimum tenure for personal loan is 12 months"
+              "Warehouse WH-WEST-999 not found or not authorized",
+              "carrier must be one of: FEDEX, UPS, DHL, USPS",
+              "items array cannot be empty",
+              "receiverAddress is required"
             ],
             "items": {
               "type": "string",
-              "example": "p8pWtHiXIez3cLeWRmalr5tAAK2MK6uB5lE47etc3PL"
+              "example": "jb0vsqUqotpjmcp3UnbqEyiL0eGwno1ylEttzXlrv8rI3VIVy"
             }
           },
           "timestamp": {
@@ -241,29 +233,42 @@
           }
         },
         "example": {
-          "error": "LOAN_ELIGIBILITY_FAILED",
+          "error": "SHIPMENT_VALIDATION_ERROR",
           "code": 400,
           "details": [
-            "Credit score below minimum threshold of 650",
-            "Requested amount exceeds 5x annual income limit",
-            "Minimum tenure for personal loan is 12 months"
+            "Warehouse WH-WEST-999 not found or not authorized",
+            "carrier must be one of: FEDEX, UPS, DHL, USPS",
+            "items array cannot be empty",
+            "receiverAddress is required"
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "X-Customer-Id": {
-        "name": "X-Customer-Id",
+      "X-Client-Code": {
+        "name": "X-Client-Code",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "CUST-778899"
+          "example": "RETAIL-ABC"
         },
-        "example": "CUST-778899"
+        "example": "RETAIL-ABC"
+      },
+      "X-Warehouse-Id": {
+        "name": "X-Warehouse-Id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "WH-EAST-001"
+        },
+        "example": "WH-EAST-001"
       },
       "Content-Type": {
         "name": "Content-Type",
@@ -285,9 +290,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "5437e1ed41a44ad08d1cb8e894084f7b"
+          "example": "cbfbdc561ae0484b0487dcfbd05c4d3b"
         },
-        "example": "5437e1ed41a44ad08d1cb8e894084f7b"
+        "example": "cbfbdc561ae0484b0487dcfbd05c4d3b"
       },
       "Authorization": {
         "name": "Authorization",
@@ -297,9 +302,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer eyJhbGciOiJSUzI1NiJ9.valid"
+          "example": "Bearer wms-system-token-valid"
         },
-        "example": "Bearer eyJhbGciOiJSUzI1NiJ9.valid"
+        "example": "Bearer wms-system-token-valid"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -332,9 +337,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f63bdf06b96b40950c61f73cd5cf46fa"
+          "example": "4e6cb48f1a17454360bdeed3b5be4d79"
         },
-        "example": "f63bdf06b96b40950c61f73cd5cf46fa"
+        "example": "4e6cb48f1a17454360bdeed3b5be4d79"
       },
       "Content-Type": {
         "style": "simple",

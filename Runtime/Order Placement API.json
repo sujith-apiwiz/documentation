@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Order Placement API",
-    "description": "This API facilitates the process of placing orders by confirming payment details. It allows users to securely submit their payment information and receive confirmation of their order placement, ensuring a seamless checkout experience.",
+    "description": "The Order Placement API facilitates the confirmation of payment and the finalization of orders in the e-commerce system. It allows clients to send payment confirmation requests securely, ensuring a seamless transaction process for customers. This API provides endpoints for integrating order confirmations into larger systems, enabling efficient processing of user transactions and management of order statuses.",
     "version": "1.0"
   },
   "servers": [
@@ -24,18 +24,18 @@
         "tags": [
           "Orders"
         ],
-        "summary": "Confirm Payment for Order",
-        "description": "This operation allows users to confirm the payment for a pending order. It takes user identification and session details as inputs, along with the necessary payment information. Upon successful confirmation, the order will be processed, and a confirmation response will be returned, indicating the status of the payment.",
-        "operationId": "confirmPaymentForOrder",
+        "summary": "Place Order Payment Confirmation",
+        "description": "This operation is used to confirm the payment for an order during the checkout process. It requires specific parameters such as user ID and session ID, along with the necessary payment details in the request body. Upon successful confirmation, the order is processed and the appropriate response is returned, indicating the state of the transaction.",
+        "operationId": "placeOrderPaymentConfirmation",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-User-Id"
           },
           {
-            "$ref": "#/components/parameters/Content-Type"
+            "$ref": "#/components/parameters/X-Session-Id"
           },
           {
-            "$ref": "#/components/parameters/X-Session-Id"
+            "$ref": "#/components/parameters/Content-Type"
           },
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -51,14 +51,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConfirmPaymentForOrderRequest"
+                "$ref": "#/components/schemas/PlaceOrderPaymentConfirmationRequest"
               }
             }
           }
         },
         "responses": {
           "500": {
-            "description": "Internal server error",
+            "description": "Internal server error occurred",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -73,28 +73,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConfirmPaymentForOrderResponse_500"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request parameters",
-            "headers": {
-              "Date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "X-Trace-Id": {
-                "$ref": "#/components/headers/X-Trace-Id"
-              },
-              "Content-Type": {
-                "$ref": "#/components/headers/Content-Type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ConfirmPaymentForOrderResponse_400"
+                  "$ref": "#/components/schemas/PlaceOrderPaymentConfirmationResponse_500"
                 }
               }
             }
@@ -118,7 +97,28 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConfirmPaymentForOrderResponse_200"
+                  "$ref": "#/components/schemas/PlaceOrderPaymentConfirmationResponse_200"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaceOrderPaymentConfirmationResponse_400"
                 }
               }
             }
@@ -134,7 +134,7 @@
   },
   "components": {
     "schemas": {
-      "ConfirmPaymentForOrderResponse_500": {
+      "PlaceOrderPaymentConfirmationResponse_500": {
         "type": "object",
         "properties": {
           "error": {
@@ -173,7 +173,56 @@
           "timestamp": "2026-06-08T10:00:00Z"
         }
       },
-      "ConfirmPaymentForOrderResponse_400": {
+      "PlaceOrderPaymentConfirmationResponse_200": {
+        "type": "object",
+        "example": {}
+      },
+      "PlaceOrderPaymentConfirmationRequest": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "example": "1tNLBQNt6d"
+          },
+          "cartId": {
+            "type": "string",
+            "example": "tq2jLCy3xC6SKDFfdl"
+          },
+          "items": {
+            "type": "array",
+            "example": "[ {\n  \"productId\" : \")Jg\\\"*Dd6kai5ux{\",\n  \"quantity\" : 41,\n  \"price\" : 88.34\n} ]",
+            "items": {
+              "type": "object",
+              "properties": {
+                "productId": {
+                  "type": "string",
+                  "example": ")Jg\"*Dd6kai5ux{"
+                },
+                "quantity": {
+                  "type": "integer",
+                  "format": "int32",
+                  "example": 41
+                },
+                "price": {
+                  "type": "number",
+                  "example": 88.34
+                }
+              },
+              "example": "{\n  \"productId\" : \")Jg\\\"*Dd6kai5ux{\",\n  \"quantity\" : 41,\n  \"price\" : 88.34\n}"
+            }
+          },
+          "couponCode": {
+            "type": "string",
+            "example": "H0D8zqvuUfk"
+          },
+          "shippingMethod": {
+            "type": "string",
+            "example": "gn:4$N20"
+          }
+        },
+        "example": "{\n  \"userId\" : \"1tNLBQNt6d\",\n  \"cartId\" : \"tq2jLCy3xC6SKDFfdl\",\n  \"items\" : [ {\n    \"productId\" : \")Jg\\\"*Dd6kai5ux{\",\n    \"quantity\" : 41,\n    \"price\" : 88.34\n  } ],\n  \"couponCode\" : \"H0D8zqvuUfk\",\n  \"shippingMethod\" : \"gn:4$N20\"\n}"
+      },
+      "PlaceOrderPaymentConfirmationResponse_400": {
         "type": "object",
         "properties": {
           "error": {
@@ -195,7 +244,7 @@
             ],
             "items": {
               "type": "string",
-              "example": "e4}2vvN)_?ILu]$C#rEj/pu[=w5Y|<Se3gR-2'K"
+              "example": "vq%0$1_TR:C}N#5s%?):#<:{V+vmE|z:E?UY:CB"
             }
           },
           "timestamp": {
@@ -214,107 +263,6 @@
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
-      },
-      "ConfirmPaymentForOrderRequest": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "string",
-            "example": "42yTzgBB84"
-          },
-          "cartId": {
-            "type": "string",
-            "example": "jAcvkw1k89nuDR3B1g"
-          },
-          "items": {
-            "type": "array",
-            "example": "[ {\n  \"productId\" : \"IdCu9e98q\",\n  \"quantity\" : 80,\n  \"price\" : 37.47,\n  \"variant\" : \"d]^>&\"\n}, {\n  \"productId\" : \"0aRcVfXMp\",\n  \"quantity\" : 56,\n  \"price\" : 29.37,\n  \"variant\" : \"nk>c@Br\"\n} ]",
-            "items": {
-              "type": "object",
-              "properties": {
-                "productId": {
-                  "type": "string",
-                  "example": "IdCu9e98q"
-                },
-                "quantity": {
-                  "type": "integer",
-                  "format": "int32",
-                  "example": 80
-                },
-                "price": {
-                  "type": "number",
-                  "example": 37.47
-                },
-                "variant": {
-                  "type": "string",
-                  "example": "d]^>&"
-                }
-              },
-              "example": "{\n  \"productId\" : \"IdCu9e98q\",\n  \"quantity\" : 80,\n  \"price\" : 37.47,\n  \"variant\" : \"d]^>&\"\n}"
-            }
-          },
-          "shippingAddress": {
-            "type": "object",
-            "properties": {
-              "fullName": {
-                "type": "string",
-                "example": "suaotgfhzmbx"
-              },
-              "street": {
-                "type": "string",
-                "example": "EpS0pIVMugaTtv"
-              },
-              "city": {
-                "type": "string",
-                "example": "gqdtlqt"
-              },
-              "state": {
-                "type": "string",
-                "example": "zz"
-              },
-              "zip": {
-                "type": "string",
-                "example": "49449"
-              },
-              "country": {
-                "type": "string",
-                "example": "lt"
-              }
-            },
-            "example": "{\n  \"fullName\" : \"suaotgfhzmbx\",\n  \"street\" : \"EpS0pIVMugaTtv\",\n  \"city\" : \"gqdtlqt\",\n  \"state\" : \"zz\",\n  \"zip\" : \"49449\",\n  \"country\" : \"lt\"\n}"
-          },
-          "paymentMethod": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "example": "<>fwNoVny$u"
-              },
-              "cardToken": {
-                "type": "string",
-                "example": "AuTrICkfyKzLSBfZQuIs"
-              },
-              "billingZip": {
-                "type": "string",
-                "example": "51813"
-              }
-            },
-            "example": "{\n  \"type\" : \"<>fwNoVny$u\",\n  \"cardToken\" : \"AuTrICkfyKzLSBfZQuIs\",\n  \"billingZip\" : \"51813\"\n}"
-          },
-          "couponCode": {
-            "type": "string",
-            "example": "RJ90sD"
-          },
-          "shippingMethod": {
-            "type": "string",
-            "example": "kKplUrqZ4Bamz"
-          }
-        },
-        "example": "{\n  \"userId\" : \"42yTzgBB84\",\n  \"cartId\" : \"jAcvkw1k89nuDR3B1g\",\n  \"items\" : [ {\n    \"productId\" : \"IdCu9e98q\",\n    \"quantity\" : 80,\n    \"price\" : 37.47,\n    \"variant\" : \"d]^>&\"\n  }, {\n    \"productId\" : \"0aRcVfXMp\",\n    \"quantity\" : 56,\n    \"price\" : 29.37,\n    \"variant\" : \"nk>c@Br\"\n  } ],\n  \"shippingAddress\" : {\n    \"fullName\" : \"suaotgfhzmbx\",\n    \"street\" : \"EpS0pIVMugaTtv\",\n    \"city\" : \"gqdtlqt\",\n    \"state\" : \"zz\",\n    \"zip\" : \"49449\",\n    \"country\" : \"lt\"\n  },\n  \"paymentMethod\" : {\n    \"type\" : \"<>fwNoVny$u\",\n    \"cardToken\" : \"AuTrICkfyKzLSBfZQuIs\",\n    \"billingZip\" : \"51813\"\n  },\n  \"couponCode\" : \"RJ90sD\",\n  \"shippingMethod\" : \"kKplUrqZ4Bamz\"\n}"
-      },
-      "ConfirmPaymentForOrderResponse_200": {
-        "type": "object",
-        "example": {}
       }
     },
     "parameters": {
@@ -330,18 +278,6 @@
         },
         "example": "USR-445678"
       },
-      "Content-Type": {
-        "name": "Content-Type",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "application/json"
-        },
-        "example": "application/json"
-      },
       "X-Session-Id": {
         "name": "X-Session-Id",
         "in": "header",
@@ -354,6 +290,18 @@
         },
         "example": "SES-20260608-XYZ"
       },
+      "Content-Type": {
+        "name": "Content-Type",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      },
       "parentspanid": {
         "name": "parentspanid",
         "in": "header",
@@ -362,9 +310,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "3d69b15b74c84e7a94c3d13afb8348cb"
+          "example": "5ce8050da21f479578e2b8cce5844f70"
         },
-        "example": "3d69b15b74c84e7a94c3d13afb8348cb"
+        "example": "5ce8050da21f479578e2b8cce5844f70"
       },
       "Authorization": {
         "name": "Authorization",
@@ -389,8 +337,8 @@
           "type": "string",
           "enum": [
             "server_error",
-            "bad_request",
-            "success"
+            "success",
+            "bad_request"
           ]
         }
       }
@@ -410,9 +358,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "32f1bf9e684e45790c6b8c7c49064942"
+          "example": "2fe2f918e7aa42dc535e7ded9d024e48"
         },
-        "example": "32f1bf9e684e45790c6b8c7c49064942"
+        "example": "2fe2f918e7aa42dc535e7ded9d024e48"
       },
       "Content-Type": {
         "style": "simple",

@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Personal Loan Eligibility API",
-    "description": "This API allows customers to submit applications for personal loan eligibility, enabling financial institutions to assess and process requests efficiently. It ensures a standardized method for submitting customer information and receiving feedback on eligibility status.",
+    "title": "Inpatient Vital Records API",
+    "description": "The Inpatient Vital Records API allows healthcare professionals to update vital signs recorded for patients in an inpatient setting. This API facilitates efficient and secure management of health data, ensuring accurate patient monitoring and care.",
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v2/banking",
+      "url": "https://stage-data-gujl.apiwiz.io/v1/healthcare",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -15,21 +15,24 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v2/banking"
+      "x-basePath": "/v1/healthcare"
     }
   ],
   "paths": {
-    "/loans/personal/application/customer/eligibility/submit": {
-      "post": {
+    "/patients/PAT-556677/vitals/inpatient/ward/record/update": {
+      "put": {
         "tags": [
-          "Loans"
+          "Patients"
         ],
-        "summary": "Submit Customer Eligibility Application",
-        "description": "This operation allows users to submit a personal loan eligibility application on behalf of a customer. It expects specific inputs in JSON format that contain the customer's details and eligibility criteria. The outcome of this submission will determine the eligibility status of the customer for a personal loan.",
-        "operationId": "submitCustomerEligibilityApplication",
+        "summary": "Update Inpatient Vital Records",
+        "description": "This operation updates the vital records of an inpatient in a specified ward. It requires the identification of the ward and the staff member making the update. Upon successful execution, the vital records are modified based on the provided data in the request body.",
+        "operationId": "updateInpatientVitalRecords",
         "parameters": [
           {
-            "$ref": "#/components/parameters/X-Customer-Id"
+            "$ref": "#/components/parameters/X-Ward-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-Staff-Id"
           },
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -48,14 +51,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SubmitCustomerEligibilityApplicationRequest"
+                "$ref": "#/components/schemas/UpdateInpatientVitalRecordsRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Eligibility application submitted successfully",
+            "description": "Vital records updated successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -70,13 +73,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubmitCustomerEligibilityApplicationResponse_200"
+                  "$ref": "#/components/schemas/UpdateInpatientVitalRecordsResponse_200"
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid request parameters provided",
+            "description": "Invalid request parameters",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -91,7 +94,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubmitCustomerEligibilityApplicationResponse_400"
+                  "$ref": "#/components/schemas/UpdateInpatientVitalRecordsResponse_400"
                 }
               }
             }
@@ -107,116 +110,92 @@
   },
   "components": {
     "schemas": {
-      "SubmitCustomerEligibilityApplicationResponse_200": {
+      "UpdateInpatientVitalRecordsResponse_200": {
         "type": "object",
         "properties": {
-          "applicationId": {
+          "vitalRecordId": {
             "type": "string",
-            "example": "LOAN-APP-20260608-5512"
+            "example": "VIT-20260608-1122"
+          },
+          "patientId": {
+            "type": "string",
+            "example": "PAT-556677"
+          },
+          "recordedBy": {
+            "type": "string",
+            "example": "NURSE-778899"
+          },
+          "recordedAt": {
+            "type": "string",
+            "example": "2026-06-08T09:45:00Z"
           },
           "status": {
             "type": "string",
-            "example": "PRE_APPROVED"
+            "example": "NORMAL"
           },
-          "approvedAmount": {
-            "type": "integer",
-            "format": "int32",
-            "example": 50000
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD"
-          },
-          "interestRate": {
-            "type": "number",
-            "example": 10.5
-          },
-          "tenureMonths": {
-            "type": "integer",
-            "format": "int32",
-            "example": 36
-          },
-          "monthlyEmi": {
-            "type": "number",
-            "example": 1625.89
-          },
-          "processingFee": {
-            "type": "integer",
-            "format": "int32",
-            "example": 1000
-          },
-          "disbursementAccount": {
-            "type": "string",
-            "example": "ACC-100200300"
-          },
-          "offerValidUntil": {
-            "type": "string",
-            "example": "2026-06-22"
-          },
-          "nextStep": {
-            "type": "string",
-            "example": "DOCUMENT_UPLOAD"
+          "alerts": {
+            "type": "array",
+            "example": [],
+            "items": {
+              "type": "string"
+            }
           },
           "message": {
             "type": "string",
-            "example": "Congratulations! Your loan application is pre-approved."
+            "example": "Vitals updated successfully"
           }
         },
         "example": {
-          "applicationId": "LOAN-APP-20260608-5512",
-          "status": "PRE_APPROVED",
-          "approvedAmount": 50000,
-          "currency": "USD",
-          "interestRate": 10.5,
-          "tenureMonths": 36,
-          "monthlyEmi": 1625.89,
-          "processingFee": 1000,
-          "disbursementAccount": "ACC-100200300",
-          "offerValidUntil": "2026-06-22",
-          "nextStep": "DOCUMENT_UPLOAD",
-          "message": "Congratulations! Your loan application is pre-approved."
+          "vitalRecordId": "VIT-20260608-1122",
+          "patientId": "PAT-556677",
+          "recordedBy": "NURSE-778899",
+          "recordedAt": "2026-06-08T09:45:00Z",
+          "status": "NORMAL",
+          "alerts": [],
+          "message": "Vitals updated successfully"
         }
       },
-      "SubmitCustomerEligibilityApplicationRequest": {
+      "UpdateInpatientVitalRecordsRequest": {
         "type": "object",
         "properties": {
-          "customerId": {
+          "patientId": {
             "type": "string",
-            "example": "awceyWJPyUs"
+            "example": "yRtkdorwIa"
           },
-          "loanType": {
+          "recordedBy": {
             "type": "string",
-            "example": "iqfkzkns"
+            "example": "qvkZIW961AUn"
           },
-          "requestedAmount": {
-            "type": "integer",
-            "format": "int32",
-            "example": 54
-          },
-          "tenureMonths": {
-            "type": "integer",
-            "format": "int32",
-            "example": 96
-          },
-          "annualIncome": {
-            "type": "integer",
-            "format": "int32",
-            "example": 48
-          },
-          "creditScore": {
-            "type": "integer",
-            "format": "int32",
-            "example": 13
+          "vitals": {
+            "type": "object",
+            "properties": {
+              "bloodPressureSystolic": {
+                "type": "integer",
+                "format": "int32",
+                "example": 87
+              },
+              "heartRate": {
+                "type": "integer",
+                "format": "int32",
+                "example": 25
+              },
+              "oxygenSaturation": {
+                "type": "integer",
+                "format": "int32",
+                "example": 20
+              }
+            },
+            "example": "{\n  \"bloodPressureSystolic\" : 87,\n  \"heartRate\" : 25,\n  \"oxygenSaturation\" : 20\n}"
           }
         },
-        "example": "{\n  \"customerId\" : \"awceyWJPyUs\",\n  \"loanType\" : \"iqfkzkns\",\n  \"requestedAmount\" : 54,\n  \"tenureMonths\" : 96,\n  \"annualIncome\" : 48,\n  \"creditScore\" : 13\n}"
+        "example": "{\n  \"patientId\" : \"yRtkdorwIa\",\n  \"recordedBy\" : \"qvkZIW961AUn\",\n  \"vitals\" : {\n    \"bloodPressureSystolic\" : 87,\n    \"heartRate\" : 25,\n    \"oxygenSaturation\" : 20\n  }\n}"
       },
-      "SubmitCustomerEligibilityApplicationResponse_400": {
+      "UpdateInpatientVitalRecordsResponse_400": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "LOAN_ELIGIBILITY_FAILED"
+            "example": "VITAL_VALUES_OUT_OF_RANGE"
           },
           "code": {
             "type": "integer",
@@ -226,13 +205,14 @@
           "details": {
             "type": "array",
             "example": [
-              "Credit score below minimum threshold of 650",
-              "Requested amount exceeds 5x annual income limit",
-              "Minimum tenure for personal loan is 12 months"
+              "bloodPressureSystolic max value is 300",
+              "heartRate must be between 20 and 300",
+              "oxygenSaturation must be between 50 and 100",
+              "recordedAt timestamp is required"
             ],
             "items": {
               "type": "string",
-              "example": "p8pWtHiXIez3cLeWRmalr5tAAK2MK6uB5lE47etc3PL"
+              "example": "nOwIdUhdRTZ37frC51garKpSCzbnd8LXkXTxZ1"
             }
           },
           "timestamp": {
@@ -241,29 +221,42 @@
           }
         },
         "example": {
-          "error": "LOAN_ELIGIBILITY_FAILED",
+          "error": "VITAL_VALUES_OUT_OF_RANGE",
           "code": 400,
           "details": [
-            "Credit score below minimum threshold of 650",
-            "Requested amount exceeds 5x annual income limit",
-            "Minimum tenure for personal loan is 12 months"
+            "bloodPressureSystolic max value is 300",
+            "heartRate must be between 20 and 300",
+            "oxygenSaturation must be between 50 and 100",
+            "recordedAt timestamp is required"
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "X-Customer-Id": {
-        "name": "X-Customer-Id",
+      "X-Ward-Id": {
+        "name": "X-Ward-Id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "CUST-778899"
+          "example": "WARD-7B"
         },
-        "example": "CUST-778899"
+        "example": "WARD-7B"
+      },
+      "X-Staff-Id": {
+        "name": "X-Staff-Id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "NURSE-778899"
+        },
+        "example": "NURSE-778899"
       },
       "Content-Type": {
         "name": "Content-Type",
@@ -285,9 +278,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "5437e1ed41a44ad08d1cb8e894084f7b"
+          "example": "c59b953147c741bdd1685ea1057a4889"
         },
-        "example": "5437e1ed41a44ad08d1cb8e894084f7b"
+        "example": "c59b953147c741bdd1685ea1057a4889"
       },
       "Authorization": {
         "name": "Authorization",
@@ -297,9 +290,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer eyJhbGciOiJSUzI1NiJ9.valid"
+          "example": "Bearer nurse-auth-token-valid"
         },
-        "example": "Bearer eyJhbGciOiJSUzI1NiJ9.valid"
+        "example": "Bearer nurse-auth-token-valid"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -332,9 +325,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f63bdf06b96b40950c61f73cd5cf46fa"
+          "example": "47d0b7f050c5445e372b4bf9efec463e"
         },
-        "example": "f63bdf06b96b40950c61f73cd5cf46fa"
+        "example": "47d0b7f050c5445e372b4bf9efec463e"
       },
       "Content-Type": {
         "style": "simple",

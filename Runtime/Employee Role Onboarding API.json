@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Personal Loan Eligibility API",
-    "description": "This API allows customers to submit applications for personal loan eligibility, enabling financial institutions to assess and process requests efficiently. It ensures a standardized method for submitting customer information and receiving feedback on eligibility status.",
+    "title": "Employee Role Onboarding API",
+    "description": "This API facilitates the onboarding process for employees by allowing HR administrators to create roles within different departments. It provides endpoints to manage detailed role profiles essential for a seamless integration into the company's operational structure.",
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v2/banking",
+      "url": "https://stage-data-gujl.apiwiz.io",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -15,21 +15,24 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v2/banking"
+      "x-basePath": "/"
     }
   ],
   "paths": {
-    "/loans/personal/application/customer/eligibility/submit": {
+    "/v1/hr/employees/onboarding/profile/department/role/create": {
       "post": {
         "tags": [
-          "Loans"
+          "Employee Onboarding"
         ],
-        "summary": "Submit Customer Eligibility Application",
-        "description": "This operation allows users to submit a personal loan eligibility application on behalf of a customer. It expects specific inputs in JSON format that contain the customer's details and eligibility criteria. The outcome of this submission will determine the eligibility status of the customer for a personal loan.",
-        "operationId": "submitCustomerEligibilityApplication",
+        "summary": "Create Department Role",
+        "description": "This operation allows you to create a new department role as part of the employee onboarding process. You are required to provide the necessary tenant and admin identifiers in the headers, along with the role details in the request body. A successful response will confirm the creation of the department role.",
+        "operationId": "createDepartmentRole",
         "parameters": [
           {
-            "$ref": "#/components/parameters/X-Customer-Id"
+            "$ref": "#/components/parameters/X-Tenant-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-HR-Admin-Id"
           },
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -48,14 +51,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SubmitCustomerEligibilityApplicationRequest"
+                "$ref": "#/components/schemas/CreateDepartmentRoleRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Eligibility application submitted successfully",
+            "description": "Department role created successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -70,13 +73,34 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubmitCustomerEligibilityApplicationResponse_200"
+                  "$ref": "#/components/schemas/CreateDepartmentRoleResponse_200"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateDepartmentRoleResponse_500"
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid request parameters provided",
+            "description": "Invalid request parameters",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -91,7 +115,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubmitCustomerEligibilityApplicationResponse_400"
+                  "$ref": "#/components/schemas/CreateDepartmentRoleResponse_400"
                 }
               }
             }
@@ -107,116 +131,92 @@
   },
   "components": {
     "schemas": {
-      "SubmitCustomerEligibilityApplicationResponse_200": {
+      "CreateDepartmentRoleResponse_200": {
         "type": "object",
-        "properties": {
-          "applicationId": {
-            "type": "string",
-            "example": "LOAN-APP-20260608-5512"
-          },
-          "status": {
-            "type": "string",
-            "example": "PRE_APPROVED"
-          },
-          "approvedAmount": {
-            "type": "integer",
-            "format": "int32",
-            "example": 50000
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD"
-          },
-          "interestRate": {
-            "type": "number",
-            "example": 10.5
-          },
-          "tenureMonths": {
-            "type": "integer",
-            "format": "int32",
-            "example": 36
-          },
-          "monthlyEmi": {
-            "type": "number",
-            "example": 1625.89
-          },
-          "processingFee": {
-            "type": "integer",
-            "format": "int32",
-            "example": 1000
-          },
-          "disbursementAccount": {
-            "type": "string",
-            "example": "ACC-100200300"
-          },
-          "offerValidUntil": {
-            "type": "string",
-            "example": "2026-06-22"
-          },
-          "nextStep": {
-            "type": "string",
-            "example": "DOCUMENT_UPLOAD"
-          },
-          "message": {
-            "type": "string",
-            "example": "Congratulations! Your loan application is pre-approved."
-          }
-        },
-        "example": {
-          "applicationId": "LOAN-APP-20260608-5512",
-          "status": "PRE_APPROVED",
-          "approvedAmount": 50000,
-          "currency": "USD",
-          "interestRate": 10.5,
-          "tenureMonths": 36,
-          "monthlyEmi": 1625.89,
-          "processingFee": 1000,
-          "disbursementAccount": "ACC-100200300",
-          "offerValidUntil": "2026-06-22",
-          "nextStep": "DOCUMENT_UPLOAD",
-          "message": "Congratulations! Your loan application is pre-approved."
-        }
+        "example": {}
       },
-      "SubmitCustomerEligibilityApplicationRequest": {
-        "type": "object",
-        "properties": {
-          "customerId": {
-            "type": "string",
-            "example": "awceyWJPyUs"
-          },
-          "loanType": {
-            "type": "string",
-            "example": "iqfkzkns"
-          },
-          "requestedAmount": {
-            "type": "integer",
-            "format": "int32",
-            "example": 54
-          },
-          "tenureMonths": {
-            "type": "integer",
-            "format": "int32",
-            "example": 96
-          },
-          "annualIncome": {
-            "type": "integer",
-            "format": "int32",
-            "example": 48
-          },
-          "creditScore": {
-            "type": "integer",
-            "format": "int32",
-            "example": 13
-          }
-        },
-        "example": "{\n  \"customerId\" : \"awceyWJPyUs\",\n  \"loanType\" : \"iqfkzkns\",\n  \"requestedAmount\" : 54,\n  \"tenureMonths\" : 96,\n  \"annualIncome\" : 48,\n  \"creditScore\" : 13\n}"
-      },
-      "SubmitCustomerEligibilityApplicationResponse_400": {
+      "CreateDepartmentRoleResponse_500": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "LOAN_ELIGIBILITY_FAILED"
+            "example": "IDENTITY_PROVISIONING_ERROR"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 500
+          },
+          "message": {
+            "type": "string",
+            "example": "Active Directory provisioning service is unavailable. Employee record saved but account not created."
+          },
+          "incidentId": {
+            "type": "string",
+            "example": "INC-HR-2026-0119"
+          },
+          "retryAfter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 120
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
+          }
+        },
+        "example": {
+          "error": "IDENTITY_PROVISIONING_ERROR",
+          "code": 500,
+          "message": "Active Directory provisioning service is unavailable. Employee record saved but account not created.",
+          "incidentId": "INC-HR-2026-0119",
+          "retryAfter": 120,
+          "timestamp": "2026-06-08T10:00:00Z"
+        }
+      },
+      "CreateDepartmentRoleRequest": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": ""
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "example": "not-a-valid-email"
+          },
+          "departmentId": {
+            "type": "string",
+            "example": "DEPT-NONEXISTENT"
+          },
+          "roleId": {
+            "type": "string",
+            "example": "ROLE-XYZ"
+          },
+          "startDate": {
+            "type": "string",
+            "example": "2026-01-01"
+          }
+        },
+        "example": {
+          "firstName": "",
+          "lastName": "Doe",
+          "email": "not-a-valid-email",
+          "departmentId": "DEPT-NONEXISTENT",
+          "roleId": "ROLE-XYZ",
+          "startDate": "2026-01-01"
+        }
+      },
+      "CreateDepartmentRoleResponse_400": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "EMPLOYEE_CREATION_FAILED"
           },
           "code": {
             "type": "integer",
@@ -226,13 +226,16 @@
           "details": {
             "type": "array",
             "example": [
-              "Credit score below minimum threshold of 650",
-              "Requested amount exceeds 5x annual income limit",
-              "Minimum tenure for personal loan is 12 months"
+              "firstName is required",
+              "email format is invalid",
+              "departmentId DEPT-NONEXISTENT does not exist",
+              "roleId ROLE-XYZ does not exist",
+              "startDate cannot be in the past",
+              "managerId is required"
             ],
             "items": {
               "type": "string",
-              "example": "p8pWtHiXIez3cLeWRmalr5tAAK2MK6uB5lE47etc3PL"
+              "example": "uplddelwtdefjnuepnhse"
             }
           },
           "timestamp": {
@@ -241,29 +244,44 @@
           }
         },
         "example": {
-          "error": "LOAN_ELIGIBILITY_FAILED",
+          "error": "EMPLOYEE_CREATION_FAILED",
           "code": 400,
           "details": [
-            "Credit score below minimum threshold of 650",
-            "Requested amount exceeds 5x annual income limit",
-            "Minimum tenure for personal loan is 12 months"
+            "firstName is required",
+            "email format is invalid",
+            "departmentId DEPT-NONEXISTENT does not exist",
+            "roleId ROLE-XYZ does not exist",
+            "startDate cannot be in the past",
+            "managerId is required"
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
       }
     },
     "parameters": {
-      "X-Customer-Id": {
-        "name": "X-Customer-Id",
+      "X-Tenant-Id": {
+        "name": "X-Tenant-Id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "CUST-778899"
+          "example": "CORP-ENT-001"
         },
-        "example": "CUST-778899"
+        "example": "CORP-ENT-001"
+      },
+      "X-HR-Admin-Id": {
+        "name": "X-HR-Admin-Id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "HR-MGR-001"
+        },
+        "example": "HR-MGR-001"
       },
       "Content-Type": {
         "name": "Content-Type",
@@ -285,9 +303,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "5437e1ed41a44ad08d1cb8e894084f7b"
+          "example": "24b9b44675944eee5b496acc7b864c9b"
         },
-        "example": "5437e1ed41a44ad08d1cb8e894084f7b"
+        "example": "24b9b44675944eee5b496acc7b864c9b"
       },
       "Authorization": {
         "name": "Authorization",
@@ -297,9 +315,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer eyJhbGciOiJSUzI1NiJ9.valid"
+          "example": "Bearer hr-admin-token-valid"
         },
-        "example": "Bearer eyJhbGciOiJSUzI1NiJ9.valid"
+        "example": "Bearer hr-admin-token-valid"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -312,6 +330,7 @@
           "type": "string",
           "enum": [
             "success",
+            "server_error",
             "bad_request"
           ]
         }
@@ -332,9 +351,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "f63bdf06b96b40950c61f73cd5cf46fa"
+          "example": "e7c17386ba9645bb71949974c60a4113"
         },
-        "example": "f63bdf06b96b40950c61f73cd5cf46fa"
+        "example": "e7c17386ba9645bb71949974c60a4113"
       },
       "Content-Type": {
         "style": "simple",

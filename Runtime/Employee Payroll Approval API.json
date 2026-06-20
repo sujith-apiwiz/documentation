@@ -2,18 +2,12 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Employee Payroll Approval API",
-    "description": "This API facilitates the approval of payroll compensation revisions for employees. It enables HR administrators to apply changes efficiently by managing relevant data and ensuring compliance with company policies. The API provides endpoints to handle authorization and traceability of payroll operations.",
-    "termsOfService": "https://www.company.com/terms-and-conditions",
-    "contact": {
-      "name": "Support Team",
-      "url": "https://www.company.com/support",
-      "email": "support@company.com"
-    },
+    "description": "The Employee Payroll Approval API facilitates the approval process for payroll compensation revisions for employees. It allows authorized HR administrators to submit approval requests, manage compensation adjustments, and track the status of payroll revisions conveniently. This API supports multiple employee records and ensures secure transactions through a structured approval mechanism.",
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://stage-data-gujl.apiwiz.io/v1/hr",
+      "url": "https://stage-data-gujl.apiwiz.io",
       "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
@@ -21,17 +15,78 @@
       "x-environmentName": "DEV",
       "x-hide": false,
       "x-environmentId": "688884305134cd49a9bcfec3",
-      "x-basePath": "/v1/hr"
+      "x-basePath": "/"
     }
   ],
   "paths": {
-    "/employees/EMP-445566/payroll/compensation/revision/approve/apply": {
+    "/v1/hr/employees/EMP-112233/payroll/compensation/revision/approve/apply": {
       "put": {
         "tags": [
-          "Payroll"
+          "Payroll Management"
         ],
         "summary": "Approve Compensation Revision",
-        "description": "This operation allows a payroll administrator to apply an approval for a specific compensation revision for an employee. It requires the appropriate headers and a JSON payload that details the approval decision. Successful execution results in the compensation revision being officially approved and recorded in the system.",
+        "description": "This endpoint allows for the approval of a compensation revision for an employee identified by their unique employee ID. The request must include authorization and relevant details regarding the compensation revision approval in the body. A successful response confirms the update of the payroll records for that employee.",
+        "operationId": "approveCompensationRevision",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Content-Type"
+          },
+          {
+            "$ref": "#/components/parameters/parentspanid"
+          },
+          {
+            "$ref": "#/components/parameters/Authorization"
+          },
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveCompensationRevisionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Internal server error occurred",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApproveCompensationRevisionResponse_500"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    },
+    "/v1/hr/employees/{employeeId}/payroll/compensation/revision/approve/apply": {
+      "put": {
+        "tags": [
+          "Payroll Management"
+        ],
+        "summary": "Approve Compensation Revision",
+        "description": "This operation is designed to approve a compensation revision for a specific employee identified by their unique employee ID. The request requires specific parameters and a JSON body containing information regarding the revision approval details. Upon successful execution, the operation will update the employee's payroll records accordingly.",
         "operationId": "approveCompensationRevision",
         "parameters": [
           {
@@ -100,61 +155,76 @@
         "properties": {
           "employeeId": {
             "type": "string",
-            "example": "RmziGrYC4p"
+            "example": "EMP-112233"
           },
           "revisionType": {
             "type": "string",
-            "example": ">;yHjl'|&2O=Rgx="
+            "example": "PROMOTION_HIKE"
           },
           "currentSalary": {
             "type": "integer",
             "format": "int32",
-            "example": 36
+            "example": 100000
           },
           "newSalary": {
             "type": "integer",
             "format": "int32",
-            "example": 71
+            "example": 125000
           },
           "currency": {
             "type": "string",
-            "example": "npz"
+            "example": "USD"
           },
           "effectiveDate": {
             "type": "string",
-            "example": "mf)rMG8gJ:"
-          },
-          "incrementPercentage": {
-            "type": "number",
-            "example": 57.59
-          },
-          "approvedBy": {
-            "type": "string",
-            "example": "OeStf4pP0Y"
-          },
-          "approvalId": {
-            "type": "string",
-            "example": "w2LyOaHrX"
-          },
-          "reason": {
-            "type": "string",
-            "example": "eszwasdhgawqmjrgskpncgveh"
-          },
-          "bonusAmount": {
-            "type": "integer",
-            "format": "int32",
-            "example": 29
-          },
-          "bonusType": {
-            "type": "string",
-            "example": "zdciyhxbczh"
+            "example": "2026-06-15"
           }
         },
-        "example": "{\n  \"employeeId\" : \"RmziGrYC4p\",\n  \"revisionType\" : \">;yHjl'|&2O=Rgx=\",\n  \"currentSalary\" : 36,\n  \"newSalary\" : 71,\n  \"currency\" : \"npz\",\n  \"effectiveDate\" : \"mf)rMG8gJ:\",\n  \"incrementPercentage\" : 57.59,\n  \"approvedBy\" : \"OeStf4pP0Y\",\n  \"approvalId\" : \"w2LyOaHrX\",\n  \"reason\" : \"eszwasdhgawqmjrgskpncgveh\",\n  \"bonusAmount\" : 29,\n  \"bonusType\" : \"zdciyhxbczh\"\n}"
+        "example": {
+          "employeeId": "EMP-112233",
+          "revisionType": "PROMOTION_HIKE",
+          "currentSalary": 100000,
+          "newSalary": 125000,
+          "currency": "USD",
+          "effectiveDate": "2026-06-15"
+        }
       },
       "ApproveCompensationRevisionResponse_200": {
         "type": "object",
         "example": {}
+      },
+      "ApproveCompensationRevisionResponse_500": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "PAYROLL_SYSTEM_ERROR"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 500
+          },
+          "message": {
+            "type": "string",
+            "example": "Payroll processing system encountered an unexpected error. Revision has been queued for manual processing."
+          },
+          "incidentId": {
+            "type": "string",
+            "example": "INC-HR-2026-0522"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
+          }
+        },
+        "example": {
+          "error": "PAYROLL_SYSTEM_ERROR",
+          "code": 500,
+          "message": "Payroll processing system encountered an unexpected error. Revision has been queued for manual processing.",
+          "incidentId": "INC-HR-2026-0522",
+          "timestamp": "2026-06-08T10:00:00Z"
+        }
       }
     },
     "parameters": {
@@ -178,9 +248,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "bdebd2bf716546dfd599e1a92e4f4f96"
+          "example": "8b03e991d96d45b4fbb9fd68e63d409e"
         },
-        "example": "bdebd2bf716546dfd599e1a92e4f4f96"
+        "example": "8b03e991d96d45b4fbb9fd68e63d409e"
       },
       "Authorization": {
         "name": "Authorization",
@@ -228,7 +298,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "success"
+            "success",
+            "server_error"
           ]
         }
       }
@@ -248,9 +319,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "882f3a33b9a544fda20d9dc7f5c746c1"
+          "example": "dc1341fb09ae465739ff9407ba6744e7"
         },
-        "example": "882f3a33b9a544fda20d9dc7f5c746c1"
+        "example": "dc1341fb09ae465739ff9407ba6744e7"
       },
       "Content-Type": {
         "style": "simple",

@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Booking Seat Upgrade Confirmation API",
-    "description": "This API allows users to confirm requests for seat upgrades associated with their bookings. It enables seamless interaction by providing necessary data formats and status responses for successful or failed confirmation attempts.",
+    "title": "Employee Leave Application API",
+    "description": "This API allows managers to submit approval for employee leave applications. It provides a streamlined process for managing employee requests efficiently and ensures that all submissions are recorded and tracked securely. Use this API to handle leave approval submissions effectively.",
     "version": "1.0"
   },
   "servers": [
@@ -19,17 +19,17 @@
     }
   ],
   "paths": {
-    "/v1/airline/bookings/{bookingId}/seat/upgrade/request/confirm": {
-      "put": {
+    "/v1/hr/employees/{employeeId}/leave/application/manager/approval/submit": {
+      "post": {
         "tags": [
-          "Seat Upgrades"
+          "Leave Management"
         ],
-        "summary": "Confirm Seat Upgrade Request",
-        "description": "This operation confirms a seat upgrade request for a specific booking. Required inputs include the booking identifier and necessary headers for authentication. Upon successful confirmation, the response will indicate the status of the upgrade request, allowing users to finalize their seating arrangements.",
-        "operationId": "confirmSeatUpgradeRequest",
+        "summary": "Submit Manager Approval for Leave Application",
+        "description": "This operation allows the manager to submit approval for an employee's leave application. The request requires the employee ID and relevant approval details in JSON format. Upon successful submission, the system processes the request and returns a confirmation response.",
+        "operationId": "submitManagerApprovalForLeaveApplication",
         "parameters": [
           {
-            "$ref": "#/components/parameters/X-Agent-Id"
+            "$ref": "#/components/parameters/X-Employee-Id"
           },
           {
             "$ref": "#/components/parameters/Content-Type"
@@ -48,14 +48,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConfirmSeatUpgradeRequestRequest"
+                "$ref": "#/components/schemas/SubmitManagerApprovalForLeaveApplicationRequest"
               }
             }
           }
         },
         "responses": {
-          "400": {
-            "description": "Invalid request parameters provided",
+          "200": {
+            "description": "Approval submitted successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -70,13 +70,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConfirmSeatUpgradeRequestResponse_400"
+                  "$ref": "#/components/schemas/SubmitManagerApprovalForLeaveApplicationResponse_200"
                 }
               }
             }
           },
-          "200": {
-            "description": "Seat upgrade request confirmed successfully",
+          "400": {
+            "description": "Invalid request parameters",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -91,7 +91,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConfirmSeatUpgradeRequestResponse_200"
+                  "$ref": "#/components/schemas/SubmitManagerApprovalForLeaveApplicationResponse_400"
                 }
               }
             }
@@ -107,12 +107,54 @@
   },
   "components": {
     "schemas": {
-      "ConfirmSeatUpgradeRequestResponse_400": {
+      "SubmitManagerApprovalForLeaveApplicationResponse_200": {
+        "type": "object",
+        "example": {}
+      },
+      "SubmitManagerApprovalForLeaveApplicationRequest": {
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "example": "EMP-445566"
+          },
+          "leaveType": {
+            "type": "string",
+            "example": "ANNUAL_LEAVE"
+          },
+          "startDate": {
+            "type": "string",
+            "example": "2026-07-10"
+          },
+          "endDate": {
+            "type": "string",
+            "example": "2026-07-05"
+          },
+          "days": {
+            "type": "integer",
+            "format": "int32",
+            "example": 15
+          },
+          "reason": {
+            "type": "string",
+            "example": ""
+          }
+        },
+        "example": {
+          "employeeId": "EMP-445566",
+          "leaveType": "ANNUAL_LEAVE",
+          "startDate": "2026-07-10",
+          "endDate": "2026-07-05",
+          "days": 15,
+          "reason": ""
+        }
+      },
+      "SubmitManagerApprovalForLeaveApplicationResponse_400": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "example": "INVALID_UPGRADE_REQUEST"
+            "example": "LEAVE_APPLICATION_INVALID"
           },
           "code": {
             "type": "integer",
@@ -122,12 +164,13 @@
           "details": {
             "type": "array",
             "example": [
-              "Cannot downgrade seat class",
-              "paymentMethod must be CREDIT_CARD or MILES"
+              "startDate cannot be after endDate",
+              "Requested 15 days exceeds available annual leave balance of 10 days",
+              "reason is required"
             ],
             "items": {
               "type": "string",
-              "example": "zmgqdrfvcdffipiwoznchfsrlgn"
+              "example": "rlcbdlppzqfabkehxeqlfokkykrrcxesf"
             }
           },
           "timestamp": {
@@ -136,74 +179,29 @@
           }
         },
         "example": {
-          "error": "INVALID_UPGRADE_REQUEST",
+          "error": "LEAVE_APPLICATION_INVALID",
           "code": 400,
           "details": [
-            "Cannot downgrade seat class",
-            "paymentMethod must be CREDIT_CARD or MILES"
+            "startDate cannot be after endDate",
+            "Requested 15 days exceeds available annual leave balance of 10 days",
+            "reason is required"
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
-      },
-      "ConfirmSeatUpgradeRequestRequest": {
-        "type": "object",
-        "properties": {
-          "currentSeatClass": {
-            "type": "string",
-            "example": "ECONOMY"
-          },
-          "requestedSeatClass": {
-            "type": "string",
-            "example": "BUSINESS"
-          },
-          "paymentMethod": {
-            "type": "string",
-            "example": "CREDIT_CARD"
-          },
-          "cardToken": {
-            "type": "string",
-            "example": "tok_visa_4242"
-          },
-          "upgradeType": {
-            "type": "string",
-            "example": "PAID"
-          },
-          "amount": {
-            "type": "string",
-            "example": "*****"
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD"
-          }
-        },
-        "example": {
-          "currentSeatClass": "ECONOMY",
-          "requestedSeatClass": "BUSINESS",
-          "paymentMethod": "CREDIT_CARD",
-          "cardToken": "tok_visa_4242",
-          "upgradeType": "PAID",
-          "amount": "*****",
-          "currency": "USD"
-        }
-      },
-      "ConfirmSeatUpgradeRequestResponse_200": {
-        "type": "object",
-        "example": {}
       }
     },
     "parameters": {
-      "X-Agent-Id": {
-        "name": "X-Agent-Id",
+      "X-Employee-Id": {
+        "name": "X-Employee-Id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "AGT-56789"
+          "example": "EMP-445566"
         },
-        "example": "AGT-56789"
+        "example": "EMP-445566"
       },
       "Content-Type": {
         "name": "Content-Type",
@@ -225,9 +223,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "d1961cd3e2c14b6c4573823f17534f7a"
+          "example": "f90a16dc148b4292a6c97eed3eab4f57"
         },
-        "example": "d1961cd3e2c14b6c4573823f17534f7a"
+        "example": "f90a16dc148b4292a6c97eed3eab4f57"
       },
       "Authorization": {
         "name": "Authorization",
@@ -237,9 +235,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Bearer valid-travel-agent-token"
+          "example": "Bearer employee-auth-token-valid"
         },
-        "example": "Bearer valid-travel-agent-token"
+        "example": "Bearer employee-auth-token-valid"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -251,8 +249,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "bad_request",
-            "success"
+            "success",
+            "bad_request"
           ]
         }
       }
@@ -272,9 +270,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "10b3186b8b914a39b3bc654e95854bfe"
+          "example": "74073ea0ef4342504fe0cccd74ed41b0"
         },
-        "example": "10b3186b8b914a39b3bc654e95854bfe"
+        "example": "74073ea0ef4342504fe0cccd74ed41b0"
       },
       "Content-Type": {
         "style": "simple",

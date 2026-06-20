@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Patient Prescription History API",
-    "description": "This API provides access to the medical prescription history of patients. It allows users to retrieve prescription records by specifying patient IDs and date ranges, enabling healthcare providers to efficiently view a patient's medication history.",
+    "description": "The Patient Prescription History API provides access to the historical records of medical prescriptions for a given patient. Users can retrieve detailed history based on specified date ranges and record types. This API is designed for healthcare providers, allowing them to manage and review patient medication histories effectively.",
     "version": "1.0"
   },
   "servers": [
@@ -22,10 +22,10 @@
     "/patients/PAT-112233/records/medical/prescriptions/history": {
       "get": {
         "tags": [
-          "Medical Records"
+          "Patients"
         ],
         "summary": "Retrieve Prescription History",
-        "description": "This endpoint retrieves the medical prescription history for a specified patient. By providing the necessary parameters such as dates, patient ID, and record type, you can obtain a detailed history of the patient's prescriptions. The expected outcome is a list of past prescriptions relevant to the provided criteria.",
+        "description": "This operation retrieves the historical prescription records for a specific patient identified by their unique Patient ID. The user can provide optional date filters, specifying a date range through 'fromDate' and 'toDate', as well as the type of records requested. The expected outcome is a list of prescriptions along with their details relevant to the patient within the specified time frame.",
         "operationId": "retrievePrescriptionHistory",
         "parameters": [
           {
@@ -35,10 +35,10 @@
             "$ref": "#/components/parameters/fromDate"
           },
           {
-            "$ref": "#/components/parameters/X-Patient-Id"
+            "$ref": "#/components/parameters/recordType"
           },
           {
-            "$ref": "#/components/parameters/recordType"
+            "$ref": "#/components/parameters/X-Patient-Id"
           },
           {
             "$ref": "#/components/parameters/parentspanid"
@@ -60,27 +60,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Prescription history retrieved successfully",
-            "headers": {
-              "Date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "X-Trace-Id": {
-                "$ref": "#/components/headers/X-Trace-Id"
-              },
-              "Content-Type": {
-                "$ref": "#/components/headers/Content-Type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RetrievePrescriptionHistoryResponse_200"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Invalid request parameters",
             "headers": {
@@ -101,6 +80,27 @@
                 }
               }
             }
+          },
+          "200": {
+            "description": "Prescription history retrieved successfully",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "X-Trace-Id": {
+                "$ref": "#/components/headers/X-Trace-Id"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrievePrescriptionHistoryResponse_200"
+                }
+              }
+            }
           }
         },
         "callbacks": {},
@@ -113,6 +113,38 @@
   },
   "components": {
     "schemas": {
+      "RetrievePrescriptionHistoryResponse_400": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "INVALID_RECORD_TYPE"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "recordType must be one of: PRESCRIPTION, LAB_REPORT, DISCHARGE_SUMMARY, IMAGING"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-08T10:00:00Z"
+          }
+        },
+        "example": {
+          "error": "INVALID_RECORD_TYPE",
+          "code": 400,
+          "message": "recordType must be one of: PRESCRIPTION, LAB_REPORT, DISCHARGE_SUMMARY, IMAGING",
+          "timestamp": "2026-06-08T10:00:00Z"
+        }
+      },
+      "RetrievePrescriptionHistoryRequest": {
+        "type": "string",
+        "example": ""
+      },
       "RetrievePrescriptionHistoryResponse_200": {
         "type": "object",
         "properties": {
@@ -163,53 +195,53 @@
               "properties": {
                 "prescriptionId": {
                   "type": "string",
-                  "example": "g1ULhdbddiQ"
+                  "example": "iPH8MItclYx"
                 },
                 "doctorName": {
                   "type": "string",
-                  "example": "|gc&TFKg!kPNl_wumd"
+                  "example": "Log}pL]t7hK=Yu9gh:"
                 },
                 "date": {
                   "type": "string",
-                  "example": "Q8;|_d|QJx"
+                  "example": "?L%#z)'dy("
                 },
                 "medications": {
                   "type": "array",
-                  "example": "[ {\n  \"name\" : \"gfohulizdy\",\n  \"dosage\" : \"1gmr\",\n  \"frequency\" : \"G*Ex)(dxw!!\",\n  \"duration\" : 68\n} ]",
+                  "example": "[ {\n  \"name\" : \"humelpydbb\",\n  \"dosage\" : \"8Y7b\",\n  \"frequency\" : \"HOm{ot1yF7_\",\n  \"duration\" : 28\n} ]",
                   "items": {
                     "type": "object",
                     "properties": {
                       "name": {
                         "type": "string",
-                        "example": "gfohulizdy"
+                        "example": "humelpydbb"
                       },
                       "dosage": {
                         "type": "string",
-                        "example": "1gmr"
+                        "example": "8Y7b"
                       },
                       "frequency": {
                         "type": "string",
-                        "example": "G*Ex)(dxw!!"
+                        "example": "HOm{ot1yF7_"
                       },
                       "duration": {
                         "type": "integer",
                         "format": "int32",
-                        "example": 68
+                        "example": 28
                       }
                     },
-                    "example": "{\n  \"name\" : \"gfohulizdy\",\n  \"dosage\" : \"1gmr\",\n  \"frequency\" : \"G*Ex)(dxw!!\",\n  \"duration\" : 68\n}"
+                    "example": "{\n  \"name\" : \"humelpydbb\",\n  \"dosage\" : \"8Y7b\",\n  \"frequency\" : \"HOm{ot1yF7_\",\n  \"duration\" : 28\n}"
                   }
                 },
                 "diagnosis": {
                   "type": "string",
-                  "example": "hfrcqwqctzwj"
+                  "example": "rszgemzhtimy"
                 },
                 "followUpDate": {
                   "type": "string",
-                  "example": "<SA3Si,<lb"
+                  "example": "{hOcD>B0bL"
                 }
               },
-              "example": "{\n  \"prescriptionId\" : \"g1ULhdbddiQ\",\n  \"doctorName\" : \"|gc&TFKg!kPNl_wumd\",\n  \"date\" : \"Q8;|_d|QJx\",\n  \"medications\" : [ {\n    \"name\" : \"gfohulizdy\",\n    \"dosage\" : \"1gmr\",\n    \"frequency\" : \"G*Ex)(dxw!!\",\n    \"duration\" : 68\n  } ],\n  \"diagnosis\" : \"hfrcqwqctzwj\",\n  \"followUpDate\" : \"<SA3Si,<lb\"\n}"
+              "example": "{\n  \"prescriptionId\" : \"iPH8MItclYx\",\n  \"doctorName\" : \"Log}pL]t7hK=Yu9gh:\",\n  \"date\" : \"?L%#z)'dy(\",\n  \"medications\" : [ {\n    \"name\" : \"humelpydbb\",\n    \"dosage\" : \"8Y7b\",\n    \"frequency\" : \"HOm{ot1yF7_\",\n    \"duration\" : 28\n  } ],\n  \"diagnosis\" : \"rszgemzhtimy\",\n  \"followUpDate\" : \"{hOcD>B0bL\"\n}"
             }
           },
           "totalRecords": {
@@ -255,38 +287,6 @@
           ],
           "totalRecords": 2
         }
-      },
-      "RetrievePrescriptionHistoryRequest": {
-        "type": "string",
-        "example": ""
-      },
-      "RetrievePrescriptionHistoryResponse_400": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "example": "INVALID_RECORD_TYPE"
-          },
-          "code": {
-            "type": "integer",
-            "format": "int32",
-            "example": 400
-          },
-          "message": {
-            "type": "string",
-            "example": "recordType must be one of: PRESCRIPTION, LAB_REPORT, DISCHARGE_SUMMARY, IMAGING"
-          },
-          "timestamp": {
-            "type": "string",
-            "example": "2026-06-08T10:00:00Z"
-          }
-        },
-        "example": {
-          "error": "INVALID_RECORD_TYPE",
-          "code": 400,
-          "message": "recordType must be one of: PRESCRIPTION, LAB_REPORT, DISCHARGE_SUMMARY, IMAGING",
-          "timestamp": "2026-06-08T10:00:00Z"
-        }
       }
     },
     "parameters": {
@@ -298,9 +298,9 @@
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "Bd[lQTHr@B"
+          "example": "{5RG$y_>xN"
         },
-        "example": "Bd[lQTHr@B"
+        "example": "{5RG$y_>xN"
       },
       "fromDate": {
         "name": "fromDate",
@@ -310,9 +310,21 @@
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "I[1e?tD@<="
+          "example": "+fBlUhh!xe"
         },
-        "example": "I[1e?tD@<="
+        "example": "+fBlUhh!xe"
+      },
+      "recordType": {
+        "name": "recordType",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "natmqqqsnxoh"
+        },
+        "example": "natmqqqsnxoh"
       },
       "X-Patient-Id": {
         "name": "X-Patient-Id",
@@ -326,18 +338,6 @@
         },
         "example": "PAT-112233"
       },
-      "recordType": {
-        "name": "recordType",
-        "in": "query",
-        "required": false,
-        "style": "form",
-        "explode": true,
-        "schema": {
-          "type": "string",
-          "example": "Yz}?\"lV!3B+O"
-        },
-        "example": "Yz}?\"lV!3B+O"
-      },
       "parentspanid": {
         "name": "parentspanid",
         "in": "header",
@@ -346,9 +346,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "299e72a223d14dae18e404d4e6ee454b"
+          "example": "19ba2f67d23d47b16d4511504de14414"
         },
-        "example": "299e72a223d14dae18e404d4e6ee454b"
+        "example": "19ba2f67d23d47b16d4511504de14414"
       },
       "Authorization": {
         "name": "Authorization",
@@ -372,8 +372,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "success",
-            "bad_request"
+            "bad_request",
+            "success"
           ]
         }
       }
@@ -393,9 +393,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "3aec47504e904b12935268a48bba4b52"
+          "example": "d97cb4f7ecfc4093539ce1dddbbf4dee"
         },
-        "example": "3aec47504e904b12935268a48bba4b52"
+        "example": "d97cb4f7ecfc4093539ce1dddbbf4dee"
       },
       "Content-Type": {
         "style": "simple",
