@@ -2,7 +2,13 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Warehouse Stock Writeoff API",
-    "description": "This API facilitates the execution of write-off approvals for damaged stock items in the warehouse. It supports operations to approve and audit stock write-off processes, ensuring that all necessary authorizations are tracked and processed effectively.",
+    "description": "This API enables the management and execution of write-off approvals for damaged stock in the specified warehouse. Users can initiate deletions of approval audits, ensuring efficient handling of stock discrepancies while maintaining comprehensive audit records.",
+    "termsOfService": "https://www.warehouse.example.com/terms",
+    "contact": {
+      "name": "Warehouse Support Team",
+      "url": "https://www.warehouse.example.com/support",
+      "email": "support@warehouse.example.com"
+    },
     "version": "1.0",
     "extensions": {
       "x-oas-type": "Runtime"
@@ -25,18 +31,12 @@
     "/warehouse/WH-NORTH-003/stock/writeoff/damaged/approval/audit/execute": {
       "delete": {
         "tags": [
-          "Inventory Management"
+          "Stock Management"
         ],
-        "summary": "Execute Write-off Approval for Damaged Stock",
-        "description": "This operation executes the approval process for writing off damaged stock in the specified warehouse. It requires the approval ID and warehouse ID, along with any necessary headers for authorization. Upon successful execution, it confirms the write-off approval, updating the stock records accordingly.",
-        "operationId": "executeWriteoffApprovalForDamagedStock",
+        "summary": "Execute Stock Writeoff Approval",
+        "description": "This operation allows you to execute an approval for stock write-off due to damage within the specified warehouse. You must provide necessary details including the warehouse ID and approval ID to correctly process the request. Upon successful execution, the damaged stock will be moved out of inventory, reflecting the write-off in the records.",
+        "operationId": "executeStockWriteoffApproval",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/X-Approval-Id"
-          },
-          {
-            "$ref": "#/components/parameters/X-Warehouse-Id"
-          },
           {
             "$ref": "#/components/parameters/Content-Type"
           },
@@ -47,6 +47,12 @@
             "$ref": "#/components/parameters/Authorization"
           },
           {
+            "$ref": "#/components/parameters/X-Approval-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-Warehouse-Id"
+          },
+          {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
@@ -54,14 +60,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ExecuteWriteoffApprovalForDamagedStockRequest"
+                "$ref": "#/components/schemas/ExecuteStockWriteoffApprovalRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Write-off approval processed successfully",
+          "400": {
+            "description": "Invalid request parameters provided",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -76,13 +82,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ExecuteWriteoffApprovalForDamagedStockResponse_200"
+                  "$ref": "#/components/schemas/ExecuteStockWriteoffApprovalResponse_400"
                 }
               }
             }
           },
-          "400": {
-            "description": "Invalid request parameters",
+          "200": {
+            "description": "Stock write-off approval executed successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -97,7 +103,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ExecuteWriteoffApprovalForDamagedStockResponse_400"
+                  "$ref": "#/components/schemas/ExecuteStockWriteoffApprovalResponse_200"
                 }
               }
             }
@@ -113,48 +119,7 @@
   },
   "components": {
     "schemas": {
-      "ExecuteWriteoffApprovalForDamagedStockResponse_200": {
-        "type": "object",
-        "example": {}
-      },
-      "ExecuteWriteoffApprovalForDamagedStockRequest": {
-        "type": "object",
-        "properties": {
-          "warehouseId": {
-            "type": "string",
-            "example": "vQBGMjm4gEb6"
-          },
-          "items": {
-            "type": "array",
-            "example": "[ {\n  \"sku\" : \"wtEM0FdO59H6b\",\n  \"quantity\" : 32,\n  \"reason\" : \"\"\n} ]",
-            "items": {
-              "type": "object",
-              "properties": {
-                "sku": {
-                  "type": "string",
-                  "example": "wtEM0FdO59H6b"
-                },
-                "quantity": {
-                  "type": "integer",
-                  "format": "int32",
-                  "example": 32
-                },
-                "reason": {
-                  "type": "string",
-                  "example": ""
-                }
-              },
-              "example": "{\n  \"sku\" : \"wtEM0FdO59H6b\",\n  \"quantity\" : 32,\n  \"reason\" : \"\"\n}"
-            }
-          },
-          "date": {
-            "type": "string",
-            "example": "$iIeyS$83u"
-          }
-        },
-        "example": "{\n  \"warehouseId\" : \"vQBGMjm4gEb6\",\n  \"items\" : [ {\n    \"sku\" : \"wtEM0FdO59H6b\",\n    \"quantity\" : 32,\n    \"reason\" : \"\"\n  } ],\n  \"date\" : \"$iIeyS$83u\"\n}"
-      },
-      "ExecuteWriteoffApprovalForDamagedStockResponse_400": {
+      "ExecuteStockWriteoffApprovalResponse_400": {
         "type": "object",
         "properties": {
           "error": {
@@ -176,7 +141,7 @@
             ],
             "items": {
               "type": "string",
-              "example": "WJVWem07sH9q6OPi5dUs76IQ5QiutldpuBaAUxPRyLMlL4PjslfiDXPjJWH7gDhepTB7aGE"
+              "example": "h3Y0JIl1IR8KBHETahRlrrgtT6zeFCzy4OVsyPFTulBYpr7v8ext5EAXAZe8URWgYpDjLv6"
             }
           },
           "timestamp": {
@@ -195,9 +160,106 @@
           ],
           "timestamp": "2026-06-08T10:00:00Z"
         }
+      },
+      "ExecuteStockWriteoffApprovalRequest": {
+        "type": "object",
+        "properties": {
+          "warehouseId": {
+            "type": "string",
+            "example": "aBga9fijd67p"
+          },
+          "items": {
+            "type": "array",
+            "example": "[ {\n  \"sku\" : \"ewRy4FGGkD2Ci\",\n  \"quantity\" : 40,\n  \"reason\" : \"ut%XOOK(]:bU!j\",\n  \"damageDescription\" : \"tcehombusnagnpcipolnleciobrqbdc\",\n  \"photos\" : [ \"TNgIhehZNXS17XNjlmchybj6op5JlWAAB5Jdqor\" ]\n} ]",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sku": {
+                  "type": "string",
+                  "example": "ewRy4FGGkD2Ci"
+                },
+                "quantity": {
+                  "type": "integer",
+                  "format": "int32",
+                  "example": 40
+                },
+                "reason": {
+                  "type": "string",
+                  "example": "ut%XOOK(]:bU!j"
+                },
+                "damageDescription": {
+                  "type": "string",
+                  "example": "tcehombusnagnpcipolnleciobrqbdc"
+                },
+                "photos": {
+                  "type": "array",
+                  "example": "[ \"TNgIhehZNXS17XNjlmchybj6op5JlWAAB5Jdqor\" ]",
+                  "items": {
+                    "type": "string",
+                    "example": "TNgIhehZNXS17XNjlmchybj6op5JlWAAB5Jdqor"
+                  }
+                }
+              },
+              "example": "{\n  \"sku\" : \"ewRy4FGGkD2Ci\",\n  \"quantity\" : 40,\n  \"reason\" : \"ut%XOOK(]:bU!j\",\n  \"damageDescription\" : \"tcehombusnagnpcipolnleciobrqbdc\",\n  \"photos\" : [ \"TNgIhehZNXS17XNjlmchybj6op5JlWAAB5Jdqor\" ]\n}"
+            }
+          },
+          "approvalId": {
+            "type": "string",
+            "example": "FVPXa5XzF7MX"
+          },
+          "writtenOffBy": {
+            "type": "string",
+            "example": "Y9otWvdXx0"
+          },
+          "date": {
+            "type": "string",
+            "example": "X0J@G4<TZ,"
+          }
+        },
+        "example": "{\n  \"warehouseId\" : \"aBga9fijd67p\",\n  \"items\" : [ {\n    \"sku\" : \"ewRy4FGGkD2Ci\",\n    \"quantity\" : 40,\n    \"reason\" : \"ut%XOOK(]:bU!j\",\n    \"damageDescription\" : \"tcehombusnagnpcipolnleciobrqbdc\",\n    \"photos\" : [ \"TNgIhehZNXS17XNjlmchybj6op5JlWAAB5Jdqor\" ]\n  } ],\n  \"approvalId\" : \"FVPXa5XzF7MX\",\n  \"writtenOffBy\" : \"Y9otWvdXx0\",\n  \"date\" : \"X0J@G4<TZ,\"\n}"
+      },
+      "ExecuteStockWriteoffApprovalResponse_200": {
+        "type": "object",
+        "example": {}
       }
     },
     "parameters": {
+      "Content-Type": {
+        "name": "Content-Type",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      },
+      "parentspanid": {
+        "name": "parentspanid",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "b56905d629a749c19c3d53e0d14cd42dc66e75842e0c4a92"
+        },
+        "example": "b56905d629a749c19c3d53e0d14cd42dc66e75842e0c4a92"
+      },
+      "Authorization": {
+        "name": "Authorization",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "Bearer warehouse-mgr-token"
+        },
+        "example": "Bearer warehouse-mgr-token"
+      },
       "X-Approval-Id": {
         "name": "X-Approval-Id",
         "in": "header",
@@ -222,42 +284,6 @@
         },
         "example": "WH-NORTH-003"
       },
-      "Content-Type": {
-        "name": "Content-Type",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "application/json"
-        },
-        "example": "application/json"
-      },
-      "parentspanid": {
-        "name": "parentspanid",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "5376c676e9ff48ce887e70d33a63dec1207c97af29f34b69"
-        },
-        "example": "5376c676e9ff48ce887e70d33a63dec1207c97af29f34b69"
-      },
-      "Authorization": {
-        "name": "Authorization",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "Bearer warehouse-mgr-token"
-        },
-        "example": "Bearer warehouse-mgr-token"
-      },
       "x-mock-response": {
         "name": "x-mock-response",
         "in": "header",
@@ -268,8 +294,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "success",
-            "bad_request"
+            "bad_request",
+            "success"
           ]
         }
       }
@@ -289,9 +315,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "34ed6c090cab4f188027b87b0d9b74ea02c4667b7c4942b9"
+          "example": "b56f98f2ea974882b487fddb9a5e3367b3682ab908b944cd"
         },
-        "example": "34ed6c090cab4f188027b87b0d9b74ea02c4667b7c4942b9"
+        "example": "b56f98f2ea974882b487fddb9a5e3367b3682ab908b944cd"
       },
       "Content-Type": {
         "style": "simple",

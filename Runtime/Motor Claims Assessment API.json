@@ -2,12 +2,12 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Motor Claims Assessment API",
-    "description": "The Motor Claims Assessment API provides detailed information about assessment documents related to motor claims, allowing users to retrieve the current status and relevant details associated with specific claims.",
+    "description": "The Motor Claims Assessment API provides detailed information regarding the assessment of motor claims. It allows users to retrieve and manage various documents, statuses, and details related to specific claims, improving the claims processing experience through efficient access to essential data.",
     "termsOfService": "https://www.example.com/terms-and-conditions",
     "contact": {
-      "name": "Claims Support Team",
+      "name": "Support Team",
       "url": "https://www.example.com/support",
-      "email": "support@claimsapi.example.com"
+      "email": "support@example.com"
     },
     "version": "1.0",
     "extensions": {
@@ -28,20 +28,26 @@
     }
   ],
   "paths": {
-    "/claims/CLM-20260101-0011/motor/status/documents/assessment/detail": {
+    "/claims/CLM-20260501-3321/motor/status/documents/assessment/detail": {
       "get": {
         "tags": [
           "Claims"
         ],
         "summary": "Retrieve Assessment Document Details",
-        "description": "This operation is designed to retrieve detailed information about the assessment documents related to a specific motor claim. Clients must provide the necessary parameters, including authorization, to access the information. The expected outcome is a comprehensive overview of the assessment documents for the specified claim.",
+        "description": "This operation retrieves detailed information regarding the assessment documents associated with a specific motor claim. The user is required to supply relevant parameters to identify the claim and any other necessary filters. The operation will return comprehensive details about the assessment documents, enhancing the claims management experience.",
         "operationId": "retrieveAssessmentDocumentDetails",
         "parameters": [
+          {
+            "$ref": "#/components/parameters/includeDocuments"
+          },
           {
             "$ref": "#/components/parameters/parentspanid"
           },
           {
             "$ref": "#/components/parameters/Authorization"
+          },
+          {
+            "$ref": "#/components/parameters/X-Customer-Id"
           },
           {
             "$ref": "#/components/parameters/x-mock-response"
@@ -57,8 +63,8 @@
           }
         },
         "responses": {
-          "500": {
-            "description": "Internal server error occurred",
+          "200": {
+            "description": "Request processed successfully",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -68,12 +74,15 @@
               },
               "Content-Type": {
                 "$ref": "#/components/headers/Content-Type"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RetrieveAssessmentDocumentDetailsResponse_500"
+                  "$ref": "#/components/schemas/RetrieveAssessmentDocumentDetailsResponse_200"
                 }
               }
             }
@@ -93,46 +102,135 @@
         "type": "string",
         "example": ""
       },
-      "RetrieveAssessmentDocumentDetailsResponse_500": {
+      "RetrieveAssessmentDocumentDetailsResponse_200": {
         "type": "object",
         "properties": {
-          "error": {
+          "claimId": {
             "type": "string",
-            "example": "CLAIMS_SERVICE_UNAVAILABLE"
+            "example": "CLM-20260501-3321"
           },
-          "code": {
-            "type": "integer",
-            "format": "int32",
-            "example": 500
-          },
-          "message": {
+          "policyId": {
             "type": "string",
-            "example": "Claims management system is under scheduled maintenance."
+            "example": "POL-INS-20260501-7710"
           },
-          "maintenanceWindow": {
+          "status": {
             "type": "string",
-            "example": "2026-06-08T10:00:00Z to 2026-06-08T12:00:00Z"
+            "example": "UNDER_ASSESSMENT"
           },
-          "incidentId": {
+          "claimType": {
             "type": "string",
-            "example": "INC-INS-2026-0502"
+            "example": "OWN_DAMAGE"
           },
-          "timestamp": {
+          "incidentDate": {
             "type": "string",
-            "example": "2026-06-08T10:00:00Z"
+            "example": "2026-05-28"
+          },
+          "incidentDescription": {
+            "type": "string",
+            "example": "Rear-end collision at intersection"
+          },
+          "estimatedLoss": {
+            "type": "number",
+            "example": 4500.0
+          },
+          "surveyorName": {
+            "type": "string",
+            "example": "Mark Evans"
+          },
+          "surveyorVisitDate": {
+            "type": "string",
+            "example": "2026-06-02"
+          },
+          "approvedAmount": {
+            "type": "string"
+          },
+          "documents": {
+            "type": "array",
+            "example": [
+              {
+                "docType": "PHOTOS",
+                "status": "RECEIVED"
+              },
+              {
+                "docType": "POLICE_REPORT",
+                "status": "PENDING"
+              },
+              {
+                "docType": "REPAIR_ESTIMATE",
+                "status": "RECEIVED"
+              }
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "docType": {
+                  "type": "string",
+                  "example": "yavjmj"
+                },
+                "status": {
+                  "type": "string",
+                  "example": "bqqponad"
+                }
+              },
+              "example": "{\n  \"docType\" : \"yavjmj\",\n  \"status\" : \"bqqponad\"\n}"
+            }
+          },
+          "nextAction": {
+            "type": "string",
+            "example": "Submit police report"
+          },
+          "expectedResolution": {
+            "type": "string",
+            "example": "2026-06-15"
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
           }
         },
         "example": {
-          "error": "CLAIMS_SERVICE_UNAVAILABLE",
-          "code": 500,
-          "message": "Claims management system is under scheduled maintenance.",
-          "maintenanceWindow": "2026-06-08T10:00:00Z to 2026-06-08T12:00:00Z",
-          "incidentId": "INC-INS-2026-0502",
-          "timestamp": "2026-06-08T10:00:00Z"
+          "claimId": "CLM-20260501-3321",
+          "policyId": "POL-INS-20260501-7710",
+          "status": "UNDER_ASSESSMENT",
+          "claimType": "OWN_DAMAGE",
+          "incidentDate": "2026-05-28",
+          "incidentDescription": "Rear-end collision at intersection",
+          "estimatedLoss": 4500.0,
+          "surveyorName": "Mark Evans",
+          "surveyorVisitDate": "2026-06-02",
+          "documents": [
+            {
+              "docType": "PHOTOS",
+              "status": "RECEIVED"
+            },
+            {
+              "docType": "POLICE_REPORT",
+              "status": "PENDING"
+            },
+            {
+              "docType": "REPAIR_ESTIMATE",
+              "status": "RECEIVED"
+            }
+          ],
+          "nextAction": "Submit police report",
+          "expectedResolution": "2026-06-15",
+          "currency": "USD"
         }
       }
     },
     "parameters": {
+      "includeDocuments": {
+        "name": "includeDocuments",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "zokr"
+        },
+        "example": "zokr"
+      },
       "parentspanid": {
         "name": "parentspanid",
         "in": "header",
@@ -141,9 +239,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "3c0242004f314f948e8315e8831f779ee8e6fd75e0354be2"
+          "example": "8d422a522f814423a0b8552fd577de5c2dde88c0a9f24597"
         },
-        "example": "3c0242004f314f948e8315e8831f779ee8e6fd75e0354be2"
+        "example": "8d422a522f814423a0b8552fd577de5c2dde88c0a9f24597"
       },
       "Authorization": {
         "name": "Authorization",
@@ -157,6 +255,18 @@
         },
         "example": "Bearer ins-customer-token"
       },
+      "X-Customer-Id": {
+        "name": "X-Customer-Id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "CUST-INS-334"
+        },
+        "example": "CUST-INS-334"
+      },
       "x-mock-response": {
         "name": "x-mock-response",
         "in": "header",
@@ -167,7 +277,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "server_error"
+            "success"
           ]
         }
       }
@@ -187,9 +297,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "59e8197225bf4219bdee7bce4bc6a993cf12d59480254aba"
+          "example": "9a73915c32c343b08e5db7135f77cef04b72eba559854ef7"
         },
-        "example": "59e8197225bf4219bdee7bce4bc6a993cf12d59480254aba"
+        "example": "9a73915c32c343b08e5db7135f77cef04b72eba559854ef7"
       },
       "Content-Type": {
         "style": "simple",
@@ -199,6 +309,15 @@
           "example": "application/json"
         },
         "example": "application/json"
+      },
+      "Cache-Control": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "max-age=60"
+        },
+        "example": "max-age=60"
       }
     }
   }
