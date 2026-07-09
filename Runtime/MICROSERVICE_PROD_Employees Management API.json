@@ -2,12 +2,13 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Employees Management API",
-    "description": "The Employee Management Microservice API provides essential endpoints for managing employee data within organizations. It allows businesses to create, read, update, and delete employee records efficiently, enhancing the workforce management process. This API is ideal for HR systems, payroll applications, and any platform needing to streamline employee-related operations. Typical consumers include HR professionals, payroll managers, and developers integrating workforce solutions.",
+    "description": "The Employees Management API enables businesses to efficiently manage employee records and workflows. This API provides core resources for creating, updating, retrieving, and deleting employee data, empowering organizations to streamline their HR processes. Typical use cases include onboarding new hires, managing employee information, and integration with payroll systems. Designed for developers, the API facilitates seamless integration into existing applications to enhance operational efficiency and data accuracy.",
     "version": "1.0"
   },
   "servers": [
     {
       "url": "https://stage-data-gujl.apiwiz.io",
+      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
@@ -19,13 +20,13 @@
   ],
   "paths": {
     "/v1/employees": {
-      "post": {
+      "get": {
         "tags": [
           "Employee Management"
         ],
-        "summary": "Create a new employee record.",
-        "description": "This endpoint allows you to create a new employee in the system by providing the required details. Ensure that all mandatory fields are included in the request to successfully create the employee record.",
-        "operationId": "createEmployee",
+        "summary": "Retrieve a list of employees.",
+        "description": "This endpoint allows you to fetch all the employees in the organization. It returns detailed information for each employee and can be used to display employee data in various applications.",
+        "operationId": "getEmployees",
         "parameters": [
           {
             "$ref": "#/components/parameters/name"
@@ -47,18 +48,18 @@
           }
         ],
         "requestBody": {
-          "description": "Request body for creating a new employee record. This includes necessary details like name, position, and contact information. Ensure all required fields are filled to successfully create a new employee entry.",
+          "description": "This request retrieves a list of employee records. Ensure to include any necessary filters in the request body to customize the results as per your requirements.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-CreateEmployeeRequest"
+                "$ref": "#/components/schemas/MICROSERVICE_PROD_getEmployees-GetEmployeesRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, employee data returned.",
+            "description": "Successfully retrieved the list of employees.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -70,25 +71,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-CreateEmployeeResponse_200"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found; the specified employee does not exist.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-CreateEmployeeResponse_404"
+                  "$ref": "#/components/schemas/MICROSERVICE_PROD_getEmployees-GetEmployeesResponse_200"
                 }
               }
             }
@@ -104,8 +87,197 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_PROD_createEmployee-CreateEmployeeResponse_200": {
-        "title": "Subscription Response",
+      "MICROSERVICE_PROD_getEmployees-GetEmployeesRequest": {
+        "title": "Employee Operations Request Body",
+        "type": "object",
+        "properties": {
+          "subscriptionName": {
+            "type": "string",
+            "description": "The name of the subscription.",
+            "example": "Daily Technology Stock Alerts"
+          },
+          "category": {
+            "type": "integer",
+            "description": "The category identifier.",
+            "format": "int32",
+            "example": 200
+          },
+          "symbols": {
+            "type": "array",
+            "description": "A list of symbols related to the subscription.",
+            "example": [
+              "AAPL",
+              "MSFT",
+              "NVDA",
+              "TSLA"
+            ],
+            "items": {
+              "type": "string",
+              "example": "AAPL"
+            }
+          },
+          "deliveryChannel": {
+            "type": "string",
+            "description": "The preferred delivery channel for notifications.",
+            "example": "EMAIL"
+          },
+          "frequency": {
+            "type": "string",
+            "description": "The frequency of notifications.",
+            "example": "DAILY"
+          },
+          "language": {
+            "type": "string",
+            "description": "The language for the notifications.",
+            "example": "en-US"
+          },
+          "region": {
+            "type": "string",
+            "description": "The region associated with the subscription.",
+            "example": "US"
+          },
+          "priority": {
+            "type": "string",
+            "description": "The priority level of the notifications.",
+            "example": "HIGH"
+          },
+          "clientReference": {
+            "type": "string",
+            "description": "A reference ID provided by the client.",
+            "example": "REF-NEWS-2026-0001"
+          },
+          "portfolioId": {
+            "type": "string",
+            "description": "The identifier for the user's portfolio.",
+            "example": "PORT-1001"
+          },
+          "deviceType": {
+            "type": "string",
+            "description": "The type of device used for notifications.",
+            "example": "WEB"
+          },
+          "notificationEnabled": {
+            "type": "boolean",
+            "description": "Indicates whether notifications are enabled.",
+            "example": true
+          },
+          "alertPreferences": {
+            "description": "Preferences for alert notifications.",
+            "$ref": "#/components/schemas/MICROSERVICE_PROD_getEmployees-AlertPreferences"
+          },
+          "schedule": {
+            "description": "The schedule for the notifications.",
+            "$ref": "#/components/schemas/MICROSERVICE_PROD_getEmployees-Schedule"
+          },
+          "customer": {
+            "description": "Information about the customer associated with the subscription.",
+            "$ref": "#/components/schemas/MICROSERVICE_PROD_getEmployees-Customer"
+          }
+        },
+        "description": "This schema defines the structure for the request body when retrieving employee-related operations.",
+        "example": {
+          "subscriptionName": "Daily Technology Stock Alerts",
+          "category": 200,
+          "symbols": [
+            "AAPL",
+            "MSFT",
+            "NVDA",
+            "TSLA"
+          ],
+          "deliveryChannel": "EMAIL",
+          "frequency": "DAILY",
+          "language": "en-US",
+          "region": "US",
+          "priority": "HIGH",
+          "clientReference": "REF-NEWS-2026-0001",
+          "portfolioId": "PORT-1001",
+          "deviceType": "WEB",
+          "notificationEnabled": true,
+          "alertPreferences": {
+            "priceChangeThreshold": 5,
+            "includeMarketSummary": true,
+            "includeAnalystRatings": false
+          },
+          "schedule": {
+            "startTime": "08:00",
+            "timezone": "America/New_York"
+          },
+          "customer": {
+            "customerId": "CUST-50001",
+            "segment": "PREMIUM",
+            "riskProfile": "MODERATE"
+          }
+        }
+      },
+      "MICROSERVICE_PROD_getEmployees-AlertPreferences": {
+        "title": "Alert Preferences",
+        "type": "object",
+        "properties": {
+          "priceChangeThreshold": {
+            "type": "integer",
+            "description": "The threshold for price changes that triggers an alert.",
+            "format": "int32",
+            "example": 5
+          },
+          "includeMarketSummary": {
+            "type": "boolean",
+            "description": "Indicates if a market summary should be included in alerts.",
+            "example": false
+          },
+          "includeAnalystRatings": {
+            "type": "boolean",
+            "description": "Indicates if analyst ratings should be included in alerts.",
+            "example": true
+          }
+        },
+        "description": "Schema representing user preferences for alerts."
+      },
+      "MICROSERVICE_PROD_getEmployees-Schedule": {
+        "title": "Subscription Schedule",
+        "type": "object",
+        "properties": {
+          "startTime": {
+            "type": "string",
+            "description": "The start time for the subscription schedule.",
+            "example": "09:00:00"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "The timezone in which the schedule is set.",
+            "example": "America/New_York"
+          },
+          "nextExecution": {
+            "type": "string",
+            "description": "The next execution time for the scheduled notifications.",
+            "example": "2023-01-11T09:00:00Z"
+          }
+        },
+        "description": "Schema representing the schedule information for a subscription."
+      },
+      "MICROSERVICE_PROD_getEmployees-Customer": {
+        "title": "Customer Information",
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "description": "The unique identifier for the customer.",
+            "example": "cust123"
+          },
+          "segment": {
+            "type": "string",
+            "description": "The segment to which the customer belongs.",
+            "example": "premium"
+          },
+          "riskProfile": {
+            "type": "string",
+            "description": "The risk profile of the customer.",
+            "example": "moderate"
+          }
+        },
+        "description": "Schema representing customer information associated with the subscription."
+      },
+      "MICROSERVICE_PROD_getEmployees-GetEmployeesResponse_200": {
+        "title": "Employee Subscription Response",
         "type": "object",
         "properties": {
           "subscriptionId": {
@@ -125,12 +297,12 @@
           },
           "deliveryChannel": {
             "type": "string",
-            "description": "Preferred channel for delivering subscription notifications.",
+            "description": "Channel through which notifications are delivered.",
             "example": "EMAIL"
           },
           "frequency": {
             "type": "string",
-            "description": "Frequency of the subscription notifications.",
+            "description": "Frequency of subscription updates.",
             "example": "DAILY"
           },
           "status": {
@@ -140,12 +312,12 @@
           },
           "createdAt": {
             "type": "string",
-            "description": "Timestamp indicating when the subscription was created.",
+            "description": "Timestamp when the subscription was created.",
             "example": "2026-06-08T12:00:00Z"
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the subscription was last updated.",
+            "description": "Timestamp when the subscription was last updated.",
             "example": "2026-06-08T12:00:00Z"
           },
           "symbols": {
@@ -164,12 +336,12 @@
           },
           "portfolioId": {
             "type": "string",
-            "description": "Identifier of the portfolio associated with the subscription.",
+            "description": "Identifier for the associated portfolio.",
             "example": "PORT-1001"
           },
           "clientReference": {
             "type": "string",
-            "description": "Client reference for tracking the subscription.",
+            "description": "Reference identifier from the client.",
             "example": "REF-NEWS-2026-0001"
           },
           "notificationEnabled": {
@@ -178,16 +350,16 @@
             "example": true
           },
           "alertPreferences": {
-            "description": "Preferences related to alerts for the subscription.",
-            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-AlertPreferences"
+            "description": "User's preferences for alerts associated with the subscription.",
+            "$ref": "#/components/schemas/MICROSERVICE_PROD_getEmployees-AlertPreferences"
           },
           "schedule": {
-            "description": "Schedule details for the subscription notifications.",
-            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-Schedule"
+            "description": "Schedule information for the subscription.",
+            "$ref": "#/components/schemas/MICROSERVICE_PROD_getEmployees-Schedule"
           },
           "delivery": {
-            "description": "Delivery details for the subscription notifications.",
-            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-Delivery"
+            "description": "Delivery options for subscription notifications.",
+            "$ref": "#/components/schemas/MICROSERVICE_PROD_getEmployees-Delivery"
           },
           "createdBy": {
             "type": "string",
@@ -196,11 +368,11 @@
           },
           "message": {
             "type": "string",
-            "description": "Additional message related to the subscription.",
+            "description": "Informational message regarding the subscription.",
             "example": "Stock market subscription created successfully."
           }
         },
-        "description": "Schema that defines the response structure for creating a subscription.",
+        "description": "Schema representing the response for an employee subscription retrieved through a GET request.",
         "example": {
           "subscriptionId": "SUB-10002",
           "subscriptionName": "Daily Technology Stock Alerts",
@@ -238,305 +410,27 @@
           "message": "Stock market subscription created successfully."
         }
       },
-      "MICROSERVICE_PROD_createEmployee-AlertPreferences": {
-        "title": "Alert Preferences",
-        "type": "object",
-        "properties": {
-          "priceChangeThreshold": {
-            "type": "integer",
-            "description": "The threshold for price changes that will trigger an alert.",
-            "format": "int32",
-            "example": 0
-          },
-          "includeMarketSummary": {
-            "type": "boolean",
-            "description": "Indicates if the market summary should be included in alerts.",
-            "example": false
-          },
-          "includeAnalystRatings": {
-            "type": "boolean",
-            "description": "Indicates if analyst ratings should be included in alerts.",
-            "example": false
-          }
-        },
-        "description": "Preferences for the alerts associated with the subscription."
-      },
-      "MICROSERVICE_PROD_createEmployee-Schedule": {
-        "title": "Notification Schedule",
-        "type": "object",
-        "properties": {
-          "startTime": {
-            "type": "string",
-            "description": "The start time for the subscription notifications in ISO 8601 format.",
-            "example": "2023-10-01T09:00:00Z"
-          },
-          "timezone": {
-            "type": "string",
-            "description": "The timezone for the start time.",
-            "example": "America/New_York"
-          }
-        },
-        "description": "Schedule details for the notifications of the subscription."
-      },
-      "MICROSERVICE_PROD_createEmployee-Delivery": {
-        "title": "Delivery Details",
+      "MICROSERVICE_PROD_getEmployees-Delivery": {
+        "title": "Delivery Options",
         "type": "object",
         "properties": {
           "channel": {
             "type": "string",
-            "description": "The channel used for delivery of notifications.",
+            "description": "Delivery channel for notifications (e.g., Email, SMS).",
             "example": "Email"
           },
           "destination": {
             "type": "string",
-            "description": "The destination address for notifications.",
+            "description": "Destination for the notification delivery.",
             "example": "user@example.com"
           },
           "verified": {
             "type": "boolean",
-            "description": "Indicates whether the delivery address has been verified.",
-            "example": false
-          }
-        },
-        "description": "Schema that defines how subscription notifications are delivered."
-      },
-      "MICROSERVICE_PROD_createEmployee-CreateEmployeeRequest": {
-        "title": "Employee Subscription Request",
-        "type": "object",
-        "properties": {
-          "subscriptionName": {
-            "type": "string",
-            "description": "The name of the subscription.",
-            "example": "Daily Technology Stock Alerts"
-          },
-          "category": {
-            "type": "boolean",
-            "description": "Indicates if the category is active.",
+            "description": "Indicates if the delivery destination has been verified.",
             "example": true
-          },
-          "symbols": {
-            "type": "array",
-            "description": "A list of symbols for the subscription.",
-            "example": [
-              "AAPL",
-              "MSFT",
-              "NVDA",
-              "TSLA"
-            ],
-            "items": {
-              "type": "string",
-              "description": "A single symbol.",
-              "example": "AAPL"
-            }
-          },
-          "deliveryChannel": {
-            "type": "string",
-            "description": "The channel through which notifications are delivered.",
-            "example": "EMAIL"
-          },
-          "frequency": {
-            "type": "string",
-            "description": "The frequency of notifications.",
-            "example": "DAILY"
-          },
-          "language": {
-            "type": "string",
-            "description": "The language for notifications.",
-            "example": "en-US"
-          },
-          "region": {
-            "type": "string",
-            "description": "The region for the subscription.",
-            "example": "US"
-          },
-          "priority": {
-            "type": "string",
-            "description": "The priority level of the subscription.",
-            "example": "HIGH"
-          },
-          "clientReference": {
-            "type": "string",
-            "description": "A reference identifier for the client.",
-            "example": "REF-NEWS-2026-0099"
-          },
-          "portfolioId": {
-            "type": "string",
-            "description": "The ID of the portfolio associated with the subscription.",
-            "example": "PORT-99999"
-          },
-          "deviceType": {
-            "type": "string",
-            "description": "Type of device for receiving notifications.",
-            "example": "WEB"
-          },
-          "notificationEnabled": {
-            "type": "boolean",
-            "description": "Flag indicating whether notifications are enabled.",
-            "example": true
-          },
-          "alertPreferences": {
-            "description": "Preferences for alerts related to the subscription.",
-            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-AlertPreferences"
-          },
-          "schedule": {
-            "description": "Schedule details for the subscription notifications.",
-            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-Schedule"
-          },
-          "customer": {
-            "description": "Details about the customer associated with the subscription.",
-            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-Customer"
           }
         },
-        "description": "Schema for creating a subscription for an employee.",
-        "example": {
-          "subscriptionName": "Daily Technology Stock Alerts",
-          "category": true,
-          "symbols": [
-            "AAPL",
-            "MSFT",
-            "NVDA",
-            "TSLA"
-          ],
-          "deliveryChannel": "EMAIL",
-          "frequency": "DAILY",
-          "language": "en-US",
-          "region": "US",
-          "priority": "HIGH",
-          "clientReference": "REF-NEWS-2026-0099",
-          "portfolioId": "PORT-99999",
-          "deviceType": "WEB",
-          "notificationEnabled": true,
-          "alertPreferences": {
-            "priceChangeThreshold": 5,
-            "includeMarketSummary": true,
-            "includeAnalystRatings": false
-          },
-          "schedule": {
-            "startTime": "08:00",
-            "timezone": "America/New_York"
-          },
-          "customer": {
-            "customerId": "CUST-99999",
-            "segment": "PREMIUM",
-            "riskProfile": "MODERATE"
-          }
-        }
-      },
-      "MICROSERVICE_PROD_createEmployee-Customer": {
-        "title": "Customer Details",
-        "type": "object",
-        "properties": {
-          "customerId": {
-            "type": "string",
-            "description": "The unique identifier for the customer.",
-            "example": "cust123"
-          },
-          "segment": {
-            "type": "string",
-            "description": "The segment to which the customer belongs.",
-            "example": "premium"
-          },
-          "riskProfile": {
-            "type": "string",
-            "description": "The risk profile of the customer.",
-            "example": "aggressive"
-          }
-        },
-        "description": "Information about the customer associated with the subscription."
-      },
-      "MICROSERVICE_PROD_createEmployee-CreateEmployeeResponse_404": {
-        "type": "object",
-        "properties": {
-          "timestamp": {
-            "type": "string",
-            "description": "The timestamp when the error occurred.",
-            "example": "2026-06-08T12:05:00Z"
-          },
-          "status": {
-            "type": "integer",
-            "description": "The HTTP status code of the response.",
-            "format": "int32",
-            "example": 404
-          },
-          "error": {
-            "type": "string",
-            "description": "A short description of the error that occurred.",
-            "example": "Portfolio Not Found"
-          },
-          "message": {
-            "type": "string",
-            "description": "A detailed message explaining the error.",
-            "example": "The requested portfolio PORT-99999 does not exist or has been removed."
-          },
-          "path": {
-            "type": "string",
-            "description": "The path of the API endpoint that was accessed.",
-            "example": "/v5/market/portfolio/stocks"
-          },
-          "errorCode": {
-            "type": "string",
-            "description": "An application-specific error code.",
-            "example": "PORTFOLIO_NOT_FOUND"
-          },
-          "details": {
-            "description": "Additional details related to the error.",
-            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-ErrorDetails"
-          },
-          "suggestions": {
-            "type": "array",
-            "description": "A list of suggestions for resolving the error.",
-            "example": [
-              "Verify the portfolio identifier",
-              "Ensure the customer has an active portfolio",
-              "Contact support if the issue persists"
-            ],
-            "items": {
-              "type": "string",
-              "description": "A suggestion to resolve the error.",
-              "example": "Check the employee ID and try again."
-            }
-          }
-        },
-        "description": "Response schema for a 404 error in the Employee Operations POST API.",
-        "example": {
-          "timestamp": "2026-06-08T12:05:00Z",
-          "status": 404,
-          "error": "Portfolio Not Found",
-          "message": "The requested portfolio PORT-99999 does not exist or has been removed.",
-          "path": "/v5/market/portfolio/stocks",
-          "errorCode": "PORTFOLIO_NOT_FOUND",
-          "details": {
-            "portfolioId": "PORT-99999",
-            "customerId": "CUST-99999",
-            "requestedOperation": "CREATE_STOCK_SUBSCRIPTION"
-          },
-          "suggestions": [
-            "Verify the portfolio identifier",
-            "Ensure the customer has an active portfolio",
-            "Contact support if the issue persists"
-          ]
-        }
-      },
-      "MICROSERVICE_PROD_createEmployee-ErrorDetails": {
-        "type": "object",
-        "properties": {
-          "portfolioId": {
-            "type": "string",
-            "description": "The ID of the portfolio associated with the operation.",
-            "example": "portfolio123"
-          },
-          "customerId": {
-            "type": "string",
-            "description": "The ID of the customer associated with the operation.",
-            "example": "customer456"
-          },
-          "requestedOperation": {
-            "type": "string",
-            "description": "The operation that was requested when the error occurred.",
-            "example": "createEmployee"
-          }
-        },
-        "description": "Details related to the error that occurred."
+        "description": "Schema representing the delivery options for notifications."
       }
     },
     "parameters": {
@@ -610,8 +504,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "success",
-            "not_found"
+            "success"
           ]
         }
       }
