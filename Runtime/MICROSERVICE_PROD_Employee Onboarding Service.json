@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Employee Onboarding Service",
-    "description": "The Employee Onboarding Service facilitates the registration of new employees into the system. Through this API, businesses can efficiently submit employee data to onboard new staff members, streamlining the process of adding talent to their organization. Typical users include HR teams and administrative personnel who handle recruitment and onboarding activities. This service ensures accurate and timely employee integration into company operations.",
+    "description": "The Employee Onboarding Service streamlines the process of registering new employees within the organization. This API endpoint allows for the submission of new employee data, including personal information and job details, to facilitate their integration into the workforce. Typical consumers of this service include HR personnel and onboarding specialists who use it to ensure efficient and accurate employee setup. It plays a crucial role in enhancing the overall employee experience from day one.",
     "version": "1.0"
   },
   "servers": [
@@ -25,7 +25,7 @@
           "Employee Management"
         ],
         "summary": "Create a new employee record.",
-        "description": "This operation allows you to create a new employee in the system by providing the necessary details. Upon successful creation, the employee record will be stored and can be retrieved, updated, or deleted later.",
+        "description": "This endpoint allows you to create a new employee in the system by providing the required employee details in the request body.",
         "operationId": "createEmployee",
         "parameters": [
           {
@@ -48,7 +48,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to create a new employee entry in the system. It requires the employee's details to be provided in JSON format, adhering to the schema defined in the components.",
+          "description": "Request body for creating a new employee record within the system. This should include all necessary details for the employee being added, such as name, position, and contact information.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,8 +58,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "The operation completed successfully and the response contains the requested data.",
+          "201": {
+            "description": "Resource created successfully.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -71,7 +71,25 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-CreateEmployeeResponse_200"
+                  "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-CreateEmployeeResponse_201"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-CreateEmployeeResponse_400"
                 }
               }
             }
@@ -87,346 +105,511 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_PROD_createEmployee-CreateEmployeeRequest": {
-        "title": "Employee Operations Request Body",
+      "MICROSERVICE_PROD_createEmployee-CreateEmployeeResponse_201": {
+        "title": "Employee Creation Response",
         "type": "object",
         "properties": {
-          "subscriptionName": {
+          "employeeId": {
             "type": "string",
-            "description": "The name of the subscription.",
-            "example": "Daily Technology Stock Alerts"
+            "description": "The unique identifier for the employee.",
+            "example": "EMP-100234"
           },
-          "category": {
+          "employeeCode": {
             "type": "string",
-            "description": "The category of the subscription.",
-            "example": "STOCK_NEWS"
-          },
-          "symbols": {
-            "type": "array",
-            "description": "A list of symbols associated with the subscription.",
-            "example": [
-              "AAPL",
-              "MSFT",
-              "NVDA",
-              "TSLA"
-            ],
-            "items": {
-              "type": "string",
-              "example": "AAPL"
-            }
-          },
-          "deliveryChannel": {
-            "type": "string",
-            "description": "The preferred delivery channel for notifications.",
-            "example": "EMAIL"
-          },
-          "frequency": {
-            "type": "string",
-            "description": "The frequency of notifications sent.",
-            "example": "DAILY"
-          },
-          "language": {
-            "type": "string",
-            "description": "The preferred language for notifications.",
-            "example": "en-US"
-          },
-          "region": {
-            "type": "string",
-            "description": "The geographical region of the user.",
-            "example": "US"
-          },
-          "priority": {
-            "type": "string",
-            "description": "The priority level of the subscription.",
-            "example": "HIGH"
-          },
-          "clientReference": {
-            "type": "string",
-            "description": "A reference identifier for the client.",
-            "example": "REF-NEWS-2026-0001"
-          },
-          "portfolioId": {
-            "type": "string",
-            "description": "The ID of the portfolio associated with the subscription.",
-            "example": "PORT-1001"
-          },
-          "deviceType": {
-            "type": "string",
-            "description": "The type of device for receiving notifications.",
-            "example": "WEB"
-          },
-          "notificationEnabled": {
-            "type": "boolean",
-            "description": "Indicates if notifications are enabled.",
-            "example": true
-          },
-          "alertPreferences": {
-            "description": "Preferences related to alert notifications.",
-            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-AlertPreferences"
-          },
-          "schedule": {
-            "description": "The schedule for notifications.",
-            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-Schedule"
-          },
-          "customer": {
-            "description": "Customer information related to the subscription.",
-            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-Customer"
-          }
-        },
-        "description": "Schema representing the request body for employee operations.",
-        "example": {
-          "subscriptionName": "Daily Technology Stock Alerts",
-          "category": "STOCK_NEWS",
-          "symbols": [
-            "AAPL",
-            "MSFT",
-            "NVDA",
-            "TSLA"
-          ],
-          "deliveryChannel": "EMAIL",
-          "frequency": "DAILY",
-          "language": "en-US",
-          "region": "US",
-          "priority": "HIGH",
-          "clientReference": "REF-NEWS-2026-0001",
-          "portfolioId": "PORT-1001",
-          "deviceType": "WEB",
-          "notificationEnabled": true,
-          "alertPreferences": {
-            "priceChangeThreshold": 5,
-            "includeMarketSummary": true,
-            "includeAnalystRatings": false
-          },
-          "schedule": {
-            "startTime": "08:00",
-            "timezone": "America/New_York"
-          },
-          "customer": {
-            "customerId": "CUST-50001",
-            "segment": "PREMIUM",
-            "riskProfile": "MODERATE"
-          }
-        }
-      },
-      "MICROSERVICE_PROD_createEmployee-AlertPreferences": {
-        "type": "object",
-        "properties": {
-          "priceChangeThreshold": {
-            "type": "integer",
-            "description": "The threshold for price change alerts.",
-            "format": "int32",
-            "example": 0
-          },
-          "includeMarketSummary": {
-            "type": "boolean",
-            "description": "Indicates whether to include market summary in alerts.",
-            "example": false
-          },
-          "includeAnalystRatings": {
-            "type": "boolean",
-            "description": "Indicates whether to include analyst ratings in alerts.",
-            "example": false
-          }
-        },
-        "description": "Preferences for alerts related to the subscription."
-      },
-      "MICROSERVICE_PROD_createEmployee-Schedule": {
-        "type": "object",
-        "properties": {
-          "startTime": {
-            "type": "string",
-            "description": "The start time for scheduled alerts.",
-            "example": "string"
-          },
-          "timezone": {
-            "type": "string",
-            "description": "Time zone for scheduled alerts.",
-            "example": "string"
-          },
-          "nextExecution": {
-            "type": "string",
-            "description": "Next execution time for alerts.",
-            "example": "string"
-          }
-        },
-        "description": "Schedule details for the subscription alerts."
-      },
-      "MICROSERVICE_PROD_createEmployee-Customer": {
-        "title": "Customer Information",
-        "type": "object",
-        "properties": {
-          "customerId": {
-            "type": "string",
-            "description": "Unique identifier for the customer.",
-            "example": "cust-001"
-          },
-          "segment": {
-            "type": "string",
-            "description": "The segment to which the customer belongs.",
-            "example": "retail"
-          },
-          "riskProfile": {
-            "type": "string",
-            "description": "The risk profile associated with the customer.",
-            "example": "moderate"
-          }
-        },
-        "description": "Schema representing customer information related to subscriptions."
-      },
-      "MICROSERVICE_PROD_createEmployee-CreateEmployeeResponse_200": {
-        "type": "object",
-        "properties": {
-          "subscriptionId": {
-            "type": "string",
-            "description": "Unique identifier for the subscription.",
-            "example": "SUB-10002"
-          },
-          "subscriptionName": {
-            "type": "string",
-            "description": "Name of the subscription.",
-            "example": "Daily Technology Stock Alerts"
-          },
-          "category": {
-            "type": "string",
-            "description": "Category of the subscription.",
-            "example": "STOCK_NEWS"
-          },
-          "deliveryChannel": {
-            "type": "string",
-            "description": "Channel through which the subscription will be delivered.",
-            "example": "EMAIL"
-          },
-          "frequency": {
-            "type": "string",
-            "description": "Frequency of the subscription notifications.",
-            "example": "DAILY"
+            "description": "The code assigned to the employee.",
+            "example": "E10234"
           },
           "status": {
             "type": "string",
-            "description": "Current status of the subscription.",
-            "example": "ACTIVE"
+            "description": "The status of the employee.",
+            "example": "CREATED"
           },
-          "createdAt": {
-            "type": "string",
-            "description": "Timestamp when the subscription was created.",
-            "example": "2026-06-08T12:00:00Z"
+          "employee": {
+            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-EmployeeDetails"
           },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp when the subscription was last updated.",
-            "example": "2026-06-08T12:00:00Z"
+          "department": {
+            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-DepartmentDetails"
           },
-          "symbols": {
-            "type": "array",
-            "description": "List of symbols associated with the subscription.",
-            "example": [
-              "AAPL",
-              "MSFT",
-              "NVDA",
-              "TSLA"
-            ],
-            "items": {
-              "type": "string",
-              "description": "Symbol identifier.",
-              "example": "string"
-            }
+          "access": {
+            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-AccessDetails"
           },
-          "portfolioId": {
-            "type": "string",
-            "description": "Identifier for the portfolio associated with the subscription.",
-            "example": "PORT-1001"
-          },
-          "clientReference": {
-            "type": "string",
-            "description": "Client reference identifier associated with the subscription.",
-            "example": "REF-NEWS-2026-0001"
-          },
-          "notificationEnabled": {
-            "type": "boolean",
-            "description": "Indicates whether notifications are enabled for this subscription.",
-            "example": true
-          },
-          "alertPreferences": {
-            "description": "Preferences for alerts related to this subscription.",
-            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-AlertPreferences"
-          },
-          "schedule": {
-            "description": "Schedule details for the subscription alerts.",
-            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-Schedule"
-          },
-          "delivery": {
-            "description": "Delivery details for the subscription notifications.",
-            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-Delivery"
-          },
-          "createdBy": {
-            "type": "string",
-            "description": "Identifier for the user who created the subscription.",
-            "example": "user-50001"
+          "system": {
+            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-SystemDetails"
           },
           "message": {
             "type": "string",
-            "description": "Message associated with the subscription.",
-            "example": "Stock market subscription created successfully."
+            "description": "A message related to the creation operation.",
+            "example": "Employee created successfully and assigned to the Engineering department."
           }
         },
-        "description": "Response schema for creating a subscription for employees in operations.",
+        "description": "Schema representing the response for a successful employee creation operation.",
         "example": {
-          "subscriptionId": "SUB-10002",
-          "subscriptionName": "Daily Technology Stock Alerts",
-          "category": "STOCK_NEWS",
-          "deliveryChannel": "EMAIL",
-          "frequency": "DAILY",
-          "status": "ACTIVE",
-          "createdAt": "2026-06-08T12:00:00Z",
-          "updatedAt": "2026-06-08T12:00:00Z",
-          "symbols": [
-            "AAPL",
-            "MSFT",
-            "NVDA",
-            "TSLA"
-          ],
-          "portfolioId": "PORT-1001",
-          "clientReference": "REF-NEWS-2026-0001",
-          "notificationEnabled": true,
-          "alertPreferences": {
-            "priceChangeThreshold": 5,
-            "includeMarketSummary": true,
-            "includeAnalystRatings": false
+          "employeeId": "EMP-100234",
+          "employeeCode": "E10234",
+          "status": "CREATED",
+          "employee": {
+            "firstName": "John",
+            "lastName": "Anderson",
+            "email": "john.anderson@example.com",
+            "phoneNumber": "+1-555-102-8890",
+            "designation": "Senior Software Engineer",
+            "employmentType": "FULL_TIME",
+            "joiningDate": "2026-07-01",
+            "managerId": "EMP-100021",
+            "workLocation": "New York"
           },
-          "schedule": {
-            "startTime": "08:00",
-            "timezone": "America/New_York",
-            "nextExecution": "2026-06-09T12:00:00Z"
+          "department": {
+            "departmentId": "DEP-1005",
+            "departmentName": "Engineering",
+            "businessUnit": "Digital Banking"
           },
-          "delivery": {
-            "channel": "EMAIL",
-            "destination": "investor@example.com",
-            "verified": true
+          "access": {
+            "employeePortal": true,
+            "vpn": true,
+            "emailProvisioning": true,
+            "laptopAssigned": true
           },
-          "createdBy": "user-50001",
-          "message": "Stock market subscription created successfully."
+          "system": {
+            "employeeUuid": "8c5d1f6e-8c7d-4d2d-b8d8-4c82b4c0b931",
+            "createdAt": "2026-07-09T08:56:32Z",
+            "createdBy": "hr-admin",
+            "recordVersion": 1
+          },
+          "message": "Employee created successfully and assigned to the Engineering department."
         }
       },
-      "MICROSERVICE_PROD_createEmployee-Delivery": {
+      "MICROSERVICE_PROD_createEmployee-EmployeeDetails": {
+        "title": "Employee Details",
         "type": "object",
         "properties": {
-          "channel": {
+          "firstName": {
             "type": "string",
-            "description": "Delivery channel for notifications.",
-            "example": "string"
+            "description": "The first name of the employee.",
+            "example": "John"
           },
-          "destination": {
+          "lastName": {
             "type": "string",
-            "description": "Destination for the notifications.",
-            "example": "string"
+            "description": "The last name of the employee.",
+            "example": "Doe"
           },
-          "verified": {
-            "type": "boolean",
-            "description": "Indicates whether the delivery destination is verified.",
-            "example": false
+          "email": {
+            "type": "string",
+            "description": "The email address of the employee.",
+            "example": "john.doe@example.com"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "The phone number of the employee.",
+            "example": "1234567890"
+          },
+          "designation": {
+            "type": "string",
+            "description": "The position or job title of the employee.",
+            "example": "Software Engineer"
+          },
+          "employmentType": {
+            "type": "string",
+            "description": "The type of employment (e.g., Full-Time, Part-Time).",
+            "example": "Full-Time"
+          },
+          "joiningDate": {
+            "type": "string",
+            "description": "The date the employee joined the company.",
+            "example": "2023-10-10"
+          },
+          "managerId": {
+            "type": "string",
+            "description": "The unique identifier of the employee's manager.",
+            "example": "mgr456"
+          },
+          "workLocation": {
+            "type": "string",
+            "description": "The location where the employee works.",
+            "example": "HQ"
           }
         },
-        "description": "Delivery details for the subscription notifications."
+        "description": "Schema representing detailed information about an employee."
+      },
+      "MICROSERVICE_PROD_createEmployee-DepartmentDetails": {
+        "title": "Department Details",
+        "type": "object",
+        "properties": {
+          "departmentId": {
+            "type": "string",
+            "description": "The unique identifier for the department.",
+            "example": "dept789"
+          },
+          "departmentName": {
+            "type": "string",
+            "description": "The name of the department.",
+            "example": "Engineering"
+          },
+          "businessUnit": {
+            "type": "string",
+            "description": "The business unit associated with the department.",
+            "example": "Technology"
+          }
+        },
+        "description": "Schema representing details about a department."
+      },
+      "MICROSERVICE_PROD_createEmployee-AccessDetails": {
+        "title": "Access Details",
+        "type": "object",
+        "properties": {
+          "employeePortal": {
+            "type": "boolean",
+            "description": "Indicates if the employee has access to the employee portal.",
+            "example": true
+          },
+          "vpn": {
+            "type": "boolean",
+            "description": "Indicates if the employee has VPN access.",
+            "example": true
+          },
+          "emailProvisioning": {
+            "type": "boolean",
+            "description": "Indicates if email provisioning is completed for the employee.",
+            "example": true
+          },
+          "laptopAssigned": {
+            "type": "boolean",
+            "description": "Indicates if a laptop has been assigned to the employee.",
+            "example": true
+          }
+        },
+        "description": "Schema representing access permissions for the employee."
+      },
+      "MICROSERVICE_PROD_createEmployee-SystemDetails": {
+        "title": "System Details",
+        "type": "object",
+        "properties": {
+          "employeeUuid": {
+            "type": "string",
+            "description": "The UUID assigned to the employee in the system.",
+            "example": "uuid-1234-5678-90ab-cdef12345678"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "The timestamp when the employee record was created.",
+            "example": "2023-10-10T12:00:00Z"
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "The user who created the employee record.",
+            "example": "admin"
+          },
+          "recordVersion": {
+            "type": "integer",
+            "description": "The version of the employee record.",
+            "format": "int32",
+            "example": 1
+          }
+        },
+        "description": "Schema representing system-related information for the employee."
+      },
+      "MICROSERVICE_PROD_createEmployee-CreateEmployeeRequest": {
+        "type": "object",
+        "properties": {
+          "employee": {
+            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-Employee"
+          },
+          "department": {
+            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-Department"
+          },
+          "access": {
+            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-Access"
+          },
+          "preferences": {
+            "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-Preferences"
+          }
+        },
+        "description": "The request body containing the employee details for creating a new employee entry.",
+        "example": {
+          "employee": {
+            "employeeId": "",
+            "employeeCode": "E10234",
+            "firstName": "",
+            "lastName": "Anderson",
+            "email": "john.anderson",
+            "phoneNumber": "12345",
+            "employmentType": "FULLTIME",
+            "designation": "",
+            "joiningDate": "2026-15-01",
+            "managerId": "EMP-999999",
+            "workLocation": "New York"
+          },
+          "department": {
+            "departmentId": "",
+            "departmentCode": "",
+            "departmentName": "",
+            "businessUnit": "",
+            "costCenter": ""
+          },
+          "access": {
+            "employeePortal": true
+          },
+          "preferences": {
+            "language": "en-US"
+          }
+        }
+      },
+      "MICROSERVICE_PROD_createEmployee-Employee": {
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "description": "The unique identifier for the employee.",
+            "example": "EMP123"
+          },
+          "employeeCode": {
+            "type": "string",
+            "description": "The employee's code used for identification.",
+            "example": "E12345"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "The first name of the employee.",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The last name of the employee.",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address of the employee.",
+            "example": "john.doe@example.com"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "The phone number of the employee.",
+            "example": "+1234567890"
+          },
+          "employmentType": {
+            "type": "string",
+            "description": "The type of employment (e.g., full-time, part-time).",
+            "example": "full-time"
+          },
+          "designation": {
+            "type": "string",
+            "description": "The job title or designation of the employee.",
+            "example": "Software Engineer"
+          },
+          "joiningDate": {
+            "type": "string",
+            "description": "The date when the employee joined the company.",
+            "example": "2021-01-15"
+          },
+          "managerId": {
+            "type": "string",
+            "description": "The unique identifier of the employee's manager.",
+            "example": "MGR456"
+          },
+          "workLocation": {
+            "type": "string",
+            "description": "The location where the employee works.",
+            "example": "New York Office"
+          }
+        },
+        "description": "Details of the employee being created."
+      },
+      "MICROSERVICE_PROD_createEmployee-Department": {
+        "type": "object",
+        "properties": {
+          "departmentId": {
+            "type": "string",
+            "description": "The unique identifier for the department.",
+            "example": "HR001"
+          },
+          "departmentCode": {
+            "type": "string",
+            "description": "The code used to identify the department.",
+            "example": "HR"
+          },
+          "departmentName": {
+            "type": "string",
+            "description": "The name of the department.",
+            "example": "Human Resources"
+          },
+          "businessUnit": {
+            "type": "string",
+            "description": "The business unit the department belongs to.",
+            "example": "Corporate Services"
+          },
+          "costCenter": {
+            "type": "string",
+            "description": "The cost center associated with the department.",
+            "example": "CC123"
+          }
+        },
+        "description": "Details of the department the employee belongs to."
+      },
+      "MICROSERVICE_PROD_createEmployee-Access": {
+        "type": "object",
+        "properties": {
+          "employeePortal": {
+            "type": "boolean",
+            "description": "Indicates if the employee has access to the employee portal.",
+            "example": true
+          }
+        },
+        "description": "Access permissions for the employee."
+      },
+      "MICROSERVICE_PROD_createEmployee-Preferences": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "description": "The preferred language of the employee.",
+            "example": "English"
+          }
+        },
+        "description": "User preferences for the employee."
+      },
+      "MICROSERVICE_PROD_createEmployee-CreateEmployeeResponse_400": {
+        "title": "ErrorResponse",
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "description": "The timestamp of the error occurrence.",
+            "example": "2026-07-09T08:56:35Z"
+          },
+          "status": {
+            "type": "integer",
+            "description": "The HTTP status code indicating the error type.",
+            "format": "int32",
+            "example": 400
+          },
+          "error": {
+            "type": "string",
+            "description": "A short description of the error.",
+            "example": "Bad Request"
+          },
+          "code": {
+            "type": "string",
+            "description": "A specific error code that further categorizes the error.",
+            "example": "EMPLOYEE_VALIDATION_FAILED"
+          },
+          "message": {
+            "type": "string",
+            "description": "A detailed error message describing the issue.",
+            "example": "Employee creation request validation failed."
+          },
+          "path": {
+            "type": "string",
+            "description": "The path of the request that caused the error.",
+            "example": "/v1/employees"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "A unique identifier for tracing the request through logs.",
+            "example": "e08822a8-7e18-4d7b-b7f1-35453c74b32c"
+          },
+          "validationErrors": {
+            "type": "array",
+            "description": "List of validation errors encountered during the request processing.",
+            "example": [
+              {
+                "field": "employee.employeeId",
+                "message": "Employee ID must not be empty"
+              },
+              {
+                "field": "employee.firstName",
+                "message": "First name is required"
+              },
+              {
+                "field": "employee.email",
+                "message": "Email address is not valid"
+              },
+              {
+                "field": "employee.phoneNumber",
+                "message": "Phone number format is invalid"
+              },
+              {
+                "field": "employee.designation",
+                "message": "Designation is required"
+              },
+              {
+                "field": "employee.joiningDate",
+                "message": "Joining date must be a valid ISO-8601 date"
+              },
+              {
+                "field": "department.departmentId",
+                "message": "Department ID is required"
+              },
+              {
+                "field": "department.departmentName",
+                "message": "Department name is required"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/MICROSERVICE_PROD_createEmployee-ValidationError"
+            }
+          }
+        },
+        "description": "Schema representing the response structure for a 400 Bad Request error in the employee operations.",
+        "example": {
+          "timestamp": "2026-07-09T08:56:35Z",
+          "status": 400,
+          "error": "Bad Request",
+          "code": "EMPLOYEE_VALIDATION_FAILED",
+          "message": "Employee creation request validation failed.",
+          "path": "/v1/employees",
+          "traceId": "e08822a8-7e18-4d7b-b7f1-35453c74b32c",
+          "validationErrors": [
+            {
+              "field": "employee.employeeId",
+              "message": "Employee ID must not be empty"
+            },
+            {
+              "field": "employee.firstName",
+              "message": "First name is required"
+            },
+            {
+              "field": "employee.email",
+              "message": "Email address is not valid"
+            },
+            {
+              "field": "employee.phoneNumber",
+              "message": "Phone number format is invalid"
+            },
+            {
+              "field": "employee.designation",
+              "message": "Designation is required"
+            },
+            {
+              "field": "employee.joiningDate",
+              "message": "Joining date must be a valid ISO-8601 date"
+            },
+            {
+              "field": "department.departmentId",
+              "message": "Department ID is required"
+            },
+            {
+              "field": "department.departmentName",
+              "message": "Department name is required"
+            }
+          ]
+        }
+      },
+      "MICROSERVICE_PROD_createEmployee-ValidationError": {
+        "title": "ValidationError",
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "The name of the field that failed validation.",
+            "example": "email"
+          },
+          "message": {
+            "type": "string",
+            "description": "A message explaining the validation failure.",
+            "example": "Email format is invalid."
+          }
+        },
+        "description": "Schema representing a validation error for a specific field in the request."
       }
     },
     "parameters": {
@@ -500,7 +683,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "success"
+            "created",
+            "bad_request"
           ]
         }
       }
