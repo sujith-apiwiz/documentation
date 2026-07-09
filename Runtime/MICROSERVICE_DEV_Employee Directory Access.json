@@ -2,13 +2,12 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_DEV_Employee Directory Access",
-    "description": "This endpoint provides access to the employee directory, enabling users to retrieve detailed information about employees within the organization. It serves as a vital resource for HR personnel, team leads, and managers needing to access employee profiles, contact details, and departmental affiliations. Typical use cases include generating reports, onboarding new employees, or managing internal communications effectively.",
+    "description": "This API endpoint allows users to access the employee directory, providing information on employees within the organization. It serves as a resource for retrieving employee details, such as names, roles, and contact information. Typical consumers include internal tools, HR applications, and any systems requiring employee data for various purposes. By standardizing access to employee information, it enhances operational efficiency and supports better decision-making within teams.",
     "version": "1.0"
   },
   "servers": [
     {
       "url": "https://stage-data-gujl.apiwiz.io",
-      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
@@ -24,8 +23,8 @@
         "tags": [
           "Employee Management"
         ],
-        "summary": "Retrieve a list of all employees.",
-        "description": "This endpoint allows you to fetch the details of all employees within the organization. It provides a comprehensive overview, including employee IDs, names, and roles, facilitating easy access to employee data for various business purposes.",
+        "summary": "Retrieve a list of employees",
+        "description": "This endpoint allows you to fetch all employee records from the system. You can use this to find information about various employees.",
         "operationId": "getEmployeesList",
         "parameters": [
           {
@@ -48,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body accepts parameters for retrieving employee data. Ensure that the request adheres to the specified schema to effectively filter and present the required employee information.",
+          "description": "This request retrieves a list of employees. You can specify query parameters to filter the results, but no additional body content is necessary for this request.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,26 +57,8 @@
           }
         },
         "responses": {
-          "201": {
-            "description": "Resource created successfully.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-GetEmployeesListResponse_201"
-                }
-              }
-            }
-          },
           "400": {
-            "description": "Invalid request parameters.",
+            "description": "The request parameters are invalid.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -93,6 +74,103 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "The requested employee resource was not found.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-GetEmployeesListResponse_404"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [],
+        "servers": []
+      },
+      "post": {
+        "tags": [
+          "Employee Management"
+        ],
+        "summary": "Add a new employee",
+        "description": "This endpoint allows you to create a new employee record in the system. Provide the necessary employee details in the request body.",
+        "operationId": "createEmployeeRecord",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/name"
+          },
+          {
+            "$ref": "#/components/parameters/appId"
+          },
+          {
+            "$ref": "#/components/parameters/connection"
+          },
+          {
+            "$ref": "#/components/parameters/content-type"
+          },
+          {
+            "$ref": "#/components/parameters/transfer-encoding"
+          },
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          }
+        ],
+        "requestBody": {
+          "description": "This request is used to create a new employee record. The body should contain the necessary details of the employee to be added in JSON format.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-GetEmployeesListRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "The request contains invalid data.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-GetEmployeesListResponse_400"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No matching employee resource was found to operate on.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-GetEmployeesListResponse_404"
+                }
+              }
+            }
           }
         },
         "callbacks": {},
@@ -105,51 +183,47 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV_getEmployeesList-GetEmployeesListResponse_201": {
-        "title": "Employee Response Schema",
+      "MICROSERVICE_DEV_getEmployeesList-GetEmployeesListResponse_400": {
+        "title": "Employee Operation Error Response",
         "type": "object",
         "properties": {
           "employeeId": {
             "type": "string",
-            "description": "The unique identifier for the employee.",
+            "description": "The unique identifier of the employee.",
             "example": "EMP-100234"
           },
           "employeeCode": {
-            "type": "string",
-            "description": "The code assigned to the employee.",
-            "example": "E10234"
+            "type": "boolean",
+            "description": "Indicates if there is a problem with the employee code.",
+            "example": true
           },
           "status": {
             "type": "string",
-            "description": "The current status of the employee (e.g., active, inactive).",
+            "description": "The status of the operation.",
             "example": "CREATED"
           },
           "employee": {
-            "description": "Details about the employee.",
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-Employee"
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-EmployeeDetails"
           },
           "department": {
-            "description": "Details of the department the employee belongs to.",
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-Department"
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-DepartmentDetails"
           },
           "access": {
-            "description": "Access permissions for the employee.",
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-Access"
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-AccessDetails"
           },
           "system": {
-            "description": "System-related information for the employee.",
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-SystemInfo"
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-SystemDetails"
           },
           "message": {
             "type": "string",
-            "description": "Message corresponding to the response.",
+            "description": "Descriptive error message regarding the operation.",
             "example": "Employee created successfully and assigned to the Engineering department."
           }
         },
-        "description": "Schema representing the response for fetching employee details from the operations endpoint.",
+        "description": "Schema representing the error response when an employee operation fails.",
         "example": {
           "employeeId": "EMP-100234",
-          "employeeCode": "E10234",
+          "employeeCode": true,
           "status": "CREATED",
           "employee": {
             "firstName": "John",
@@ -182,48 +256,49 @@
           "message": "Employee created successfully and assigned to the Engineering department."
         }
       },
-      "MICROSERVICE_DEV_getEmployeesList-Employee": {
+      "MICROSERVICE_DEV_getEmployeesList-EmployeeDetails": {
+        "title": "Employee Details",
         "type": "object",
         "properties": {
           "firstName": {
             "type": "string",
-            "description": "First name of the employee.",
+            "description": "The first name of the employee.",
             "example": "John"
           },
           "lastName": {
             "type": "string",
-            "description": "Last name of the employee.",
+            "description": "The last name of the employee.",
             "example": "Doe"
           },
           "email": {
             "type": "string",
-            "description": "Email address of the employee.",
+            "description": "The email address of the employee.",
             "example": "john.doe@example.com"
           },
           "phoneNumber": {
             "type": "string",
-            "description": "Phone number of the employee.",
-            "example": "+1234567890"
+            "description": "The contact phone number of the employee.",
+            "example": "123-456-7890"
           },
           "designation": {
             "type": "string",
-            "description": "Job title of the employee.",
-            "example": "Software Engineer"
+            "description": "The job designation of the employee.",
+            "example": "Developer"
           },
           "employmentType": {
             "type": "string",
-            "description": "Type of employment (e.g., full-time, part-time).",
-            "example": "full-time"
+            "description": "The type of employment (e.g., full-time, part-time).",
+            "example": "Full-time"
           },
           "joiningDate": {
             "type": "string",
-            "description": "Date when the employee joined the company.",
-            "example": "2023-01-15"
+            "description": "The date when the employee joined the company.",
+            "example": "2023-01-01"
           },
           "managerId": {
             "type": "string",
-            "description": "ID of the employee's manager.",
-            "example": "manager-1"
+            "description": "The unique identifier of the employee's manager.",
+            "example": "67890"
           },
           "workLocation": {
             "type": "string",
@@ -231,264 +306,32 @@
             "example": "New York"
           }
         },
-        "description": "Details about the employee."
+        "description": "Schema representing the personal details of an employee."
       },
-      "MICROSERVICE_DEV_getEmployeesList-Department": {
+      "MICROSERVICE_DEV_getEmployeesList-DepartmentDetails": {
+        "title": "Department Details",
         "type": "object",
         "properties": {
           "departmentId": {
             "type": "string",
-            "description": "Unique identifier for the department.",
-            "example": "dept-01"
+            "description": "The unique identifier of the department.",
+            "example": "dept01"
           },
           "departmentName": {
             "type": "string",
-            "description": "Name of the department.",
+            "description": "The name of the department.",
             "example": "Engineering"
           },
           "businessUnit": {
             "type": "string",
-            "description": "Business unit to which the department belongs.",
+            "description": "The business unit to which the department belongs.",
             "example": "Technology"
           }
         },
-        "description": "Details about the employee's department."
+        "description": "Schema representing the details of an employee's department."
       },
-      "MICROSERVICE_DEV_getEmployeesList-Access": {
-        "type": "object",
-        "properties": {
-          "employeePortal": {
-            "type": "boolean",
-            "description": "Indicates if the employee has access to the employee portal.",
-            "example": false
-          },
-          "vpn": {
-            "type": "boolean",
-            "description": "Indicates if the employee has VPN access.",
-            "example": false
-          },
-          "emailProvisioning": {
-            "type": "boolean",
-            "description": "Indicates if email provisioning is available for the employee.",
-            "example": false
-          },
-          "laptopAssigned": {
-            "type": "boolean",
-            "description": "Indicates if a laptop is assigned to the employee.",
-            "example": false
-          }
-        },
-        "description": "Access rights and equipment assigned to the employee."
-      },
-      "MICROSERVICE_DEV_getEmployeesList-SystemInfo": {
-        "title": "System Information Schema",
-        "type": "object",
-        "properties": {
-          "employeeUuid": {
-            "type": "string",
-            "description": "The universally unique identifier for the employee.",
-            "example": "uuid-1234-5678-9012"
-          },
-          "createdAt": {
-            "type": "string",
-            "description": "Timestamp indicating when the employee record was created.",
-            "example": "2023-01-01T00:00:00Z"
-          },
-          "createdBy": {
-            "type": "string",
-            "description": "Identifier of the user who created the employee record.",
-            "example": "admin"
-          },
-          "recordVersion": {
-            "type": "integer",
-            "description": "Version of the employee record.",
-            "format": "int32",
-            "example": 1
-          }
-        },
-        "description": "Schema containing system-related information about an employee."
-      },
-      "MICROSERVICE_DEV_getEmployeesList-GetEmployeesListRequest": {
-        "type": "object",
-        "properties": {
-          "employee": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-Employee"
-          },
-          "department": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-Department"
-          },
-          "access": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-Access"
-          },
-          "preferences": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-Preferences"
-          }
-        },
-        "description": "Schema representing the request body for retrieving employee details.",
-        "example": {
-          "employee": {
-            "employeeId": "EMP-100234",
-            "employeeCode": "E10234",
-            "firstName": "John",
-            "lastName": "Anderson",
-            "email": "john.anderson@example.com",
-            "phoneNumber": "+1-555-102-8890",
-            "dateOfBirth": "1993-07-18",
-            "gender": "MALE",
-            "employmentType": "FULL_TIME",
-            "designation": "Senior Software Engineer",
-            "joiningDate": "2026-07-01",
-            "managerId": "EMP-100021",
-            "workLocation": "New York",
-            "status": "ACTIVE",
-            "salary": {
-              "amount": "******",
-              "currency": "USD"
-            },
-            "address": {
-              "line1": "125 Madison Avenue",
-              "city": "New York",
-              "state": "NY",
-              "country": "USA",
-              "postalCode": "10016"
-            }
-          },
-          "department": {
-            "departmentId": "DEP-1005",
-            "departmentCode": "ENG",
-            "departmentName": "Engineering",
-            "businessUnit": "Digital Banking",
-            "costCenter": "CC-ENG-450",
-            "location": "New York",
-            "headOfDepartment": "Sarah Mitchell"
-          },
-          "access": {
-            "employeePortal": true,
-            "vpn": true,
-            "emailProvisioning": true,
-            "laptopAssigned": true
-          },
-          "preferences": {
-            "language": "en-US",
-            "timezone": "America/New_York",
-            "notificationEnabled": true
-          }
-        }
-      },
-      "MICROSERVICE_DEV_getEmployeesList-Salary": {
-        "type": "object",
-        "properties": {
-          "amount": {
-            "type": "string",
-            "description": "Salary amount for the employee.",
-            "example": "70000"
-          },
-          "currency": {
-            "type": "string",
-            "description": "Currency in which the salary is paid.",
-            "example": "USD"
-          }
-        },
-        "description": "Salary details of the employee."
-      },
-      "MICROSERVICE_DEV_getEmployeesList-Preferences": {
-        "type": "object",
-        "properties": {
-          "language": {
-            "type": "string",
-            "description": "Preferred language of the employee.",
-            "example": "English"
-          },
-          "timezone": {
-            "type": "string",
-            "description": "Preferred timezone of the employee.",
-            "example": "UTC-5"
-          },
-          "notificationEnabled": {
-            "type": "boolean",
-            "description": "Indicates if notifications are enabled for the employee.",
-            "example": false
-          }
-        },
-        "description": "Preferences set by the employee regarding notifications and language."
-      },
-      "MICROSERVICE_DEV_getEmployeesList-GetEmployeesListResponse_400": {
-        "type": "object",
-        "properties": {
-          "employeeId": {
-            "type": "string",
-            "description": "Unique identifier for the employee.",
-            "example": "EMP-100234"
-          },
-          "employeeCode": {
-            "type": "string",
-            "description": "Code associated with the employee.",
-            "example": "E10234"
-          },
-          "status": {
-            "type": "string",
-            "description": "Current status of the employee (e.g., active, inactive).",
-            "example": "CREATED"
-          },
-          "employee": {
-            "description": "Details about the employee.",
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-Employee"
-          },
-          "department": {
-            "description": "Details about the employee's department.",
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-Department"
-          },
-          "access": {
-            "description": "Access permissions assigned to the employee.",
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-AccessPermissions"
-          },
-          "system": {
-            "description": "System-related details of the employee.",
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-SystemDetails"
-          },
-          "message": {
-            "type": "string",
-            "description": "Error message providing details about the request.",
-            "example": "Employee created successfully and assigned to the Engineering department."
-          }
-        },
-        "description": "Response schema for a 400 Bad Request error during employee retrieval.",
-        "example": {
-          "employeeId": "EMP-100234",
-          "employeeCode": "E10234",
-          "status": "CREATED",
-          "employee": {
-            "firstName": "John",
-            "lastName": "Anderson",
-            "email": "john.anderson@example.com",
-            "phoneNumber": "+1-555-102-8890",
-            "designation": "Senior Software Engineer",
-            "employmentType": "FULL_TIME",
-            "joiningDate": "2026-07-01",
-            "managerId": "EMP-100021",
-            "workLocation": "New York"
-          },
-          "department": {
-            "departmentId": "DEP-1005",
-            "departmentName": "Engineering",
-            "businessUnit": "Digital Banking"
-          },
-          "access": {
-            "employeePortal": true,
-            "vpn": true,
-            "emailProvisioning": true,
-            "laptopAssigned": true
-          },
-          "system": {
-            "employeeUuid": "8c5d1f6e-8c7d-4d2d-b8d8-4c82b4c0b931",
-            "createdAt": "2026-07-09T08:56:32Z",
-            "createdBy": "hr-admin",
-            "recordVersion": 1
-          },
-          "message": "Employee created successfully and assigned to the Engineering department."
-        }
-      },
-      "MICROSERVICE_DEV_getEmployeesList-AccessPermissions": {
+      "MICROSERVICE_DEV_getEmployeesList-AccessDetails": {
+        "title": "Access Details",
         "type": "object",
         "properties": {
           "employeePortal": {
@@ -508,38 +351,471 @@
           },
           "laptopAssigned": {
             "type": "boolean",
-            "description": "Indicates if a laptop has been assigned to the employee.",
+            "description": "Indicates if the employee has been assigned a laptop.",
             "example": false
           }
         },
-        "description": "Access permissions assigned to the employee."
+        "description": "Schema representing the access rights of an employee."
       },
       "MICROSERVICE_DEV_getEmployeesList-SystemDetails": {
+        "title": "System Details",
         "type": "object",
         "properties": {
           "employeeUuid": {
             "type": "string",
-            "description": "Unique identifier for the employee in the system.",
-            "example": "uuid-1234"
+            "description": "The unique UUID assigned to the employee.",
+            "example": "uuid123456"
           },
           "createdAt": {
             "type": "string",
-            "description": "Timestamp when the employee record was created.",
-            "example": "2023-01-01T10:00:00Z"
+            "description": "The date and time when the employee record was created.",
+            "example": "2023-01-01T00:00:00Z"
           },
           "createdBy": {
             "type": "string",
-            "description": "Identifier for who created the employee record.",
-            "example": "admin-1"
+            "description": "The user who created the employee record.",
+            "example": "admin"
           },
           "recordVersion": {
             "type": "integer",
-            "description": "Version of the employee record.",
+            "description": "The version number of the employee record.",
             "format": "int32",
             "example": 1
           }
         },
-        "description": "System-related details of the employee."
+        "description": "Schema representing the system-related information of an employee."
+      },
+      "MICROSERVICE_DEV_getEmployeesList-GetEmployeesListRequest": {
+        "type": "object",
+        "properties": {
+          "subscriptionName": {
+            "type": "string",
+            "description": "The name of the subscription.",
+            "example": "Daily Technology Stock Alerts"
+          },
+          "category": {
+            "type": "boolean",
+            "description": "Indicates whether the category is active.",
+            "example": true
+          },
+          "symbols": {
+            "type": "array",
+            "description": "A list of stock symbols related to the subscription.",
+            "example": [
+              "AAPL",
+              "MSFT",
+              "NVDA",
+              "TSLA"
+            ],
+            "items": {
+              "type": "string",
+              "description": "A stock symbol.",
+              "example": "AAPL"
+            }
+          },
+          "deliveryChannel": {
+            "type": "string",
+            "description": "The channel through which notifications will be delivered.",
+            "example": "EMAIL"
+          },
+          "frequency": {
+            "type": "string",
+            "description": "The frequency of the notifications.",
+            "example": "DAILY"
+          },
+          "language": {
+            "type": "string",
+            "description": "The language preference for the notifications.",
+            "example": "en-US"
+          },
+          "region": {
+            "type": "string",
+            "description": "The geographical region associated with the operation.",
+            "example": "US"
+          },
+          "priority": {
+            "type": "string",
+            "description": "The priority level of the notifications.",
+            "example": "HIGH"
+          },
+          "clientReference": {
+            "type": "string",
+            "description": "A reference ID provided by the client.",
+            "example": "REF-NEWS-2026-0099"
+          },
+          "portfolioId": {
+            "type": "string",
+            "description": "The ID of the portfolio associated with the operation.",
+            "example": "PORT-99999"
+          },
+          "deviceType": {
+            "type": "string",
+            "description": "The type of device for receiving notifications.",
+            "example": "WEB"
+          },
+          "notificationEnabled": {
+            "type": "boolean",
+            "description": "Indicates whether notifications are enabled.",
+            "example": true
+          },
+          "alertPreferences": {
+            "description": "Preferences for alerts regarding stock changes.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-AlertPreferences"
+          },
+          "schedule": {
+            "description": "Schedule details for the subscription.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-Schedule"
+          },
+          "customer": {
+            "description": "Details about the customer associated with the subscription.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-Customer"
+          }
+        },
+        "description": "Request body schema for creating a new employee operation. Contains preferences for subscription, notifications, and customer details.",
+        "example": {
+          "subscriptionName": "Daily Technology Stock Alerts",
+          "category": true,
+          "symbols": [
+            "AAPL",
+            "MSFT",
+            "NVDA",
+            "TSLA"
+          ],
+          "deliveryChannel": "EMAIL",
+          "frequency": "DAILY",
+          "language": "en-US",
+          "region": "US",
+          "priority": "HIGH",
+          "clientReference": "REF-NEWS-2026-0099",
+          "portfolioId": "PORT-99999",
+          "deviceType": "WEB",
+          "notificationEnabled": true,
+          "alertPreferences": {
+            "priceChangeThreshold": 5,
+            "includeMarketSummary": true,
+            "includeAnalystRatings": false
+          },
+          "schedule": {
+            "startTime": "08:00",
+            "timezone": "America/New_York"
+          },
+          "customer": {
+            "customerId": "CUST-99999",
+            "segment": "PREMIUM",
+            "riskProfile": "MODERATE"
+          }
+        }
+      },
+      "MICROSERVICE_DEV_getEmployeesList-Employee": {
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "description": "The unique identifier for the employee."
+          },
+          "employeeCode": {
+            "type": "string",
+            "description": "The employee's unique code."
+          },
+          "firstName": {
+            "type": "string",
+            "description": "The employee's first name."
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The employee's last name."
+          },
+          "email": {
+            "type": "string",
+            "description": "The employee's email address."
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "The employee's phone number."
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "description": "The employee's date of birth."
+          },
+          "gender": {
+            "type": "string",
+            "description": "The employee's gender."
+          },
+          "employmentType": {
+            "type": "string",
+            "description": "The type of employment (e.g., full-time, part-time)."
+          },
+          "designation": {
+            "type": "string",
+            "description": "The job designation of the employee."
+          },
+          "joiningDate": {
+            "type": "string",
+            "description": "The date the employee joined the organization."
+          },
+          "managerId": {
+            "type": "string",
+            "description": "The unique identifier of the employee's manager."
+          },
+          "workLocation": {
+            "type": "string",
+            "description": "The location where the employee works."
+          },
+          "status": {
+            "type": "string",
+            "description": "The current status of the employee (e.g., active, inactive)."
+          },
+          "salary": {
+            "description": "The salary details of the employee.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-Salary"
+          },
+          "address": {
+            "description": "The address of the employee.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-Address"
+          },
+          "access": {
+            "description": "Access permissions for the employee.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-Access"
+          },
+          "preferences": {
+            "description": "The preferences set by the employee.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-Preferences"
+          }
+        },
+        "description": "Represents an employee with various attributes."
+      },
+      "MICROSERVICE_DEV_getEmployeesList-Salary": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "description": "The amount of salary."
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency in which the salary is represented."
+          }
+        },
+        "description": "Represents the salary details of an employee."
+      },
+      "MICROSERVICE_DEV_getEmployeesList-Address": {
+        "type": "object",
+        "properties": {
+          "line1": {
+            "type": "string",
+            "description": "The first line of the address."
+          },
+          "city": {
+            "type": "string",
+            "description": "The city where the employee resides."
+          },
+          "state": {
+            "type": "string",
+            "description": "The state where the employee resides."
+          },
+          "country": {
+            "type": "string",
+            "description": "The country where the employee resides."
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "The postal code for the residence of the employee."
+          }
+        },
+        "description": "Represents the address details of an employee."
+      },
+      "MICROSERVICE_DEV_getEmployeesList-Access": {
+        "type": "object",
+        "properties": {
+          "employeePortal": {
+            "type": "boolean",
+            "description": "Indicates if the employee has access to the employee portal."
+          },
+          "vpn": {
+            "type": "boolean",
+            "description": "Indicates if the employee has VPN access."
+          },
+          "emailProvisioning": {
+            "type": "boolean",
+            "description": "Indicates if email provisioning is available for the employee."
+          },
+          "laptopAssigned": {
+            "type": "boolean",
+            "description": "Indicates if a laptop has been assigned to the employee."
+          }
+        },
+        "description": "Access rights and equipment assigned to the employee."
+      },
+      "MICROSERVICE_DEV_getEmployeesList-Preferences": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "description": "The preferred language of the employee."
+          },
+          "timezone": {
+            "type": "string",
+            "description": "The time zone of the employee."
+          },
+          "notificationEnabled": {
+            "type": "boolean",
+            "description": "Indicates if notifications are enabled for the employee."
+          }
+        },
+        "description": "Represents the preferences set by the employee."
+      },
+      "MICROSERVICE_DEV_getEmployeesList-GetEmployeesListResponse_404": {
+        "title": "ErrorResponse",
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "description": "The timestamp when the error occurred.",
+            "example": "2026-06-08T12:05:00Z"
+          },
+          "status": {
+            "type": "integer",
+            "description": "The HTTP status code of the error.",
+            "format": "int32",
+            "example": 404
+          },
+          "error": {
+            "type": "string",
+            "description": "A short description of the error.",
+            "example": "Portfolio Not Found"
+          },
+          "message": {
+            "type": "string",
+            "description": "A detailed message about the error and potential causes.",
+            "example": "The requested portfolio PORT-99999 does not exist or has been removed."
+          },
+          "path": {
+            "type": "string",
+            "description": "The API path that was requested when the error occurred.",
+            "example": "/v5/market/portfolio/stocks"
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "A unique code for identifying the specific error type.",
+            "example": "PORTFOLIO_NOT_FOUND"
+          },
+          "details": {
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployeesList-ErrorDetails"
+          },
+          "suggestions": {
+            "type": "array",
+            "description": "An array of suggestions to help resolve the error.",
+            "example": [
+              "Verify the portfolio identifier",
+              "Ensure the customer has an active portfolio",
+              "Contact support if the issue persists"
+            ],
+            "items": {
+              "type": "string",
+              "example": "Check the employee ID and try again."
+            }
+          }
+        },
+        "description": "This schema represents the structure of an error response for the employee operations when a 404 error occurs.",
+        "example": {
+          "timestamp": "2026-06-08T12:05:00Z",
+          "status": 404,
+          "error": "Portfolio Not Found",
+          "message": "The requested portfolio PORT-99999 does not exist or has been removed.",
+          "path": "/v5/market/portfolio/stocks",
+          "errorCode": "PORTFOLIO_NOT_FOUND",
+          "details": {
+            "portfolioId": "PORT-99999",
+            "customerId": "CUST-99999",
+            "requestedOperation": "CREATE_STOCK_SUBSCRIPTION"
+          },
+          "suggestions": [
+            "Verify the portfolio identifier",
+            "Ensure the customer has an active portfolio",
+            "Contact support if the issue persists"
+          ]
+        }
+      },
+      "MICROSERVICE_DEV_getEmployeesList-ErrorDetails": {
+        "title": "ErrorDetails",
+        "type": "object",
+        "properties": {
+          "portfolioId": {
+            "type": "string",
+            "description": "The ID of the portfolio associated with the error.",
+            "example": "portfolio-123"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "The ID of the customer associated with the error.",
+            "example": "customer-456"
+          },
+          "requestedOperation": {
+            "type": "string",
+            "description": "The operation that was requested when the error occurred.",
+            "example": "GetEmployeeById"
+          }
+        },
+        "description": "Contains additional information regarding the error, including identifiers related to the request."
+      },
+      "MICROSERVICE_DEV_getEmployeesList-AlertPreferences": {
+        "type": "object",
+        "properties": {
+          "priceChangeThreshold": {
+            "type": "integer",
+            "description": "The threshold for price changes that triggers an alert.",
+            "format": "int32",
+            "example": 0
+          },
+          "includeMarketSummary": {
+            "type": "boolean",
+            "description": "Whether to include a summary of the market in alerts.",
+            "example": false
+          },
+          "includeAnalystRatings": {
+            "type": "boolean",
+            "description": "Whether to include analyst ratings in alerts.",
+            "example": false
+          }
+        },
+        "description": "Preferences for setting alerts based on stock market changes."
+      },
+      "MICROSERVICE_DEV_getEmployeesList-Schedule": {
+        "type": "object",
+        "properties": {
+          "startTime": {
+            "type": "string",
+            "description": "The start time for the subscription alerts.",
+            "example": "09:00"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "The time zone applicable for the subscription alerts.",
+            "example": "America/New_York"
+          }
+        },
+        "description": "Details of the schedule for the subscription."
+      },
+      "MICROSERVICE_DEV_getEmployeesList-Customer": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "description": "The unique identifier of the customer.",
+            "example": "C123456"
+          },
+          "segment": {
+            "type": "string",
+            "description": "The segment the customer belongs to.",
+            "example": "premium"
+          },
+          "riskProfile": {
+            "type": "string",
+            "description": "The risk profile classification of the customer.",
+            "example": "high"
+          }
+        },
+        "description": "Information about the customer subscribing to the service."
       }
     },
     "parameters": {
@@ -613,8 +889,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "created",
-            "bad_request"
+            "bad_request",
+            "not_found"
           ]
         }
       }

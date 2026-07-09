@@ -2,13 +2,12 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_DEV_Employee Onboarding Service",
-    "description": "The Employee Onboarding Service streamlines the process of integrating new employees into the organization. This API endpoint allows businesses to submit essential employee information, facilitating the creation of employee records in the system. Typical consumers include HR departments and employee management systems that aim to enhance workforce management efficiency. By automating the onboarding process, organizations can ensure a smoother transition for new hires and improve overall operational efficacy.",
+    "description": "This endpoint provides a comprehensive overview of the employee onboarding process, enabling HR and management teams to track the status of new hires. It facilitates access to essential information regarding onboarding stages, required documents, and training schedules. Typical users include HR professionals, managers, and team leads who oversee recruitment and onboarding activities. The endpoint supports streamlined coordination and ensures that all aspects of the onboarding experience are effectively managed.",
     "version": "1.0"
   },
   "servers": [
     {
       "url": "https://stage-data-gujl.apiwiz.io",
-      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
@@ -20,12 +19,73 @@
   ],
   "paths": {
     "/v1/employees": {
+      "get": {
+        "tags": [
+          "Employee Management"
+        ],
+        "summary": "Retrieve a list of employees.",
+        "description": "This endpoint allows you to fetch the complete list of employees in the organization. You can use this information for reporting or analysis purposes.",
+        "operationId": "getEmployees",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/name"
+          },
+          {
+            "$ref": "#/components/parameters/appId"
+          },
+          {
+            "$ref": "#/components/parameters/connection"
+          },
+          {
+            "$ref": "#/components/parameters/content-type"
+          },
+          {
+            "$ref": "#/components/parameters/transfer-encoding"
+          },
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          }
+        ],
+        "requestBody": {
+          "description": "Retrieve a list of employees. This request does not require a body, but it's provided here for consistency.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployees-GetEmployeesRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "The request contains invalid parameters or data.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployees-GetEmployeesResponse_400"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [],
+        "servers": []
+      },
       "post": {
         "tags": [
           "Employee Management"
         ],
-        "summary": "Create a new employee record.",
-        "description": "This endpoint allows you to create a new employee in the system by providing the necessary details in the request body. Ensure that all required fields are filled in to successfully add a new employee.",
+        "summary": "Add a new employee.",
+        "description": "This endpoint enables you to add a new employee to the organization. You will need to provide the necessary details in the request body, such as name, position, and contact information.",
         "operationId": "createEmployee",
         "parameters": [
           {
@@ -48,36 +108,18 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to create a new employee entry in the system. It should contain all necessary information about the employee, including personal details and job-related information.",
+          "description": "Create a new employee. Include the employee details in the request body in JSON format.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MICROSERVICE_DEV_createEmployee-CreateEmployeeRequest"
+                "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployees-GetEmployeesRequest"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Employee created successfully.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createEmployee-CreateEmployeeResponse_201"
-                }
-              }
-            }
-          },
           "400": {
-            "description": "Request parameters are invalid.",
+            "description": "The request contains invalid parameters or data.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -89,7 +131,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createEmployee-CreateEmployeeResponse_400"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployees-GetEmployeesResponse_400"
                 }
               }
             }
@@ -105,47 +147,274 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV_createEmployee-CreateEmployeeResponse_201": {
-        "title": "Employee Creation Response",
+      "MICROSERVICE_DEV_getEmployees-GetEmployeesRequest": {
+        "type": "object",
+        "properties": {
+          "employee": {
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployees-Employee"
+          }
+        },
+        "description": "Request body schema for creating a new employee.",
+        "example": {
+          "employee": {
+            "employeeId": "EMP-100234",
+            "employeeCode": "E10234",
+            "firstName": "John",
+            "lastName": "Anderson",
+            "email": "john.anderson@example.com",
+            "phoneNumber": "+1-555-102-8890",
+            "dateOfBirth": "1993-07-18",
+            "gender": "MALE",
+            "employmentType": "FULL_TIME",
+            "designation": "Senior Software Engineer",
+            "joiningDate": "2026-07-01",
+            "managerId": "EMP-100021",
+            "workLocation": "New York",
+            "status": "ACTIVE",
+            "salary": {
+              "amount": "******",
+              "currency": "USD"
+            },
+            "address": {
+              "line1": "125 Madison Avenue",
+              "city": "New York",
+              "state": "NY",
+              "country": "USA",
+              "postalCode": "10016"
+            }
+          },
+          "department": {
+            "departmentId": "DEP-1005",
+            "departmentCode": "ENG",
+            "departmentName": "Engineering",
+            "businessUnit": "Digital Banking",
+            "costCenter": "CC-ENG-450",
+            "location": "New York",
+            "headOfDepartment": "Sarah Mitchell"
+          },
+          "access": {
+            "employeePortal": true,
+            "vpn": true,
+            "emailProvisioning": true,
+            "laptopAssigned": true
+          },
+          "preferences": {
+            "language": "en-US",
+            "timezone": "America/New_York",
+            "notificationEnabled": true
+          }
+        }
+      },
+      "MICROSERVICE_DEV_getEmployees-Employee": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "The first name of the employee.",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The last name of the employee.",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address of the employee.",
+            "example": "john.doe@example.com"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Contact phone number of the employee.",
+            "example": "123-456-7890"
+          },
+          "designation": {
+            "type": "string",
+            "description": "The job title of the employee.",
+            "example": "Engineer"
+          },
+          "employmentType": {
+            "type": "string",
+            "description": "The type of employment (e.g., Full-time, Part-time).",
+            "example": "Full-time"
+          },
+          "joiningDate": {
+            "type": "string",
+            "description": "The date when the employee joined the company.",
+            "example": "2023-01-01"
+          },
+          "managerId": {
+            "type": "string",
+            "description": "The unique identifier of the employee's manager.",
+            "example": "mgr-98765"
+          },
+          "workLocation": {
+            "type": "string",
+            "description": "The work location of the employee.",
+            "example": "New York"
+          }
+        },
+        "description": "Schema representing an employee's details."
+      },
+      "MICROSERVICE_DEV_getEmployees-Salary": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "description": "Salary amount of the employee.",
+            "example": "60000"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency in which the salary is paid.",
+            "example": "USD"
+          }
+        },
+        "description": "Salary details for the employee."
+      },
+      "MICROSERVICE_DEV_getEmployees-Address": {
+        "type": "object",
+        "properties": {
+          "line1": {
+            "type": "string",
+            "description": "First line of the address.",
+            "example": "123 Main St."
+          },
+          "city": {
+            "type": "string",
+            "description": "City where the employee resides.",
+            "example": "New York"
+          },
+          "state": {
+            "type": "string",
+            "description": "State where the employee resides.",
+            "example": "NY"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country where the employee resides.",
+            "example": "USA"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Postal code of the employee's residence.",
+            "example": "10001"
+          }
+        },
+        "description": "Address details of the employee."
+      },
+      "MICROSERVICE_DEV_getEmployees-Department": {
+        "type": "object",
+        "properties": {
+          "departmentId": {
+            "type": "string",
+            "description": "The unique identifier for the department.",
+            "example": "dept-001"
+          },
+          "departmentName": {
+            "type": "string",
+            "description": "The name of the department.",
+            "example": "Engineering"
+          },
+          "businessUnit": {
+            "type": "string",
+            "description": "The business unit associated with the department.",
+            "example": "Technology"
+          }
+        },
+        "description": "Schema representing department information."
+      },
+      "MICROSERVICE_DEV_getEmployees-Access": {
+        "type": "object",
+        "properties": {
+          "employeePortal": {
+            "type": "boolean",
+            "description": "Indicates if the employee has access to the employee portal.",
+            "example": false
+          },
+          "vpn": {
+            "type": "boolean",
+            "description": "Indicates if the employee has VPN access.",
+            "example": false
+          },
+          "emailProvisioning": {
+            "type": "boolean",
+            "description": "Indicates if the employee's email is provisioned.",
+            "example": false
+          },
+          "laptopAssigned": {
+            "type": "boolean",
+            "description": "Indicates if a laptop is assigned to the employee.",
+            "example": false
+          }
+        },
+        "description": "Schema representing access permissions for an employee."
+      },
+      "MICROSERVICE_DEV_getEmployees-Preferences": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "description": "Preferred language of the employee.",
+            "example": "English"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Preferred timezone of the employee.",
+            "example": "UTC-5"
+          },
+          "notificationEnabled": {
+            "type": "boolean",
+            "description": "Indicates if notifications are enabled for the employee.",
+            "example": false
+          }
+        },
+        "description": "User preferences for the employee."
+      },
+      "MICROSERVICE_DEV_getEmployees-GetEmployeesResponse_400": {
         "type": "object",
         "properties": {
           "employeeId": {
             "type": "string",
-            "description": "Unique identifier for the employee.",
+            "description": "The unique identifier for the employee.",
             "example": "EMP-100234"
           },
           "employeeCode": {
-            "type": "string",
-            "description": "Unique code assigned to the employee.",
-            "example": "E10234"
+            "type": "boolean",
+            "description": "Indicates if the employee code is valid.",
+            "example": true
           },
           "status": {
             "type": "string",
-            "description": "Current status of the employee.",
+            "description": "The current status of the employee creation process.",
             "example": "CREATED"
           },
           "employee": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createEmployee-EmployeeDetails"
+            "description": "Details about the employee, if any information is available.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployees-Employee"
           },
           "department": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createEmployee-DepartmentDetails"
+            "description": "Information about the department to which the employee belongs.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployees-Department"
           },
           "access": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createEmployee-EmployeeAccess"
+            "description": "Access permissions granted to the employee.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployees-Access"
           },
           "system": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createEmployee-SystemDetails"
+            "description": "System-related metadata for the employee.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_getEmployees-System"
           },
           "message": {
             "type": "string",
-            "description": "Message indicating the result of the operation.",
+            "description": "A message describing the error that occurred.",
             "example": "Employee created successfully and assigned to the Engineering department."
           }
         },
-        "description": "Response schema for the creation of an employee, containing employee details, status, and system information.",
+        "description": "Schema representing the response structure for a failed employee creation request.",
         "example": {
           "employeeId": "EMP-100234",
-          "employeeCode": "E10234",
+          "employeeCode": true,
           "status": "CREATED",
           "employee": {
             "firstName": "John",
@@ -178,437 +447,32 @@
           "message": "Employee created successfully and assigned to the Engineering department."
         }
       },
-      "MICROSERVICE_DEV_createEmployee-EmployeeDetails": {
-        "title": "Employee Details",
-        "type": "object",
-        "properties": {
-          "firstName": {
-            "type": "string",
-            "description": "The first name of the employee.",
-            "example": "John"
-          },
-          "lastName": {
-            "type": "string",
-            "description": "The last name of the employee.",
-            "example": "Doe"
-          },
-          "email": {
-            "type": "string",
-            "description": "The email address of the employee.",
-            "example": "john.doe@example.com"
-          },
-          "phoneNumber": {
-            "type": "string",
-            "description": "The phone number of the employee.",
-            "example": "+1234567890"
-          },
-          "designation": {
-            "type": "string",
-            "description": "The job title or designation of the employee.",
-            "example": "Software Engineer"
-          },
-          "employmentType": {
-            "type": "string",
-            "description": "Type of employment (e.g., full-time, part-time).",
-            "example": "Full-time"
-          },
-          "joiningDate": {
-            "type": "string",
-            "description": "The date when the employee joined the organization.",
-            "example": "2023-01-01"
-          },
-          "managerId": {
-            "type": "string",
-            "description": "Identifier for the employee's manager.",
-            "example": "321"
-          },
-          "workLocation": {
-            "type": "string",
-            "description": "The primary work location of the employee.",
-            "example": "Remote"
-          }
-        },
-        "description": "Details of the employee including personal and job-related information."
-      },
-      "MICROSERVICE_DEV_createEmployee-DepartmentDetails": {
-        "title": "Department Details",
-        "type": "object",
-        "properties": {
-          "departmentId": {
-            "type": "string",
-            "description": "Unique identifier for the department.",
-            "example": "001"
-          },
-          "departmentName": {
-            "type": "string",
-            "description": "Name of the department.",
-            "example": "Engineering"
-          },
-          "businessUnit": {
-            "type": "string",
-            "description": "The business unit associated with the department.",
-            "example": "Product Development"
-          }
-        },
-        "description": "Information about the department to which the employee belongs."
-      },
-      "MICROSERVICE_DEV_createEmployee-EmployeeAccess": {
-        "title": "Employee Access Rights",
-        "type": "object",
-        "properties": {
-          "employeePortal": {
-            "type": "boolean",
-            "description": "Indicates if the employee has access to the employee portal.",
-            "example": true
-          },
-          "vpn": {
-            "type": "boolean",
-            "description": "Indicates if the employee has VPN access.",
-            "example": true
-          },
-          "emailProvisioning": {
-            "type": "boolean",
-            "description": "Indicates if email provisioning is enabled for the employee.",
-            "example": true
-          },
-          "laptopAssigned": {
-            "type": "boolean",
-            "description": "Indicates if a laptop has been assigned to the employee.",
-            "example": true
-          }
-        },
-        "description": "Access rights granted to the employee within the organization."
-      },
-      "MICROSERVICE_DEV_createEmployee-SystemDetails": {
-        "title": "System Details",
+      "MICROSERVICE_DEV_getEmployees-System": {
         "type": "object",
         "properties": {
           "employeeUuid": {
             "type": "string",
-            "description": "Unique UUID assigned to the employee.",
-            "example": "uuid-1234-5678-9101"
+            "description": "The unique identifier of the employee in UUID format.",
+            "example": "uuid-abc-123"
           },
           "createdAt": {
             "type": "string",
-            "description": "The timestamp when the employee record was created.",
+            "description": "Timestamp of when the employee record was created.",
             "example": "2023-01-01T00:00:00Z"
           },
           "createdBy": {
             "type": "string",
-            "description": "Identifier for the user who created the employee record.",
+            "description": "Identifier of the user who created the employee record.",
             "example": "admin"
           },
           "recordVersion": {
             "type": "integer",
-            "description": "The version of the employee record.",
+            "description": "Version of the employee record.",
             "format": "int32",
-            "example": 1
+            "example": 0
           }
         },
-        "description": "System-related information for the employee record."
-      },
-      "MICROSERVICE_DEV_createEmployee-CreateEmployeeRequest": {
-        "type": "object",
-        "properties": {
-          "employee": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createEmployee-Employee"
-          },
-          "department": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createEmployee-Department"
-          },
-          "access": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createEmployee-Access"
-          },
-          "preferences": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createEmployee-Preferences"
-          }
-        },
-        "description": "Schema for creating a new employee record, including details about the employee, their department, access rights, and preferences.",
-        "example": {
-          "employee": {
-            "employeeId": "",
-            "employeeCode": "E10234",
-            "firstName": "",
-            "lastName": "Anderson",
-            "email": "john.anderson",
-            "phoneNumber": "12345",
-            "employmentType": "FULLTIME",
-            "designation": "",
-            "joiningDate": "2026-15-01",
-            "managerId": "EMP-999999",
-            "workLocation": "New York"
-          },
-          "department": {
-            "departmentId": "",
-            "departmentCode": "",
-            "departmentName": "",
-            "businessUnit": "",
-            "costCenter": ""
-          },
-          "access": {
-            "employeePortal": true
-          },
-          "preferences": {
-            "language": "en-US"
-          }
-        }
-      },
-      "MICROSERVICE_DEV_createEmployee-Employee": {
-        "type": "object",
-        "properties": {
-          "employeeId": {
-            "type": "string",
-            "description": "Unique identifier for the employee.",
-            "example": "emp123"
-          },
-          "employeeCode": {
-            "type": "string",
-            "description": "Code assigned to the employee.",
-            "example": "E12345"
-          },
-          "firstName": {
-            "type": "string",
-            "description": "The employee's first name.",
-            "example": "John"
-          },
-          "lastName": {
-            "type": "string",
-            "description": "The employee's last name.",
-            "example": "Doe"
-          },
-          "email": {
-            "type": "string",
-            "description": "The employee's email address.",
-            "example": "john.doe@example.com"
-          },
-          "phoneNumber": {
-            "type": "string",
-            "description": "The employee's phone number.",
-            "example": "+1234567890"
-          },
-          "employmentType": {
-            "type": "string",
-            "description": "Type of employment (e.g., full-time, part-time, contractor).",
-            "example": "full-time"
-          },
-          "designation": {
-            "type": "string",
-            "description": "The employee's job title or designation.",
-            "example": "Software Engineer"
-          },
-          "joiningDate": {
-            "type": "string",
-            "description": "The date the employee joined the organization.",
-            "example": "2023-01-01"
-          },
-          "managerId": {
-            "type": "string",
-            "description": "ID of the employee's manager.",
-            "example": "mgr123"
-          },
-          "workLocation": {
-            "type": "string",
-            "description": "Location where the employee works.",
-            "example": "New York"
-          }
-        },
-        "description": "Schema representing an employee's data."
-      },
-      "MICROSERVICE_DEV_createEmployee-Department": {
-        "type": "object",
-        "properties": {
-          "departmentId": {
-            "type": "string",
-            "description": "Unique identifier for the department.",
-            "example": "dept123"
-          },
-          "departmentCode": {
-            "type": "string",
-            "description": "Code assigned to the department.",
-            "example": "DPT001"
-          },
-          "departmentName": {
-            "type": "string",
-            "description": "Name of the department.",
-            "example": "Engineering"
-          },
-          "businessUnit": {
-            "type": "string",
-            "description": "Business unit to which the department belongs.",
-            "example": "Technology"
-          },
-          "costCenter": {
-            "type": "string",
-            "description": "Cost center associated with the department.",
-            "example": "CC001"
-          }
-        },
-        "description": "Schema representing the department data for an employee."
-      },
-      "MICROSERVICE_DEV_createEmployee-Access": {
-        "type": "object",
-        "properties": {
-          "employeePortal": {
-            "type": "boolean",
-            "description": "Indicates whether the employee has access to the employee portal.",
-            "example": false
-          }
-        },
-        "description": "Schema representing the access rights for an employee."
-      },
-      "MICROSERVICE_DEV_createEmployee-Preferences": {
-        "type": "object",
-        "properties": {
-          "language": {
-            "type": "string",
-            "description": "Preferred language of the employee.",
-            "example": "English"
-          }
-        },
-        "description": "Schema representing the preferences of an employee."
-      },
-      "MICROSERVICE_DEV_createEmployee-CreateEmployeeResponse_400": {
-        "title": "Error Response for Employee Operations",
-        "type": "object",
-        "properties": {
-          "timestamp": {
-            "type": "string",
-            "description": "The timestamp when the error occurred.",
-            "example": "2026-07-09T08:56:35Z"
-          },
-          "status": {
-            "type": "string",
-            "description": "The HTTP status code for the error.",
-            "example": "400"
-          },
-          "error": {
-            "type": "string",
-            "description": "The error type or name.",
-            "example": "Bad Request"
-          },
-          "code": {
-            "type": "string",
-            "description": "A machine-readable error code.",
-            "example": "EMPLOYEE_VALIDATION_FAILED"
-          },
-          "message": {
-            "type": "string",
-            "description": "A human-readable error message.",
-            "example": "Employee creation request validation failed."
-          },
-          "path": {
-            "type": "string",
-            "description": "The path of the request that caused the error.",
-            "example": "/v1/employees"
-          },
-          "traceId": {
-            "type": "string",
-            "description": "A unique identifier for tracing the error.",
-            "example": "ab442c50-6df7-4d69-9a52-86365e90a46a"
-          },
-          "validationErrors": {
-            "type": "array",
-            "description": "A list of validation errors that occurred.",
-            "example": [
-              {
-                "field": "employee.employeeId",
-                "message": "Employee ID must not be empty"
-              },
-              {
-                "field": "employee.firstName",
-                "message": "First name is required"
-              },
-              {
-                "field": "employee.email",
-                "message": "Email address is not valid"
-              },
-              {
-                "field": "employee.phoneNumber",
-                "message": "Phone number format is invalid"
-              },
-              {
-                "field": "employee.designation",
-                "message": "Designation is required"
-              },
-              {
-                "field": "employee.joiningDate",
-                "message": "Joining date must be a valid ISO-8601 date"
-              },
-              {
-                "field": "department.departmentId",
-                "message": "Department ID is required"
-              },
-              {
-                "field": "department.departmentName",
-                "message": "Department name is required"
-              }
-            ],
-            "items": {
-              "$ref": "#/components/schemas/MICROSERVICE_DEV_createEmployee-ValidationError"
-            }
-          }
-        },
-        "description": "Schema representing the error response format for employee operations when a request fails with a 400 status code.",
-        "example": {
-          "timestamp": "2026-07-09T08:56:35Z",
-          "status": "400",
-          "error": "Bad Request",
-          "code": "EMPLOYEE_VALIDATION_FAILED",
-          "message": "Employee creation request validation failed.",
-          "path": "/v1/employees",
-          "traceId": "ab442c50-6df7-4d69-9a52-86365e90a46a",
-          "validationErrors": [
-            {
-              "field": "employee.employeeId",
-              "message": "Employee ID must not be empty"
-            },
-            {
-              "field": "employee.firstName",
-              "message": "First name is required"
-            },
-            {
-              "field": "employee.email",
-              "message": "Email address is not valid"
-            },
-            {
-              "field": "employee.phoneNumber",
-              "message": "Phone number format is invalid"
-            },
-            {
-              "field": "employee.designation",
-              "message": "Designation is required"
-            },
-            {
-              "field": "employee.joiningDate",
-              "message": "Joining date must be a valid ISO-8601 date"
-            },
-            {
-              "field": "department.departmentId",
-              "message": "Department ID is required"
-            },
-            {
-              "field": "department.departmentName",
-              "message": "Department name is required"
-            }
-          ]
-        }
-      },
-      "MICROSERVICE_DEV_createEmployee-ValidationError": {
-        "title": "Validation Error",
-        "type": "object",
-        "properties": {
-          "field": {
-            "type": "string",
-            "description": "The name of the field that caused the validation error.",
-            "example": "email"
-          },
-          "message": {
-            "type": "string",
-            "description": "A message describing the validation error.",
-            "example": "Email address is not valid."
-          }
-        },
-        "description": "Schema representing a validation error that occurred during request processing."
+        "description": "Schema containing system-related metadata for an employee."
       }
     },
     "parameters": {
@@ -682,7 +546,6 @@
         "schema": {
           "type": "string",
           "enum": [
-            "created",
             "bad_request"
           ]
         }
