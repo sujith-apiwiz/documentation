@@ -2,13 +2,12 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_DEV_Invoice Management API",
-    "description": "The Invoice Management API enables businesses to efficiently create and manage invoices within their financial software. This API allows users to submit new invoices, ensuring accurate billing and streamlined financial processes. Typical consumers include accountants, financial platforms, and business owners looking to automate invoicing tasks. Integrating this API enhances operational efficiency and improves financial tracking.",
+    "description": "The Invoice Processing API facilitates the submission and management of invoices within the invoicing system. This API allows users to upload and register new invoices, ensuring seamless tracking and processing of billing transactions. Typical consumers include accounting applications and financial services platforms that seek to streamline their invoicing workflows. By leveraging this API, businesses can enhance their operational efficiency and maintain accurate financial records.",
     "version": "1.0"
   },
   "servers": [
     {
       "url": "https://stage-data-gujl.apiwiz.io",
-      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
@@ -24,8 +23,8 @@
         "tags": [
           "Billing"
         ],
-        "summary": "Create a new billing invoice",
-        "description": "This endpoint allows users to create a new billing invoice, providing all necessary details such as items, amounts, and customer information. Ensure that the request body contains valid data to successfully generate the invoice.",
+        "summary": "Create a new invoice in the billing system.",
+        "description": "This endpoint allows you to create a new invoice in the billing system by providing the necessary details. Ensure that all required fields are included in the request body to successfully generate the invoice.",
         "operationId": "createBillingInvoice",
         "parameters": [
           {
@@ -54,7 +53,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to create a new billing invoice. It must contain all necessary information required to process the invoice correctly.",
+          "description": "Client request to create a new invoice in the billing system. This request must include all necessary fields as defined in the schema.",
           "content": {
             "application/json": {
               "schema": {
@@ -65,7 +64,7 @@
         },
         "responses": {
           "400": {
-            "description": "The request contains invalid parameters.",
+            "description": "The request parameters are invalid or missing.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -86,7 +85,7 @@
             }
           },
           "200": {
-            "description": "The request has been processed successfully.",
+            "description": "The request was successful; invoice data returned.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -118,50 +117,43 @@
   "components": {
     "schemas": {
       "MICROSERVICE_DEV_createBillingInvoice-CreateBillingInvoiceResponse_400": {
-        "title": "Error Response for Invoice Creation",
         "type": "object",
         "properties": {
           "timestamp": {
             "type": "string",
-            "description": "The timestamp of when the error occurred.",
+            "description": "The time at which the error occurred.",
             "example": "2026-07-13T12:20:39Z"
           },
           "status": {
             "type": "integer",
-            "description": "The HTTP status code indicating the type of error.",
+            "description": "HTTP status code representing the error.",
             "format": "int32",
             "example": 200
           },
           "error": {
             "type": "integer",
-            "description": "The error code associated with the error type.",
-            "format": "int32",
-            "example": 400
-          },
-          "errorCode": {
-            "type": "integer",
-            "description": "A specific error code to identify the problem.",
+            "description": "Specific error code related to the bad request.",
             "format": "int32",
             "example": 100
           },
           "message": {
             "type": "string",
-            "description": "A descriptive message providing more details about the error.",
+            "description": "A descriptive message about the error that occurred.",
             "example": "The order request contains invalid or missing information."
           },
           "path": {
             "type": "string",
-            "description": "The API endpoint path where the error occurred.",
+            "description": "The path of the request that caused the error.",
             "example": "/v1/orders"
           },
-          "traceId": {
+          "trace": {
             "type": "string",
-            "description": "A unique identifier for tracing the request across services.",
-            "example": "a08179d6-b9a0-4ee5-8bf1-dcf2a765e6b5"
+            "description": "A trace identifier for debugging purposes.",
+            "example": "db2fe2c8-ecae-4952-84ea-f786a70f7e83"
           },
           "validationErrors": {
             "type": "array",
-            "description": "A list of validation errors that occurred during request processing.",
+            "description": "List of validation errors that occurred during the request.",
             "example": [
               {
                 "field": "address.postalCode",
@@ -176,7 +168,7 @@
               {
                 "field": "serviceDetails.speed",
                 "rejectedValue": "500Mbps",
-                "message": "Selected speed is not available for the provided address."
+                "message": 100
               }
             ],
             "items": {
@@ -185,19 +177,18 @@
           },
           "suggestion": {
             "type": "string",
-            "description": "A suggestion on how to fix the error.",
+            "description": "Suggestion for a corrective action regarding the error.",
             "example": "Please verify customer details, service availability, and billing information before submitting the order."
           }
         },
-        "description": "Schema representing the error response returned when an invoice creation operation fails.",
+        "description": "Response schema for a 400 Bad Request error when creating invoices.",
         "example": {
           "timestamp": "2026-07-13T12:20:39Z",
           "status": 200,
-          "error": 400,
-          "errorCode": 100,
+          "error": 100,
           "message": "The order request contains invalid or missing information.",
           "path": "/v1/orders",
-          "traceId": "a08179d6-b9a0-4ee5-8bf1-dcf2a765e6b5",
+          "trace": "db2fe2c8-ecae-4952-84ea-f786a70f7e83",
           "validationErrors": [
             {
               "field": "address.postalCode",
@@ -212,7 +203,7 @@
             {
               "field": "serviceDetails.speed",
               "rejectedValue": "500Mbps",
-              "message": "Selected speed is not available for the provided address."
+              "message": 100
             }
           ],
           "suggestion": "Please verify customer details, service availability, and billing information before submitting the order."
@@ -225,54 +216,53 @@
           "field": {
             "type": "string",
             "description": "The name of the field that caused the validation error.",
-            "example": "invoiceNumber"
+            "example": "amount"
           },
           "rejectedValue": {
             "type": "string",
             "description": "The value that was rejected during validation.",
-            "example": "INV-12345"
+            "example": "-100"
           },
           "message": {
             "type": "string",
-            "description": "A message explaining why the validation failed.",
-            "example": "Invoice number must be unique."
+            "description": "A message explaining the validation error.",
+            "example": "Amount must be positive."
           }
         },
-        "description": "Details of a validation error encountered during the processing of an invoice."
+        "description": "Represents a validation error that occurred during the processing of the invoice."
       },
       "MICROSERVICE_DEV_createBillingInvoice-CreateBillingInvoiceRequest": {
-        "title": "Billing Invoice Request",
         "type": "object",
         "properties": {
           "customerId": {
             "type": "string",
-            "description": "Unique identifier for the customer.",
+            "description": "The unique identifier for the customer.",
             "example": "CUST-100234"
           },
           "productId": {
             "type": "string",
-            "description": "Unique identifier for the product being purchased.",
+            "description": "The unique identifier for the product.",
             "example": "PROD-FIBER-100"
           },
           "orderType": {
             "type": "string",
-            "description": "Type of the order (e.g., new, upgrade, downgrade).",
+            "description": "The type of order being placed.",
             "example": "NEW_CONNECTION"
           },
           "serviceDetails": {
-            "description": "Details about the service being provided.",
+            "description": "Details about the service being requested.",
             "$ref": "#/components/schemas/MICROSERVICE_DEV_createBillingInvoice-ServiceDetails"
           },
           "address": {
-            "description": "The billing address for the invoice.",
+            "description": "The address where the service will be provided.",
             "$ref": "#/components/schemas/MICROSERVICE_DEV_createBillingInvoice-Address"
           },
           "payment": {
-            "description": "Payment information for the invoice.",
+            "description": "Details regarding the payment method.",
             "$ref": "#/components/schemas/MICROSERVICE_DEV_createBillingInvoice-Payment"
           }
         },
-        "description": "Schema representing the request body for creating a billing invoice.",
+        "description": "Request body schema for creating a new invoice.",
         "example": {
           "customerId": "CUST-100234",
           "productId": "PROD-FIBER-100",
@@ -295,70 +285,67 @@
         }
       },
       "MICROSERVICE_DEV_createBillingInvoice-ServiceDetails": {
-        "title": "Service Details",
         "type": "object",
         "properties": {
           "serviceType": {
             "type": "string",
-            "description": "The type of service (e.g., internet, phone, cable).",
-            "example": "internet"
+            "description": "Type of the service offered.",
+            "example": "string"
           },
           "speed": {
             "type": "string",
-            "description": "The speed of the service (e.g., Mbps for internet services).",
-            "example": "100mbps"
+            "description": "Speed associated with the service.",
+            "example": "string"
           },
           "installationRequired": {
             "type": "boolean",
-            "description": "Indicates whether installation of the service is required.",
+            "description": "Indicates whether installation is required for the service.",
             "example": false
           }
         },
-        "description": "Schema representing the details of the service being provided."
+        "description": "Details of the service being requested."
       },
       "MICROSERVICE_DEV_createBillingInvoice-Address": {
-        "title": "Address",
         "type": "object",
         "properties": {
           "street": {
             "type": "string",
-            "description": "Street address for the billing location.",
-            "example": "123 Main St"
+            "description": "The street address.",
+            "example": "string"
           },
           "city": {
             "type": "string",
-            "description": "City for the billing address.",
-            "example": "Anytown"
+            "description": "The city where the address is located.",
+            "example": "string"
           },
           "postalCode": {
             "type": "string",
-            "description": "Postal code for the billing address.",
-            "example": "12345"
+            "description": "The postal code of the address.",
+            "example": "string"
           },
           "country": {
             "type": "string",
-            "description": "Country of the billing address.",
-            "example": "USA"
+            "description": "The country of the address.",
+            "example": "string"
           }
         },
-        "description": "Schema representing the billing address."
+        "description": "Represents a postal address."
       },
       "MICROSERVICE_DEV_createBillingInvoice-Payment": {
-        "title": "Payment Information",
         "type": "object",
         "properties": {
           "method": {
             "type": "string",
-            "description": "Payment method (e.g., credit card, bank transfer).",
-            "example": "credit_card"
+            "description": "The method of payment used.",
+            "example": "string"
           },
           "billingAccountId": {
             "type": "string",
-            "description": "Unique identifier for the billing account.",
-            "example": "BA123456"
+            "description": "The unique identifier for the billing account.",
+            "example": "string"
           }
         },
-        "description": "Schema representing payment information for the invoice."
+        "description": "Details related to the payment."
       },
       "MICROSERVICE_DEV_createBillingInvoice-CreateBillingInvoiceResponse_200": {
         "title": "Invoice Operation Response",
@@ -366,45 +353,39 @@
         "properties": {
           "timestamp": {
             "type": "string",
-            "description": "The timestamp indicating when the response was generated.",
+            "description": "The timestamp when the operation was processed.",
             "example": "2026-07-13T12:20:39Z"
           },
           "status": {
             "type": "integer",
-            "description": "The status code of the operation, indicating success or failure.",
+            "description": "The HTTP status code of the response.",
             "format": "int32",
             "example": 200
           },
           "error": {
             "type": "integer",
-            "description": "An error code that corresponds to the type of error encountered, if any.",
-            "format": "int32",
-            "example": 400
-          },
-          "errorCode": {
-            "type": "integer",
-            "description": "A specific error code for detailed error identification, if applicable.",
+            "description": "An error code if the operation failed.",
             "format": "int32",
             "example": 100
           },
           "message": {
             "type": "string",
-            "description": "A summary message providing additional context about the operation's outcome.",
+            "description": "A message describing the operation's result.",
             "example": "The order request contains invalid or missing information."
           },
           "path": {
             "type": "string",
-            "description": "The path of the resource affected by the operation.",
+            "description": "The path of the request that was processed.",
             "example": "/v1/orders"
           },
-          "traceId": {
+          "trace": {
             "type": "string",
-            "description": "A unique identifier for tracing the request through the system.",
-            "example": "b3c3f624-03bc-4a6d-af1f-4fe38a22cc6d"
+            "description": "A trace ID for debugging purposes.",
+            "example": "186a3cdf-c2aa-4349-b482-377d5c64e764"
           },
           "validationErrors": {
             "type": "array",
-            "description": "A list of validation errors encountered during the operation, if any.",
+            "description": "A list of validation errors if the request input was invalid.",
             "example": [
               {
                 "field": "address.postalCode",
@@ -419,7 +400,7 @@
               {
                 "field": "serviceDetails.speed",
                 "rejectedValue": "500Mbps",
-                "message": "Selected speed is not available for the provided address."
+                "message": 100
               }
             ],
             "items": {
@@ -428,19 +409,18 @@
           },
           "suggestion": {
             "type": "string",
-            "description": "A suggestion or guidance for rectifying any issues encountered during the operation.",
+            "description": "A suggestion for correcting the validation errors.",
             "example": "Please verify customer details, service availability, and billing information before submitting the order."
           }
         },
-        "description": "Response schema for a successful operation on invoices. It provides details of the operation including timestamps, status codes, and any validation errors that may have occurred.",
+        "description": "This schema represents the response structure for the invoice operation performed via POST request.",
         "example": {
           "timestamp": "2026-07-13T12:20:39Z",
           "status": 200,
-          "error": 400,
-          "errorCode": 100,
+          "error": 100,
           "message": "The order request contains invalid or missing information.",
           "path": "/v1/orders",
-          "traceId": "b3c3f624-03bc-4a6d-af1f-4fe38a22cc6d",
+          "trace": "186a3cdf-c2aa-4349-b482-377d5c64e764",
           "validationErrors": [
             {
               "field": "address.postalCode",
@@ -455,7 +435,7 @@
             {
               "field": "serviceDetails.speed",
               "rejectedValue": "500Mbps",
-              "message": "Selected speed is not available for the provided address."
+              "message": 100
             }
           ],
           "suggestion": "Please verify customer details, service availability, and billing information before submitting the order."
@@ -563,7 +543,7 @@
     },
     "headers": {
       "Vary": {
-        "description": "Indicates the response headers that may vary based on the request's parameters or context. Commonly used for caching mechanisms.",
+        "description": "Indicates the request headers that may vary the response. Useful in caching mechanisms.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -573,7 +553,7 @@
         "example": "Origin"
       },
       "Location": {
-        "description": "Provides the URL of the newly created resource after a successful POST request.",
+        "description": "Provides the URI of the newly created resource. This should be the absolute URL where the created resource can be accessed.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -583,7 +563,7 @@
         "example": "/v2/customers/CUST-100234"
       },
       "content-type": {
-        "description": "Specifies the media type of the resource returned in the response. It informs the client about the nature of the data.",
+        "description": "Defines the media type of the resource returned in the response. This indicates how the content of the response should be interpreted.",
         "style": "simple",
         "explode": false,
         "schema": {
