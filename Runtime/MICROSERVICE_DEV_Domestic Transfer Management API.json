@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_DEV_Domestic Transfer Management API",
-    "description": "MICROSERVICE_DEV_Domestic Transfer Management API",
+    "description": "The Domestic Transfer Management API facilitates efficient management of domestic money transfers between users. This service allows consumers to initiate, track, and manage their transfer requests seamlessly. Typical users include banks and financial institutions looking to streamline their clients' transfer processes. The API supports functionalities such as submitting transfer requests and monitoring their status, ensuring that users have real-time updates on their transactions.",
     "version": "1.0"
   },
   "servers": [
@@ -20,7 +20,12 @@
   "paths": {
     "/v1/payments/domestic-transfer": {
       "post": {
-        "operationId": "POST_domestic-transfer",
+        "tags": [
+          "Money Transfer"
+        ],
+        "summary": "Initiates a domestic money transfer.",
+        "description": "This endpoint allows users to initiate a transfer of funds within the same country. Ensure that all necessary information such as the sender, recipient, and amount are provided in the request body to successfully complete the transaction.",
+        "operationId": "createDomesticTransfer",
         "parameters": [
           {
             "$ref": "#/components/parameters/name"
@@ -36,20 +41,30 @@
           },
           {
             "$ref": "#/components/parameters/transfer-encoding"
+          },
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/environment"
+          },
+          {
+            "$ref": "#/components/parameters/serviceCategory"
           }
         ],
         "requestBody": {
+          "description": "This request body is for initiating a domestic transfer operation. It should contain all necessary details regarding the transaction, such as sender and receiver information, amount, and any relevant identifiers.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MICROSERVICE_DEV_POST_domestic-transfer-POST_domestic-transferRequest"
+                "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-CreateDomesticTransferRequest"
               }
             }
           }
         },
         "responses": {
           "500": {
-            "description": "500Description",
+            "description": "An unexpected error occurred on the server. Please try again later.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -64,13 +79,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_POST_domestic-transfer-POST_domestic-transferResponse_500"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-CreateDomesticTransferResponse_500"
                 }
               }
             }
           },
           "404": {
-            "description": "404Description",
+            "description": "The requested resource does not exist. Check the URL and try again.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -85,13 +100,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_POST_domestic-transfer-POST_domestic-transferResponse_404"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-CreateDomesticTransferResponse_404"
                 }
               }
             }
           },
           "400": {
-            "description": "400Description",
+            "description": "The request was malformed or contained invalid parameters. Review the request data.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -106,13 +121,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_POST_domestic-transfer-POST_domestic-transferResponse_400"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-CreateDomesticTransferResponse_400"
                 }
               }
             }
           },
           "200": {
-            "description": "200Description",
+            "description": "The request was successful and the response contains the requested data.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -127,7 +142,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_POST_domestic-transfer-POST_domestic-transferResponse_200"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-CreateDomesticTransferResponse_200"
                 }
               }
             }
@@ -143,41 +158,50 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV_POST_domestic-transfer-POST_domestic-transferResponse_500": {
+      "MICROSERVICE_DEV_createDomesticTransfer-CreateDomesticTransferResponse_500": {
+        "title": "Domestic Transfer Error Response",
         "type": "object",
         "properties": {
           "timestamp": {
             "type": "string",
+            "description": "The time when the error occurred, represented as an ISO 8601 string.",
             "example": "2026-07-12T16:35:10Z"
           },
           "status": {
-            "type": "integer",
-            "format": "int32",
-            "example": 400
+            "type": "boolean",
+            "description": "Indicates whether the request was successful or not.",
+            "example": true
           },
           "error": {
             "type": "integer",
+            "description": "A numerical code representing the type of error encountered.",
             "format": "int32",
             "example": 400
           },
           "errorCode": {
-            "type": "string",
-            "example": "TRANSFER_VALIDATION_FAILED"
+            "type": "integer",
+            "description": "An application-specific error code providing further detail on the error.",
+            "format": "int32",
+            "example": 100
           },
           "message": {
             "type": "string",
+            "description": "A human-readable message providing further information about the error.",
             "example": "The fund transfer request contains invalid or missing information."
           },
           "path": {
             "type": "string",
+            "description": "The path of the request that resulted in the error.",
             "example": "/v1/payments/domestic-transfer"
           },
           "traceId": {
             "type": "string",
-            "example": "9bfc7601-ee76-4abe-bbb2-3726a8560964"
+            "description": "A unique identifier for the request, useful for tracing through logs.",
+            "example": "58f46b49-e670-47a2-8868-d6952887ad1b"
           },
           "validationErrors": {
             "type": "array",
+            "description": "A list of validation errors encountered during the processing of the request.",
             "example": [
               {
                 "field": "beneficiary.accountNumber",
@@ -196,59 +220,28 @@
               }
             ],
             "items": {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "type": "string",
-                  "example": "xK!{{#CPac-Hr5%z6rVAT_J;2"
-                },
-                "rejectedValue": {
-                  "type": "string",
-                  "example": "357905134858"
-                },
-                "message": {
-                  "type": "string",
-                  "example": "j,FHN\"/YNLUchvuY9!q{4UK%(?j50r.3y/gUS&"
-                }
-              },
-              "example": "{\n  \"field\" : \"xK!{{#CPac-Hr5%z6rVAT_J;2\",\n  \"rejectedValue\" : \"357905134858\",\n  \"message\" : \"j,FHN\\\"/YNLUchvuY9!q{4UK%(?j50r.3y/gUS&\"\n}"
+              "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-ValidationError"
             }
           },
           "request": {
-            "type": "object",
-            "properties": {
-              "transferReference": {
-                "type": "string",
-                "example": "Tw2fGztAAdZrf8DIs"
-              },
-              "sourceAccount": {
-                "type": "string",
-                "example": "701778263189"
-              },
-              "beneficiaryId": {
-                "type": "string",
-                "example": "nunINUYw6"
-              }
-            },
-            "example": {
-              "transferReference": "TRF-20260712-1001",
-              "sourceAccount": "123456789012",
-              "beneficiaryId": "BEN-10045"
-            }
+            "description": "The original request data that resulted in the error.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-TransferRequest"
           },
           "suggestion": {
             "type": "string",
+            "description": "A suggestion to the user on how to resolve the issue.",
             "example": "Verify the beneficiary details, transfer amount, and currency before retrying the request."
           }
         },
+        "description": "Schema representing the response for a domestic transfer operation when an error occurs.",
         "example": {
           "timestamp": "2026-07-12T16:35:10Z",
-          "status": 400,
+          "status": true,
           "error": 400,
-          "errorCode": "TRANSFER_VALIDATION_FAILED",
+          "errorCode": 100,
           "message": "The fund transfer request contains invalid or missing information.",
           "path": "/v1/payments/domestic-transfer",
-          "traceId": "9bfc7601-ee76-4abe-bbb2-3726a8560964",
+          "traceId": "58f46b49-e670-47a2-8868-d6952887ad1b",
           "validationErrors": [
             {
               "field": "beneficiary.accountNumber",
@@ -269,46 +262,99 @@
           "request": {
             "transferReference": "TRF-20260712-1001",
             "sourceAccount": "123456789012",
-            "beneficiaryId": "BEN-10045"
+            "beneficiaryId": 100
           },
           "suggestion": "Verify the beneficiary details, transfer amount, and currency before retrying the request."
         }
       },
-      "MICROSERVICE_DEV_POST_domestic-transfer-POST_domestic-transferResponse_404": {
+      "MICROSERVICE_DEV_createDomesticTransfer-ValidationError": {
+        "title": "Validation Error",
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "The name of the field that caused the validation error.",
+            "example": "beneficiaryId"
+          },
+          "rejectedValue": {
+            "type": "string",
+            "description": "The value that was rejected during validation.",
+            "example": "invalid-beneficiary-id"
+          },
+          "message": {
+            "type": "string",
+            "description": "A message explaining the validation error.",
+            "example": "Beneficiary ID is invalid."
+          }
+        },
+        "description": "Represents a validation error that occurred during request processing."
+      },
+      "MICROSERVICE_DEV_createDomesticTransfer-TransferRequest": {
+        "title": "Transfer Request",
+        "type": "object",
+        "properties": {
+          "transferReference": {
+            "type": "string",
+            "description": "Unique reference identifier for the transfer.",
+            "example": "transfer-ref-001"
+          },
+          "sourceAccount": {
+            "type": "string",
+            "description": "Account ID from which the funds are to be transferred.",
+            "example": "account-001"
+          },
+          "beneficiaryId": {
+            "type": "string",
+            "description": "ID of the beneficiary to whom the funds are to be transferred.",
+            "example": "beneficiary-001"
+          }
+        },
+        "description": "Represents the request data for a domestic transfer operation."
+      },
+      "MICROSERVICE_DEV_createDomesticTransfer-CreateDomesticTransferResponse_404": {
+        "title": "Domestic Transfer Error Response",
         "type": "object",
         "properties": {
           "timestamp": {
             "type": "string",
+            "description": "The timestamp when the error occurred.",
             "example": "2026-07-12T16:35:10Z"
           },
           "status": {
             "type": "integer",
+            "description": "HTTP status code representing the result of the operation.",
             "format": "int32",
             "example": 400
           },
           "error": {
             "type": "integer",
+            "description": "Internal error code related to the failed operation.",
             "format": "int32",
             "example": 400
           },
           "errorCode": {
             "type": "string",
+            "description": "A code representing the type of error.",
             "example": "TRANSFER_VALIDATION_FAILED"
           },
           "message": {
             "type": "string",
+            "description": "A human-readable message describing the error.",
             "example": "The fund transfer request contains invalid or missing information."
           },
           "path": {
             "type": "string",
+            "description": "The request path that led to the error.",
             "example": "/v1/payments/domestic-transfer"
           },
           "traceId": {
             "type": "string",
+            "description": "A unique identifier for tracing the request through the system.",
             "example": "eea3ccb4-dfdd-4c0f-b850-805d3e271525"
           },
           "validationErrors": {
             "type": "array",
+            "description": "An array of validation error details for the request.",
             "example": [
               {
                 "field": "beneficiary.accountNumber",
@@ -327,51 +373,19 @@
               }
             ],
             "items": {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "type": "string",
-                  "example": "Z@liG@/H_<,JPT=W[_y9*rMY;"
-                },
-                "rejectedValue": {
-                  "type": "string",
-                  "example": "381789971655"
-                },
-                "message": {
-                  "type": "string",
-                  "example": "zu*?8J#'S_s6!#3M\"mQgDh}'DTRwrBUL\"L#C.}"
-                }
-              },
-              "example": "{\n  \"field\" : \"Z@liG@/H_<,JPT=W[_y9*rMY;\",\n  \"rejectedValue\" : \"381789971655\",\n  \"message\" : \"zu*?8J#'S_s6!#3M\\\"mQgDh}'DTRwrBUL\\\"L#C.}\"\n}"
+              "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-ValidationError"
             }
           },
           "request": {
-            "type": "object",
-            "properties": {
-              "transferReference": {
-                "type": "string",
-                "example": "KdfL73GfLE4K7nsM3"
-              },
-              "sourceAccount": {
-                "type": "string",
-                "example": "802776142526"
-              },
-              "beneficiaryId": {
-                "type": "string",
-                "example": "9wKsUteyI"
-              }
-            },
-            "example": {
-              "transferReference": "TRF-20260712-1001",
-              "sourceAccount": "123456789012",
-              "beneficiaryId": "BEN-10045"
-            }
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-TransferRequest"
           },
           "suggestion": {
             "type": "string",
+            "description": "A suggestion to help the user resolve the error.",
             "example": "Verify the beneficiary details, transfer amount, and currency before retrying the request."
           }
         },
+        "description": "Schema representing the structure of the error response returned for a domestic transfer operation when the requested resource is not found (404).",
         "example": {
           "timestamp": "2026-07-12T16:35:10Z",
           "status": 400,
@@ -405,41 +419,50 @@
           "suggestion": "Verify the beneficiary details, transfer amount, and currency before retrying the request."
         }
       },
-      "MICROSERVICE_DEV_POST_domestic-transfer-POST_domestic-transferResponse_400": {
+      "MICROSERVICE_DEV_createDomesticTransfer-CreateDomesticTransferResponse_400": {
+        "title": "Domestic Transfer Error Response",
         "type": "object",
         "properties": {
           "timestamp": {
             "type": "string",
+            "description": "The time at which the error occurred.",
             "example": "2026-07-12T16:35:10Z"
           },
           "status": {
             "type": "integer",
+            "description": "The HTTP status code associated with the error.",
             "format": "int32",
             "example": 400
           },
           "error": {
             "type": "integer",
+            "description": "A specific error identifier.",
             "format": "int32",
             "example": 400
           },
           "errorCode": {
             "type": "string",
+            "description": "A code representing the error type.",
             "example": "TRANSFER_VALIDATION_FAILED"
           },
           "message": {
             "type": "string",
+            "description": "A detailed message describing the error.",
             "example": "The fund transfer request contains invalid or missing information."
           },
           "path": {
             "type": "string",
+            "description": "The path of the request that caused the error.",
             "example": "/v1/payments/domestic-transfer"
           },
           "traceId": {
             "type": "string",
+            "description": "An identifier for tracing the error across systems.",
             "example": "926e5467-4543-4c5e-906b-fce4e46e215a"
           },
           "validationErrors": {
             "type": "array",
+            "description": "A list of validation errors that occurred during the request.",
             "example": [
               {
                 "field": "beneficiary.accountNumber",
@@ -458,51 +481,20 @@
               }
             ],
             "items": {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "type": "string",
-                  "example": "sf_D.c9N['BHzp/<UyNu/p</&"
-                },
-                "rejectedValue": {
-                  "type": "string",
-                  "example": "269975938621"
-                },
-                "message": {
-                  "type": "string",
-                  "example": "mL6GQXc4^q?ucTIo1PB.70ag%N}P\"^XuA2l}wL"
-                }
-              },
-              "example": "{\n  \"field\" : \"sf_D.c9N['BHzp/<UyNu/p</&\",\n  \"rejectedValue\" : \"269975938621\",\n  \"message\" : \"mL6GQXc4^q?ucTIo1PB.70ag%N}P\\\"^XuA2l}wL\"\n}"
+              "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-ValidationError"
             }
           },
           "request": {
-            "type": "object",
-            "properties": {
-              "transferReference": {
-                "type": "string",
-                "example": "dzeNUoUx06xEXDeZD"
-              },
-              "sourceAccount": {
-                "type": "string",
-                "example": "690472797635"
-              },
-              "beneficiaryId": {
-                "type": "string",
-                "example": "oYD0yqqHS"
-              }
-            },
-            "example": {
-              "transferReference": "TRF-20260712-1001",
-              "sourceAccount": "123456789012",
-              "beneficiaryId": "BEN-10045"
-            }
+            "description": "The original request that caused the error.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-DomesticTransferRequest"
           },
           "suggestion": {
             "type": "string",
+            "description": "Suggested actions to resolve the error.",
             "example": "Verify the beneficiary details, transfer amount, and currency before retrying the request."
           }
         },
+        "description": "Schema representing the error response for a domestic transfer operation.",
         "example": {
           "timestamp": "2026-07-12T16:35:10Z",
           "status": 400,
@@ -536,118 +528,52 @@
           "suggestion": "Verify the beneficiary details, transfer amount, and currency before retrying the request."
         }
       },
-      "MICROSERVICE_DEV_POST_domestic-transfer-POST_domestic-transferRequest": {
+      "MICROSERVICE_DEV_createDomesticTransfer-DomesticTransferRequest": {
+        "title": "Domestic Transfer Request",
+        "type": "object",
+        "properties": {
+          "transferReference": {
+            "type": "string",
+            "description": "A unique reference identifier for the transfer.",
+            "example": "TR123456"
+          },
+          "sourceAccount": {
+            "type": "string",
+            "description": "The account number from which the transfer is to be made.",
+            "example": "AC123456789"
+          },
+          "beneficiaryId": {
+            "type": "string",
+            "description": "The identifier of the beneficiary receiving the transfer.",
+            "example": "BEN987654321"
+          }
+        },
+        "description": "Schema representing a request for a domestic transfer operation."
+      },
+      "MICROSERVICE_DEV_createDomesticTransfer-CreateDomesticTransferRequest": {
+        "title": "Domestic Transfer Request",
         "type": "object",
         "properties": {
           "transferReference": {
             "type": "integer",
+            "description": "Unique reference number for the transfer.",
             "format": "int32",
             "example": 101
           },
           "sourceAccount": {
-            "type": "object",
-            "properties": {
-              "accountNumber": {
-                "type": "string",
-                "example": "745658378677"
-              },
-              "accountType": {
-                "type": "string",
-                "example": "pgqxele"
-              }
-            },
-            "example": {
-              "accountNumber": "123456789012",
-              "accountType": "SAVINGS"
-            }
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-SourceAccount"
           },
           "beneficiary": {
-            "type": "object",
-            "properties": {
-              "beneficiaryId": {
-                "type": "string",
-                "example": "dQWULop9O"
-              },
-              "name": {
-                "type": "string",
-                "example": "gryvzgrjazzrm"
-              },
-              "accountNumber": {
-                "type": "string",
-                "example": "421516385432"
-              },
-              "bankCode": {
-                "type": "string",
-                "example": "gw2hZKB"
-              },
-              "ifscCode": {
-                "type": "string",
-                "example": "8SoUIDFiEjg"
-              }
-            },
-            "example": {
-              "beneficiaryId": "BEN-10045",
-              "name": "Alice Johnson",
-              "accountNumber": "987654321098",
-              "bankCode": "BANK001",
-              "ifscCode": "BANK0001234"
-            }
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-Beneficiary"
           },
           "transfer": {
-            "type": "object",
-            "properties": {
-              "amount": {
-                "type": "string",
-                "example": "WKIFmx+"
-              },
-              "currency": {
-                "type": "string",
-                "example": "ezw"
-              },
-              "purpose": {
-                "type": "string",
-                "example": "ikwqvftqfvrmfhl"
-              },
-              "remarks": {
-                "type": "string",
-                "example": "mwafrpswwehikodmnobpyiy"
-              },
-              "transferMode": {
-                "type": "string",
-                "example": "cqub"
-              },
-              "schedule": {
-                "type": "string",
-                "example": "cfofroirn"
-              }
-            },
-            "example": {
-              "amount": "*******",
-              "currency": "USD",
-              "purpose": "Invoice Payment",
-              "remarks": "July invoice settlement",
-              "transferMode": "IMPS",
-              "schedule": "IMMEDIATE"
-            }
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-TransferDetails"
           },
           "notification": {
-            "type": "object",
-            "properties": {
-              "email": {
-                "type": "boolean",
-                "example": false
-              },
-              "sms": {
-                "type": "boolean",
-                "example": true
-              }
-            },
-            "example": {
-              "email": true,
-              "sms": true
-            }
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-NotificationPreferences"
           }
         },
+        "description": "Schema representing the request body for a domestic transfer operation.",
         "example": {
           "transferReference": 101,
           "sourceAccount": {
@@ -675,41 +601,153 @@
           }
         }
       },
-      "MICROSERVICE_DEV_POST_domestic-transfer-POST_domestic-transferResponse_200": {
+      "MICROSERVICE_DEV_createDomesticTransfer-SourceAccount": {
+        "title": "Source Account",
+        "type": "object",
+        "properties": {
+          "accountNumber": {
+            "type": "string",
+            "description": "The number of the source bank account.",
+            "example": "string"
+          },
+          "accountType": {
+            "type": "string",
+            "description": "The type of the source bank account.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing the source account details for the transfer."
+      },
+      "MICROSERVICE_DEV_createDomesticTransfer-Beneficiary": {
+        "title": "Beneficiary Details",
+        "type": "object",
+        "properties": {
+          "beneficiaryId": {
+            "type": "string",
+            "description": "Unique identifier for the beneficiary.",
+            "example": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the beneficiary.",
+            "example": "string"
+          },
+          "accountNumber": {
+            "type": "string",
+            "description": "The bank account number of the beneficiary.",
+            "example": "string"
+          },
+          "bankCode": {
+            "type": "string",
+            "description": "The bank code of the beneficiary's bank.",
+            "example": "string"
+          },
+          "ifscCode": {
+            "type": "string",
+            "description": "IFSC code for the beneficiary's bank.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing the details of the transfer beneficiary."
+      },
+      "MICROSERVICE_DEV_createDomesticTransfer-TransferDetails": {
+        "title": "Transfer Details",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "description": "Amount to be transferred.",
+            "example": "string"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency in which the amount is specified.",
+            "example": "string"
+          },
+          "purpose": {
+            "type": "string",
+            "description": "Purpose of the transfer.",
+            "example": "string"
+          },
+          "remarks": {
+            "type": "string",
+            "description": "Additional remarks related to the transfer.",
+            "example": "string"
+          },
+          "transferMode": {
+            "type": "string",
+            "description": "Mode of the transfer (e.g., immediate, scheduled).",
+            "example": "string"
+          },
+          "schedule": {
+            "type": "string",
+            "description": "Schedule information if the transfer is to be scheduled.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing the details of the transfer."
+      },
+      "MICROSERVICE_DEV_createDomesticTransfer-NotificationPreferences": {
+        "title": "Notification Preferences",
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "boolean",
+            "description": "Indicates whether email notifications are enabled.",
+            "example": false
+          },
+          "sms": {
+            "type": "boolean",
+            "description": "Indicates whether SMS notifications are enabled.",
+            "example": false
+          }
+        },
+        "description": "Schema representing the notification preferences for the transfer."
+      },
+      "MICROSERVICE_DEV_createDomesticTransfer-CreateDomesticTransferResponse_200": {
+        "title": "Domestic Transfer Response",
         "type": "object",
         "properties": {
           "timestamp": {
             "type": "string",
+            "description": "The timestamp indicating when the response was generated.",
             "example": "2026-07-12T16:35:10Z"
           },
           "status": {
             "type": "integer",
+            "description": "Status code of the response indicating success or failure.",
             "format": "int32",
             "example": 400
           },
           "error": {
             "type": "integer",
+            "description": "Error code if any error occurred during the operation; otherwise 0.",
             "format": "int32",
             "example": 400
           },
           "errorCode": {
             "type": "string",
+            "description": "A specific error code associated with the response, if applicable.",
             "example": "TRANSFER_VALIDATION_FAILED"
           },
           "message": {
             "type": "string",
+            "description": "Detailed message regarding the response.",
             "example": "The fund transfer request contains invalid or missing information."
           },
           "path": {
             "type": "string",
+            "description": "The path of the request that generated this response.",
             "example": "/v1/payments/domestic-transfer"
           },
           "traceId": {
             "type": "string",
+            "description": "A unique identifier for tracking the request through the system.",
             "example": "0ca26097-5bbc-4c3d-8ee6-5d14285daec9"
           },
           "validationErrors": {
             "type": "array",
+            "description": "List of validation errors that may have occurred during the transfer request.",
             "example": [
               {
                 "field": "beneficiary.accountNumber",
@@ -728,51 +766,19 @@
               }
             ],
             "items": {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "type": "string",
-                  "example": "IgCg8f,NuaO]E7A/5-6_%1OjG"
-                },
-                "rejectedValue": {
-                  "type": "string",
-                  "example": "724123865532"
-                },
-                "message": {
-                  "type": "string",
-                  "example": "MRgcDzz?wDQvK]mj8KD7a>IVVJ2dIGiGN2t_#D"
-                }
-              },
-              "example": "{\n  \"field\" : \"IgCg8f,NuaO]E7A/5-6_%1OjG\",\n  \"rejectedValue\" : \"724123865532\",\n  \"message\" : \"MRgcDzz?wDQvK]mj8KD7a>IVVJ2dIGiGN2t_#D\"\n}"
+              "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-ValidationError"
             }
           },
           "request": {
-            "type": "object",
-            "properties": {
-              "transferReference": {
-                "type": "string",
-                "example": "V1kv9FcT6xbRAeWeg"
-              },
-              "sourceAccount": {
-                "type": "string",
-                "example": "245141746288"
-              },
-              "beneficiaryId": {
-                "type": "string",
-                "example": "qnzsWKfkm"
-              }
-            },
-            "example": {
-              "transferReference": "TRF-20260712-1001",
-              "sourceAccount": "123456789012",
-              "beneficiaryId": "BEN-10045"
-            }
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_createDomesticTransfer-TransferRequest"
           },
           "suggestion": {
             "type": "string",
+            "description": "Suggestions for correcting the input if the operation failed.",
             "example": "Verify the beneficiary details, transfer amount, and currency before retrying the request."
           }
         },
+        "description": "Response object for a successful domestic transfer operation.",
         "example": {
           "timestamp": "2026-07-12T16:35:10Z",
           "status": 400,
@@ -867,6 +873,45 @@
           "example": "chunked"
         },
         "example": "chunked"
+      },
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "server_error",
+            "not_found",
+            "bad_request",
+            "success"
+          ]
+        }
+      },
+      "environment": {
+        "name": "environment",
+        "in": "header",
+        "description": "Environment used to select the workflow branch.",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "serviceCategory": {
+        "name": "serviceCategory",
+        "in": "header",
+        "description": "Service category used to select the workflow branch.",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
       }
     },
     "headers": {
