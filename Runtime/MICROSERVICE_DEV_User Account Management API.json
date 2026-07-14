@@ -2,13 +2,12 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_DEV_User Account Management API",
-    "description": "The User Account Management API enables organizations to seamlessly manage user accounts within their systems. This API facilitates the creation and configuration of user profiles, allowing for tailored access control and personalization. Common use cases include onboarding new users, adjusting permissions, and integrating with identity management solutions. It is designed for developers working on applications that require robust user account capabilities.",
+    "description": "The User Account Creation API facilitates the onboarding of new users by allowing businesses to create user accounts efficiently. This endpoint primarily focuses on the user resource, enabling the seamless registration of user details such as email, username, and password. Typical consumers of this API include web and mobile application developers looking to integrate user management functionalities into their platforms. By streamlining the account creation process, organizations can enhance user experience and accelerate user engagement.",
     "version": "1.0"
   },
   "servers": [
     {
       "url": "https://stage-data-gujl.apiwiz.io",
-      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
@@ -25,7 +24,7 @@
           "Account Management"
         ],
         "summary": "Create a new account",
-        "description": "This operation allows you to create a new account by providing the necessary details. Ensure that all required fields are filled out correctly to avoid errors during account creation.",
+        "description": "This endpoint allows users to create a new account by providing the necessary details. Ensure that all required fields are filled correctly to successfully create the account.",
         "operationId": "createAccount",
         "parameters": [
           {
@@ -54,7 +53,7 @@
           }
         ],
         "requestBody": {
-          "description": "Creates a new account by providing the required information in the request body. This includes details such as account type, owner information, and any other necessary attributes defined in the schema.",
+          "description": "This request body is used to create a new account. The data provided should conform to the specified JSON schema, which includes all necessary account details required for the operation.",
           "content": {
             "application/json": {
               "schema": {
@@ -64,8 +63,29 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "Request completed successfully, account created.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAccount-CreateAccountResponse_200"
+                }
+              }
+            }
+          },
           "500": {
-            "description": "An unexpected server error occurred while processing the request.",
+            "description": "Unexpected server error occurred while processing the request.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -86,7 +106,7 @@
             }
           },
           "404": {
-            "description": "The requested resource could not be found.",
+            "description": "Requested resource could not be found.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -105,27 +125,6 @@
                 }
               }
             }
-          },
-          "200": {
-            "description": "Request completed successfully, returning the requested data.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              },
-              "Location": {
-                "$ref": "#/components/headers/Location"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAccount-CreateAccountResponse_200"
-                }
-              }
-            }
           }
         },
         "callbacks": {},
@@ -138,8 +137,71 @@
   },
   "components": {
     "schemas": {
+      "MICROSERVICE_DEV_createAccount-CreateAccountResponse_200": {
+        "title": "Account Creation Response",
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Unique identifier for the account.",
+            "example": "ACC-100001"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "Unique identifier for the customer associated with the account.",
+            "example": "CUST-10001"
+          },
+          "accountType": {
+            "type": "string",
+            "description": "Type of the account (e.g., savings, checking).",
+            "example": "SAVINGS"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the account (e.g., active, inactive).",
+            "example": "ACTIVE"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency in which the account balance is maintained.",
+            "example": "USD"
+          },
+          "balance": {
+            "type": "string",
+            "description": "Current balance of the account.",
+            "example": "5000.00"
+          },
+          "branchCode": {
+            "type": "string",
+            "description": "Code of the branch where the account is held.",
+            "example": "BR-1001"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Timestamp when the account was created.",
+            "example": "2026-07-15T10:30:00Z"
+          },
+          "message": {
+            "type": "string",
+            "description": "Optional message related to the account creation.",
+            "example": "Bank account created successfully."
+          }
+        },
+        "description": "Schema representing the response returned upon successful account creation.",
+        "example": {
+          "accountId": "ACC-100001",
+          "customerId": "CUST-10001",
+          "accountType": "SAVINGS",
+          "status": "ACTIVE",
+          "currency": "USD",
+          "balance": "5000.00",
+          "branchCode": "BR-1001",
+          "createdAt": "2026-07-15T10:30:00Z",
+          "message": "Bank account created successfully."
+        }
+      },
       "MICROSERVICE_DEV_createAccount-CreateAccountResponse_500": {
-        "title": "Internal Server Error Response",
+        "title": "Error Response for Account Operations",
         "type": "object",
         "properties": {
           "timestamp": {
@@ -149,134 +211,88 @@
           },
           "status": {
             "type": "boolean",
-            "description": "Indicates if the request was successful or not.",
+            "description": "A boolean indicating whether the request was successful or not.",
             "example": false
           },
           "error": {
             "type": "string",
-            "description": "Short description of the error.",
+            "description": "A brief description of the error.",
             "example": "INTERNAL_SERVER_ERROR"
           },
           "message": {
             "type": "string",
-            "description": "Detailed message providing additional context about the error.",
+            "description": "A detailed message explaining the error.",
             "example": "Unable to process bank account creation request due to internal service failure."
           },
           "path": {
             "type": "string",
-            "description": "The path of the API endpoint that was accessed when the error occurred.",
+            "description": "The path of the request that caused the error.",
             "example": "/v1/banking/accounts"
           },
           "trace": {
             "type": "string",
-            "description": "Stack trace or additional detailed information related to the error.",
-            "example": "a7904f9a-497d-4fd3-b9b2-be2750fcd4c2"
+            "description": "A trace of the error that can be useful for debugging.",
+            "example": "d0120c0e-f10b-4a5c-98fb-fab466144a32"
           },
           "details": {
             "$ref": "#/components/schemas/MICROSERVICE_DEV_createAccount-ErrorDetails"
           },
           "suggestion": {
             "type": "string",
-            "description": "A suggestion for the user on what to do next.",
+            "description": "A suggestion for the client on how to resolve the issue.",
             "example": "Please retry after some time or contact support if the issue persists."
           }
         },
-        "description": "This schema defines the structure of the response returned when an internal server error occurs during account operations.",
+        "description": "This schema defines the structure of a 500 Internal Server Error response for account-related operations.",
         "example": {
           "timestamp": "2026-07-13T12:20:39Z",
           "status": false,
           "error": "INTERNAL_SERVER_ERROR",
           "message": "Unable to process bank account creation request due to internal service failure.",
           "path": "/v1/banking/accounts",
-          "trace": "a7904f9a-497d-4fd3-b9b2-be2750fcd4c2",
+          "trace": "d0120c0e-f10b-4a5c-98fb-fab466144a32",
           "details": {
             "service": "account-service",
             "errorCode": "BANK_DB_TIMEOUT",
-            "message": "Database connection timeout while creating account details."
+            "message": "Database connection timeout while creating account details.",
+            "database": "account_registry",
+            "retryable": true
           },
           "suggestion": "Please retry after some time or contact support if the issue persists."
         }
       },
       "MICROSERVICE_DEV_createAccount-ErrorDetails": {
-        "title": "ErrorDetails",
+        "title": "Error Details",
         "type": "object",
         "properties": {
           "customerId": {
             "type": "string",
-            "description": "The identifier for the customer associated with the error.",
-            "example": "CUST123456"
+            "description": "The ID of the customer related to the account error.",
+            "example": "cust_12345"
+          },
+          "accountType": {
+            "type": "string",
+            "description": "The type of account that generated the error.",
+            "example": "savings"
+          },
+          "branchCode": {
+            "type": "integer",
+            "description": "The branch code associated with the account.",
+            "format": "int32",
+            "example": 101
           },
           "errorCode": {
             "type": "string",
-            "description": "A specific error code categorizing the type of error.",
-            "example": "E404"
-          },
-          "message": {
-            "type": "string",
-            "description": "A message providing contextual details about the error.",
-            "example": "Customer not found."
-          }
-        },
-        "description": "Schema representing detailed error information."
-      },
-      "MICROSERVICE_DEV_createAccount-CreateAccountResponse_404": {
-        "title": "ErrorResponse",
-        "type": "object",
-        "properties": {
-          "timestamp": {
-            "type": "string",
-            "description": "A timestamp indicating when the error occurred.",
-            "example": "2026-07-13T12:20:39Z"
-          },
-          "status": {
-            "type": "boolean",
-            "description": "The status of the request, indicating if it was successful or not.",
-            "example": false
-          },
-          "error": {
-            "type": "string",
-            "description": "A brief error message indicating the type of error.",
+            "description": "A specific code representing the type of error encountered.",
             "example": "ACCOUNT_NOT_FOUND"
           },
           "message": {
             "type": "string",
-            "description": "Detailed error message providing more context.",
-            "example": "Bank account details not found for the provided customer."
-          },
-          "path": {
-            "type": "string",
-            "description": "The path of the request that resulted in the error.",
-            "example": "/v1/banking/accounts"
-          },
-          "trace": {
-            "type": "string",
-            "description": "A stack trace for debugging purposes.",
-            "example": "61a208c0-3c4c-45be-bdbb-042da7626112"
-          },
-          "details": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createAccount-ErrorDetails"
-          },
-          "suggestion": {
-            "type": "string",
-            "description": "A helpful suggestion for resolving the error.",
-            "example": "Please verify the customer ID and try again."
+            "description": "A specific message detailing the nature of the error.",
+            "example": "The account was not found in the records."
           }
         },
-        "description": "Schema representing the error response for a 404 Not Found error in the application.",
-        "example": {
-          "timestamp": "2026-07-13T12:20:39Z",
-          "status": false,
-          "error": "ACCOUNT_NOT_FOUND",
-          "message": "Bank account details not found for the provided customer.",
-          "path": "/v1/banking/accounts",
-          "trace": "61a208c0-3c4c-45be-bdbb-042da7626112",
-          "details": {
-            "customerId": "CUST-99999",
-            "errorCode": "ACCOUNT_MISSING",
-            "message": "No active account exists for the requested customer."
-          },
-          "suggestion": "Please verify the customer ID and try again."
-        }
+        "description": "This schema provides additional context about the error, including specific details related to the customer and account that generated the error."
       },
       "MICROSERVICE_DEV_createAccount-CreateAccountRequest": {
         "title": "Account Creation Request",
@@ -284,84 +300,113 @@
         "properties": {
           "customerId": {
             "type": "string",
-            "description": "The unique identifier for the customer who owns the account.",
-            "example": "CUST-10001"
+            "description": "Unique identifier for the customer.",
+            "example": "CUST-99999"
           },
           "accountType": {
             "type": "string",
-            "description": "The type of account being created (e.g., savings, checking).",
+            "description": "Type of the account to be created (e.g., savings, checking).",
             "example": "SAVINGS"
           },
           "currency": {
             "type": "string",
-            "description": "The currency in which the account will be denominated (e.g., USD, EUR).",
-            "example": "USD"
+            "description": "Currency for the account (e.g., USD, EUR).",
+            "example": "EUR"
           },
           "initialDeposit": {
             "type": "integer",
-            "description": "The amount of money that will be deposited into the account initially.",
+            "description": "Initial deposit amount to open the account.",
             "format": "int32",
             "example": 5000
+          },
+          "branchCode": {
+            "type": "integer",
+            "description": "Code for the branch where the account will be opened.",
+            "format": "int32",
+            "example": 2001
+          },
+          "accountHolder": {
+            "type": "string",
+            "description": "Name of the account holder.",
+            "example": "John Smith"
+          },
+          "notificationEnabled": {
+            "type": "boolean",
+            "description": "Flag to indicate if notifications are enabled for the account.",
+            "example": false
           }
         },
-        "description": "This schema represents the request body required for creating a new account.",
+        "description": "Schema for creating a new account, including customer details and account preferences.",
         "example": {
-          "customerId": "CUST-10001",
+          "customerId": "CUST-99999",
           "accountType": "SAVINGS",
-          "currency": "USD",
-          "initialDeposit": 5000
+          "currency": "EUR",
+          "initialDeposit": 5000,
+          "branchCode": 2001,
+          "accountHolder": "John Smith",
+          "notificationEnabled": false
         }
       },
-      "MICROSERVICE_DEV_createAccount-CreateAccountResponse_200": {
-        "title": "AccountCreationResponse",
+      "MICROSERVICE_DEV_createAccount-CreateAccountResponse_404": {
+        "title": "Error Response for Account Operations",
         "type": "object",
         "properties": {
-          "accountId": {
+          "timestamp": {
             "type": "string",
-            "description": "The unique identifier of the created account.",
-            "example": "ACC-100001"
-          },
-          "customerId": {
-            "type": "string",
-            "description": "The unique identifier of the customer associated with the account.",
-            "example": "CUST-10001"
-          },
-          "accountType": {
-            "type": "string",
-            "description": "The type of the account (e.g., savings, checking).",
-            "example": "SAVINGS"
+            "description": "The timestamp when the error occurred.",
+            "example": "2026-07-13T12:20:39Z"
           },
           "status": {
-            "type": "string",
-            "description": "The current status of the account (e.g., active, inactive).",
-            "example": "ACTIVE"
+            "type": "boolean",
+            "description": "The success status of the operation, where false indicates failure.",
+            "example": false
           },
-          "currency": {
+          "error": {
             "type": "string",
-            "description": "The currency in which the account is denominated.",
-            "example": "USD"
-          },
-          "balance": {
-            "type": "integer",
-            "description": "The current balance of the account.",
-            "format": "int32",
-            "example": 5000
+            "description": "A brief description of the error that occurred.",
+            "example": "ACCOUNT_NOT_FOUND"
           },
           "message": {
             "type": "string",
-            "description": "A message providing additional information about the account creation.",
-            "example": "Bank account created successfully."
+            "description": "A detailed message about the error.",
+            "example": "Bank account details not found for the provided customer."
+          },
+          "path": {
+            "type": "string",
+            "description": "The path of the API that was called.",
+            "example": "/v1/banking/accounts"
+          },
+          "trace": {
+            "type": "string",
+            "description": "The stack trace of the error for debugging purposes.",
+            "example": "d0120c0e-f10b-4a5c-98fb-fab466144a32"
+          },
+          "details": {
+            "description": "Additional details regarding the error, including customer and account information.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_createAccount-ErrorDetails"
+          },
+          "suggestion": {
+            "type": "string",
+            "description": "A suggestion for the user on what to do next.",
+            "example": "Please verify customer details and try again."
           }
         },
-        "description": "Response schema for the creation of a new account.",
+        "description": "This schema defines the structure of the error response returned when a specific account operation fails due to a 404 error. It includes a timestamp, status, error message, path, trace, details about the customer and account, and any suggestions for resolution.",
         "example": {
-          "accountId": "ACC-100001",
-          "customerId": "CUST-10001",
-          "accountType": "SAVINGS",
-          "status": "ACTIVE",
-          "currency": "USD",
-          "balance": 5000,
-          "message": "Bank account created successfully."
+          "timestamp": "2026-07-13T12:20:39Z",
+          "status": false,
+          "error": "ACCOUNT_NOT_FOUND",
+          "message": "Bank account details not found for the provided customer.",
+          "path": "/v1/banking/accounts",
+          "trace": "d0120c0e-f10b-4a5c-98fb-fab466144a32",
+          "details": {
+            "customerId": "CUST-99999",
+            "accountType": "SAVINGS",
+            "branchCode": 2001,
+            "errorCode": "ACCOUNT_MISSING",
+            "message": "No active account exists for the requested customer."
+          },
+          "suggestion": "Please verify customer details and try again."
         }
       }
     },
@@ -436,9 +481,9 @@
         "schema": {
           "type": "string",
           "enum": [
+            "success",
             "server_error",
-            "not_found",
-            "success"
+            "not_found"
           ]
         }
       },
@@ -480,9 +525,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "/v1/banking/accounts/ACC-100001"
+          "example": "/v1/banking/accounts/CUST-99999"
         },
-        "example": "/v1/banking/accounts/ACC-100001"
+        "example": "/v1/banking/accounts/CUST-99999"
       },
       "content-type": {
         "style": "simple",
