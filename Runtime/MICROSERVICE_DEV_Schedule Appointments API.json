@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_DEV_Schedule Appointments API",
-    "description": "The Appointment Booking API enables users to schedule appointments efficiently within the system. This API allows applications to create and manage appointments, ensuring that resources are allocated optimally. Typical consumers include service platforms, booking systems, and workflow management tools that require seamless integration of scheduling capabilities. Utilizing this API enhances user experience by allowing automated appointment handling and management.",
+    "description": "The Schedule Appointments API enables businesses to efficiently manage and book appointments for their services. This endpoint facilitates the creation of new appointment records, streamlining the scheduling process for both service providers and clients. Typical users include service-based organizations such as clinics, salons, and consultancies that require an effective booking system to enhance customer experience and optimize resource allocation.",
     "version": "1.0"
   },
   "servers": [
@@ -21,15 +21,12 @@
     "/v3/patients/appointments": {
       "post": {
         "tags": [
-          "Appointments"
+          "Appointment Management"
         ],
         "summary": "Create a new appointment",
-        "description": "This endpoint allows users to create a new appointment by providing the necessary details. Ensure all required fields are populated for successful creation.",
+        "description": "This endpoint allows users to create a new appointment by submitting the relevant details. After the appointment is created, a confirmation response will be provided, which includes the appointment ID and other pertinent information.",
         "operationId": "createAppointment",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/name"
-          },
           {
             "$ref": "#/components/parameters/appId"
           },
@@ -37,10 +34,70 @@
             "$ref": "#/components/parameters/connection"
           },
           {
+            "$ref": "#/components/parameters/transfer-encoding"
+          },
+          {
+            "$ref": "#/components/parameters/name"
+          },
+          {
+            "$ref": "#/components/parameters/appid"
+          },
+          {
+            "$ref": "#/components/parameters/referer"
+          },
+          {
+            "$ref": "#/components/parameters/priority"
+          },
+          {
+            "$ref": "#/components/parameters/x-tenant"
+          },
+          {
+            "$ref": "#/components/parameters/sec-ch-ua"
+          },
+          {
+            "$ref": "#/components/parameters/gatewaytype"
+          },
+          {
             "$ref": "#/components/parameters/content-type"
           },
           {
-            "$ref": "#/components/parameters/transfer-encoding"
+            "$ref": "#/components/parameters/x-request-id"
+          },
+          {
+            "$ref": "#/components/parameters/sec-fetch-dest"
+          },
+          {
+            "$ref": "#/components/parameters/sec-fetch-mode"
+          },
+          {
+            "$ref": "#/components/parameters/sec-fetch-site"
+          },
+          {
+            "$ref": "#/components/parameters/accept-language"
+          },
+          {
+            "$ref": "#/components/parameters/requesttimestamp"
+          },
+          {
+            "$ref": "#/components/parameters/sec-ch-ua-mobile"
+          },
+          {
+            "$ref": "#/components/parameters/responsetimestamp"
+          },
+          {
+            "$ref": "#/components/parameters/x-forwarded-proto"
+          },
+          {
+            "$ref": "#/components/parameters/sec-ch-ua-platform"
+          },
+          {
+            "$ref": "#/components/parameters/x-application-type"
+          },
+          {
+            "$ref": "#/components/parameters/x-envoy-attempt-count"
+          },
+          {
+            "$ref": "#/components/parameters/x-envoy-external-address"
           },
           {
             "$ref": "#/components/parameters/x-mock-response"
@@ -53,18 +110,18 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to create a new appointment. Please provide all required fields in the JSON format as defined in the schema. Ensure that the data complies with the expected types and formats to avoid validation errors.",
+          "description": "This request body is used to create a new appointment. It requires the necessary appointment details to be provided in JSON format.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentRequest"
+                "$ref": "#/components/schemas/WORKFLOW_DEV_createAppointment-CreateAppointmentRequest"
               }
             }
           }
         },
         "responses": {
           "400": {
-            "description": "The request has invalid parameters or format.",
+            "description": "Invalid request parameters. Please check your input.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -79,13 +136,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_400"
+                  "$ref": "#/components/schemas/WORKFLOW_DEV_createAppointment-CreateAppointmentResponse_400"
                 }
               }
             }
           },
           "200": {
-            "description": "The appointment has been successfully created.",
+            "description": "Request completed successfully. Data returned reflects the created resource.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -100,7 +157,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_200"
+                  "$ref": "#/components/schemas/WORKFLOW_DEV_createAppointment-CreateAppointmentResponse_200"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found. Please verify the endpoint and parameters.",
+            "headers": {
+              "x-log-id": {
+                "$ref": "#/components/headers/x-log-id"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WORKFLOW_DEV_createAppointment-CreateAppointmentResponse_404"
                 }
               }
             }
@@ -116,18 +188,18 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_400": {
+      "WORKFLOW_DEV_createAppointment-CreateAppointmentResponse_400": {
         "title": "Error Response for Appointment Operations",
         "type": "object",
         "properties": {
           "timestamp": {
             "type": "string",
-            "description": "The timestamp when the error occurred.",
+            "description": "The timestamp of when the error occurred.",
             "example": "2026-07-13T12:20:39Z"
           },
           "status": {
             "type": "boolean",
-            "description": "Indicates whether the operation was successful or not.",
+            "description": "Indicates whether the request was successful.",
             "example": true
           },
           "error": {
@@ -137,29 +209,29 @@
           },
           "message": {
             "type": "string",
-            "description": "A detailed message explaining the error.",
+            "description": "A detailed message containing information about the error.",
             "example": "Unable to process appointment request due to internal service failure."
           },
           "path": {
             "type": "string",
-            "description": "The path of the API endpoint that triggered the error.",
+            "description": "The path of the request that resulted in the error.",
             "example": "/v1/patients/appointments"
           },
           "trace": {
             "type": "string",
-            "description": "A trace or ID for tracking the error in the system.",
+            "description": "A trace identifier for tracking errors.",
             "example": "5966dbb7-25ba-473e-b709-a0baf4e066b8"
           },
           "details": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-ErrorDetails"
+            "$ref": "#/components/schemas/WORKFLOW_DEV_createAppointment-ErrorDetails"
           },
           "suggestion": {
             "type": "string",
-            "description": "A suggestion for how to resolve the error.",
+            "description": "A suggestion or hint on how to rectify the error.",
             "example": "Please retry after some time or contact support if the issue persists."
           }
         },
-        "description": "This schema represents the structure of an error response for appointment-related operations when a 400 Bad Request response is returned.",
+        "description": "This schema represents the error response returned when the request for appointment operations fails with a 400 status code.",
         "example": {
           "timestamp": "2026-07-13T12:20:39Z",
           "status": true,
@@ -175,79 +247,38 @@
           "suggestion": "Please retry after some time or contact support if the issue persists."
         }
       },
-      "MICROSERVICE_DEV_createAppointment-ErrorDetails": {
-        "title": "Error Details",
+      "WORKFLOW_DEV_createAppointment-ErrorDetails": {
         "type": "object",
         "properties": {
           "service": {
             "type": "string",
-            "description": "Name of the service that generated the error.",
+            "description": "The name of the service that generated the error.",
             "example": "AppointmentService"
           },
           "errorCode": {
             "type": "string",
-            "description": "A code representing the specific error.",
-            "example": "NONE"
+            "description": "A code representing the error type.",
+            "example": "200"
           },
           "message": {
             "type": "string",
-            "description": "A message describing the error.",
-            "example": "No error occurred."
+            "description": "A descriptive message about the error.",
+            "example": "No issues."
           }
         },
-        "description": "Contains details about an error that may have occurred during the operation."
+        "description": "Detailed information about any errors that occurred during the operation."
       },
-      "MICROSERVICE_DEV_createAppointment-CreateAppointmentRequest": {
-        "title": "Create Appointment Request",
-        "type": "object",
-        "properties": {
-          "patientId": {
-            "type": "string",
-            "description": "The unique identifier of the patient.",
-            "example": "PAT-10001"
-          },
-          "doctorId": {
-            "type": "string",
-            "description": "The unique identifier of the doctor.",
-            "example": "DOC-50001"
-          },
-          "appointmentDate": {
-            "type": "string",
-            "description": "The date of the appointment in YYYY-MM-DD format.",
-            "example": "2026-07-15"
-          },
-          "appointmentTime": {
-            "type": "string",
-            "description": "The time of the appointment in HH:mm format.",
-            "example": "10:30:00"
-          },
-          "department": {
-            "type": "string",
-            "description": "The department where the appointment will take place.",
-            "example": "CARDIOLOGY"
-          }
-        },
-        "description": "Schema for creating a new appointment for a patient with a doctor.",
-        "example": {
-          "patientId": "PAT-10001",
-          "doctorId": "DOC-50001",
-          "appointmentDate": "2026-07-15",
-          "appointmentTime": "10:30:00",
-          "department": "CARDIOLOGY"
-        }
-      },
-      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_200": {
-        "title": "Appointment Operation Response",
+      "WORKFLOW_DEV_createAppointment-CreateAppointmentResponse_200": {
         "type": "object",
         "properties": {
           "timestamp": {
             "type": "string",
-            "description": "The time at which the response was generated.",
+            "description": "The timestamp indicating when the response was generated.",
             "example": "2026-07-13T12:20:39Z"
           },
           "status": {
             "type": "boolean",
-            "description": "Indicates whether the operation was successful.",
+            "description": "The status of the operation indicating success or failure.",
             "example": true
           },
           "error": {
@@ -257,26 +288,25 @@
           },
           "message": {
             "type": "string",
-            "description": "A message providing additional information about the operation status.",
+            "description": "A descriptive message regarding the operation.",
             "example": "Unable to process appointment request due to internal service failure."
           },
           "path": {
             "type": "string",
-            "description": "The request path that triggered this response.",
+            "description": "The path of the endpoint that was called.",
             "example": "/v1/patients/appointments"
           },
           "trace": {
             "type": "string",
-            "description": "A trace identifier for debugging purposes.",
+            "description": "A trace identifier useful for debugging.",
             "example": "ae5c36ae-9703-42fd-a69a-6ccb19bb7f6a"
           },
           "details": {
-            "description": "Details about any errors that may have occurred during the operation.",
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-ErrorDetails"
+            "$ref": "#/components/schemas/WORKFLOW_DEV_createAppointment-ErrorDetails"
           },
           "suggestion": {
             "type": "string",
-            "description": "Recommendations for the user based on the operation result.",
+            "description": "Suggestions for next steps or actions.",
             "example": "Please retry after some time or contact support if the issue persists."
           }
         },
@@ -295,21 +325,63 @@
           },
           "suggestion": "Please retry after some time or contact support if the issue persists."
         }
+      },
+      "WORKFLOW_DEV_createAppointment-CreateAppointmentRequest": {
+        "title": "Appointment Request",
+        "type": "object",
+        "properties": {
+          "patientId": {
+            "type": "string",
+            "description": "The unique identifier of the patient.",
+            "example": "PAT-10001"
+          },
+          "doctorId": {
+            "type": "string",
+            "description": "The unique identifier of the doctor assigned to the appointment.",
+            "example": "DOC-50001"
+          },
+          "appointmentDate": {
+            "type": "string",
+            "description": "The date of the appointment in YYYY-MM-DD format.",
+            "example": "2026-07-15"
+          },
+          "appointmentTime": {
+            "type": "string",
+            "description": "The time of the appointment in HH:MM format.",
+            "example": "10:30:00"
+          },
+          "department": {
+            "type": "string",
+            "description": "The department where the appointment will take place.",
+            "example": "CARDIOLOGY"
+          }
+        },
+        "description": "Schema representing the request body for creating a new appointment.",
+        "example": {
+          "patientId": "PAT-10001",
+          "doctorId": "DOC-50001",
+          "appointmentDate": "2026-07-15",
+          "appointmentTime": "10:30:00",
+          "department": "CARDIOLOGY"
+        }
+      },
+      "WORKFLOW_DEV_createAppointment-CreateAppointmentResponse_404": {
+        "title": "Appointment Not Found Response",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "A descriptive message indicating that the requested appointment was not found.",
+            "example": "Service category not found"
+          }
+        },
+        "description": "This schema represents the structure of the response received when an appointment could not be found (HTTP 404).",
+        "example": {
+          "message": "Service category not found"
+        }
       }
     },
     "parameters": {
-      "name": {
-        "name": "name",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "akash"
-        },
-        "example": "akash"
-      },
       "appId": {
         "name": "appId",
         "in": "header",
@@ -334,18 +406,6 @@
         },
         "example": "keep-alive"
       },
-      "content-type": {
-        "name": "content-type",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "application/json"
-        },
-        "example": "application/json"
-      },
       "transfer-encoding": {
         "name": "transfer-encoding",
         "in": "header",
@@ -358,6 +418,258 @@
         },
         "example": "chunked"
       },
+      "name": {
+        "name": "name",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "akash"
+        },
+        "example": "akash"
+      },
+      "appid": {
+        "name": "appid",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "cacadas"
+        },
+        "example": "cacadas"
+      },
+      "referer": {
+        "name": "referer",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "http://localhost:9000/"
+        },
+        "example": "http://localhost:9000/"
+      },
+      "priority": {
+        "name": "priority",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "u=1, i"
+        },
+        "example": "u=1, i"
+      },
+      "x-tenant": {
+        "name": "x-tenant",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "stage-data"
+        },
+        "example": "stage-data"
+      },
+      "sec-ch-ua": {
+        "name": "sec-ch-ua",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "\"Google Chrome\";v=\"149\", \"Chromium\";v=\"149\", \"Not)A;Brand\";v=\"24\""
+        },
+        "example": "\"Google Chrome\";v=\"149\", \"Chromium\";v=\"149\", \"Not)A;Brand\";v=\"24\""
+      },
+      "gatewaytype": {
+        "name": "gatewaytype",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "API_SANDBOX"
+        },
+        "example": "API_SANDBOX"
+      },
+      "content-type": {
+        "name": "content-type",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      },
+      "x-request-id": {
+        "name": "x-request-id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "e009f828-be83-4dbd-91af-9ff4ce1f2a29"
+        },
+        "example": "e009f828-be83-4dbd-91af-9ff4ce1f2a29"
+      },
+      "sec-fetch-dest": {
+        "name": "sec-fetch-dest",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "empty"
+        },
+        "example": "empty"
+      },
+      "sec-fetch-mode": {
+        "name": "sec-fetch-mode",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "cors"
+        },
+        "example": "cors"
+      },
+      "sec-fetch-site": {
+        "name": "sec-fetch-site",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "cross-site"
+        },
+        "example": "cross-site"
+      },
+      "accept-language": {
+        "name": "accept-language",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "en-GB,en-US;q=0.9,en;q=0.8"
+        },
+        "example": "en-GB,en-US;q=0.9,en;q=0.8"
+      },
+      "requesttimestamp": {
+        "name": "requesttimestamp",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "1784010792268"
+        },
+        "example": "1784010792268"
+      },
+      "sec-ch-ua-mobile": {
+        "name": "sec-ch-ua-mobile",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "?0"
+        },
+        "example": "?0"
+      },
+      "responsetimestamp": {
+        "name": "responsetimestamp",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "1784010792314"
+        },
+        "example": "1784010792314"
+      },
+      "x-forwarded-proto": {
+        "name": "x-forwarded-proto",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "https"
+        },
+        "example": "https"
+      },
+      "sec-ch-ua-platform": {
+        "name": "sec-ch-ua-platform",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "\"macOS\""
+        },
+        "example": "\"macOS\""
+      },
+      "x-application-type": {
+        "name": "x-application-type",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "apisandbox"
+        },
+        "example": "apisandbox"
+      },
+      "x-envoy-attempt-count": {
+        "name": "x-envoy-attempt-count",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "1"
+        },
+        "example": "1"
+      },
+      "x-envoy-external-address": {
+        "name": "x-envoy-external-address",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "34.217.218.221"
+        },
+        "example": "34.217.218.221"
+      },
       "x-mock-response": {
         "name": "x-mock-response",
         "in": "header",
@@ -369,7 +681,8 @@
           "type": "string",
           "enum": [
             "bad_request",
-            "success"
+            "success",
+            "not_found"
           ]
         }
       },
@@ -423,6 +736,16 @@
           "example": "application/json"
         },
         "example": "application/json"
+      },
+      "x-log-id": {
+        "description": "A unique identifier for logging purposes, used to trace the request in the system. This identifier can be useful for debugging and tracking the flow of operations.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "6a55d8281dd62638892342e4"
+        },
+        "example": "6a55d8281dd62638892342e4"
       }
     }
   }
