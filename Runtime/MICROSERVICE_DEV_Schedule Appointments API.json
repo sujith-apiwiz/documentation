@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_DEV_Schedule Appointments API",
-    "description": "The Schedule Appointments API enables users to efficiently manage appointment bookings within the application. This endpoint allows for the creation of new appointments by capturing necessary details such as date, time, and participant information. Typical consumers of this API include scheduling applications and calendar management systems aiming to streamline the appointment setting process. By leveraging this API, developers can enhance user experience for clients needing reliable scheduling solutions.",
+    "description": "The Schedule Appointments API provides a seamless way for users to book and manage appointments within the system. This API allows clients to create new appointment records, updating relevant parties on scheduled sessions. It is particularly useful for businesses in service industries, such as healthcare, beauty, and professional services, where appointment scheduling is critical. Typical consumers include appointment booking applications and user management systems that enhance operational efficiency.",
     "version": "1.0"
   },
   "servers": [
@@ -21,10 +21,10 @@
     "/v3/patients/appointments": {
       "post": {
         "tags": [
-          "Appointment Management"
+          "Appointments"
         ],
-        "summary": "Create a new appointment",
-        "description": "This endpoint allows users to create a new appointment by providing the necessary details. Ensure that all required fields are filled out to successfully create the appointment.",
+        "summary": "Create a new appointment.",
+        "description": "This endpoint allows users to create a new appointment by providing the necessary details. Ensure all required fields are filled to successfully create an appointment.",
         "operationId": "createAppointment",
         "parameters": [
           {
@@ -56,7 +56,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to create a new appointment. It should include all necessary information to schedule the appointment, such as the date, time, client details, and any specific requirements. Ensure that the data adheres to the schema defined in the components section.",
+          "description": "Creates a new appointment with the provided details. Ensure that all required fields are filled out correctly to avoid validation errors.",
           "content": {
             "application/json": {
               "schema": {
@@ -67,7 +67,7 @@
         },
         "responses": {
           "400": {
-            "description": "The request has invalid parameters.",
+            "description": "The request parameters are invalid or missing required fields.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -88,7 +88,7 @@
             }
           },
           "200": {
-            "description": "The request was successfully processed.",
+            "description": "The appointment was successfully created, and the response contains the resource details.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -111,29 +111,8 @@
               }
             }
           },
-          "404": {
-            "description": "The requested resource could not be found.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              },
-              "Location": {
-                "$ref": "#/components/headers/Location"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_404"
-                }
-              }
-            }
-          },
           "502": {
-            "description": "The server received an invalid response from the upstream server.",
+            "description": "The server, while acting as a gateway, received an invalid response from the upstream server.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -154,7 +133,7 @@
             }
           },
           "500": {
-            "description": "An unexpected error occurred on the server.",
+            "description": "An unexpected error occurred on the server while processing the request.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -170,6 +149,27 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_500"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The specified resource could not be found.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_404"
                 }
               }
             }
@@ -190,44 +190,45 @@
         "properties": {
           "timestamp": {
             "type": "string",
-            "description": "The time when the error occurred.",
+            "description": "The timestamp when the error occurred.",
             "example": "2026-07-16T11:20:39Z"
           },
           "status": {
             "type": "boolean",
-            "description": "Indicates whether the request was successful.",
+            "description": "The status of the request, indicating failure.",
             "example": false
           },
           "error": {
             "type": "string",
-            "description": "The error type.",
+            "description": "A brief description of the error.",
             "example": "INTERNAL_SERVER_ERROR"
           },
           "message": {
             "type": "string",
-            "description": "A human-readable message providing more details about the error.",
+            "description": "A more detailed error message.",
             "example": "Unable to process bank account creation request due to internal service failure."
           },
           "path": {
             "type": "string",
-            "description": "The endpoint path that was being accessed.",
+            "description": "The path to the resource that caused the error.",
             "example": "/v2/banking/accounts"
           },
           "trace": {
             "type": "string",
-            "description": "A string tracing the error through the application.",
+            "description": "A trace of the error for debugging purposes.",
             "example": "1ee21c7c-a6af-486a-a333-a6c7df8ad429"
           },
           "details": {
+            "description": "Additional details related to the error.",
             "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-ErrorDetails"
           },
           "suggestion": {
             "type": "string",
-            "description": "Suggestions for resolving the error.",
+            "description": "Suggestions for the user to resolve the error.",
             "example": "Please retry after some time or contact support if the issue persists."
           }
         },
-        "description": "The response schema for a 400 error in the appointment operations POST request.",
+        "description": "Schema representing the response for a 400 Bad Request error during the appointment operations.",
         "example": {
           "timestamp": "2026-07-16T11:20:39Z",
           "status": false,
@@ -246,29 +247,29 @@
         }
       },
       "MICROSERVICE_DEV_createAppointment-ErrorDetails": {
-        "title": "ErrorDetails",
+        "title": "Error Details",
         "type": "object",
         "properties": {
           "customer": {
             "type": "boolean",
-            "description": "Indicates whether the error is related to a customer issue.",
+            "description": "Indicates if the error is related to customer data.",
             "example": false
           },
           "errorCode": {
             "type": "string",
-            "description": "Specific error code representing the error type.",
-            "example": "500"
+            "description": "A specific error code representing the error.",
+            "example": "APPT_NOT_FOUND"
           },
           "message": {
             "type": "string",
-            "description": "A message providing further information about the error.",
-            "example": "The server encountered an unexpected condition."
+            "description": "A message providing further details about the error.",
+            "example": "The appointment with the specified ID does not exist."
           }
         },
-        "description": "Schema representing additional details of the error encountered."
+        "description": "Contains additional information about the error that occurred."
       },
       "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_200": {
-        "title": "AppointmentResponse",
+        "title": "Appointment Response",
         "type": "object",
         "properties": {
           "policyId": {
@@ -278,48 +279,48 @@
           },
           "customerId": {
             "type": "string",
-            "description": "The unique identifier for the customer related to the appointment.",
+            "description": "The unique identifier for the customer associated with the policy.",
             "example": "INS-10001"
           },
           "policyType": {
             "type": "string",
-            "description": "The type of policy (e.g., health, auto, etc.) associated with the appointment.",
+            "description": "The type of the policy (e.g., health, auto, home).",
             "example": "HEALTH"
           },
           "coverageAmount": {
             "type": "integer",
-            "description": "The total coverage amount provided by the policy.",
+            "description": "The total amount of coverage provided by the policy.",
             "format": "int32",
             "example": 500000
           },
           "premiumAmount": {
             "type": "integer",
-            "description": "The premium amount that needs to be paid for the policy.",
+            "description": "The amount of premium to be paid for the policy.",
             "format": "int32",
             "example": 12000
           },
           "status": {
             "type": "string",
-            "description": "The current status of the appointment.",
+            "description": "The current status of the appointment (e.g., active, cancelled).",
             "example": "ACTIVE"
           },
           "startDate": {
             "type": "string",
-            "description": "The start date of the policy validity.",
+            "description": "The start date of the coverage under the policy.",
             "example": "2026-07-16"
           },
           "endDate": {
             "type": "string",
-            "description": "The end date of the policy validity.",
+            "description": "The end date of the coverage under the policy.",
             "example": "2027-07-16"
           },
           "message": {
             "type": "string",
-            "description": "Additional message or information regarding the appointment.",
+            "description": "A message providing additional details or context related to the appointment.",
             "example": "Insurance policy created successfully."
           }
         },
-        "description": "Response object for a successful appointment operation that includes policy and customer details.",
+        "description": "Response schema for a successful appointment creation.",
         "example": {
           "policyId": "POL-100001",
           "customerId": "INS-10001",
@@ -332,66 +333,8 @@
           "message": "Insurance policy created successfully."
         }
       },
-      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_404": {
-        "type": "object",
-        "properties": {
-          "timestamp": {
-            "type": "string",
-            "description": "The timestamp when the error occurred.",
-            "example": "2026-07-16T10:20:39Z"
-          },
-          "status": {
-            "type": "boolean",
-            "description": "Indicates the status of the response, where false denotes an error.",
-            "example": false
-          },
-          "error": {
-            "type": "string",
-            "description": "A brief description of the error.",
-            "example": "CUSTOMER_NOT_FOUND"
-          },
-          "message": {
-            "type": "string",
-            "description": "A detailed message about the error.",
-            "example": "Customer details not found for policy creation."
-          },
-          "path": {
-            "type": "string",
-            "description": "The path of the request that caused the error.",
-            "example": "/v3/patients/appointments"
-          },
-          "trace": {
-            "type": "string",
-            "description": "A stack trace for debugging the error.",
-            "example": "e0a78025-0c08-4b4d-93e8-0456c918cd5d"
-          },
-          "details": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-ErrorDetails"
-          },
-          "suggestion": {
-            "type": "string",
-            "description": "A suggestion for the user on what to do next.",
-            "example": "Verify customer details and retry the policy creation request."
-          }
-        },
-        "description": "Schema for the 404 error response when an appointment operation fails.",
-        "example": {
-          "timestamp": "2026-07-16T10:20:39Z",
-          "status": false,
-          "error": "CUSTOMER_NOT_FOUND",
-          "message": "Customer details not found for policy creation.",
-          "path": "/v3/patients/appointments",
-          "trace": "e0a78025-0c08-4b4d-93e8-0456c918cd5d",
-          "details": {
-            "customer": true,
-            "errorCode": "INSURANCE_CUSTOMER_MISSING",
-            "message": "No registered customer profile exists for the provided customer ID."
-          },
-          "suggestion": "Verify customer details and retry the policy creation request."
-        }
-      },
       "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_502": {
-        "title": "Error Response for Appointment Operations",
+        "title": "Error Response for Appointment Operations (502)",
         "type": "object",
         "properties": {
           "timestamp": {
@@ -406,22 +349,22 @@
           },
           "error": {
             "type": "string",
-            "description": "A brief description of the error that occurred.",
+            "description": "The error code related to the failure.",
             "example": "CUSTOMER_NOT_FOUND"
           },
           "message": {
             "type": "string",
-            "description": "A detailed message describing the error.",
+            "description": "A human-readable message providing more details about the error.",
             "example": "Customer details not found for policy creation."
           },
           "path": {
             "type": "string",
-            "description": "The path of the request that caused the error.",
+            "description": "The API path that was accessed when the error occurred.",
             "example": "/v3/patients/appointments"
           },
           "trace": {
             "type": "string",
-            "description": "A trace identifier for tracking the error.",
+            "description": "A trace identifier for debugging purposes.",
             "example": "d01ae013-9be0-4a22-bcac-7165e4768285"
           },
           "details": {
@@ -429,11 +372,11 @@
           },
           "suggestion": {
             "type": "string",
-            "description": "A suggestion on what the client can do to resolve the error.",
+            "description": "Suggested action to take in response to the error.",
             "example": "Verify customer details and retry the policy creation request."
           }
         },
-        "description": "This schema represents the error response structure returned when an appointment operation fails with a 502 status code.",
+        "description": "This schema represents the error response returned when an appointment operation results in a 502 Bad Gateway error.",
         "example": {
           "timestamp": "2026-07-16T10:20:39Z",
           "status": false,
@@ -449,55 +392,112 @@
           "suggestion": "Verify customer details and retry the policy creation request."
         }
       },
+      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_500": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "description": "The timestamp when the error occurred.",
+            "example": "2026-07-16T10:20:39Z"
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Indicates whether the operation was successful or not.",
+            "example": false
+          },
+          "error": {
+            "type": "string",
+            "description": "The error type or name.",
+            "example": "CUSTOMER_NOT_FOUND"
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing details about the error.",
+            "example": "Customer details not found for policy creation."
+          },
+          "path": {
+            "type": "string",
+            "description": "The path of the request that resulted in the error.",
+            "example": "/v3/patients/appointments"
+          },
+          "trace": {
+            "type": "string",
+            "description": "A stack trace of the error for debugging purposes.",
+            "example": "a31def4e-dec5-4aca-be1f-5a803b5a1896"
+          },
+          "details": {
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-ErrorDetails"
+          },
+          "suggestion": {
+            "type": "string",
+            "description": "Suggestions for the user to resolve the issue.",
+            "example": "Verify customer details and retry the policy creation request."
+          }
+        },
+        "description": "Schema representing the error response for a failed appointment operation.",
+        "example": {
+          "timestamp": "2026-07-16T10:20:39Z",
+          "status": false,
+          "error": "CUSTOMER_NOT_FOUND",
+          "message": "Customer details not found for policy creation.",
+          "path": "/v3/patients/appointments",
+          "trace": "a31def4e-dec5-4aca-be1f-5a803b5a1896",
+          "details": {
+            "customer": true,
+            "errorCode": "INSURANCE_CUSTOMER_MISSING",
+            "message": "No registered customer profile exists for the provided customer ID."
+          },
+          "suggestion": "Verify customer details and retry the policy creation request."
+        }
+      },
       "MICROSERVICE_DEV_createAppointment-CreateAppointmentRequest": {
-        "title": "AppointmentRequestBody",
         "type": "object",
         "properties": {
           "customernumber": {
             "type": "string",
-            "description": "The unique identifier for the customer.",
+            "description": "The unique identifier for the customer associated with the appointment.",
             "example": "INS-99999"
           },
           "policyType": {
             "type": "string",
-            "description": "The type of policy being requested.",
+            "description": "The type of insurance policy associated with the appointment.",
             "example": "LIFE"
           },
           "coverageAmount": {
             "type": "integer",
-            "description": "The total coverage amount for the policy.",
+            "description": "The total amount covered by the insurance policy.",
             "format": "int32",
             "example": 1000000
           },
           "premiumAmount": {
             "type": "integer",
-            "description": "The premium amount to be paid for the policy.",
+            "description": "The amount the customer needs to pay as a premium for the policy.",
             "format": "int32",
             "example": 25000
           },
           "startDate": {
             "type": "string",
-            "description": "The start date of the policy in ISO 8601 format.",
+            "description": "The start date of the coverage in ISO 8601 format.",
             "example": "2026-07-16"
           },
           "endDate": {
             "type": "string",
-            "description": "The end date of the policy in ISO 8601 format.",
+            "description": "The end date of the coverage in ISO 8601 format.",
             "example": "2027-07-16"
           },
           "beneficiarycode": {
             "type": "integer",
-            "description": "The code representing the beneficiary associated with the policy.",
+            "description": "The unique identifier for the beneficiary associated with the appointment.",
             "format": "int32",
             "example": 1000
           },
           "paymentmode": {
             "type": "string",
-            "description": "The mode of payment for the premium (e.g., monthly, yearly).",
+            "description": "The mode of payment for the insurance premium.",
             "example": "ONLINE"
           }
         },
-        "description": "Schema representing the request body for creating an appointment, including customer details, policy information, coverage, and payment mode.",
+        "description": "Schema representing the request body for creating or updating an appointment in the system.",
         "example": {
           "customernumber": "INS-99999",
           "policyType": "LIFE",
@@ -509,58 +509,58 @@
           "paymentmode": "ONLINE"
         }
       },
-      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_500": {
-        "title": "ErrorResponse",
+      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_404": {
+        "title": "404 Not Found Response for Appointment Operations",
         "type": "object",
         "properties": {
           "timestamp": {
             "type": "string",
-            "description": "The timestamp when the error occurred.",
+            "description": "The timestamp of when the error occurred.",
             "example": "2026-07-16T10:20:39Z"
           },
           "status": {
             "type": "boolean",
-            "description": "Indicates the success status of the request.",
+            "description": "Indicates whether the operation was successful or not.",
             "example": false
           },
           "error": {
             "type": "string",
-            "description": "The error type or category.",
+            "description": "A brief description of the error.",
             "example": "CUSTOMER_NOT_FOUND"
           },
           "message": {
             "type": "string",
-            "description": "A human-readable message providing details about the error.",
+            "description": "A detailed message about the error.",
             "example": "Customer details not found for policy creation."
           },
           "path": {
             "type": "string",
-            "description": "The API path that was requested when the error occurred.",
+            "description": "The path of the request that failed.",
             "example": "/v3/patients/appointments"
           },
           "trace": {
             "type": "string",
-            "description": "A stack trace or additional context for debugging purposes.",
-            "example": "a31def4e-dec5-4aca-be1f-5a803b5a1896"
+            "description": "A trace of the error for debugging purposes.",
+            "example": "e0a78025-0c08-4b4d-93e8-0456c918cd5d"
           },
           "details": {
-            "description": "Additional details specific to the error encountered.",
+            "description": "Additional details about the error.",
             "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-ErrorDetails"
           },
           "suggestion": {
             "type": "string",
-            "description": "Suggested actions or resolutions for the user.",
+            "description": "A suggestion on how to resolve the error.",
             "example": "Verify customer details and retry the policy creation request."
           }
         },
-        "description": "Schema representing the structure of an error response for the POST operation on appointments.",
+        "description": "This schema represents the structure of the response when a requested appointment operation cannot be found, returning a 404 Not Found error.",
         "example": {
           "timestamp": "2026-07-16T10:20:39Z",
           "status": false,
           "error": "CUSTOMER_NOT_FOUND",
           "message": "Customer details not found for policy creation.",
           "path": "/v3/patients/appointments",
-          "trace": "a31def4e-dec5-4aca-be1f-5a803b5a1896",
+          "trace": "e0a78025-0c08-4b4d-93e8-0456c918cd5d",
           "details": {
             "customer": true,
             "errorCode": "INSURANCE_CUSTOMER_MISSING",
@@ -655,9 +655,9 @@
           "enum": [
             "bad_request",
             "success",
-            "not_found",
             "bad_gateway",
-            "server_error"
+            "server_error",
+            "not_found"
           ]
         }
       },
@@ -704,7 +704,6 @@
         "example": "/v3/patients/appointments"
       },
       "content-type": {
-        "description": "The `Content-Type` header indicates the media type of the resource. In this case, it specifies that the response body format is JSON.",
         "style": "simple",
         "explode": false,
         "schema": {
