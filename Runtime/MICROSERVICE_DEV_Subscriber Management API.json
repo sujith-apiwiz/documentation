@@ -2,13 +2,12 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_DEV_Subscriber Management API",
-    "description": "The Subscriber Management API enables businesses to onboard and manage subscribers effectively. This endpoint facilitates the registration of new subscribers, allowing organizations to expand their customer base and enhance engagement. Typical consumers of this API include marketing teams and customer relationship managers who require streamlined processes for managing subscription services. Utilize this API to initiate subscription workflows and improve overall user experience.",
+    "description": "The Subscriber Onboarding API facilitates the process of adding new subscribers to the system. It streamlines user registration, ensuring that all necessary information is captured efficiently. This API serves businesses looking to enhance their subscriber base through automated enrollment, providing a seamless experience for new users. Typical consumers include marketing teams and application developers aiming for better subscriber management and engagement strategies.",
     "version": "1.0"
   },
   "servers": [
     {
       "url": "https://stage-data-gujl.apiwiz.io",
-      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
@@ -24,8 +23,8 @@
         "tags": [
           "Customer Management"
         ],
-        "summary": "Create a new subscriber for a customer.",
-        "description": "This endpoint allows you to create a new subscriber associated with a specific customer. Provide the necessary details in the request body to successfully register the subscriber.",
+        "summary": "Create a new subscriber.",
+        "description": "This endpoint allows you to create a new subscriber associated with a customer. Ensure that all required fields are provided in the request body to successfully create the subscriber.",
         "operationId": "createCustomerSubscriber",
         "parameters": [
           {
@@ -54,7 +53,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to create a new subscriber within the customers' subscription service. It is crucial to provide the necessary details in the specified format to successfully add the subscriber to the system.",
+          "description": "The request body for creating new subscribers under the customers section. It must include all necessary information to register the subscriber properly.",
           "content": {
             "application/json": {
               "schema": {
@@ -65,7 +64,7 @@
         },
         "responses": {
           "500": {
-            "description": "An unexpected server error occurred while processing the request.",
+            "description": "An internal server error occurred while processing the request.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -86,7 +85,7 @@
             }
           },
           "200": {
-            "description": "The request was successfully completed, returning the requested data.",
+            "description": "The request was successful and the response contains the requested data.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -107,7 +106,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found on the server.",
+            "description": "The requested resource could not be found.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -139,12 +138,11 @@
   "components": {
     "schemas": {
       "MICROSERVICE_DEV_createCustomerSubscriber-CreateCustomerSubscriberResponse_500": {
-        "title": "ErrorResponse",
         "type": "object",
         "properties": {
           "timestamp": {
             "type": "string",
-            "description": "The timestamp when the error occurred.",
+            "description": "The time at which the error occurred.",
             "example": "2026-07-13T12:20:39Z"
           },
           "status": {
@@ -154,71 +152,82 @@
           },
           "error": {
             "type": "string",
-            "description": "A short description of the error.",
+            "description": "A brief error message for debugging.",
             "example": "INTERNAL_SERVER_ERROR"
           },
           "message": {
             "type": "string",
-            "description": "A more detailed message providing additional information about the error.",
+            "description": "A detailed message describing the error.",
             "example": "Unable to process subscriber activation request due to internal service failure."
           },
           "path": {
             "type": "string",
-            "description": "The path of the request that caused the error.",
+            "description": "The API path that was accessed when the error occurred.",
             "example": "/v1/telkom/customers/subscribers"
           },
           "trace": {
             "type": "string",
-            "description": "A trace identifier to assist in debugging.",
-            "example": "8c76b608-a139-4320-b0aa-e689257471f6"
+            "description": "Trace information for debugging purposes.",
+            "example": "e8ed989e-a33e-43ba-8a40-c21e8347ced7"
           },
           "details": {
-            "description": "Detailed information about the error.",
+            "description": "Additional details about the error that occurred.",
             "$ref": "#/components/schemas/MICROSERVICE_DEV_createCustomerSubscriber-ErrorDetails"
           },
           "suggestion": {
             "type": "string",
-            "description": "A suggestion for the user on how to potentially resolve the issue.",
+            "description": "Suggested actions to take to resolve the error.",
             "example": "Please retry after some time or contact support if the issue persists."
           }
         },
-        "description": "Schema representing a response for an error scenario during the subscriber operation.",
+        "description": "Response schema for the 500 error when performing POST operations on subscribers.",
         "example": {
           "timestamp": "2026-07-13T12:20:39Z",
           "status": false,
           "error": "INTERNAL_SERVER_ERROR",
           "message": "Unable to process subscriber activation request due to internal service failure.",
           "path": "/v1/telkom/customers/subscribers",
-          "trace": "8c76b608-a139-4320-b0aa-e689257471f6",
+          "trace": "e8ed989e-a33e-43ba-8a40-c21e8347ced7",
           "details": {
             "service": "subscriber-management-service",
             "errorCode": "SUBSCRIBER_DB_TIMEOUT",
-            "message": "Database connection timeout while saving subscriber details."
+            "message": "Database connection timeout while saving subscriber details.",
+            "database": "subscriber_registry",
+            "retryable": true
           },
           "suggestion": "Please retry after some time or contact support if the issue persists."
         }
       },
       "MICROSERVICE_DEV_createCustomerSubscriber-ErrorDetails": {
-        "title": "Error Details",
         "type": "object",
         "properties": {
           "customerId": {
             "type": "string",
             "description": "The ID of the customer associated with the error.",
-            "example": "123"
+            "example": "12345"
+          },
+          "customerType": {
+            "type": "string",
+            "description": "The type of customer associated with the error.",
+            "example": "premium"
           },
           "errorCode": {
             "type": "string",
-            "description": "A specific code representing the error that occurred.",
-            "example": "SUBSCRIBER_NOT_FOUND"
+            "description": "A specific error code related to the error.",
+            "example": "CUSTOMER_NOT_FOUND"
           },
           "message": {
             "type": "string",
-            "description": "A message providing additional context about the error.",
-            "example": "Subscriber with the given ID does not exist."
+            "description": "A detailed message providing further context about the error.",
+            "example": "Customer with ID 12345 does not exist."
+          },
+          "region": {
+            "type": "string",
+            "description": "The region associated with the customer.",
+            "example": "US"
           }
         },
-        "description": "This schema captures detailed information about an error that occurred during a subscriber operation."
+        "description": "Schema containing details related to the error that occurred."
       },
       "MICROSERVICE_DEV_createCustomerSubscriber-CreateCustomerSubscriberResponse_200": {
         "title": "Subscriber Response",
@@ -226,53 +235,71 @@
         "properties": {
           "subscriberId": {
             "type": "string",
-            "description": "The unique identifier for the subscriber.",
+            "description": "Unique identifier for the subscriber.",
             "example": "SUB-100001"
           },
           "customerId": {
             "type": "string",
-            "description": "The unique identifier for the customer associated with the subscriber.",
+            "description": "Unique identifier for the customer associated with the subscriber.",
             "example": "TEL-10001"
           },
           "msisdn": {
-            "type": "string",
-            "description": "The mobile subscriber integrated service digital network number.",
-            "example": "27821234567"
+            "type": "number",
+            "description": "Mobile Station International Subscriber Directory Number (MSISDN) for the subscriber.",
+            "example": 27821234567
           },
           "plan": {
             "type": "string",
-            "description": "The subscription plan associated with the subscriber.",
+            "description": "The plan that the subscriber is enrolled in.",
             "example": "PREPAID"
           },
           "network": {
             "type": "string",
-            "description": "The network provider associated with the subscriber's plan.",
+            "description": "The network provider for the subscriber.",
             "example": "4G"
           },
           "status": {
             "type": "string",
-            "description": "The current status of the subscription.",
+            "description": "Current status of the subscriber.",
             "example": "ACTIVE"
+          },
+          "deviceType": {
+            "type": "string",
+            "description": "Type of device used by the subscriber.",
+            "example": "SMARTPHONE"
+          },
+          "simType": {
+            "type": "string",
+            "description": "Type of SIM card assigned to the subscriber.",
+            "example": "ESIM"
+          },
+          "activatedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the subscriber was activated.",
+            "example": "2026-07-15T10:30:00Z"
           },
           "message": {
             "type": "string",
-            "description": "Additional information or messages regarding the subscription operation.",
+            "description": "Optional message accompanying the response.",
             "example": "Subscriber created successfully."
           }
         },
-        "description": "Schema representing the response returned upon a successful subscription operation.",
+        "description": "Schema representing the response data for a successful subscriber creation operation.",
         "example": {
           "subscriberId": "SUB-100001",
           "customerId": "TEL-10001",
-          "msisdn": "27821234567",
+          "msisdn": 27821234567,
           "plan": "PREPAID",
           "network": "4G",
           "status": "ACTIVE",
+          "deviceType": "SMARTPHONE",
+          "simType": "ESIM",
+          "activatedAt": "2026-07-15T10:30:00Z",
           "message": "Subscriber created successfully."
         }
       },
       "MICROSERVICE_DEV_createCustomerSubscriber-CreateCustomerSubscriberRequest": {
-        "title": "Customer Subscription Request",
+        "title": "Subscriber Creation Request",
         "type": "object",
         "properties": {
           "customerId": {
@@ -282,7 +309,7 @@
           },
           "msisdn": {
             "type": "string",
-            "description": "Mobile Station International Subscriber Directory Number, a unique phone number for the subscriber.",
+            "description": "Mobile Station International Subscriber Directory Number - the phone number of the subscriber.",
             "example": "27829999999"
           },
           "firstName": {
@@ -297,21 +324,31 @@
           },
           "plan": {
             "type": "string",
-            "description": "Subscription plan the customer is signing up for.",
+            "description": "Subscription plan type that the subscriber is enrolling in.",
             "example": "PREPAID"
           },
           "network": {
             "type": "string",
-            "description": "Network operator that the subscription will be associated with.",
+            "description": "Network provider for the subscriber's service.",
             "example": "4G"
           },
           "activationDate": {
             "type": "string",
-            "description": "Date when the subscription will be activated, in ISO 8601 format.",
+            "description": "Date when the subscription will be activated (in ISO 8601 format).",
             "example": "2026-07-15"
+          },
+          "deviceType": {
+            "type": "string",
+            "description": "Type of device being used by the subscriber.",
+            "example": "TABLET"
+          },
+          "simType": {
+            "type": "string",
+            "description": "Type of SIM card used for the service.",
+            "example": "PHYSICAL"
           }
         },
-        "description": "Schema representing the request body for creating a new customer subscription.",
+        "description": "Schema representing the request body for creating a new subscriber.",
         "example": {
           "customerId": "TEL-99999",
           "msisdn": "27829999999",
@@ -319,11 +356,12 @@
           "lastName": "Smith",
           "plan": "PREPAID",
           "network": "4G",
-          "activationDate": "2026-07-15"
+          "activationDate": "2026-07-15",
+          "deviceType": "TABLET",
+          "simType": "PHYSICAL"
         }
       },
       "MICROSERVICE_DEV_createCustomerSubscriber-CreateCustomerSubscriberResponse_404": {
-        "title": "Error Response for Subscriber Operations",
         "type": "object",
         "properties": {
           "timestamp": {
@@ -333,50 +371,52 @@
           },
           "status": {
             "type": "boolean",
-            "description": "Indicates whether the operation was successful or not.",
+            "description": "Indicates whether the request was successful.",
             "example": false
           },
           "error": {
             "type": "string",
-            "description": "A short description of the error.",
+            "description": "A brief description of the error.",
             "example": "CUSTOMER_NOT_FOUND"
           },
           "message": {
             "type": "string",
-            "description": "A detailed message explaining the nature of the error.",
+            "description": "Detailed error message to provide more information about the error.",
             "example": "Customer details not found for subscriber activation."
           },
           "path": {
             "type": "string",
-            "description": "The path of the API endpoint that was accessed.",
+            "description": "The path of the request that resulted in the error.",
             "example": "/v1/telkom/customers/subscribers"
           },
           "trace": {
             "type": "string",
-            "description": "A trace of the error for debugging purposes.",
-            "example": "8c76b608-a139-4320-b0aa-e689257471f6"
+            "description": "A trace identifier that can be used for debugging the error.",
+            "example": "e8ed989e-a33e-43ba-8a40-c21e8347ced7"
           },
           "details": {
             "$ref": "#/components/schemas/MICROSERVICE_DEV_createCustomerSubscriber-ErrorDetails"
           },
           "suggestion": {
             "type": "string",
-            "description": "A suggestion for the client on how to remedy the error.",
+            "description": "Suggestions for resolving the error.",
             "example": "Verify customer information and retry the request."
           }
         },
-        "description": "This schema represents the error response returned when a subscriber operation fails with a 404 status. It includes details about the error and possible suggestions for the client.",
+        "description": "Schema representing the response for a 404 Not Found error when performing operations related to subscribers.",
         "example": {
           "timestamp": "2026-07-13T12:20:39Z",
           "status": false,
           "error": "CUSTOMER_NOT_FOUND",
           "message": "Customer details not found for subscriber activation.",
           "path": "/v1/telkom/customers/subscribers",
-          "trace": "8c76b608-a139-4320-b0aa-e689257471f6",
+          "trace": "e8ed989e-a33e-43ba-8a40-c21e8347ced7",
           "details": {
             "customerId": "TEL-99999",
+            "customerType": "PREPAID",
             "errorCode": "TELKOM_CUSTOMER_MISSING",
-            "message": "No registered customer profile exists for the provided customer ID."
+            "message": "No registered customer profile exists for the provided customer ID.",
+            "region": "UNKNOWN"
           },
           "suggestion": "Verify customer information and retry the request."
         }
@@ -484,6 +524,7 @@
     },
     "headers": {
       "Vary": {
+        "description": "Indicates the fields that were evaluated for content negotiation. It specifies what headers to vary in cached responses.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -493,6 +534,7 @@
         "example": "Origin"
       },
       "Location": {
+        "description": "Provides the URL to the resource that may provide additional information or context regarding the 404 error.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -502,6 +544,7 @@
         "example": "/v1/telkom/customers/subscribers/TEL-99999"
       },
       "content-type": {
+        "description": "Specifies the media type of the resource returned in the response, helping clients understand how to interpret the response body.",
         "style": "simple",
         "explode": false,
         "schema": {
