@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE_DEV_Policy Management API",
-    "description": "The Policy Management API enables users to efficiently manage and create insurance policies. It offers functionality to submit new policy applications and process policy details promptly. This API is essential for insurance providers and agents looking to streamline their workflows and enhance customer service. By integrating with this API, organizations can improve their policy lifecycle management and accelerate business operations.",
+    "title": "MICROSERVICE_DEV_Manage Appointments API",
+    "description": "The Manage Appointments API allows businesses to create and schedule appointments efficiently. This API provides endpoints for adding new appointment details, including time slots, customer information, and service type. Typical consumers include calendar management systems, booking applications, and customer relationship management (CRM) software that require seamless appointment scheduling functionality. By utilizing this API, organizations can enhance their customer service and streamline operational workflows.",
     "version": "1.0"
   },
   "servers": [
@@ -19,14 +19,14 @@
     }
   ],
   "paths": {
-    "/v1/insurance/policies": {
+    "/v4/patients/appointments": {
       "post": {
         "tags": [
-          "Insurance"
+          "Appointments"
         ],
-        "summary": "Create a new insurance policy.",
-        "description": "This operation allows users to create a new insurance policy by providing the necessary details such as coverage type, premium, and insured items. Successful creation of a policy returns the details of the newly created policy.",
-        "operationId": "createPolicy",
+        "summary": "Schedule a new appointment.",
+        "description": "This endpoint allows users to create a new appointment by providing the necessary details such as date, time, and participant information. Ensure all required fields are filled to successfully schedule the appointment.",
+        "operationId": "createAppointment",
         "parameters": [
           {
             "$ref": "#/components/parameters/name"
@@ -36,6 +36,9 @@
           },
           {
             "$ref": "#/components/parameters/connection"
+          },
+          {
+            "$ref": "#/components/parameters/x-mock-200"
           },
           {
             "$ref": "#/components/parameters/content-type"
@@ -54,18 +57,18 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to create a new policy. It requires a JSON object containing the details of the policy to be created.",
+          "description": "Request body for creating a new appointment. This object should contain all the necessary details for the appointment, following the specified schema.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MICROSERVICE_DEV_createPolicy-CreatePolicyRequest"
+                "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentRequest"
               }
             }
           }
         },
         "responses": {
-          "404": {
-            "description": "The requested policy was not found.",
+          "400": {
+            "description": "The request parameters are invalid or missing.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -80,19 +83,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createPolicy-CreatePolicyResponse_404"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_400"
                 }
               }
             }
           },
           "200": {
-            "description": "Policy successfully created.",
+            "description": "The request was successful and the appointment has been processed.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
               },
               "Location": {
                 "$ref": "#/components/headers/Location"
+              },
+              "x-mock-200": {
+                "$ref": "#/components/headers/x-mock-200"
               },
               "content-type": {
                 "$ref": "#/components/headers/content-type"
@@ -101,7 +107,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createPolicy-CreatePolicyResponse_200"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_200"
                 }
               }
             }
@@ -117,121 +123,134 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV_createPolicy-CreatePolicyResponse_404": {
-        "title": "Not Found Error Response",
+      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_400": {
+        "title": "Bad Request Response",
         "type": "object",
         "properties": {
           "timestamp": {
             "type": "string",
             "description": "The timestamp when the error occurred.",
-            "example": "2026-07-16T10:20:39Z"
+            "example": "2026-07-16T11:20:39Z"
           },
           "status": {
             "type": "boolean",
-            "description": "Indicates whether the request was successful or not.",
+            "description": "Indicates whether the request was successful.",
             "example": false
           },
           "error": {
             "type": "string",
             "description": "A short description of the error.",
-            "example": "CUSTOMER_NOT_FOUND"
+            "example": "INTERNAL_SERVER_ERROR"
           },
           "message": {
             "type": "string",
-            "description": "A detailed message explaining the error.",
-            "example": "Customer details not found for policy creation."
+            "description": "A detailed message providing additional context about the error.",
+            "example": "Unable to process bank account creation request due to internal service failure."
           },
           "path": {
             "type": "string",
-            "description": "The path of the API endpoint that was requested.",
-            "example": "/v1/insurance/policies"
+            "description": "The request path that was accessed.",
+            "example": "/v2/banking/accounts"
           },
           "trace": {
             "type": "string",
-            "description": "A trace of the error for debugging purposes.",
-            "example": "1ed0a052-2a74-4721-aa42-60140d753a4a"
+            "description": "A tracing identifier for tracking the request in logs.",
+            "example": "102f92a8-bb0e-48d7-b739-9f3ed93b481e"
           },
           "details": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createPolicy-ErrorDetails"
+            "description": "Detailed information about the error.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-ErrorDetails"
           },
           "suggestion": {
             "type": "string",
-            "description": "A suggestion to the user on what to do next.",
-            "example": "Verify customer details and retry the policy creation request."
+            "description": "Suggested actions to resolve the error.",
+            "example": "Please retry after some time or contact support if the issue persists."
           }
         },
-        "description": "This schema represents the structure of a 404 Not Found error response for the policy operations.",
+        "description": "Schema representing the response for a bad request in the appointments operation.",
         "example": {
-          "timestamp": "2026-07-16T10:20:39Z",
+          "timestamp": "2026-07-16T11:20:39Z",
           "status": false,
-          "error": "CUSTOMER_NOT_FOUND",
-          "message": "Customer details not found for policy creation.",
-          "path": "/v1/insurance/policies",
-          "trace": "1ed0a052-2a74-4721-aa42-60140d753a4a",
+          "error": "INTERNAL_SERVER_ERROR",
+          "message": "Unable to process bank account creation request due to internal service failure.",
+          "path": "/v2/banking/accounts",
+          "trace": "102f92a8-bb0e-48d7-b739-9f3ed93b481e",
           "details": {
-            "customerId": "INS-99999",
-            "errorCode": "INSURANCE_CUSTOMER_MISSING",
-            "message": "No registered customer profile exists for the provided customer ID."
+            "service": "account-management-service",
+            "errorCode": "ACCOUNT_DATABASE_TIMEOUT",
+            "message": "Database timeout occurred while saving account information.",
+            "database": "banking_account_registry",
+            "retryable": true
           },
-          "suggestion": "Verify customer details and retry the policy creation request."
+          "suggestion": "Please retry after some time or contact support if the issue persists."
         }
       },
-      "MICROSERVICE_DEV_createPolicy-ErrorDetails": {
+      "MICROSERVICE_DEV_createAppointment-ErrorDetails": {
         "title": "Error Details",
         "type": "object",
         "properties": {
-          "customerId": {
+          "service": {
             "type": "string",
-            "description": "The ID of the customer associated with the error.",
-            "example": "12345"
+            "description": "The name of the service that returned the error.",
+            "example": "Appointment Service"
           },
           "errorCode": {
             "type": "string",
-            "description": "A specific error code that identifies the nature of the error.",
-            "example": "404_NOT_FOUND"
+            "description": "A unique code that identifies the specific error.",
+            "example": "4002"
           },
           "message": {
             "type": "string",
-            "description": "A message that describes the error in detail.",
-            "example": "No policy found for the given ID."
+            "description": "A message providing additional information about the error.",
+            "example": "Invalid data"
+          },
+          "database": {
+            "type": "string",
+            "description": "The name of the database involved in the error.",
+            "example": "appointments_db"
+          },
+          "retryable": {
+            "type": "boolean",
+            "description": "Indicates whether the request can be retried after this error.",
+            "example": false
           }
         },
-        "description": "This schema provides detailed information about the error that occurred."
+        "description": "Schema representing the details of an error response."
       },
-      "MICROSERVICE_DEV_createPolicy-CreatePolicyRequest": {
-        "title": "Policy Creation Request",
+      "MICROSERVICE_DEV_createAppointment-CreateAppointmentRequest": {
+        "title": "Appointment Request Body",
         "type": "object",
         "properties": {
           "customerId": {
             "type": "string",
-            "description": "The unique identifier for the customer associated with the policy.",
+            "description": "The unique identifier for the customer.",
             "example": "INS-10001"
           },
           "policyType": {
             "type": "string",
-            "description": "The type of policy being created (e.g., health, life, vehicle).",
+            "description": "The type of policy associated with the appointment.",
             "example": "HEALTH"
           },
           "coverageAmount": {
             "type": "integer",
-            "description": "The total coverage amount provided by the policy.",
+            "description": "The amount of coverage provided by the policy.",
             "format": "int32",
             "example": 500000
           },
           "premiumAmount": {
             "type": "integer",
-            "description": "The premium amount that needs to be paid for the policy.",
+            "description": "The premium amount to be paid for the policy.",
             "format": "int32",
             "example": 12000
           },
           "startDate": {
             "type": "string",
-            "description": "The start date of the policy in ISO 8601 format.",
+            "description": "The start date of the policy coverage.",
             "example": "2026-07-16"
           },
           "endDate": {
             "type": "string",
-            "description": "The end date of the policy in ISO 8601 format.",
+            "description": "The end date of the policy coverage.",
             "example": "2027-07-16"
           },
           "beneficiaryName": {
@@ -241,11 +260,11 @@
           },
           "paymentMode": {
             "type": "string",
-            "description": "The mode of payment for the policy premium (e.g., monthly, yearly).",
+            "description": "The mode of payment for the premium (e.g., monthly, annually).",
             "example": "ONLINE"
           }
         },
-        "description": "Schema representing the request body for creating a new policy.",
+        "description": "Schema representing the request body for creating an appointment.",
         "example": {
           "customerId": "INS-10001",
           "policyType": "HEALTH",
@@ -257,8 +276,8 @@
           "paymentMode": "ONLINE"
         }
       },
-      "MICROSERVICE_DEV_createPolicy-CreatePolicyResponse_200": {
-        "title": "Policy Response",
+      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_200": {
+        "title": "Appointment Response",
         "type": "object",
         "properties": {
           "policyId": {
@@ -268,48 +287,48 @@
           },
           "customerId": {
             "type": "string",
-            "description": "Identifier for the customer associated with the policy.",
+            "description": "Unique identifier for the customer associated with the policy.",
             "example": "INS-10001"
           },
           "policyType": {
             "type": "string",
-            "description": "The type of the insurance policy.",
+            "description": "Type of the insurance policy.",
             "example": "HEALTH"
           },
           "coverageAmount": {
             "type": "integer",
-            "description": "The total coverage amount provided by the policy.",
+            "description": "The total amount covered by the policy.",
             "format": "int32",
             "example": 500000
           },
           "premiumAmount": {
             "type": "integer",
-            "description": "The premium amount charged for the policy.",
+            "description": "The amount to be paid as a premium for the policy.",
             "format": "int32",
             "example": 12000
           },
           "status": {
             "type": "string",
-            "description": "The current status of the policy.",
+            "description": "Current status of the policy.",
             "example": "ACTIVE"
           },
           "startDate": {
             "type": "string",
-            "description": "The start date of the policy's coverage.",
+            "description": "The start date of the policy in ISO 8601 format.",
             "example": "2026-07-16"
           },
           "endDate": {
             "type": "string",
-            "description": "The end date of the policy's coverage.",
+            "description": "The end date of the policy in ISO 8601 format.",
             "example": "2027-07-16"
           },
           "message": {
             "type": "string",
-            "description": "Additional information or message regarding the policy.",
+            "description": "Additional information or message regarding the appointment or policy.",
             "example": "Insurance policy created successfully."
           }
         },
-        "description": "The schema for the response returned when a policy is successfully created.",
+        "description": "Schema representing the response for the appointment creation operation.",
         "example": {
           "policyId": "POL-100001",
           "customerId": "INS-10001",
@@ -360,6 +379,18 @@
         },
         "example": "keep-alive"
       },
+      "x-mock-200": {
+        "name": "x-mock-200",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "mock"
+        },
+        "example": "mock"
+      },
       "content-type": {
         "name": "content-type",
         "in": "header",
@@ -394,7 +425,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "not_found",
+            "bad_request",
             "success"
           ]
         }
@@ -424,6 +455,7 @@
     },
     "headers": {
       "Vary": {
+        "description": "Indicates how the response varies based on different headers or parameters. This header is utilized for caching mechanisms.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -433,13 +465,14 @@
         "example": "Origin"
       },
       "Location": {
+        "description": "The URL of the newly created resource. This header is essential for the client to know how to access the resource that was just created.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "/v1/insurance/policies/POL-100001"
+          "example": "/v4/patients/appointments/POL-100001"
         },
-        "example": "/v1/insurance/policies/POL-100001"
+        "example": "/v4/patients/appointments/POL-100001"
       },
       "content-type": {
         "style": "simple",
@@ -449,6 +482,16 @@
           "example": "application/json"
         },
         "example": "application/json"
+      },
+      "x-mock-200": {
+        "description": "A custom header used to indicate mock responses for testing purposes. It can be used to differentiate between real and simulated API responses.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "mock"
+        },
+        "example": "mock"
       }
     }
   }
