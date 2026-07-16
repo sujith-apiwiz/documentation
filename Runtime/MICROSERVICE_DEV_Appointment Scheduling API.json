@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_DEV_Appointment Scheduling API",
-    "description": "The Appointment Scheduling API facilitates the creation and management of appointments within the system. Users can schedule new appointments, which are essential for managing time-sensitive interactions, bookings, or consultations. This API is particularly beneficial for service-based industries like healthcare, education, or customer support where appointment management is crucial. Typical consumers of this API include businesses that require efficient scheduling capabilities to optimize resource utilization and enhance customer experience.",
+    "description": "The Appointment Scheduling API facilitates the creation and management of appointment bookings in a streamlined manner. This API allows businesses to efficiently schedule appointments, manage availability, and optimize resource allocation. Typical consumers include service-based businesses such as clinics, salons, and consultations looking to automate their appointment handling. By providing a flexible interface for integrating with front-end applications, this API enhances user experience and operational efficiency.",
     "version": "1.0"
   },
   "servers": [
@@ -19,13 +19,13 @@
     }
   ],
   "paths": {
-    "/v3/patients/appointments": {
+    "/v4/patients/appointments": {
       "post": {
         "tags": [
           "Appointments"
         ],
-        "summary": "Create a new appointment",
-        "description": "This endpoint allows users to create a new appointment using the provided details. Ensure all required fields are filled in the request body to successfully create the appointment.",
+        "summary": "Create a new appointment.",
+        "description": "This endpoint allows users to create a new appointment in the system. Users must provide the necessary details including date, time, and customer information.",
         "operationId": "createAppointment",
         "parameters": [
           {
@@ -36,6 +36,9 @@
           },
           {
             "$ref": "#/components/parameters/connection"
+          },
+          {
+            "$ref": "#/components/parameters/x-mock-200"
           },
           {
             "$ref": "#/components/parameters/content-type"
@@ -54,7 +57,7 @@
           }
         ],
         "requestBody": {
-          "description": "Provides the necessary details to create a new appointment. Ensure all required fields are correctly filled out to maintain data integrity and meet validation requirements.",
+          "description": "This request body is used to create a new appointment. It must include all required fields defined in the schema.",
           "content": {
             "application/json": {
               "schema": {
@@ -64,29 +67,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Request completed successfully with appointment details.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              },
-              "Location": {
-                "$ref": "#/components/headers/Location"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_200"
-                }
-              }
-            }
-          },
           "400": {
-            "description": "Invalid input parameters provided in the request.",
+            "description": "The request contains invalid parameters.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -106,14 +88,17 @@
               }
             }
           },
-          "500": {
-            "description": "An unexpected error occurred on the server.",
+          "200": {
+            "description": "The request was successful and the appointment was processed.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
               },
               "Location": {
                 "$ref": "#/components/headers/Location"
+              },
+              "x-mock-200": {
+                "$ref": "#/components/headers/x-mock-200"
               },
               "content-type": {
                 "$ref": "#/components/headers/content-type"
@@ -122,7 +107,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_500"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_200"
                 }
               }
             }
@@ -138,62 +123,64 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_200": {
-        "title": "Appointment Operation Response",
+      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_400": {
+        "title": "Error Response for Appointment Operations",
         "type": "object",
         "properties": {
           "timestamp": {
             "type": "string",
-            "description": "The timestamp when the operation was performed.",
-            "example": "2026-07-13T12:20:39Z"
+            "description": "The timestamp when the error occurred.",
+            "example": "2026-07-16T11:20:39Z"
           },
           "status": {
-            "type": "integer",
-            "description": "The status code of the response.",
-            "format": "int32",
-            "example": 500
+            "type": "boolean",
+            "description": "Indicates the success status of the operation. False indicates an error.",
+            "example": false
           },
           "error": {
             "type": "string",
-            "description": "Error message, if any occurred during the operation.",
+            "description": "A short description of the error that occurred.",
             "example": "INTERNAL_SERVER_ERROR"
           },
           "message": {
             "type": "string",
-            "description": "A general message about the operation.",
-            "example": "Unable to process appointment request due to internal service failure."
+            "description": "A detailed error message.",
+            "example": "Unable to process bank account creation request due to internal service failure."
           },
           "path": {
             "type": "string",
-            "description": "The request path related to the operation.",
-            "example": "/v1/patients/appointments"
+            "description": "The path of the request that caused the error.",
+            "example": "/v2/banking/accounts"
           },
           "trace": {
             "type": "string",
-            "description": "Trace information for debugging purposes.",
-            "example": "a065badd-9804-4f8d-9fb5-51afac78d7ec"
+            "description": "A debug trace that can help in troubleshooting the issue.",
+            "example": "102f92a8-bb0e-48d7-b739-9f3ed93b481e"
           },
           "details": {
+            "description": "Detailed information about the error.",
             "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-ErrorDetails"
           },
           "suggestion": {
             "type": "string",
-            "description": "Additional suggestions or actions related to the operation.",
+            "description": "A suggestion on how the user can resolve the error.",
             "example": "Please retry after some time or contact support if the issue persists."
           }
         },
-        "description": "Response schema for a successful appointment operation.",
+        "description": "Schema representing the error response returned by the Appointment Operations when a bad request is made.",
         "example": {
-          "timestamp": "2026-07-13T12:20:39Z",
-          "status": 500,
+          "timestamp": "2026-07-16T11:20:39Z",
+          "status": false,
           "error": "INTERNAL_SERVER_ERROR",
-          "message": "Unable to process appointment request due to internal service failure.",
-          "path": "/v1/patients/appointments",
-          "trace": "a065badd-9804-4f8d-9fb5-51afac78d7ec",
+          "message": "Unable to process bank account creation request due to internal service failure.",
+          "path": "/v2/banking/accounts",
+          "trace": "102f92a8-bb0e-48d7-b739-9f3ed93b481e",
           "details": {
-            "service": "appointment-service",
-            "errorCode": "APPT_SERVICE_DOWN",
-            "message": "Database connection timeout while saving appointment details."
+            "service": "account-management-service",
+            "errorCode": "ACCOUNT_DATABASE_TIMEOUT",
+            "message": "Database timeout occurred while saving account information.",
+            "database": "banking_account_registry",
+            "retryable": true
           },
           "suggestion": "Please retry after some time or contact support if the issue persists."
         }
@@ -204,180 +191,153 @@
         "properties": {
           "service": {
             "type": "string",
-            "description": "The name of the service that encountered the error.",
-            "example": "Appointment Service"
+            "description": "The name of the service where the error originated.",
+            "example": "appointment-service"
           },
           "errorCode": {
             "type": "string",
-            "description": "A specific error code that can be used for troubleshooting.",
-            "example": "APP-500"
+            "description": "The error code associated with the error.",
+            "example": "400B"
           },
           "message": {
             "type": "string",
             "description": "A message providing more context about the error.",
-            "example": "Failed to create appointment due to server issues."
+            "example": "Invalid date format."
+          },
+          "database": {
+            "type": "string",
+            "description": "The name of the database involved in the operation.",
+            "example": "appointment_db"
+          },
+          "retryable": {
+            "type": "boolean",
+            "description": "Indicates whether the operation can be retried.",
+            "example": false
           }
         },
-        "description": "Detailed information about the error, including service-specific data."
-      },
-      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_400": {
-        "title": "Bad Request Response",
-        "type": "object",
-        "properties": {
-          "timestamp": {
-            "type": "string",
-            "description": "The timestamp when the error occurred.",
-            "example": "2026-07-13T12:20:39Z"
-          },
-          "status": {
-            "type": "integer",
-            "description": "The HTTP status code indicating the type of error.",
-            "format": "int32",
-            "example": 500
-          },
-          "error": {
-            "type": "string",
-            "description": "A short description of the error.",
-            "example": "INTERNAL_SERVER_ERROR"
-          },
-          "message": {
-            "type": "string",
-            "description": "A detailed message about the error.",
-            "example": "Unable to process appointment request due to internal service failure."
-          },
-          "path": {
-            "type": "string",
-            "description": "The path of the request that caused the error.",
-            "example": "/v1/patients/appointments"
-          },
-          "trace": {
-            "type": "string",
-            "description": "A trace identifier for error tracking.",
-            "example": "81113ee8-3449-4867-955c-9ef5e3e09666"
-          },
-          "details": {
-            "description": "Detailed information about the error.",
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-ErrorDetails"
-          },
-          "suggestion": {
-            "type": "string",
-            "description": "A suggestion for how to resolve the error.",
-            "example": "Please retry after some time or contact support if the issue persists."
-          }
-        },
-        "description": "Schema for the response body when a 400 Bad Request error occurs.",
-        "example": {
-          "timestamp": "2026-07-13T12:20:39Z",
-          "status": 500,
-          "error": "INTERNAL_SERVER_ERROR",
-          "message": "Unable to process appointment request due to internal service failure.",
-          "path": "/v1/patients/appointments",
-          "trace": "81113ee8-3449-4867-955c-9ef5e3e09666",
-          "details": {
-            "service": "appointment-service",
-            "errorCode": "APPT_SERVICE_DOWN",
-            "message": "Database connection timeout while saving appointment details."
-          },
-          "suggestion": "Please retry after some time or contact support if the issue persists."
-        }
+        "description": "Schema representing detailed information about the error."
       },
       "MICROSERVICE_DEV_createAppointment-CreateAppointmentRequest": {
-        "title": "Appointment Request Body",
         "type": "object",
         "properties": {
-          "patientId": {
+          "customerId": {
             "type": "string",
-            "description": "The unique identifier of the patient.",
-            "example": "PAT-10001"
+            "description": "The unique identifier for the customer.",
+            "example": "INS-10001"
           },
-          "doctorId": {
+          "policyType": {
             "type": "string",
-            "description": "The unique identifier of the doctor for the appointment.",
-            "example": "DOC-50001"
+            "description": "The type of policy being requested (e.g., health, life, auto).",
+            "example": "HEALTH"
           },
-          "appointmentDate": {
-            "type": "string",
-            "description": "The date of the appointment in ISO format.",
-            "example": "2026-07-15"
+          "coverageAmount": {
+            "type": "integer",
+            "description": "The amount of coverage required by the policy.",
+            "format": "int32",
+            "example": 500000
           },
-          "appointmentTime": {
-            "type": "string",
-            "description": "The time of the appointment in 24-hour format.",
-            "example": "10:30:00"
+          "premiumAmount": {
+            "type": "integer",
+            "description": "The amount to be paid as the premium for the policy.",
+            "format": "int32",
+            "example": 12000
           },
-          "department": {
+          "startDate": {
             "type": "string",
-            "description": "The department where the appointment will take place.",
-            "example": "CARDIOLOGY"
+            "description": "The start date for the coverage in YYYY-MM-DD format.",
+            "example": "2026-07-16"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "The end date for the coverage in YYYY-MM-DD format.",
+            "example": "2027-07-16"
+          },
+          "beneficiaryName": {
+            "type": "string",
+            "description": "The name of the beneficiary who will receive the benefits from the policy.",
+            "example": "John Smith"
+          },
+          "paymentMode": {
+            "type": "string",
+            "description": "The mode of payment for the premium (e.g., monthly, yearly).",
+            "example": "ONLINE"
           }
         },
-        "description": "This schema represents the request body for creating a new appointment, containing the necessary details about the patient, the doctor, and the appointment time.",
+        "description": "Request body for the appointment operations in the system.",
         "example": {
-          "patientId": "PAT-10001",
-          "doctorId": "DOC-50001",
-          "appointmentDate": "2026-07-15",
-          "appointmentTime": "10:30:00",
-          "department": "CARDIOLOGY"
+          "customerId": "INS-10001",
+          "policyType": "HEALTH",
+          "coverageAmount": 500000,
+          "premiumAmount": 12000,
+          "startDate": "2026-07-16",
+          "endDate": "2027-07-16",
+          "beneficiaryName": "John Smith",
+          "paymentMode": "ONLINE"
         }
       },
-      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_500": {
-        "title": "Error Response for Appointment Operations",
+      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_200": {
+        "title": "Appointment Response",
         "type": "object",
         "properties": {
-          "timestamp": {
+          "policyId": {
             "type": "string",
-            "description": "The time at which the error occurred.",
-            "example": "2026-07-13T12:20:39Z"
+            "description": "Unique identifier for the insurance policy associated with the appointment.",
+            "example": "POL-100001"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "Unique identifier for the customer associated with the appointment.",
+            "example": "INS-10001"
+          },
+          "policyType": {
+            "type": "string",
+            "description": "Type of insurance policy associated with the appointment.",
+            "example": "HEALTH"
+          },
+          "coverageAmount": {
+            "type": "integer",
+            "description": "Total coverage amount of the policy in the appointment.",
+            "format": "int32",
+            "example": 500000
+          },
+          "premiumAmount": {
+            "type": "integer",
+            "description": "Premium amount associated with the policy in the appointment.",
+            "format": "int32",
+            "example": 12000
           },
           "status": {
-            "type": "integer",
-            "description": "The HTTP status code that represents the error state.",
-            "format": "int32",
-            "example": 500
-          },
-          "error": {
             "type": "string",
-            "description": "A short description of the error.",
-            "example": "INTERNAL_SERVER_ERROR"
+            "description": "Current status of the appointment.",
+            "example": "ACTIVE"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date of the appointment in ISO 8601 format.",
+            "example": "2026-07-16"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date of the appointment in ISO 8601 format.",
+            "example": "2027-07-16"
           },
           "message": {
             "type": "string",
-            "description": "A detailed message describing the error.",
-            "example": "Unable to process appointment request due to internal service failure."
-          },
-          "path": {
-            "type": "string",
-            "description": "The request path that generated the error.",
-            "example": "/v1/patients/appointments"
-          },
-          "trace": {
-            "type": "string",
-            "description": "The stack trace of the error for debugging purposes.",
-            "example": "974b26ee-32bf-4373-a3b0-2b5f62fc7e5a"
-          },
-          "details": {
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-ErrorDetails"
-          },
-          "suggestion": {
-            "type": "string",
-            "description": "A user-friendly suggestion to resolve the error.",
-            "example": "Please retry after some time or contact support if the issue persists."
+            "description": "Optional message or note related to the appointment.",
+            "example": "Insurance policy created successfully."
           }
         },
-        "description": "This schema represents the structure of an error response returned when an appointment operation fails.",
+        "description": "This schema represents the response for the successful creation of an appointment.",
         "example": {
-          "timestamp": "2026-07-13T12:20:39Z",
-          "status": 500,
-          "error": "INTERNAL_SERVER_ERROR",
-          "message": "Unable to process appointment request due to internal service failure.",
-          "path": "/v1/patients/appointments",
-          "trace": "974b26ee-32bf-4373-a3b0-2b5f62fc7e5a",
-          "details": {
-            "service": "appointment-service",
-            "errorCode": "APPT_SERVICE_DOWN",
-            "message": "Database connection timeout while saving appointment details."
-          },
-          "suggestion": "Please retry after some time or contact support if the issue persists."
+          "policyId": "POL-100001",
+          "customerId": "INS-10001",
+          "policyType": "HEALTH",
+          "coverageAmount": 500000,
+          "premiumAmount": 12000,
+          "status": "ACTIVE",
+          "startDate": "2026-07-16",
+          "endDate": "2027-07-16",
+          "message": "Insurance policy created successfully."
         }
       }
     },
@@ -418,6 +378,18 @@
         },
         "example": "keep-alive"
       },
+      "x-mock-200": {
+        "name": "x-mock-200",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "mock"
+        },
+        "example": "mock"
+      },
       "content-type": {
         "name": "content-type",
         "in": "header",
@@ -452,9 +424,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "success",
             "bad_request",
-            "server_error"
+            "success"
           ]
         }
       },
@@ -483,7 +454,7 @@
     },
     "headers": {
       "Vary": {
-        "description": "Indicates which request headers will influence the caching behavior of the response.",
+        "description": "Indicates how responses may vary based on request headers, aiding in caching decisions.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -493,24 +464,34 @@
         "example": "Origin"
       },
       "Location": {
-        "description": "The URI that identifies the location of a newly created resource, used in response to HTTP POST requests.",
+        "description": "Specifies the URI of the newly created resource, providing clients with the resource's location.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "/v2/customers/CUST-100234"
+          "example": "/v4/patients/appointments/POL-100001"
         },
-        "example": "/v2/customers/CUST-100234"
+        "example": "/v4/patients/appointments/POL-100001"
       },
       "content-type": {
-        "description": "The media type of the resource returned in the body of the response, indicating the format of the response content.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
+          "description": "The MIME type of the content being returned. This indicates the media type of the resource, helping clients understand how to process the received data.",
           "example": "application/json"
         },
         "example": "application/json"
+      },
+      "x-mock-200": {
+        "description": "A mock header used to simulate responses in a testing environment, allowing for client-side development without server interaction.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "mock"
+        },
+        "example": "mock"
       }
     }
   }
