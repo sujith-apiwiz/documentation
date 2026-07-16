@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_DEV_Transaction Management API",
-    "description": "The Transaction Processing API facilitates efficient management of financial transactions within the system. This API allows for seamless initiation and approval of transactions, ensuring quick and secure processing. It is designed for developers working in financial services, e-commerce, or any application requiring transaction handling. Typical use cases include processing user payments, managing refunds, and handling transactions for various financial operations.",
+    "description": "The Transaction Management API streamlines the processing and tracking of financial transactions within the microservices architecture. It allows users to initiate, monitor, and manage various transaction types seamlessly. Ideal for financial institutions and payment processing applications, this API supports operations such as validating transaction details and updating transaction statuses, enabling developers to create robust transactional workflows. Utilize this API to optimize transaction handling and enhance overall user experience.",
     "version": "1.0"
   },
   "servers": [
@@ -21,10 +21,10 @@
     "/v1/finance/transactions": {
       "post": {
         "tags": [
-          "Transactions"
+          "Transaction Management"
         ],
-        "summary": "Initiates a new transaction.",
-        "description": "This endpoint allows users to create a new transaction in the system. Ensure all required fields are filled in the request body to successfully initiate the transaction.",
+        "summary": "Create a new transaction",
+        "description": "This endpoint allows users to create a new transaction in the system. Provide the necessary transaction details in the request body to successfully process a transaction.",
         "operationId": "createTransaction",
         "parameters": [
           {
@@ -53,7 +53,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body allows clients to submit transaction data for processing. Ensure that all required fields are included and properly formatted according to the schema provided.",
+          "description": "The request body for creating a new transaction. It must be a valid JSON object that adheres to the specified schema, which defines the required fields and their respective formats.",
           "content": {
             "application/json": {
               "schema": {
@@ -64,7 +64,7 @@
         },
         "responses": {
           "500": {
-            "description": "An unexpected server error occurred. Please try again later.",
+            "description": "An unexpected server error occurred.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -85,7 +85,7 @@
             }
           },
           "200": {
-            "description": "The request was successful, and the transaction data is returned.",
+            "description": "The request was processed successfully and the transaction details are returned.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -106,7 +106,7 @@
             }
           },
           "404": {
-            "description": "The requested transaction resource could not be found.",
+            "description": "The requested transaction resource was not found.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -138,6 +138,7 @@
   "components": {
     "schemas": {
       "MICROSERVICE_DEV_createTransaction-CreateTransactionResponse_500": {
+        "title": "Error Response for Transaction Operations",
         "type": "object",
         "properties": {
           "timestamp": {
@@ -147,27 +148,27 @@
           },
           "status": {
             "type": "boolean",
-            "description": "Indicates whether the operation was successful or not.",
+            "description": "Indicates if the operation was successful.",
             "example": false
           },
           "error": {
             "type": "string",
-            "description": "A short, human-readable summary of the error.",
+            "description": "A short description of the error that occurred.",
             "example": "INTERNAL_SERVER_ERROR"
           },
           "message": {
             "type": "string",
-            "description": "Detailed message describing the error.",
+            "description": "A longer description of the error providing additional context.",
             "example": "Unable to process financial transaction due to internal service failure."
           },
           "path": {
             "type": "string",
-            "description": "The path where the error occurred, typically the API endpoint.",
+            "description": "The path of the API endpoint that generated the error.",
             "example": "/v1/finance/transactions"
           },
           "trace": {
             "type": "string",
-            "description": "A stack trace or any additional information useful for debugging.",
+            "description": "A trace of the error for debugging purposes.",
             "example": "f06f97ee-6992-42d3-96e1-7bdce23fdda7"
           },
           "details": {
@@ -176,11 +177,11 @@
           },
           "suggestion": {
             "type": "string",
-            "description": "A recommendation or suggestion to resolve the issue.",
+            "description": "A suggestion on how to resolve the error.",
             "example": "Please retry after some time or contact support if the issue persists."
           }
         },
-        "description": "Schema representing the error response for a failed transaction operation.",
+        "description": "This schema represents the structure of the error response returned by the transaction operations when a server error occurs.",
         "example": {
           "timestamp": "2026-07-13T12:20:39Z",
           "status": false,
@@ -199,34 +200,34 @@
         }
       },
       "MICROSERVICE_DEV_createTransaction-ErrorDetails": {
-        "title": "Error Details",
         "type": "object",
         "properties": {
           "accountNumber": {
             "type": "integer",
-            "description": "The account number associated with the error.",
+            "description": "The account number associated with the transaction.",
             "format": "int32",
             "example": 123456
           },
           "accountType": {
             "type": "string",
-            "description": "The type of account that had the issue.",
+            "description": "The type of the account linked to the transaction.",
             "example": "Savings"
           },
           "errorCode": {
             "type": "string",
-            "description": "A code representing the specific error.",
-            "example": "404_NOT_FOUND"
+            "description": "A specific error code indicating the type of error.",
+            "example": "NOT_FOUND"
           },
           "message": {
             "type": "string",
-            "description": "A message explaining the error in detail.",
-            "example": "Account not found."
+            "description": "A user-friendly message describing the error.",
+            "example": "No transaction found for the given ID."
           }
         },
-        "description": "Detailed information about the error that occurred."
+        "description": "Schema representing detailed error information for the transaction error response."
       },
       "MICROSERVICE_DEV_createTransaction-CreateTransactionResponse_200": {
+        "title": "Transaction Response",
         "type": "object",
         "properties": {
           "transactionId": {
@@ -236,51 +237,51 @@
           },
           "customerId": {
             "type": "string",
-            "description": "Unique identifier for the customer who initiated the transaction.",
+            "description": "Unique identifier for the customer associated with this transaction.",
             "example": "FIN-10001"
           },
           "accountNumber": {
             "type": "string",
-            "description": "Account number associated with the transaction.",
+            "description": "The account number from which the transaction was made.",
             "example": "ACC-500001"
           },
           "transactionType": {
             "type": "string",
-            "description": "Type of the transaction (e.g., credit, debit).",
+            "description": "The type of transaction (e.g., deposit, withdrawal, transfer).",
             "example": "TRANSFER"
           },
           "amount": {
             "type": "string",
-            "description": "Amount involved in the transaction.",
+            "description": "The amount of money involved in the transaction.",
             "example": "*******"
           },
           "currency": {
             "type": "string",
-            "description": "Currency in which the transaction amount is denominated.",
+            "description": "The currency type of the transaction amount (e.g., USD, EUR).",
             "example": "USD"
           },
           "status": {
             "type": "string",
-            "description": "Current status of the transaction (e.g., pending, completed, failed).",
+            "description": "The current status of the transaction (e.g., pending, completed, failed).",
             "example": "SUCCESS"
           },
           "processedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the transaction was processed.",
+            "description": "The date and time when the transaction was processed.",
             "example": "2026-07-15T10:30:00Z"
           },
           "paymentMode": {
             "type": "string",
-            "description": "Mode of payment used for the transaction (e.g., credit card, bank transfer).",
+            "description": "The mode of payment used (e.g., credit card, bank transfer).",
             "example": "ONLINE"
           },
           "message": {
             "type": "string",
-            "description": "Additional message or notes related to the transaction.",
+            "description": "A message related to the transaction status or result.",
             "example": "Transaction processed successfully."
           }
         },
-        "description": "Response schema for successful transaction creation. This schema provides details of the completed transaction.",
+        "description": "Response schema for a successful transaction operation. This schema contains the details of the transaction performed.",
         "example": {
           "transactionId": "TXN-100001",
           "customerId": "FIN-10001",
@@ -295,57 +296,57 @@
         }
       },
       "MICROSERVICE_DEV_createTransaction-CreateTransactionRequest": {
-        "title": "Transaction Request",
+        "title": "Transaction Request Body",
         "type": "object",
         "properties": {
           "customerId": {
             "type": "string",
-            "description": "The unique identifier for the customer.",
+            "description": "The unique identifier for the customer initiating the transaction.",
             "example": "FIN-99999"
           },
           "accountNumber": {
             "type": "integer",
-            "description": "The account number associated with the transaction.",
+            "description": "The account number from which the transaction will be made.",
             "format": "int32",
             "example": 999999
           },
           "transactionType": {
             "type": "string",
-            "description": "The type of the transaction (e.g., transfer, deposit, withdrawal).",
+            "description": "The type of the transaction (e.g., debit, credit).",
             "example": "TRANSFER"
           },
           "amount": {
             "type": "string",
-            "description": "The amount of money involved in the transaction.",
+            "description": "The amount of money to be transacted.",
             "example": "****"
           },
           "currency": {
             "type": "string",
-            "description": "The currency in which the transaction amount is specified (e.g., USD, EUR).",
+            "description": "The currency in which the transaction is conducted (e.g., USD, EUR).",
             "example": "USD"
           },
           "beneficiaryAccount": {
             "type": "string",
-            "description": "The account number of the beneficiary in case of transfers.",
+            "description": "The account number of the beneficiary for the transaction.",
             "example": "ACC-800001"
           },
           "transactionDate": {
             "type": "string",
-            "description": "The date when the transaction is to be processed.",
+            "description": "The date when the transaction is initiated.",
             "example": "2026-07-15"
           },
           "paymentMode": {
             "type": "string",
-            "description": "The mode of payment for the transaction (e.g., online, cash, check).",
+            "description": "The method used for the payment (e.g., online, cheque).",
             "example": "ONLINE"
           },
           "remarks": {
             "type": "string",
-            "description": "Additional remarks or notes regarding the transaction.",
+            "description": "Any additional remarks regarding the transaction.",
             "example": "Account settlement"
           }
         },
-        "description": "Schema representing a request body for creating a new transaction.",
+        "description": "Schema representing the request body for creating a transaction.",
         "example": {
           "customerId": "FIN-99999",
           "accountNumber": 999999,
@@ -359,7 +360,6 @@
         }
       },
       "MICROSERVICE_DEV_createTransaction-CreateTransactionResponse_404": {
-        "title": "Error Response for Transaction Operations",
         "type": "object",
         "properties": {
           "timestamp": {
@@ -369,27 +369,27 @@
           },
           "status": {
             "type": "boolean",
-            "description": "Indicates if the operation was successful or not.",
+            "description": "Indicates whether the request was successful.",
             "example": false
           },
           "error": {
             "type": "string",
-            "description": "A short description of the error.",
+            "description": "A brief description of the error.",
             "example": "ACCOUNT_NOT_FOUND"
           },
           "message": {
             "type": "string",
-            "description": "Detailed message about the error.",
+            "description": "A detailed message about the error.",
             "example": "Source account details not found for transaction processing."
           },
           "path": {
             "type": "string",
-            "description": "The path of the endpoint that caused the error.",
+            "description": "The path of the API endpoint that was called.",
             "example": "/v1/finance/transactions"
           },
           "trace": {
             "type": "string",
-            "description": "A trace of the error for debugging purposes.",
+            "description": "A trace provided for debugging purposes.",
             "example": "f06f97ee-6992-42d3-96e1-7bdce23fdda7"
           },
           "details": {
@@ -397,11 +397,11 @@
           },
           "suggestion": {
             "type": "string",
-            "description": "Suggestions for resolving the error.",
+            "description": "A suggestion for how to resolve the issue.",
             "example": "Verify account details and retry the transaction."
           }
         },
-        "description": "This schema represents the error response returned when a transaction operation fails with a 404 status code.",
+        "description": "Schema representing the response when a 404 error occurs during a transaction operation.",
         "example": {
           "timestamp": "2026-07-13T12:20:39Z",
           "status": false,
