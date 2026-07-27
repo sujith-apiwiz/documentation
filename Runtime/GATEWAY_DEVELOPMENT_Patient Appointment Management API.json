@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE_DEV_Appointment Management API",
-    "description": "The Appointment Management API facilitates the scheduling of patient appointments within the healthcare system. This endpoint allows authorized users to create new appointments for patients, ensuring efficient management of healthcare resources and improved patient care. Typical consumers of this API include healthcare providers and administrative staff who handle patient scheduling. By utilizing this API, organizations can streamline appointment bookings and enhance patient experience.",
+    "title": "GATEWAY_DEVELOPMENT_Patient Appointment Management API",
+    "description": "The Patient Appointment Management API allows healthcare providers to streamline the scheduling of patient appointments at the hospital. It facilitates the submission and management of appointment requests, ensuring efficient coordination between patients and healthcare staff. Typical consumers of this API include hospital administrators and clinic management systems that need to enhance patient experience by providing easy appointment booking options. This API supports key operations related to appointment creation, providing a crucial service in healthcare operations.",
     "version": "1.0"
   },
   "servers": [
@@ -19,14 +19,14 @@
     }
   ],
   "paths": {
-    "/v1/patients/appointment": {
+    "/v1/patients/hospital/appointment": {
       "post": {
         "tags": [
-          "Appointment Management"
+          "Hospital Services"
         ],
-        "summary": "Create a new appointment.",
-        "description": "This endpoint allows users to create a new appointment in the system, specifying details such as the date, time, and participants involved. Ensure that all required fields are completed to successfully create an appointment.",
-        "operationId": "createAppointment",
+        "summary": "Schedule a new hospital appointment.",
+        "description": "This endpoint allows users to create a new appointment at the hospital. Users can specify details such as date, time, doctor, and their personal information to confirm the appointment.",
+        "operationId": "createHospitalAppointment",
         "parameters": [
           {
             "$ref": "#/components/parameters/host"
@@ -66,18 +66,18 @@
           }
         ],
         "requestBody": {
-          "description": "Request body for creating a new appointment. This contains the necessary details for scheduling an appointment, including the date, time, and participant information.",
+          "description": "Create a new appointment at the hospital. This request requires the appointment details, including patient information, appointment date and time, and the reason for the visit. Ensure all the required fields are filled appropriately to avoid errors during processing.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentRequest"
+                "$ref": "#/components/schemas/GATEWAY_DEVELOPMENT_createHospitalAppointment-CreateHospitalAppointmentRequest"
               }
             }
           }
         },
         "responses": {
           "500": {
-            "description": "An unexpected error occurred on the server.",
+            "description": "An unexpected server error occurred while processing the request.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -95,61 +95,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_500"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The specified appointment resource could not be found.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              },
-              "Location": {
-                "$ref": "#/components/headers/Location"
-              },
-              "x-mock-200": {
-                "$ref": "#/components/headers/x-mock-200"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_404"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request contains invalid parameters or data.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              },
-              "Location": {
-                "$ref": "#/components/headers/Location"
-              },
-              "x-mock-200": {
-                "$ref": "#/components/headers/x-mock-200"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_400"
+                  "$ref": "#/components/schemas/GATEWAY_DEVELOPMENT_createHospitalAppointment-CreateHospitalAppointmentResponse_500"
                 }
               }
             }
           },
           "200": {
-            "description": "The appointment was successfully created.",
+            "description": "The appointment request was successfully processed.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -167,7 +119,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_200"
+                  "$ref": "#/components/schemas/GATEWAY_DEVELOPMENT_createHospitalAppointment-CreateHospitalAppointmentResponse_200"
                 }
               }
             }
@@ -183,59 +135,59 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_500": {
-        "title": "Appointment Error Response",
+      "GATEWAY_DEVELOPMENT_createHospitalAppointment-CreateHospitalAppointmentResponse_500": {
+        "title": "Error Response for Hospital Appointment Operations",
         "type": "object",
         "properties": {
           "policyId": {
             "type": "string",
-            "description": "The identifier for the insurance policy associated with the appointment.",
+            "description": "The unique identifier for the policy associated with the appointment.",
             "example": "POL-100001"
           },
           "customerId": {
             "type": "string",
-            "description": "The identifier for the customer related to the appointment.",
+            "description": "The unique identifier for the customer associated with the appointment.",
             "example": "INS-10001"
           },
           "policyType": {
             "type": "string",
-            "description": "The type of insurance policy (e.g., health, auto, life).",
+            "description": "The type of policy related to the appointment.",
             "example": "HEALTH"
           },
           "coverageAmount": {
             "type": "integer",
-            "description": "The total amount of coverage provided by the policy.",
+            "description": "The amount of coverage provided by the policy.",
             "format": "int32",
             "example": 500000
           },
           "premiumAmount": {
             "type": "integer",
-            "description": "The amount that must be paid for the policy premium.",
+            "description": "The premium amount that needs to be paid for the policy.",
             "format": "int32",
             "example": 12000
           },
           "status": {
             "type": "string",
-            "description": "The current status of the appointment (e.g., pending, confirmed, cancelled).",
+            "description": "The current status of the policy, indicating whether it is active, inactive, or canceled.",
             "example": "ACTIVE"
           },
           "startDate": {
             "type": "string",
-            "description": "The start date and time of the appointment in ISO 8601 format.",
+            "description": "The start date of the policy validity.",
             "example": "2026-07-16"
           },
           "endDate": {
             "type": "string",
-            "description": "The end date and time of the appointment in ISO 8601 format.",
+            "description": "The end date of the policy validity.",
             "example": "2027-07-16"
           },
           "message": {
             "type": "string",
-            "description": "A descriptive message providing additional details about the error.",
+            "description": "A detailed message describing the error that occurred while processing the appointment.",
             "example": "Insurance policy created successfully."
           }
         },
-        "description": "This schema represents the error response returned when an appointment operation fails.",
+        "description": "This schema represents the error response returned when a hospital appointment operation fails. It includes details such as policy information and a message describing the error.",
         "example": {
           "policyId": "POL-100001",
           "customerId": "INS-10001",
@@ -248,41 +200,30 @@
           "message": "Insurance policy created successfully."
         }
       },
-      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_404": {
-        "title": "Error Response for Appointment Operation",
+      "GATEWAY_DEVELOPMENT_createHospitalAppointment-CreateHospitalAppointmentRequest": {
         "type": "object",
         "properties": {
-          "policyId": {
-            "type": "string",
-            "description": "The unique identifier for the insurance policy.",
-            "example": "POL-100001"
-          },
           "customerId": {
             "type": "string",
-            "description": "The unique identifier for the customer associated with the policy.",
+            "description": "The unique identifier for the customer.",
             "example": "INS-10001"
           },
           "policyType": {
             "type": "string",
-            "description": "The type of insurance policy (e.g., Health, Auto, Home).",
+            "description": "The type of insurance policy.",
             "example": "HEALTH"
           },
           "coverageAmount": {
             "type": "integer",
-            "description": "The total coverage amount provided by the policy.",
+            "description": "The total coverage amount of the policy.",
             "format": "int32",
             "example": 500000
           },
           "premiumAmount": {
             "type": "integer",
-            "description": "The amount the customer needs to pay for the insurance policy.",
+            "description": "The amount of premium to be paid for the policy.",
             "format": "int32",
             "example": 12000
-          },
-          "status": {
-            "type": "string",
-            "description": "The current status of the policy (e.g., Active, Inactive).",
-            "example": "ACTIVE"
           },
           "startDate": {
             "type": "string",
@@ -294,126 +235,6 @@
             "description": "The end date of the insurance coverage.",
             "example": "2027-07-16"
           },
-          "message": {
-            "type": "string",
-            "description": "A message providing additional context about the error.",
-            "example": "Insurance policy created successfully."
-          }
-        },
-        "description": "This schema represents the error response structure for the appointment operations when a resource is not found (HTTP 404).",
-        "example": {
-          "policyId": "POL-100001",
-          "customerId": "INS-10001",
-          "policyType": "HEALTH",
-          "coverageAmount": 500000,
-          "premiumAmount": 12000,
-          "status": "ACTIVE",
-          "startDate": "2026-07-16",
-          "endDate": "2027-07-16",
-          "message": "Insurance policy created successfully."
-        }
-      },
-      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_400": {
-        "title": "Appointment Error Response",
-        "type": "object",
-        "properties": {
-          "policyId": {
-            "type": "string",
-            "description": "Unique identifier for the insurance policy.",
-            "example": "POL-100001"
-          },
-          "customerId": {
-            "type": "string",
-            "description": "Unique identifier for the customer associated with the policy.",
-            "example": "INS-10001"
-          },
-          "policyType": {
-            "type": "string",
-            "description": "Type of the insurance policy (e.g., health, auto, etc.).",
-            "example": "HEALTH"
-          },
-          "coverageAmount": {
-            "type": "integer",
-            "description": "The total amount of coverage provided by the policy.",
-            "format": "int32",
-            "example": 500000
-          },
-          "premiumAmount": {
-            "type": "integer",
-            "description": "The amount the customer needs to pay for the policy.",
-            "format": "int32",
-            "example": 12000
-          },
-          "status": {
-            "type": "string",
-            "description": "Current status of the appointment request.",
-            "example": "ACTIVE"
-          },
-          "startDate": {
-            "type": "string",
-            "description": "The start date of the policy coverage.",
-            "example": "2026-07-16"
-          },
-          "endDate": {
-            "type": "string",
-            "description": "The end date of the policy coverage.",
-            "example": "2027-07-16"
-          },
-          "message": {
-            "type": "string",
-            "description": "Detailed error message providing more context on the error.",
-            "example": "Insurance policy created successfully."
-          }
-        },
-        "description": "Schema representing the error response for creating an appointment.",
-        "example": {
-          "policyId": "POL-100001",
-          "customerId": "INS-10001",
-          "policyType": "HEALTH",
-          "coverageAmount": 500000,
-          "premiumAmount": 12000,
-          "status": "ACTIVE",
-          "startDate": "2026-07-16",
-          "endDate": "2027-07-16",
-          "message": "Insurance policy created successfully."
-        }
-      },
-      "MICROSERVICE_DEV_createAppointment-CreateAppointmentRequest": {
-        "title": "Appointment Request Body",
-        "type": "object",
-        "properties": {
-          "customerId": {
-            "type": "string",
-            "description": "The unique identifier for the customer.",
-            "example": "INS-10001"
-          },
-          "policyType": {
-            "type": "string",
-            "description": "The type of policy being requested.",
-            "example": "HEALTH"
-          },
-          "coverageAmount": {
-            "type": "integer",
-            "description": "The amount of coverage requested in the policy.",
-            "format": "int32",
-            "example": 500000
-          },
-          "premiumAmount": {
-            "type": "integer",
-            "description": "The premium amount to be paid for the policy.",
-            "format": "int32",
-            "example": 12000
-          },
-          "startDate": {
-            "type": "string",
-            "description": "The start date of the policy coverage in ISO 8601 format.",
-            "example": "2026-07-16"
-          },
-          "endDate": {
-            "type": "string",
-            "description": "The end date of the policy coverage in ISO 8601 format.",
-            "example": "2027-07-16"
-          },
           "beneficiaryName": {
             "type": "string",
             "description": "The name of the beneficiary for the policy.",
@@ -421,11 +242,11 @@
           },
           "paymentMode": {
             "type": "string",
-            "description": "The mode of payment for the premium.",
+            "description": "The mode of payment for the insurance premium (e.g., monthly, annually).",
             "example": "ONLINE"
           }
         },
-        "description": "Schema representing the request body for creating an appointment.",
+        "description": "Request body for scheduling an appointment that includes details about the insurance policy.",
         "example": {
           "customerId": "INS-10001",
           "policyType": "HEALTH",
@@ -437,59 +258,58 @@
           "paymentMode": "ONLINE"
         }
       },
-      "MICROSERVICE_DEV_createAppointment-CreateAppointmentResponse_200": {
-        "title": "Appointment Response",
+      "GATEWAY_DEVELOPMENT_createHospitalAppointment-CreateHospitalAppointmentResponse_200": {
         "type": "object",
         "properties": {
           "policyId": {
             "type": "string",
-            "description": "The unique identifier for the insurance policy.",
+            "description": "Unique identifier for the policy.",
             "example": "POL-100001"
           },
           "customerId": {
             "type": "string",
-            "description": "The unique identifier for the customer associated with the policy.",
+            "description": "Unique identifier for the customer associated with the policy.",
             "example": "INS-10001"
           },
           "policyType": {
             "type": "string",
-            "description": "The type of insurance policy.",
+            "description": "Type of the policy, which could represent different coverage plans.",
             "example": "HEALTH"
           },
           "coverageAmount": {
             "type": "integer",
-            "description": "The amount of coverage provided by the policy.",
+            "description": "Total amount covered under the policy.",
             "format": "int32",
             "example": 500000
           },
           "premiumAmount": {
             "type": "integer",
-            "description": "The amount to be paid as premium for the policy.",
+            "description": "Amount to be paid for the insurance policy.",
             "format": "int32",
             "example": 12000
           },
           "status": {
             "type": "string",
-            "description": "The current status of the policy.",
+            "description": "Current status of the policy, such as active or inactive.",
             "example": "ACTIVE"
           },
           "startDate": {
             "type": "string",
-            "description": "The date when the policy becomes effective.",
+            "description": "Date when the policy coverage starts.",
             "example": "2026-07-16"
           },
           "endDate": {
             "type": "string",
-            "description": "The date when the policy expires.",
+            "description": "Date when the policy coverage ends.",
             "example": "2027-07-16"
           },
           "message": {
             "type": "string",
-            "description": "A message providing additional information about the appointment.",
+            "description": "Additional message regarding the appointment operation.",
             "example": "Insurance policy created successfully."
           }
         },
-        "description": "Represents the response structure for a successful appointment operation, containing details about the policy and customer.",
+        "description": "Schema representing the response for a successful operation of an appointment.",
         "example": {
           "policyId": "POL-100001",
           "customerId": "INS-10001",
@@ -646,10 +466,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_DEV_500",
-            "MICROSERVICE_DEV_404",
-            "MICROSERVICE_DEV_400",
-            "MICROSERVICE_DEV_200"
+            "GATEWAY_DEVELOPMENT_500",
+            "GATEWAY_DEVELOPMENT_200"
           ]
         }
       }
