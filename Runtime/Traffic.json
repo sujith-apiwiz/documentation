@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Health APIs",
-    "description": "The Patient Health Records Retrieval API enables healthcare providers to access patient health records efficiently. This API allows authorized users to retrieve comprehensive health data linked to a specific patient by their unique ID. Typical consumers include healthcare professionals, clinics, and health information systems that need to access patient history for better care coordination. By leveraging this API, stakeholders can ensure timely and informed medical decisions based on accurate patient data.",
+    "title": "Traffic",
+    "description": "The Traffic Violation Management API allows users to submit and manage traffic violation reports effectively. This API serves law enforcement agencies and municipalities to streamline the process of documenting violations, ensuring accurate record-keeping and facilitating follow-up actions. Through this endpoint, users can upload necessary details related to each violation, including time, location, and involved parties. Ideal for software solutions in public safety and traffic management systems, this API enhances the operational capabilities of organizations addressing road safety.",
     "version": "1.0"
   },
   "servers": [
@@ -18,14 +18,14 @@
     }
   ],
   "paths": {
-    "/health/v1/patients/{id}/records": {
-      "get": {
+    "/traffic/v1/violations": {
+      "post": {
         "tags": [
-          "Patient Management"
+          "Violations"
         ],
-        "summary": "Retrieve patient records by ID",
-        "description": "Fetches the medical records associated with a specific patient identified by their unique ID. This endpoint allows users to access important health information for further analysis or review.",
-        "operationId": "getPatientRecords",
+        "summary": "Create a new violation record.",
+        "description": "This endpoint allows users to submit a new violation record to the system. Ensure that all required fields are filled in the request body for successful creation.",
+        "operationId": "createViolation",
         "parameters": [
           {
             "$ref": "#/components/parameters/host"
@@ -61,9 +61,19 @@
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
+        "requestBody": {
+          "description": "The request body for creating a new violation record. This should include all necessary details regarding the violation, formatted as JSON.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createViolation-CreateViolationRequest"
+              }
+            }
+          }
+        },
         "responses": {
-          "201": {
-            "description": "Resource created successfully.",
+          "400": {
+            "description": "The request contains invalid parameters.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -72,13 +82,28 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_201"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createViolation-CreateViolationResponse_400"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "A new resource has been successfully created.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createViolation-CreateViolationResponse_201"
                 }
               }
             }
           },
           "200": {
-            "description": "Request completed successfully.",
+            "description": "The request was successful and the response contains the requested data.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -87,28 +112,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_200"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request parameters.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_400"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createViolation-CreateViolationResponse_200"
                 }
               }
             }
           },
           "404": {
-            "description": "Requested resource not found.",
+            "description": "The specified resource could not be found.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -117,13 +127,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_404"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createViolation-CreateViolationResponse_404"
                 }
               }
             }
           },
           "500": {
-            "description": "Unexpected server error.",
+            "description": "An unexpected error occurred on the server.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -132,7 +142,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_500"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createViolation-CreateViolationResponse_500"
                 }
               }
             }
@@ -148,81 +158,146 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_201": {
-        "title": "Patient Records Response",
-        "type": "object",
-        "properties": {},
-        "description": "This schema represents the response returned when successfully retrieving a patient's records.",
-        "example": {}
-      },
-      "MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_200": {
-        "title": "Patient Records Response",
+      "MICROSERVICE_DEV-TEST_createViolation-CreateViolationResponse_400": {
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status of the request indicating success or failure.",
+            "description": "The status of the response indicating the error type.",
             "example": "ok"
           },
           "example": {
             "type": "string",
-            "description": "An example field containing a relevant value.",
-            "example": "This is an example response."
+            "description": "An example message providing additional context about the error.",
+            "example": "The provided data is not valid."
           }
         },
-        "description": "Schema representing the response structure for retrieving patient records.",
+        "description": "Response schema for a 400 Bad Request error in the POST operation related to violations.",
         "example": {
           "status": "ok"
         }
       },
-      "MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_400": {
-        "title": "Patient Records GET Error Response",
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "description": "A message describing the error that occurred during the request."
-          },
-          "code": {
-            "type": "integer",
-            "description": "The error code indicating the type of error that occurred."
-          }
-        },
-        "description": "This schema represents the structure of the error response returned when a GET request for patient records fails with a 400 Bad Request status.",
-        "example": {}
-      },
-      "MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_404": {
+      "MICROSERVICE_DEV-TEST_createViolation-CreateViolationResponse_201": {
+        "title": "Violations Post Response",
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status message indicating the error type.",
+            "description": "The status message indicating the result of the operation.",
             "example": "ok"
+          },
+          "example": {
+            "type": "string",
+            "description": "An example string that provides further context or data for the response.",
+            "example": "Operation completed successfully."
           }
         },
-        "description": "Response schema for the 404 error when retrieving patient records.",
+        "description": "Response schema for a successful POST operation regarding violations. It contains the status of the operation and an example field.",
         "example": {
           "status": "ok"
         }
       },
-      "MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_500": {
-        "title": "Error Response for Patient Records Retrieval",
+      "MICROSERVICE_DEV-TEST_createViolation-CreateViolationResponse_200": {
+        "title": "Successful Operation Response for Violations",
+        "type": "object",
+        "properties": {},
+        "description": "Schema representing the successful response for a POST request related to operations and violations.",
+        "example": {}
+      },
+      "MICROSERVICE_DEV-TEST_createViolation-CreateViolationResponse_404": {
+        "title": "Not Found Response for POST Operations",
+        "type": "object",
+        "properties": {},
+        "description": "This schema represents the structure of the response when a POST operation results in a 404 Not Found error.",
+        "example": {}
+      },
+      "MICROSERVICE_DEV-TEST_createViolation-CreateViolationRequest": {
         "type": "object",
         "properties": {
-          "error": {
+          "violationId": {
             "type": "string",
-            "description": "A message describing the error that occurred."
+            "description": "Unique identifier for the violation.",
+            "example": "VIO-974983"
           },
-          "code": {
+          "vehicleNumber": {
+            "type": "string",
+            "description": "The registration number of the vehicle involved in the violation.",
+            "example": "MH92AB9437"
+          },
+          "violationType": {
+            "type": "string",
+            "description": "Type of the violation (e.g., speeding, parking).",
+            "example": "SPEEDING"
+          },
+          "location": {
+            "description": "Location details where the violation occurred.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createViolation-Location"
+          },
+          "speedRecorded": {
             "type": "integer",
-            "description": "The HTTP status code representing the type of error."
+            "description": "Speed recorded at the time of the violation.",
+            "format": "int32",
+            "example": 117
           },
-          "details": {
+          "speedLimit": {
+            "type": "integer",
+            "description": "The speed limit at the location of the violation.",
+            "format": "int32",
+            "example": 80
+          },
+          "fineAmount": {
+            "type": "integer",
+            "description": "The monetary amount of the fine for the violation.",
+            "format": "int32",
+            "example": 600
+          },
+          "timestamp": {
             "type": "string",
-            "description": "Additional details about the error (optional)."
+            "description": "The date and time when the violation occurred.",
+            "example": "2026-07-30T01:13:21.699Z"
           }
         },
-        "description": "This schema represents the error response returned when a request to retrieve patient records results in a server error (HTTP 500).",
+        "description": "Schema representing a request body for creating a violation entry.",
+        "example": {
+          "violationId": "VIO-974983",
+          "vehicleNumber": "MH92AB9437",
+          "violationType": "SPEEDING",
+          "location": {
+            "lat": 20.999138,
+            "lng": 70.39153,
+            "area": "Downtown"
+          },
+          "speedRecorded": 117,
+          "speedLimit": 80,
+          "fineAmount": 600,
+          "timestamp": "2026-07-30T01:13:21.699Z"
+        }
+      },
+      "MICROSERVICE_DEV-TEST_createViolation-Location": {
+        "type": "object",
+        "properties": {
+          "lat": {
+            "type": "number",
+            "description": "Latitude of the violation location.",
+            "example": 0.0
+          },
+          "lng": {
+            "type": "number",
+            "description": "Longitude of the violation location.",
+            "example": 0.0
+          },
+          "area": {
+            "type": "string",
+            "description": "The area or name of the location where the violation occurred.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing the geographic location details of a violation."
+      },
+      "MICROSERVICE_DEV-TEST_createViolation-CreateViolationResponse_500": {
+        "title": "Server Error Response",
+        "type": "object",
+        "description": "This schema represents the response structure returned when a server error (500) occurs during a POST operation related to violations.",
         "example": {}
       }
     },
@@ -357,9 +432,9 @@
         "schema": {
           "type": "string",
           "enum": [
+            "_400",
             "_201",
             "_200",
-            "_400",
             "_404",
             "_500"
           ]

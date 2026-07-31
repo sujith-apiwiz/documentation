@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Health APIs",
-    "description": "The Patient Health Records Retrieval API enables healthcare providers to access patient health records efficiently. This API allows authorized users to retrieve comprehensive health data linked to a specific patient by their unique ID. Typical consumers include healthcare professionals, clinics, and health information systems that need to access patient history for better care coordination. By leveraging this API, stakeholders can ensure timely and informed medical decisions based on accurate patient data.",
+    "title": "Hotel",
+    "description": "The Hotel Booking API facilitates the reservation of accommodations for travelers and guests. Users can initiate bookings by providing essential details such as check-in and check-out dates, room preferences, and guest information. This API is designed for travel agencies, hotel management systems, and any application that aims to integrate hotel booking functionalities. By utilizing this API, developers can streamline the booking process, enhance user experience, and manage hotel reservations efficiently.",
     "version": "1.0"
   },
   "servers": [
@@ -18,14 +18,14 @@
     }
   ],
   "paths": {
-    "/health/v1/patients/{id}/records": {
-      "get": {
+    "/hotel/v1/bookings": {
+      "post": {
         "tags": [
-          "Patient Management"
+          "Bookings"
         ],
-        "summary": "Retrieve patient records by ID",
-        "description": "Fetches the medical records associated with a specific patient identified by their unique ID. This endpoint allows users to access important health information for further analysis or review.",
-        "operationId": "getPatientRecords",
+        "summary": "Create a new booking.",
+        "description": "This endpoint allows users to create a new booking by providing the necessary details. Upon successful creation, a confirmation response will be returned, including booking details.",
+        "operationId": "createBooking",
         "parameters": [
           {
             "$ref": "#/components/parameters/host"
@@ -61,24 +61,19 @@
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
-        "responses": {
-          "201": {
-            "description": "Resource created successfully.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_201"
-                }
+        "requestBody": {
+          "description": "Request body for creating a new booking. This should include all necessary details required to process the booking, such as customer information, booking dates, and any special requests.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createBooking-CreateBookingRequest"
               }
             }
-          },
-          "200": {
-            "description": "Request completed successfully.",
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Resource created successfully for the booking.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -87,13 +82,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_200"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_201"
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid request parameters.",
+            "description": "The request contains invalid parameters; check your input.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -102,13 +97,28 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_400"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_400"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Request completed successfully; booking details retrieved.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_200"
                 }
               }
             }
           },
           "404": {
-            "description": "Requested resource not found.",
+            "description": "The requested booking resource could not be found.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -117,13 +127,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_404"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_404"
                 }
               }
             }
           },
           "500": {
-            "description": "Unexpected server error.",
+            "description": "An unexpected error occurred on the server; please try again later.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -132,7 +142,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_500"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_500"
                 }
               }
             }
@@ -148,81 +158,141 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_201": {
-        "title": "Patient Records Response",
+      "MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_201": {
+        "required": [
+          "bookingId",
+          "createdAt",
+          "status"
+        ],
         "type": "object",
-        "properties": {},
-        "description": "This schema represents the response returned when successfully retrieving a patient's records.",
+        "properties": {
+          "bookingId": {
+            "type": "string",
+            "description": "Unique identifier for the newly created booking."
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the booking."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Timestamp when the booking was created.",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp when the booking was last updated.",
+            "format": "date-time"
+          }
+        },
+        "description": "Response schema for the successful creation of bookings in the system.",
         "example": {}
       },
-      "MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_200": {
-        "title": "Patient Records Response",
+      "MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_400": {
+        "title": "Error Response for Booking Creation",
+        "type": "object",
+        "description": "This schema represents the error response format when a booking creation request fails with a 400 Bad Request status.",
+        "example": {}
+      },
+      "MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_200": {
+        "title": "Booking Operations Response",
+        "type": "object",
+        "description": "This schema represents the response structure for a successful booking operation.",
+        "example": {}
+      },
+      "MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_404": {
+        "title": "Error Response for Booking Operation",
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status of the request indicating success or failure.",
+            "description": "The status of the error response.",
             "example": "ok"
           },
           "example": {
             "type": "string",
-            "description": "An example field containing a relevant value.",
-            "example": "This is an example response."
+            "description": "An example string that illustrates the error response.",
+            "example": "The requested booking was not found."
           }
         },
-        "description": "Schema representing the response structure for retrieving patient records.",
+        "description": "This schema represents the error response returned when a booking operation fails with a 404 status code.",
         "example": {
           "status": "ok"
         }
       },
-      "MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_400": {
-        "title": "Patient Records GET Error Response",
+      "MICROSERVICE_DEV-TEST_createBooking-CreateBookingRequest": {
+        "title": "Booking Request",
         "type": "object",
         "properties": {
-          "error": {
+          "bookingId": {
             "type": "string",
-            "description": "A message describing the error that occurred during the request."
+            "description": "Unique identifier for the booking.",
+            "example": "HB-982013"
           },
-          "code": {
-            "type": "integer",
-            "description": "The error code indicating the type of error that occurred."
-          }
-        },
-        "description": "This schema represents the structure of the error response returned when a GET request for patient records fails with a 400 Bad Request status.",
-        "example": {}
-      },
-      "MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_404": {
-        "type": "object",
-        "properties": {
-          "status": {
+          "hotelId": {
             "type": "string",
-            "description": "The status message indicating the error type.",
-            "example": "ok"
+            "description": "Identifier for the hotel where the booking is made.",
+            "example": "HTL-4113"
+          },
+          "guestName": {
+            "type": "string",
+            "description": "Name of the guest making the booking.",
+            "example": "Liam Chen"
+          },
+          "roomType": {
+            "type": "string",
+            "description": "Type of room booked (e.g., single, double, suite).",
+            "example": "DELUXE"
+          },
+          "checkInDate": {
+            "type": "string",
+            "description": "The date when the guest will check in.",
+            "example": "2026-08-17T20:14:34.764Z"
+          },
+          "checkOutDate": {
+            "type": "string",
+            "description": "The date when the guest will check out.",
+            "example": "2026-07-24T05:43:57.960Z"
+          },
+          "guests": {
+            "type": "integer",
+            "description": "Number of guests included in the booking.",
+            "format": "int32",
+            "example": 1
+          },
+          "totalAmount": {
+            "type": "number",
+            "description": "Total amount to be paid for the booking.",
+            "example": 980.78
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency in which the total amount is specified (e.g., USD, EUR).",
+            "example": "EUR"
+          },
+          "paymentStatus": {
+            "type": "string",
+            "description": "Current status of the payment (e.g., pending, completed).",
+            "example": "PENDING"
           }
         },
-        "description": "Response schema for the 404 error when retrieving patient records.",
+        "description": "Schema representing the request body for creating a new booking.",
         "example": {
-          "status": "ok"
+          "bookingId": "HB-982013",
+          "hotelId": "HTL-4113",
+          "guestName": "Liam Chen",
+          "roomType": "DELUXE",
+          "checkInDate": "2026-08-17T20:14:34.764Z",
+          "checkOutDate": "2026-07-24T05:43:57.960Z",
+          "guests": 1,
+          "totalAmount": 980.78,
+          "currency": "EUR",
+          "paymentStatus": "PENDING"
         }
       },
-      "MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_500": {
-        "title": "Error Response for Patient Records Retrieval",
+      "MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_500": {
         "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "description": "A message describing the error that occurred."
-          },
-          "code": {
-            "type": "integer",
-            "description": "The HTTP status code representing the type of error."
-          },
-          "details": {
-            "type": "string",
-            "description": "Additional details about the error (optional)."
-          }
-        },
-        "description": "This schema represents the error response returned when a request to retrieve patient records results in a server error (HTTP 500).",
+        "description": "This schema represents the response structure for a failed booking operation due to server error (HTTP 500).",
         "example": {}
       }
     },
@@ -358,8 +428,8 @@
           "type": "string",
           "enum": [
             "_201",
-            "_200",
             "_400",
+            "_200",
             "_404",
             "_500"
           ]
