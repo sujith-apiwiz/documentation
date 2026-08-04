@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Hotel",
-    "description": "The Hotel Booking API facilitates the reservation of accommodations, allowing users to efficiently manage travel plans. Through this API, consumers can create bookings for various hotel properties, providing essential details such as check-in and check-out dates, guest information, and room selection. This service is particularly useful for travel agencies, online travel platforms, and consumers seeking streamlined hotel booking processes. By leveraging this API, developers can enhance their applications with seamless integration to hotel reservation systems.",
+    "description": "The Booking Management API enables users to manage hotel bookings efficiently. This API allows partners and travelers to initiate and confirm hotel reservations seamlessly, enhancing their travel planning experience. It facilitates the interaction with hotel inventory to check availability and reduce booking friction. Typical consumers include travel agencies, hotel partners, and application developers looking to enhance their offerings with booking capabilities.",
     "version": "1.0"
   },
   "servers": [
@@ -21,10 +21,10 @@
     "/hotel/v1/bookings": {
       "post": {
         "tags": [
-          "Bookings"
+          "Booking Management"
         ],
         "summary": "Create a new booking.",
-        "description": "This endpoint allows users to create a new booking in the system. Ensure that all required information is provided in the request body to successfully create the booking.",
+        "description": "This operation allows users to create a new booking in the system by providing the necessary details required for the booking process.",
         "operationId": "createBooking",
         "parameters": [
           {
@@ -62,7 +62,7 @@
           }
         ],
         "requestBody": {
-          "description": "Request body containing the details for creating a new booking. This should include all necessary information such as booking dates, user information, and any additional preferences.",
+          "description": "This request body is used to create a new booking. It should contain all necessary information required to process the booking, such as customer details, booking dates, and any additional specifications related to the service being booked.",
           "content": {
             "application/json": {
               "schema": {
@@ -73,29 +73,79 @@
         },
         "responses": {
           "201": {
-            "description": "Resource created successfully, confirming the booking.",
-            "headers": {},
-            "content": {}
+            "description": "Resource created successfully, booking confirmed.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_201"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Invalid request parameters. Please check the input data.",
-            "headers": {},
-            "content": {}
+            "description": "Invalid request parameters provided, please check your input.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_400"
+                }
+              }
+            }
           },
           "200": {
-            "description": "Request completed successfully, returning the booking details.",
-            "headers": {},
-            "content": {}
+            "description": "Request completed successfully, returning booking details.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_200"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Requested resource not found. Please verify the booking ID.",
-            "headers": {},
-            "content": {}
+            "description": "Requested resource not found, please verify the booking ID.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_404"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Unexpected server error. Please try again later.",
-            "headers": {},
-            "content": {}
+            "description": "Unexpected server error, please try again later.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_500"
+                }
+              }
+            }
           }
         },
         "callbacks": {},
@@ -109,53 +159,72 @@
   "components": {
     "schemas": {
       "MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_201": {
+        "title": "Booking Creation Response",
         "type": "object",
         "properties": {},
-        "description": "Response schema for a successful booking operation via POST request."
+        "description": "This schema represents the response returned when a booking is successfully created.",
+        "example": {}
       },
       "MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_400": {
-        "title": "Bad Request Response for Bookings POST Operation",
+        "title": "Booking Error Response",
         "type": "object",
         "properties": {
-          "error": {
+          "errorCode": {
             "type": "string",
-            "description": "A summary of the error that occurred."
+            "description": "A code representing the type of error that occurred."
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "A descriptive message providing more details about the error."
           },
           "details": {
-            "type": "array",
-            "description": "An array of detailed error messages related to the request.",
-            "items": {
-              "type": "string",
-              "description": "Detailed descriptions of specific validation issues or problems."
-            }
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string",
+                "description": "The specific field that caused the validation error."
+              },
+              "issue": {
+                "type": "string",
+                "description": "A description of the issue with the specific field."
+              }
+            },
+            "description": "Additional information related to the error, if applicable."
           }
         },
-        "description": "This schema represents the error response for a 400 Bad Request in the bookings POST operation. It contains details about the error encountered during the request."
+        "description": "This schema represents the response structure for a 400 Bad Request error when making a booking. It includes details about the error that occurred.",
+        "example": {}
       },
       "MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_200": {
-        "title": "Successful Booking Response",
+        "title": "Bookings Operations Response",
         "type": "object",
         "properties": {},
-        "description": "Schema representing the response structure for a successful booking operation."
+        "additionalProperties": false,
+        "description": "Schema representing the response structure for the bookings operations on successful POST request.",
+        "example": {}
       },
       "MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_404": {
-        "title": "Booking Error Response",
+        "title": "Error Response for Booking Operations",
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status of the error response, typically indicating the type of error that occurred.",
-            "example": "not_found"
+            "description": "The status of the error response indicating the nature of the error.",
+            "example": "ok"
           },
           "example": {
             "type": "string",
-            "description": "An example string for demonstration purposes.",
-            "example": "The requested booking could not be found."
+            "description": "An example message that provides additional context about the error.",
+            "example": "The requested booking was not found."
           }
         },
-        "description": "Response schema for a 404 error when attempting to perform operations on bookings."
+        "description": "This schema represents the error response returned when a booking operation results in a 404 Not Found error.",
+        "example": {
+          "status": "ok"
+        }
       },
       "MICROSERVICE_DEV-TEST_createBooking-CreateBookingRequest": {
+        "title": "Booking Request",
         "type": "object",
         "properties": {
           "bookingId": {
@@ -175,42 +244,42 @@
           },
           "roomType": {
             "type": "string",
-            "description": "Type of room booked.",
+            "description": "Type of room being booked (e.g., single, double, suite).",
             "example": "DELUXE"
           },
           "checkInDate": {
             "type": "string",
-            "description": "The check-in date for the booking (ISO 8601 format).",
+            "description": "Date when the guest will check in, formatted as YYYY-MM-DD.",
             "example": "2026-08-17T20:14:34.764Z"
           },
           "checkOutDate": {
             "type": "string",
-            "description": "The check-out date for the booking (ISO 8601 format).",
+            "description": "Date when the guest will check out, formatted as YYYY-MM-DD.",
             "example": "2026-07-24T05:43:57.960Z"
           },
           "guests": {
             "type": "integer",
-            "description": "Number of guests staying in the room.",
+            "description": "Number of guests included in the booking.",
             "format": "int32",
             "example": 1
           },
           "totalAmount": {
             "type": "number",
-            "description": "Total amount charged for the booking.",
+            "description": "Total amount for the booking, in the specified currency.",
             "example": 980.78
           },
           "currency": {
             "type": "string",
-            "description": "Currency code for the total amount (e.g., USD, EUR).",
+            "description": "Currency in which the total amount is denominated (e.g., USD, EUR).",
             "example": "EUR"
           },
           "paymentStatus": {
             "type": "string",
-            "description": "Current payment status of the booking.",
+            "description": "Current payment status of the booking (e.g., pending, completed).",
             "example": "PENDING"
           }
         },
-        "description": "Schema representing the request body for creating a booking.",
+        "description": "Schema representing a booking request for a hotel stay.",
         "example": {
           "bookingId": "HB-982013",
           "hotelId": "HTL-4113",
@@ -225,33 +294,10 @@
         }
       },
       "MICROSERVICE_DEV-TEST_createBooking-CreateBookingResponse_500": {
-        "title": "Error Response for Bookings Operations",
         "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "description": "A message describing the error that occurred."
-          },
-          "code": {
-            "type": "integer",
-            "description": "The HTTP status code representing the error."
-          },
-          "details": {
-            "type": "object",
-            "properties": {
-              "field": {
-                "type": "string",
-                "description": "The field in the request that caused the error, if applicable."
-              },
-              "issue": {
-                "type": "string",
-                "description": "Description of the specific issue with the request."
-              }
-            },
-            "description": "Additional details regarding the error, if available."
-          }
-        },
-        "description": "This schema represents the structure of the error response returned when a POST operation for bookings encounters a server error (500)."
+        "properties": {},
+        "description": "This schema represents the response structure for a 500 Internal Server Error when attempting to create a booking through the POST operation.",
+        "example": {}
       }
     },
     "parameters": {
@@ -396,13 +442,14 @@
     },
     "headers": {
       "Vary": {
+        "description": "This header denotes the caching characteristics of the response for a 500 Internal Server Error status. It specifies the request parameters that might influence variations in the response.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "string"
+          "example": "Origin"
         },
-        "example": "This header can vary depending on internal server conditions and error states."
+        "example": "Origin"
       }
     }
   }
