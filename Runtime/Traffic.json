@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Traffic",
-    "description": "The Traffic Violation Management API allows users to submit and manage traffic violation reports effectively. This API serves law enforcement agencies and municipalities to streamline the process of documenting violations, ensuring accurate record-keeping and facilitating follow-up actions. Through this endpoint, users can upload necessary details related to each violation, including time, location, and involved parties. Ideal for software solutions in public safety and traffic management systems, this API enhances the operational capabilities of organizations addressing road safety.",
+    "description": "The Traffic Violation Reporting API allows users to submit reports of traffic violations efficiently. This service is designed for law enforcement agencies, municipalities, and citizens to document and manage traffic infractions, enhancing road safety and law enforcement efficacy. Users can report various types of violations, including speeding, illegal parking, and red-light offenses, facilitating quicker incident resolution. This API provides a streamlined way to capture and store violation data for review and action.",
     "version": "1.0"
   },
   "servers": [
@@ -24,7 +24,7 @@
           "Violations"
         ],
         "summary": "Create a new violation record.",
-        "description": "This endpoint allows users to submit a new violation record to the system. Ensure that all required fields are filled in the request body for successful creation.",
+        "description": "This endpoint allows the user to submit a new violation record into the system, capturing necessary details about the violation and associated metadata.",
         "operationId": "createViolation",
         "parameters": [
           {
@@ -62,7 +62,7 @@
           }
         ],
         "requestBody": {
-          "description": "The request body for creating a new violation record. This should include all necessary details regarding the violation, formatted as JSON.",
+          "description": "The request body should contain information about the violations being reported. It should adhere to the defined schema for the POST operation.",
           "content": {
             "application/json": {
               "schema": {
@@ -73,7 +73,7 @@
         },
         "responses": {
           "400": {
-            "description": "The request contains invalid parameters.",
+            "description": "The request parameters are invalid or malformed.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -103,7 +103,7 @@
             }
           },
           "200": {
-            "description": "The request was successful and the response contains the requested data.",
+            "description": "The request has been successfully processed.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -118,7 +118,7 @@
             }
           },
           "404": {
-            "description": "The specified resource could not be found.",
+            "description": "The requested resource could not be found.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -163,52 +163,82 @@
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status of the response indicating the error type.",
+            "description": "The status message describing the result of the request.",
             "example": "ok"
           },
           "example": {
             "type": "string",
-            "description": "An example message providing additional context about the error.",
-            "example": "The provided data is not valid."
+            "description": "An example message or detail about the error encountered.",
+            "example": "The provided input does not meet the required format."
           }
         },
-        "description": "Response schema for a 400 Bad Request error in the POST operation related to violations.",
+        "description": "Schema representing the response structure for a 400 Bad Request error in the POST operation for violations.",
         "example": {
           "status": "ok"
         }
       },
       "MICROSERVICE_DEV-TEST_createViolation-CreateViolationResponse_201": {
-        "title": "Violations Post Response",
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status message indicating the result of the operation.",
+            "description": "The status of the operation, indicating success or failure.",
             "example": "ok"
           },
           "example": {
             "type": "string",
-            "description": "An example string that provides further context or data for the response.",
+            "description": "An example message or data related to the operation.",
             "example": "Operation completed successfully."
           }
         },
-        "description": "Response schema for a successful POST operation regarding violations. It contains the status of the operation and an example field.",
+        "description": "Response schema for successful POST operations related to violations.",
         "example": {
           "status": "ok"
         }
       },
       "MICROSERVICE_DEV-TEST_createViolation-CreateViolationResponse_200": {
-        "title": "Successful Operation Response for Violations",
+        "title": "Violations Response",
         "type": "object",
-        "properties": {},
-        "description": "Schema representing the successful response for a POST request related to operations and violations.",
+        "properties": {
+          "violations": {
+            "type": "array",
+            "description": "A list of violations that were successfully processed.",
+            "items": {
+              "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createViolation-Violation"
+            }
+          }
+        },
+        "description": "This schema defines the structure of the response for the successful POST operation related to violations.",
         "example": {}
       },
+      "MICROSERVICE_DEV-TEST_createViolation-Violation": {
+        "title": "Violation Details",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for the violation."
+          },
+          "description": {
+            "type": "string",
+            "description": "A detailed description of the violation."
+          },
+          "date": {
+            "type": "string",
+            "description": "The date and time when the violation occurred.",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "description": "The current status of the violation (e.g., open, resolved)."
+          }
+        },
+        "description": "This schema represents a single violation with its details."
+      },
       "MICROSERVICE_DEV-TEST_createViolation-CreateViolationResponse_404": {
-        "title": "Not Found Response for POST Operations",
         "type": "object",
         "properties": {},
-        "description": "This schema represents the structure of the response when a POST operation results in a 404 Not Found error.",
+        "description": "This schema represents the response structure returned when a POST operation on violations results in a 404 Not Found error.",
         "example": {}
       },
       "MICROSERVICE_DEV-TEST_createViolation-CreateViolationRequest": {
@@ -221,43 +251,43 @@
           },
           "vehicleNumber": {
             "type": "string",
-            "description": "The registration number of the vehicle involved in the violation.",
+            "description": "The number plate of the vehicle involved in the violation.",
             "example": "MH92AB9437"
           },
           "violationType": {
             "type": "string",
-            "description": "Type of the violation (e.g., speeding, parking).",
+            "description": "Type of violation (e.g., speeding, parking, etc.).",
             "example": "SPEEDING"
           },
           "location": {
-            "description": "Location details where the violation occurred.",
+            "description": "Geographical location where the violation occurred.",
             "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createViolation-Location"
           },
           "speedRecorded": {
             "type": "integer",
-            "description": "Speed recorded at the time of the violation.",
+            "description": "Speed of the vehicle at the time of the violation in km/h.",
             "format": "int32",
             "example": 117
           },
           "speedLimit": {
             "type": "integer",
-            "description": "The speed limit at the location of the violation.",
+            "description": "Speed limit in km/h applicable at the location.",
             "format": "int32",
             "example": 80
           },
           "fineAmount": {
             "type": "integer",
-            "description": "The monetary amount of the fine for the violation.",
+            "description": "The monetary amount of the fine imposed for the violation.",
             "format": "int32",
             "example": 600
           },
           "timestamp": {
             "type": "string",
-            "description": "The date and time when the violation occurred.",
+            "description": "Timestamp of when the violation was recorded.",
             "example": "2026-07-30T01:13:21.699Z"
           }
         },
-        "description": "Schema representing a request body for creating a violation entry.",
+        "description": "Schema representing the request body for creating a violation record.",
         "example": {
           "violationId": "VIO-974983",
           "vehicleNumber": "MH92AB9437",
@@ -278,26 +308,26 @@
         "properties": {
           "lat": {
             "type": "number",
-            "description": "Latitude of the violation location.",
-            "example": 0.0
+            "description": "Latitude of the location.",
+            "example": 37.7749
           },
           "lng": {
             "type": "number",
-            "description": "Longitude of the violation location.",
-            "example": 0.0
+            "description": "Longitude of the location.",
+            "example": -122.4194
           },
           "area": {
             "type": "string",
-            "description": "The area or name of the location where the violation occurred.",
-            "example": "string"
+            "description": "Area or description of the location where the violation occurred.",
+            "example": "Downtown"
           }
         },
-        "description": "Schema representing the geographic location details of a violation."
+        "description": "Schema representing the geographical location of a violation."
       },
       "MICROSERVICE_DEV-TEST_createViolation-CreateViolationResponse_500": {
         "title": "Server Error Response",
         "type": "object",
-        "description": "This schema represents the response structure returned when a server error (500) occurs during a POST operation related to violations.",
+        "description": "This schema represents the structure of the response returned when a server error occurs for the POST operation related to violations.",
         "example": {}
       }
     },
