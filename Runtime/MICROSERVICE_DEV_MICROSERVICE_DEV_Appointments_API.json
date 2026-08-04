@@ -19,7 +19,7 @@
     }
   ],
   "paths": {
-    "/health/v1/appointments": {
+    "/v1/patients/appointments": {
       "post": {
         "operationId": "POST_appointments",
         "parameters": [
@@ -27,10 +27,13 @@
             "$ref": "#/components/parameters/host"
           },
           {
-            "$ref": "#/components/parameters/accept"
+            "$ref": "#/components/parameters/name"
           },
           {
-            "$ref": "#/components/parameters/jsession"
+            "$ref": "#/components/parameters/appId"
+          },
+          {
+            "$ref": "#/components/parameters/accept"
           },
           {
             "$ref": "#/components/parameters/connection"
@@ -46,9 +49,6 @@
           },
           {
             "$ref": "#/components/parameters/consumer-email"
-          },
-          {
-            "$ref": "#/components/parameters/x-forwarded-host"
           },
           {
             "$ref": "#/components/parameters/transfer-encoding"
@@ -67,26 +67,17 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "200Description",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_200"
-                }
-              }
-            }
-          },
           "500": {
             "description": "500Description",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
               }
             },
             "content": {
@@ -102,6 +93,12 @@
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
               }
             },
             "content": {
@@ -112,32 +109,23 @@
               }
             }
           },
-          "201": {
-            "description": "201Description",
+          "200": {
+            "description": "200Description",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_201"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "404Description",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_404"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_200"
                 }
               }
             }
@@ -153,83 +141,268 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_200": {
-        "type": "object",
-        "example": {}
-      },
       "MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_500": {
         "type": "object",
-        "example": {}
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "example": "2026-07-13T12:20:39Z"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "example": 500
+          },
+          "error": {
+            "type": "string",
+            "example": "INTERNAL_SERVER_ERROR"
+          },
+          "message": {
+            "type": "string",
+            "example": "Unable to process appointment request due to internal service failure."
+          },
+          "path": {
+            "type": "string",
+            "example": "/v1/patients/appointments"
+          },
+          "trace": {
+            "type": "string",
+            "example": "9e0752eb-8a0e-4eae-9136-eaf2b8839f8d"
+          },
+          "details": {
+            "type": "object",
+            "properties": {
+              "service": {
+                "type": "string",
+                "example": "I@0e>fn9\"(aKM7jfGR?"
+              },
+              "errorCode": {
+                "type": "string",
+                "example": "JLY8[^RQ.|zU,Rw%;"
+              },
+              "message": {
+                "type": "string",
+                "example": "6dR}C+C8ASb*^0G]Y-v:3o[D<R,I<AV63!cvL]Q(yu9V({i2?v9P9aCK8<8H#"
+              }
+            },
+            "example": {
+              "service": "appointment-service",
+              "errorCode": "APPT_SERVICE_DOWN",
+              "message": "Database connection timeout while saving appointment details."
+            }
+          },
+          "suggestion": {
+            "type": "string",
+            "example": "Please retry after some time or contact support if the issue persists."
+          }
+        },
+        "example": {
+          "timestamp": "2026-07-13T12:20:39Z",
+          "status": 500,
+          "error": "INTERNAL_SERVER_ERROR",
+          "message": "Unable to process appointment request due to internal service failure.",
+          "path": "/v1/patients/appointments",
+          "trace": "9e0752eb-8a0e-4eae-9136-eaf2b8839f8d",
+          "details": {
+            "service": "appointment-service",
+            "errorCode": "APPT_SERVICE_DOWN",
+            "message": "Database connection timeout while saving appointment details."
+          },
+          "suggestion": "Please retry after some time or contact support if the issue persists."
+        }
       },
       "MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_400": {
         "type": "object",
-        "example": {}
-      },
-      "MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_201": {
-        "type": "object",
-        "example": {}
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "example": "2026-07-13T12:20:39Z"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "example": 400
+          },
+          "error": {
+            "type": "string",
+            "example": "BAD_REQUEST"
+          },
+          "message": {
+            "type": "string",
+            "example": "Invalid appointment request."
+          },
+          "path": {
+            "type": "string",
+            "example": "/v1/patients/appointments"
+          },
+          "trace": {
+            "type": "string",
+            "example": "57638faf-e71e-494a-86cf-ee59a73e8ed8"
+          },
+          "validationErrors": {
+            "type": "array",
+            "example": [
+              {
+                "field": "doctorId",
+                "rejectedValue": "",
+                "message": "Doctor ID is mandatory."
+              },
+              {
+                "field": "appointmentTime",
+                "rejectedValue": "",
+                "message": "Appointment time is required."
+              }
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "example": "fmigvgez"
+                },
+                "rejectedValue": {
+                  "type": "string",
+                  "example": ""
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Qakg{XOm0%S$MD)1Z+*7f:W"
+                }
+              },
+              "example": "{\n  \"field\" : \"fmigvgez\",\n  \"rejectedValue\" : \"\",\n  \"message\" : \"Qakg{XOm0%S$MD)1Z+*7f:W\"\n}"
+            }
+          },
+          "suggestion": {
+            "type": "string",
+            "example": "Please provide valid patient and doctor appointment details."
+          }
+        },
+        "example": {
+          "timestamp": "2026-07-13T12:20:39Z",
+          "status": 400,
+          "error": "BAD_REQUEST",
+          "message": "Invalid appointment request.",
+          "path": "/v1/patients/appointments",
+          "trace": "57638faf-e71e-494a-86cf-ee59a73e8ed8",
+          "validationErrors": [
+            {
+              "field": "doctorId",
+              "rejectedValue": "",
+              "message": "Doctor ID is mandatory."
+            },
+            {
+              "field": "appointmentTime",
+              "rejectedValue": "",
+              "message": "Appointment time is required."
+            }
+          ],
+          "suggestion": "Please provide valid patient and doctor appointment details."
+        }
       },
       "MICROSERVICE_DEV_POST_appointments-POST_appointmentsRequest": {
         "type": "object",
         "properties": {
           "patientId": {
             "type": "string",
-            "example": "PAT-832315"
+            "example": "PAT-10001"
           },
           "doctorId": {
             "type": "string",
-            "example": "DOC-4252"
-          },
-          "department": {
-            "type": "string",
-            "example": "Cardiology"
+            "example": "DOC-50001"
           },
           "appointmentDate": {
             "type": "string",
-            "example": "2026-08-05T19:38:01.245Z"
+            "example": "2026-07-15"
           },
-          "status": {
+          "appointmentTime": {
             "type": "string",
-            "example": "CONFIRMED"
+            "example": "10:30:00"
+          },
+          "department": {
+            "type": "string",
+            "example": "CARDIOLOGY"
           },
           "reason": {
             "type": "string",
-            "example": "Follow-up"
+            "example": "Routine heart checkup"
           },
           "insurance": {
             "type": "object",
             "properties": {
               "provider": {
                 "type": "string",
-                "example": "amtfuburn"
+                "example": "bmhnvcidsanidc"
               },
               "policyNumber": {
                 "type": "string",
-                "example": "aUfM2HQeXD"
+                "example": "wxUFqUkOD"
               }
             },
             "example": {
-              "provider": "BlueCross",
-              "policyNumber": "POL-417149"
+              "provider": "HealthCarePlus",
+              "policyNumber": "HC-987654"
             }
           }
         },
         "example": {
-          "patientId": "PAT-832315",
-          "doctorId": "DOC-4252",
-          "department": "Cardiology",
-          "appointmentDate": "2026-08-05T19:38:01.245Z",
-          "status": "CONFIRMED",
-          "reason": "Follow-up",
+          "patientId": "PAT-10001",
+          "doctorId": "DOC-50001",
+          "appointmentDate": "2026-07-15",
+          "appointmentTime": "10:30:00",
+          "department": "CARDIOLOGY",
+          "reason": "Routine heart checkup",
           "insurance": {
-            "provider": "BlueCross",
-            "policyNumber": "POL-417149"
+            "provider": "HealthCarePlus",
+            "policyNumber": "HC-987654"
           }
         }
       },
-      "MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_404": {
+      "MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_200": {
         "type": "object",
-        "example": {}
+        "properties": {
+          "appointmentId": {
+            "type": "string",
+            "example": "APPT-10001"
+          },
+          "patientId": {
+            "type": "string",
+            "example": "PAT-10001"
+          },
+          "doctorId": {
+            "type": "string",
+            "example": "DOC-50001"
+          },
+          "status": {
+            "type": "string",
+            "example": "CONFIRMED"
+          },
+          "appointmentDate": {
+            "type": "string",
+            "example": "2026-07-15"
+          },
+          "appointmentTime": {
+            "type": "string",
+            "example": "10:30:00"
+          },
+          "department": {
+            "type": "string",
+            "example": "CARDIOLOGY"
+          },
+          "message": {
+            "type": "string",
+            "example": "Appointment booked successfully."
+          }
+        },
+        "example": {
+          "appointmentId": "APPT-10001",
+          "patientId": "PAT-10001",
+          "doctorId": "DOC-50001",
+          "status": "CONFIRMED",
+          "appointmentDate": "2026-07-15",
+          "appointmentTime": "10:30:00",
+          "department": "CARDIOLOGY",
+          "message": "Appointment booked successfully."
+        }
       }
     },
     "parameters": {
@@ -241,9 +414,33 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "public-api.apiwiz.io"
+          "example": "api.apiwiz.io"
         },
-        "example": "public-api.apiwiz.io"
+        "example": "api.apiwiz.io"
+      },
+      "name": {
+        "name": "name",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "akash"
+        },
+        "example": "akash"
+      },
+      "appId": {
+        "name": "appId",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "cacadas"
+        },
+        "example": "cacadas"
       },
       "accept": {
         "name": "accept",
@@ -256,18 +453,6 @@
           "example": "application/json, application/*+json"
         },
         "example": "application/json, application/*+json"
-      },
-      "jsession": {
-        "name": "jsession",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "akash"
-        },
-        "example": "akash"
       },
       "connection": {
         "name": "connection",
@@ -301,9 +486,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "apiwiz"
+          "example": "divakar"
         },
-        "example": "apiwiz"
+        "example": "divakar"
       },
       "content-type": {
         "name": "content-type",
@@ -325,21 +510,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "test-apiwiz"
+          "example": "divakar.v@test.com"
         },
-        "example": "test-apiwiz"
-      },
-      "x-forwarded-host": {
-        "name": "x-forwarded-host",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "test.com"
-        },
-        "example": "test.com"
+        "example": "divakar.v@test.com"
       },
       "transfer-encoding": {
         "name": "transfer-encoding",
@@ -363,11 +536,9 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_DEV_200",
             "MICROSERVICE_DEV_500",
             "MICROSERVICE_DEV_400",
-            "MICROSERVICE_DEV_201",
-            "MICROSERVICE_DEV_404"
+            "MICROSERVICE_DEV_200"
           ]
         }
       }
@@ -381,6 +552,24 @@
           "example": "Origin"
         },
         "example": "Origin"
+      },
+      "Location": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "/v2/customers/CUST-100234"
+        },
+        "example": "/v2/customers/CUST-100234"
+      },
+      "content-type": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
       }
     }
   }
