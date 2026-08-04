@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Health APIs",
-    "description": "The Patient Health Records Retrieval API enables healthcare providers to access patient health records efficiently. This API allows authorized users to retrieve comprehensive health data linked to a specific patient by their unique ID. Typical consumers include healthcare professionals, clinics, and health information systems that need to access patient history for better care coordination. By leveraging this API, stakeholders can ensure timely and informed medical decisions based on accurate patient data.",
+    "description": "The Prescription Management API enables healthcare providers and pharmacies to manage patient prescriptions efficiently. Through this API, users can submit new prescriptions, update existing ones, and track their status. It is particularly useful for clinicians and pharmacy management systems to ensure accurate medication dispensing and patient compliance. By facilitating seamless interactions between healthcare providers and pharmacies, this API enhances patient safety and streamlines the prescription workflow.",
     "version": "1.0"
   },
   "servers": [
@@ -18,14 +18,14 @@
     }
   ],
   "paths": {
-    "/health/v1/patients/{id}/records": {
-      "get": {
+    "/health/v1/prescriptions": {
+      "post": {
         "tags": [
-          "Patient Management"
+          "Prescription Management"
         ],
-        "summary": "Retrieve patient records by ID",
-        "description": "Fetches the medical records associated with a specific patient identified by their unique ID. This endpoint allows users to access important health information for further analysis or review.",
-        "operationId": "getPatientRecords",
+        "summary": "Create a new prescription",
+        "description": "This endpoint allows the user to create a new prescription in the system. It requires the necessary details to be provided in the request body, ensuring that all relevant information about the prescription is included.",
+        "operationId": "createPrescription",
         "parameters": [
           {
             "$ref": "#/components/parameters/host"
@@ -61,9 +61,19 @@
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
+        "requestBody": {
+          "description": "Creates a new prescription record based on the provided details. Ensure that all required fields are populated and adhere to the specified formats. This endpoint allows for efficient management of prescription data in the system.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionRequest"
+              }
+            }
+          }
+        },
         "responses": {
-          "201": {
-            "description": "Resource created successfully.",
+          "200": {
+            "description": "Request completed successfully, returning the existing resource.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -72,13 +82,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_201"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_200"
                 }
               }
             }
           },
-          "200": {
-            "description": "Request completed successfully.",
+          "201": {
+            "description": "Resource created successfully, returning the new resource details.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -87,13 +97,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_200"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_201"
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid request parameters.",
+            "description": "Invalid request parameters; check the input values.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -102,13 +112,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_400"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_400"
                 }
               }
             }
           },
           "404": {
-            "description": "Requested resource not found.",
+            "description": "Requested resource not found; verify the reference IDs.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -117,13 +127,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_404"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_404"
                 }
               }
             }
           },
           "500": {
-            "description": "Unexpected server error.",
+            "description": "Unexpected server error; please try again later.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -132,7 +142,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_500"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_500"
                 }
               }
             }
@@ -148,81 +158,151 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_201": {
-        "title": "Patient Records Response",
+      "MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_200": {
+        "title": "Prescriptions Post Response",
         "type": "object",
         "properties": {},
-        "description": "This schema represents the response returned when successfully retrieving a patient's records.",
+        "description": "Response schema for the successful operation of creating a prescription.",
         "example": {}
       },
-      "MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_200": {
-        "title": "Patient Records Response",
+      "MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_201": {
+        "title": "Prescription Creation Response",
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status of the request indicating success or failure.",
-            "example": "ok"
+            "description": "The status of the prescription creation operation."
           },
-          "example": {
-            "type": "string",
-            "description": "An example field containing a relevant value.",
-            "example": "This is an example response."
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The unique identifier for the prescription."
+              },
+              "patientId": {
+                "type": "string",
+                "description": "The unique identifier for the patient associated with the prescription."
+              },
+              "medications": {
+                "type": "array",
+                "description": "An array of medications prescribed.",
+                "items": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createPrescription-Medication"
+                }
+              }
+            },
+            "description": "The details of the newly created prescription."
           }
         },
-        "description": "Schema representing the response structure for retrieving patient records.",
-        "example": {
-          "status": "ok"
-        }
-      },
-      "MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_400": {
-        "title": "Patient Records GET Error Response",
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "description": "A message describing the error that occurred during the request."
-          },
-          "code": {
-            "type": "integer",
-            "description": "The error code indicating the type of error that occurred."
-          }
-        },
-        "description": "This schema represents the structure of the error response returned when a GET request for patient records fails with a 400 Bad Request status.",
+        "description": "This schema defines the structure of the response returned when a new prescription is successfully created.",
         "example": {}
       },
-      "MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_404": {
+      "MICROSERVICE_DEV-TEST_createPrescription-Medication": {
+        "title": "Medication",
         "type": "object",
         "properties": {
-          "status": {
+          "name": {
             "type": "string",
-            "description": "The status message indicating the error type.",
-            "example": "ok"
+            "description": "The name of the medication."
+          },
+          "dosage": {
+            "type": "string",
+            "description": "The recommended dosage of the medication."
+          },
+          "frequency": {
+            "type": "string",
+            "description": "The frequency at which the medication should be taken."
           }
         },
-        "description": "Response schema for the 404 error when retrieving patient records.",
+        "description": "This schema defines the structure for a medication object."
+      },
+      "MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_400": {
+        "title": "Bad Request Response for Prescription Operations",
+        "type": "object",
+        "properties": {},
+        "description": "This schema defines the structure of a 400 Bad Request response for prescription operations. It contains information about the validation errors that occurred while processing the request.",
+        "example": {}
+      },
+      "MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_404": {
+        "type": "object",
+        "properties": {},
+        "description": "Response schema for a 404 error when trying to access a prescription operation via POST. This indicates that the requested resource could not be found.",
+        "example": {}
+      },
+      "MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionRequest": {
+        "title": "Prescription Creation Request",
+        "type": "object",
+        "properties": {
+          "prescriptionId": {
+            "type": "string",
+            "description": "Unique identifier for the prescription.",
+            "example": "RX-621591"
+          },
+          "patientId": {
+            "type": "string",
+            "description": "Unique identifier for the patient to whom the prescription is issued.",
+            "example": "PAT-244976"
+          },
+          "medication": {
+            "type": "string",
+            "description": "Name of the medication prescribed.",
+            "example": "Lisinopril"
+          },
+          "dosage": {
+            "type": "string",
+            "description": "Dosage of the medication to be taken.",
+            "example": "250mg"
+          },
+          "frequency": {
+            "type": "string",
+            "description": "Frequency at which the medication should be taken (e.g., once daily, twice a day).",
+            "example": "Twice daily"
+          },
+          "prescribedBy": {
+            "type": "string",
+            "description": "Identifier of the healthcare provider who prescribed the medication.",
+            "example": "DOC-4119"
+          },
+          "issuedDate": {
+            "type": "string",
+            "description": "Date on which the prescription is issued.",
+            "example": "2026-07-26T21:58:20.668Z"
+          }
+        },
+        "description": "Schema representing the request body for creating a new prescription.",
         "example": {
-          "status": "ok"
+          "prescriptionId": "RX-621591",
+          "patientId": "PAT-244976",
+          "medication": "Lisinopril",
+          "dosage": "250mg",
+          "frequency": "Twice daily",
+          "prescribedBy": "DOC-4119",
+          "issuedDate": "2026-07-26T21:58:20.668Z"
         }
       },
-      "MICROSERVICE_DEV-TEST_getPatientRecords-GetPatientRecordsResponse_500": {
-        "title": "Error Response for Patient Records Retrieval",
+      "MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_500": {
+        "title": "Prescriptions Error Response",
+        "required": [
+          "error",
+          "message"
+        ],
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
-            "description": "A message describing the error that occurred."
+            "description": "A brief description of the error that occurred."
+          },
+          "message": {
+            "type": "string",
+            "description": "A detailed message explaining the error."
           },
           "code": {
             "type": "integer",
-            "description": "The HTTP status code representing the type of error."
-          },
-          "details": {
-            "type": "string",
-            "description": "Additional details about the error (optional)."
+            "description": "The error code associated with the failure."
           }
         },
-        "description": "This schema represents the error response returned when a request to retrieve patient records results in a server error (HTTP 500).",
+        "description": "This schema represents the error response for the POST operation on prescriptions that returns a 500 status code.",
         "example": {}
       }
     },
@@ -357,8 +437,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "_201",
             "_200",
+            "_201",
             "_400",
             "_404",
             "_500"
