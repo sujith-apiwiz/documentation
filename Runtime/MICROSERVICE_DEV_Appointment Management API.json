@@ -2,12 +2,13 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_DEV_Appointment Management API",
-    "description": "MICROSERVICE_DEV_Appointment Management API",
+    "description": "The Appointment Management API facilitates the scheduling of patient appointments within the clinic's system. This endpoint allows healthcare providers to manage the booking process, ensuring that patients can secure their appointments easily and efficiently. Typical users include clinic staff and administrative personnel who require seamless appointment handling. By employing this API, clinics can enhance their operational workflow and improve patient satisfaction through effective appointment management.",
     "version": "1.0"
   },
   "servers": [
     {
       "url": "https://stage-data-gujl.apiwiz.io",
+      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
@@ -18,9 +19,14 @@
     }
   ],
   "paths": {
-    "/v1/patients/appointments": {
+    "/v1/patients/appointment/clinic": {
       "post": {
-        "operationId": "POST_appointments",
+        "tags": [
+          "Appointment Management"
+        ],
+        "summary": "Schedule a new appointment for a clinic",
+        "description": "This endpoint allows users to schedule a new appointment at a specified clinic. Provide the necessary details such as clinic ID, appointment date, and patient information to successfully create the appointment.",
+        "operationId": "createAppointmentForClinic",
         "parameters": [
           {
             "$ref": "#/components/parameters/host"
@@ -41,6 +47,9 @@
             "$ref": "#/components/parameters/user-agent"
           },
           {
+            "$ref": "#/components/parameters/x-mock-200"
+          },
+          {
             "$ref": "#/components/parameters/consumer-key"
           },
           {
@@ -57,23 +66,27 @@
           }
         ],
         "requestBody": {
+          "description": "This request body is used to create a new clinic appointment. It requires a JSON object that contains the necessary details for scheduling the appointment, such as the patient's information, preferred time, and any specific requirements or notes.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MICROSERVICE_DEV_POST_appointments-POST_appointmentsRequest"
+                "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointmentForClinic-CreateAppointmentForClinicRequest"
               }
             }
           }
         },
         "responses": {
-          "400": {
-            "description": "400Description",
+          "500": {
+            "description": "An unexpected error occurred on the server.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
               },
               "Location": {
                 "$ref": "#/components/headers/Location"
+              },
+              "x-mock-200": {
+                "$ref": "#/components/headers/x-mock-200"
               },
               "content-type": {
                 "$ref": "#/components/headers/content-type"
@@ -82,19 +95,70 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_400"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointmentForClinic-CreateAppointmentForClinicResponse_500"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "x-mock-200": {
+                "$ref": "#/components/headers/x-mock-200"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointmentForClinic-CreateAppointmentForClinicResponse_404"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request contains invalid parameters.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "x-mock-200": {
+                "$ref": "#/components/headers/x-mock-200"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointmentForClinic-CreateAppointmentForClinicResponse_400"
                 }
               }
             }
           },
           "200": {
-            "description": "200Description",
+            "description": "The request was successful and the resource is returned.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
               },
               "Location": {
                 "$ref": "#/components/headers/Location"
+              },
+              "x-mock-200": {
+                "$ref": "#/components/headers/x-mock-200"
               },
               "content-type": {
                 "$ref": "#/components/headers/content-type"
@@ -103,28 +167,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_200"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "500Description",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              },
-              "Location": {
-                "$ref": "#/components/headers/Location"
-              },
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_500"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createAppointmentForClinic-CreateAppointmentForClinicResponse_200"
                 }
               }
             }
@@ -140,243 +183,321 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_400": {
+      "MICROSERVICE_DEV_createAppointmentForClinic-CreateAppointmentForClinicResponse_500": {
         "type": "object",
         "properties": {
-          "timestamp": {
+          "policyId": {
             "type": "string",
-            "example": "2026-07-13T12:20:39Z"
+            "description": "The unique identifier for the insurance policy.",
+            "example": "POL-100001"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "The unique identifier for the customer associated with the policy.",
+            "example": "INS-10001"
+          },
+          "policyType": {
+            "type": "string",
+            "description": "The type of insurance policy, e.g., health, auto, home.",
+            "example": "HEALTH"
+          },
+          "coverageAmount": {
+            "type": "integer",
+            "description": "The total amount covered by the policy.",
+            "format": "int32",
+            "example": 500000
+          },
+          "premiumAmount": {
+            "type": "integer",
+            "description": "The amount of money that must be paid for the policy premium.",
+            "format": "int32",
+            "example": 12000
           },
           "status": {
-            "type": "boolean",
-            "example": true
-          },
-          "error": {
             "type": "string",
-            "example": "INTERNAL_SERVER_ERROR"
+            "description": "The current status of the policy, e.g., active, canceled.",
+            "example": "ACTIVE"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "The start date of the insurance coverage in ISO 8601 format.",
+            "example": "2026-07-16"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "The end date of the insurance coverage in ISO 8601 format.",
+            "example": "2027-07-16"
           },
           "message": {
             "type": "string",
-            "example": "Unable to process appointment request due to internal service failure."
-          },
-          "path": {
-            "type": "string",
-            "example": "/v1/patients/appointments"
-          },
-          "trace": {
-            "type": "string",
-            "example": "46369660-9f25-47ab-8c7d-ed89bc7f7736"
-          },
-          "details": {
-            "type": "object",
-            "properties": {
-              "service": {
-                "type": "string",
-                "example": "d1K:b)2f<#/<4.E\"7Iv"
-              },
-              "errorCode": {
-                "type": "string",
-                "example": "egx=t*o(cw>9KIeDK"
-              },
-              "message": {
-                "type": "string",
-                "example": "|a|%{F;%zT^y/-T05;.!4L';+!]dU1ND?XbPC#K3|/Hk(S+oAF^2$q\"VqNDFF"
-              }
-            },
-            "example": {
-              "service": "appointment-service",
-              "errorCode": "APPT_SERVICE_DOWN",
-              "message": "Database connection timeout while saving appointment details."
-            }
-          },
-          "suggestion": {
-            "type": "string",
-            "example": "Please retry after some time or contact support if the issue persists."
+            "description": "A message providing additional information about the error.",
+            "example": "Insurance policy created successfully."
           }
         },
+        "description": "Represents the error response returned when a POST request to the appointment clinic operation fails.",
         "example": {
-          "timestamp": "2026-07-13T12:20:39Z",
-          "status": true,
-          "error": "INTERNAL_SERVER_ERROR",
-          "message": "Unable to process appointment request due to internal service failure.",
-          "path": "/v1/patients/appointments",
-          "trace": "46369660-9f25-47ab-8c7d-ed89bc7f7736",
-          "details": {
-            "service": "appointment-service",
-            "errorCode": "APPT_SERVICE_DOWN",
-            "message": "Database connection timeout while saving appointment details."
-          },
-          "suggestion": "Please retry after some time or contact support if the issue persists."
+          "policyId": "POL-100001",
+          "customerId": "INS-10001",
+          "policyType": "HEALTH",
+          "coverageAmount": 500000,
+          "premiumAmount": 12000,
+          "status": "ACTIVE",
+          "startDate": "2026-07-16",
+          "endDate": "2027-07-16",
+          "message": "Insurance policy created successfully."
         }
       },
-      "MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_200": {
+      "MICROSERVICE_DEV_createAppointmentForClinic-CreateAppointmentForClinicResponse_404": {
+        "title": "Appointment Clinic Error Response",
         "type": "object",
         "properties": {
-          "timestamp": {
+          "policyId": {
             "type": "string",
-            "example": "2026-07-13T12:20:39Z"
+            "description": "The unique identifier for the policy related to the appointment.",
+            "example": "POL-100001"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "The unique identifier for the customer associated with the policy.",
+            "example": "INS-10001"
+          },
+          "policyType": {
+            "type": "string",
+            "description": "The type of policy related to the appointment (e.g., health, dental).",
+            "example": "HEALTH"
+          },
+          "coverageAmount": {
+            "type": "integer",
+            "description": "The total coverage amount provided by the policy.",
+            "format": "int32",
+            "example": 500000
+          },
+          "premiumAmount": {
+            "type": "integer",
+            "description": "The premium amount that the customer is required to pay for the policy.",
+            "format": "int32",
+            "example": 12000
           },
           "status": {
-            "type": "boolean",
-            "example": true
-          },
-          "error": {
             "type": "string",
-            "example": "INTERNAL_SERVER_ERROR"
+            "description": "The current status of the policy (e.g., active, expired).",
+            "example": "ACTIVE"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "The date when the policy coverage begins.",
+            "example": "2026-07-16"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "The date when the policy coverage ends.",
+            "example": "2027-07-16"
           },
           "message": {
             "type": "string",
-            "example": "Unable to process appointment request due to internal service failure."
-          },
-          "path": {
-            "type": "string",
-            "example": "/v1/patients/appointments"
-          },
-          "trace": {
-            "type": "string",
-            "example": "62bf7dee-3039-4b2e-9b32-63cb8e7c4ff9"
-          },
-          "details": {
-            "type": "object",
-            "properties": {
-              "service": {
-                "type": "string",
-                "example": "'ppE?8GjXK:rExbnrc}"
-              },
-              "errorCode": {
-                "type": "string",
-                "example": "T4Rp{lKS>iP]_hBH]"
-              },
-              "message": {
-                "type": "string",
-                "example": "sH0=9o!\"1f5s/!LXA=+xOYwS!g*eyQzX*E8s(|T{]&>/vPSZ:'4Z>wq?]/Muh"
-              }
-            },
-            "example": {
-              "service": "appointment-service",
-              "errorCode": "APPT_SERVICE_DOWN",
-              "message": "Database connection timeout while saving appointment details."
-            }
-          },
-          "suggestion": {
-            "type": "string",
-            "example": "Please retry after some time or contact support if the issue persists."
+            "description": "A message that provides additional details about the error response.",
+            "example": "Insurance policy created successfully."
           }
         },
+        "description": "Schema representing the error response for a failed appointment operation in the clinic.",
         "example": {
-          "timestamp": "2026-07-13T12:20:39Z",
-          "status": true,
-          "error": "INTERNAL_SERVER_ERROR",
-          "message": "Unable to process appointment request due to internal service failure.",
-          "path": "/v1/patients/appointments",
-          "trace": "62bf7dee-3039-4b2e-9b32-63cb8e7c4ff9",
-          "details": {
-            "service": "appointment-service",
-            "errorCode": "APPT_SERVICE_DOWN",
-            "message": "Database connection timeout while saving appointment details."
-          },
-          "suggestion": "Please retry after some time or contact support if the issue persists."
+          "policyId": "POL-100001",
+          "customerId": "INS-10001",
+          "policyType": "HEALTH",
+          "coverageAmount": 500000,
+          "premiumAmount": 12000,
+          "status": "ACTIVE",
+          "startDate": "2026-07-16",
+          "endDate": "2027-07-16",
+          "message": "Insurance policy created successfully."
         }
       },
-      "MICROSERVICE_DEV_POST_appointments-POST_appointmentsRequest": {
+      "MICROSERVICE_DEV_createAppointmentForClinic-CreateAppointmentForClinicResponse_400": {
+        "title": "Appointment Clinic Error Response",
         "type": "object",
         "properties": {
-          "patientId": {
+          "policyId": {
             "type": "string",
-            "example": "PAT-10001"
+            "description": "The unique identifier for the policy related to the appointment.",
+            "example": "POL-100001"
           },
-          "doctorId": {
+          "customerId": {
             "type": "string",
-            "example": "DOC-50001"
+            "description": "The unique identifier for the customer associated with the policy.",
+            "example": "INS-10001"
           },
-          "appointmentDate": {
+          "policyType": {
             "type": "string",
-            "example": "2026-07-15"
+            "description": "The type of policy associated with the appointment.",
+            "example": "HEALTH"
           },
-          "appointmentTime": {
-            "type": "string",
-            "example": "10:30:00"
+          "coverageAmount": {
+            "type": "integer",
+            "description": "The total amount of coverage provided by the policy.",
+            "format": "int32",
+            "example": 500000
           },
-          "department": {
-            "type": "string",
-            "example": "CARDIOLOGY"
-          }
-        },
-        "example": {
-          "patientId": "PAT-10001",
-          "doctorId": "DOC-50001",
-          "appointmentDate": "2026-07-15",
-          "appointmentTime": "10:30:00",
-          "department": "CARDIOLOGY"
-        }
-      },
-      "MICROSERVICE_DEV_POST_appointments-POST_appointmentsResponse_500": {
-        "type": "object",
-        "properties": {
-          "timestamp": {
-            "type": "string",
-            "example": "2026-07-13T12:20:39Z"
+          "premiumAmount": {
+            "type": "integer",
+            "description": "The premium amount to be paid for maintaining the policy.",
+            "format": "int32",
+            "example": 12000
           },
           "status": {
-            "type": "boolean",
-            "example": true
-          },
-          "error": {
             "type": "string",
-            "example": "INTERNAL_SERVER_ERROR"
+            "description": "The current status of the policy.",
+            "example": "ACTIVE"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "The start date of the coverage in ISO 8601 format.",
+            "example": "2026-07-16"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "The end date of the coverage in ISO 8601 format.",
+            "example": "2027-07-16"
           },
           "message": {
             "type": "string",
-            "example": "Unable to process appointment request due to internal service failure."
-          },
-          "path": {
-            "type": "string",
-            "example": "/v1/patients/appointments"
-          },
-          "trace": {
-            "type": "string",
-            "example": "7c943cea-c219-4d0b-8713-e871bf3c849d"
-          },
-          "details": {
-            "type": "object",
-            "properties": {
-              "service": {
-                "type": "string",
-                "example": "HoL2|31l>lXHYJ')k@t"
-              },
-              "errorCode": {
-                "type": "string",
-                "example": "0EXCQOKvSVdP44R.)"
-              },
-              "message": {
-                "type": "string",
-                "example": "9o7!}Ttpq%zn}F\"MezL:gSH}#DB&ubRt/J'=jL}Uk/9@B9FM;76}HFpg]%R^S"
-              }
-            },
-            "example": {
-              "service": "appointment-service",
-              "errorCode": "APPT_SERVICE_DOWN",
-              "message": "Database connection timeout while saving appointment details."
-            }
-          },
-          "suggestion": {
-            "type": "string",
-            "example": "Please retry after some time or contact support if the issue persists."
+            "description": "A message providing additional information about the error.",
+            "example": "Insurance policy created successfully."
           }
         },
+        "description": "This schema represents the error response for appointment clinic operations when a request fails with a 400 status code.",
         "example": {
-          "timestamp": "2026-07-13T12:20:39Z",
-          "status": true,
-          "error": "INTERNAL_SERVER_ERROR",
-          "message": "Unable to process appointment request due to internal service failure.",
-          "path": "/v1/patients/appointments",
-          "trace": "7c943cea-c219-4d0b-8713-e871bf3c849d",
-          "details": {
-            "service": "appointment-service",
-            "errorCode": "APPT_SERVICE_DOWN",
-            "message": "Database connection timeout while saving appointment details."
+          "policyId": "POL-100001",
+          "customerId": "INS-10001",
+          "policyType": "HEALTH",
+          "coverageAmount": 500000,
+          "premiumAmount": 12000,
+          "status": "ACTIVE",
+          "startDate": "2026-07-16",
+          "endDate": "2027-07-16",
+          "message": "Insurance policy created successfully."
+        }
+      },
+      "MICROSERVICE_DEV_createAppointmentForClinic-CreateAppointmentForClinicRequest": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "description": "The unique identifier for the customer.",
+            "example": "INS-10001"
           },
-          "suggestion": "Please retry after some time or contact support if the issue persists."
+          "policyType": {
+            "type": "string",
+            "description": "The type of insurance policy selected by the customer.",
+            "example": "HEALTH"
+          },
+          "coverageAmount": {
+            "type": "integer",
+            "description": "The amount of coverage provided by the insurance policy.",
+            "format": "int32",
+            "example": 500000
+          },
+          "premiumAmount": {
+            "type": "integer",
+            "description": "The amount to be paid for the insurance premium.",
+            "format": "int32",
+            "example": 12000
+          },
+          "startDate": {
+            "type": "string",
+            "description": "The date when the insurance coverage starts.",
+            "example": "2026-07-16"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "The date when the insurance coverage ends.",
+            "example": "2027-07-16"
+          },
+          "beneficiaryName": {
+            "type": "string",
+            "description": "The name of the beneficiary for the insurance policy.",
+            "example": "John Smith"
+          },
+          "paymentMode": {
+            "type": "string",
+            "description": "The mode of payment for the insurance premium.",
+            "example": "ONLINE"
+          }
+        },
+        "description": "Request body for creating a new appointment in the clinic, including the customer's insurance details.",
+        "example": {
+          "customerId": "INS-10001",
+          "policyType": "HEALTH",
+          "coverageAmount": 500000,
+          "premiumAmount": 12000,
+          "startDate": "2026-07-16",
+          "endDate": "2027-07-16",
+          "beneficiaryName": "John Smith",
+          "paymentMode": "ONLINE"
+        }
+      },
+      "MICROSERVICE_DEV_createAppointmentForClinic-CreateAppointmentForClinicResponse_200": {
+        "title": "Appointment Clinic Response",
+        "type": "object",
+        "properties": {
+          "policyId": {
+            "type": "string",
+            "description": "Unique identifier for the insurance policy.",
+            "example": "POL-100001"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "Unique identifier for the customer associated with the policy.",
+            "example": "INS-10001"
+          },
+          "policyType": {
+            "type": "string",
+            "description": "Type of the insurance policy, e.g., health, dental, etc.",
+            "example": "HEALTH"
+          },
+          "coverageAmount": {
+            "type": "integer",
+            "description": "The total amount covered by the insurance policy.",
+            "format": "int32",
+            "example": 500000
+          },
+          "premiumAmount": {
+            "type": "integer",
+            "description": "The premium amount payable for the insurance policy.",
+            "format": "int32",
+            "example": 12000
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the policy, e.g., active, inactive, etc.",
+            "example": "ACTIVE"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "The start date of the insurance policy in ISO 8601 format.",
+            "example": "2026-07-16"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "The end date of the insurance policy in ISO 8601 format.",
+            "example": "2027-07-16"
+          },
+          "message": {
+            "type": "string",
+            "description": "A message providing additional information about the appointment or policy.",
+            "example": "Insurance policy created successfully."
+          }
+        },
+        "description": "Schema representing the response for a successful appointment creation in the clinic.",
+        "example": {
+          "policyId": "POL-100001",
+          "customerId": "INS-10001",
+          "policyType": "HEALTH",
+          "coverageAmount": 500000,
+          "premiumAmount": 12000,
+          "status": "ACTIVE",
+          "startDate": "2026-07-16",
+          "endDate": "2027-07-16",
+          "message": "Insurance policy created successfully."
         }
       }
     },
@@ -453,6 +574,18 @@
         },
         "example": "Java/21.0.10"
       },
+      "x-mock-200": {
+        "name": "x-mock-200",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "mock"
+        },
+        "example": "mock"
+      },
       "consumer-key": {
         "name": "consumer-key",
         "in": "header",
@@ -511,9 +644,10 @@
         "schema": {
           "type": "string",
           "enum": [
-            "_400",
-            "_200",
-            "_500"
+            "MICROSERVICE_DEV_500",
+            "MICROSERVICE_DEV_404",
+            "MICROSERVICE_DEV_400",
+            "MICROSERVICE_DEV_200"
           ]
         }
       }
@@ -533,9 +667,18 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "/v2/customers/CUST-100234"
+          "example": "/v7/patients/appointments/POL-100001"
         },
-        "example": "/v2/customers/CUST-100234"
+        "example": "/v7/patients/appointments/POL-100001"
+      },
+      "x-mock-200": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "mock"
+        },
+        "example": "mock"
       },
       "content-type": {
         "style": "simple",
