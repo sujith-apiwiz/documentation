@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_DEV_SIM Swap Management API",
-    "description": "The SIM Swap Management API facilitates the seamless processing of SIM card swaps for telecommunications providers. This API allows vendors to initiate the replacement of SIM cards when users require changes such as upgrading or transferring their services. It serves as a critical tool for customer service representatives and automated systems handling user requests. Typical consumers include telecommunication support teams and mobile service management platforms, enhancing operational efficiency and customer satisfaction.",
+    "description": "The SIM Swap Management API facilitates the efficient handling of SIM card swaps within the telecommunications domain. This API allows authorized users to submit requests for switching SIM cards associated with customer accounts. Typical consumers include customer service representatives and automated systems managing customer profiles. The API ensures seamless transitions for customers needing to switch SIM cards due to various reasons, enhancing customer experience and operational efficiency.",
     "version": "1.0"
   },
   "servers": [
@@ -23,8 +23,8 @@
         "tags": [
           "SIM Management"
         ],
-        "summary": "Initiate a SIM swap process.",
-        "description": "This endpoint allows you to initiate a SIM swap for a customer. Provide the necessary details in the request body to begin the process. Ensure that all required information is accurately filled to prevent errors.",
+        "summary": "Create a new SIM swap request.",
+        "description": "This endpoint allows users to initiate a new SIM swap process, which involves replacing an existing SIM card with a new one. It requires the necessary identification and validation details as part of the request to ensure security and proper handling of the account.",
         "operationId": "createSimSwap",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "A request to initiate a SIM swap operation for a user. This includes the necessary details for processing the request, such as the user's identification and the new SIM information.",
+          "description": "This request body allows for the initiation of SIM swaps. The data provided should include all necessary information to process the swap effectively.",
           "content": {
             "application/json": {
               "schema": {
@@ -57,38 +57,8 @@
           }
         },
         "responses": {
-          "400": {
-            "description": "The request contains invalid parameters.",
-            "headers": {
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-CreateSimSwapResponse_400"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "An unexpected error occurred on the server.",
-            "headers": {
-              "content-type": {
-                "$ref": "#/components/headers/content-type"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-CreateSimSwapResponse_500"
-                }
-              }
-            }
-          },
           "201": {
-            "description": "The resource was created successfully.",
+            "description": "Resource created successfully and the location of the new resource is provided.",
             "headers": {
               "Location": {
                 "$ref": "#/components/headers/Location"
@@ -104,6 +74,36 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "The request contains invalid parameters, and processing cannot be completed.",
+            "headers": {
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-CreateSimSwapResponse_400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An unexpected server error occurred while processing the request.",
+            "headers": {
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-CreateSimSwapResponse_500"
+                }
+              }
+            }
           }
         },
         "callbacks": {},
@@ -116,249 +116,17 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV_createSimSwap-CreateSimSwapResponse_400": {
-        "title": "ErrorResponse",
+      "MICROSERVICE_DEV_createSimSwap-CreateSimSwapResponse_201": {
         "type": "object",
         "properties": {
-          "errorCode": {
+          "swapId": {
             "type": "string",
-            "description": "A code representing the type of error that occurred.",
-            "example": "VALIDATION_ERROR"
+            "description": "Unique identifier for the SIM swap operation.",
+            "example": "SWAP-10001"
           },
-          "message": {
-            "type": "string",
-            "description": "A human-readable message providing more details about the error.",
-            "example": "SIM replacement request validation failed."
-          },
-          "status": {
-            "type": "integer",
-            "description": "HTTP status code indicating the result of the request.",
-            "format": "int32",
-            "example": 400
-          },
-          "timestamp": {
-            "type": "string",
-            "description": "The timestamp when the error occurred, formatted as an ISO 8601 string.",
-            "example": "2026-07-22T10:30:00Z"
-          },
-          "path": {
-            "type": "string",
-            "description": "The API path that was accessed when the error occurred.",
-            "example": "/v1/telkom/sim-swaps"
-          },
-          "traceId": {
-            "type": "string",
-            "description": "A unique identifier for tracking the request through the system.",
-            "example": "60e2bbd3-ac11-475b-bd58-24214c9f2396"
-          },
-          "requestId": {
-            "type": "string",
-            "description": "A unique identifier for the specific request that resulted in the error.",
-            "example": "REQ-SIM-10001"
-          },
-          "errors": {
-            "type": "array",
-            "description": "A list of validation errors encountered during the request.",
-            "example": [
-              {
-                "field": "subscriberId",
-                "reason": "must not be empty"
-              },
-              {
-                "field": "mobileNumber",
-                "reason": "invalid mobile number"
-              },
-              {
-                "field": "newSimSerial",
-                "reason": "SIM serial number is required"
-              },
-              {
-                "field": "identity.documentNumber",
-                "reason": "identity verification failed"
-              }
-            ],
-            "items": {
-              "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-ValidationError"
-            }
-          },
-          "validationId": {
-            "type": "string",
-            "description": "An identifier for the particular validation that was performed.",
-            "example": "VAL-SIM-1001"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "An identifier to correlate multiple requests in distributed systems.",
-            "example": "CORR-SIM-2001"
-          },
-          "severity": {
-            "type": "string",
-            "description": "The severity level of the error (e.g., WARNING, ERROR).",
-            "example": "HIGH"
-          },
-          "retryAllowed": {
-            "type": "boolean",
-            "description": "Indicates whether the operation can be retried or not.",
-            "example": false
-          },
-          "documentation": {
-            "type": "string",
-            "description": "Link or reference to documentation related to the error.",
-            "example": "/docs/errors/sim-swap-validation"
-          }
-        },
-        "description": "Schema representing the structure of an error response for a failed operation.",
-        "example": {
-          "errorCode": "VALIDATION_ERROR",
-          "message": "SIM replacement request validation failed.",
-          "status": 400,
-          "timestamp": "2026-07-22T10:30:00Z",
-          "path": "/v1/telkom/sim-swaps",
-          "traceId": "60e2bbd3-ac11-475b-bd58-24214c9f2396",
-          "requestId": "REQ-SIM-10001",
-          "errors": [
-            {
-              "field": "subscriberId",
-              "reason": "must not be empty"
-            },
-            {
-              "field": "mobileNumber",
-              "reason": "invalid mobile number"
-            },
-            {
-              "field": "newSimSerial",
-              "reason": "SIM serial number is required"
-            },
-            {
-              "field": "identity.documentNumber",
-              "reason": "identity verification failed"
-            }
-          ],
-          "validationId": "VAL-SIM-1001",
-          "correlationId": "CORR-SIM-2001",
-          "severity": "HIGH",
-          "retryAllowed": false,
-          "documentation": "/docs/errors/sim-swap-validation"
-        }
-      },
-      "MICROSERVICE_DEV_createSimSwap-ValidationError": {
-        "title": "ValidationError",
-        "type": "object",
-        "properties": {
-          "field": {
-            "type": "string",
-            "description": "The name of the field that caused the validation error.",
-            "example": "amount"
-          },
-          "reason": {
-            "type": "string",
-            "description": "A message explaining the reason for the validation error.",
-            "example": "Amount must be greater than zero."
-          }
-        },
-        "description": "Schema representing a single validation error in the error response."
-      },
-      "MICROSERVICE_DEV_createSimSwap-CreateSimSwapResponse_500": {
-        "title": "Error Response for Sim Swap Operation",
-        "type": "object",
-        "properties": {
-          "errorCode": {
-            "type": "string",
-            "description": "A code representing the error that occurred.",
-            "example": "INTERNAL_SERVER_ERROR"
-          },
-          "message": {
-            "type": "string",
-            "description": "A descriptive message explaining the error.",
-            "example": "Unable to process SIM replacement."
-          },
-          "status": {
-            "type": "integer",
-            "description": "HTTP status code returned by the server.",
-            "format": "int32",
-            "example": 500
-          },
-          "timestamp": {
-            "type": "string",
-            "description": "The timestamp when the error occurred.",
-            "example": "2026-07-22T10:30:00Z"
-          },
-          "path": {
-            "type": "string",
-            "description": "The path of the API endpoint that was called.",
-            "example": "/v1/telkom/sim-swaps"
-          },
-          "traceId": {
-            "type": "string",
-            "description": "A unique identifier for tracing the error in logs.",
-            "example": "60e2bbd3-ac11-475b-bd58-24214c9f2396"
-          },
-          "requestId": {
-            "type": "string",
-            "description": "The ID of the request that resulted in the error.",
-            "example": "REQ-SIM-10002"
-          },
-          "referenceId": {
-            "type": "string",
-            "description": "A unique reference ID for the error for customer support.",
-            "example": "ERR-SIM-500001"
-          },
-          "supportContact": {
-            "type": "string",
-            "description": "Contact information for support personnel.",
-            "example": "support@telkom.com"
-          },
-          "retryable": {
-            "type": "boolean",
-            "description": "Indicates whether the operation can be retried.",
-            "example": true
-          },
-          "incidentId": {
-            "type": "string",
-            "description": "An identifier for the incident related to this error.",
-            "example": "INC-SIM-9001"
-          },
-          "serviceRegion": {
-            "type": "string",
-            "description": "The geographic region where the service is hosted.",
-            "example": "US-WEST"
-          },
-          "failureCategory": {
-            "type": "string",
-            "description": "The category of failure that occurred.",
-            "example": "SIM_PROVISIONING"
-          },
-          "estimatedResolution": {
-            "type": "string",
-            "description": "An estimate of when the issue may be resolved.",
-            "example": "2026-07-22T12:00:00Z"
-          }
-        },
-        "description": "This schema represents the error response returned when a 500 internal server error occurs during the sim swap operation.",
-        "example": {
-          "errorCode": "INTERNAL_SERVER_ERROR",
-          "message": "Unable to process SIM replacement.",
-          "status": 500,
-          "timestamp": "2026-07-22T10:30:00Z",
-          "path": "/v1/telkom/sim-swaps",
-          "traceId": "60e2bbd3-ac11-475b-bd58-24214c9f2396",
-          "requestId": "REQ-SIM-10002",
-          "referenceId": "ERR-SIM-500001",
-          "supportContact": "support@telkom.com",
-          "retryable": true,
-          "incidentId": "INC-SIM-9001",
-          "serviceRegion": "US-WEST",
-          "failureCategory": "SIM_PROVISIONING",
-          "estimatedResolution": "2026-07-22T12:00:00Z"
-        }
-      },
-      "MICROSERVICE_DEV_createSimSwap-CreateSimSwapRequest": {
-        "title": "SIM Swap Operation Request Body",
-        "type": "object",
-        "properties": {
           "subscriberId": {
             "type": "string",
-            "description": "Unique identifier for the subscriber.",
+            "description": "Identifier for the subscriber.",
             "example": "SUB-10001"
           },
           "mobileNumber": {
@@ -366,215 +134,9 @@
             "description": "Mobile number associated with the subscriber.",
             "example": "+15551234567"
           },
-          "oldSimSerialNo": {
-            "type": "string",
-            "description": "Serial number of the old SIM card.",
-            "example": "89014103211118510720"
-          },
-          "newSimSerial": {
-            "type": "string",
-            "description": "Serial number of the new SIM card.",
-            "example": "89014103211118510999"
-          },
-          "swapReason": {
-            "type": "boolean",
-            "description": "Indicates whether the swap reason is provided.",
-            "example": true
-          },
-          "requestedBy": {
-            "type": "string",
-            "description": "Identifier of the person requesting the SIM swap.",
-            "example": "CUSTOMER"
-          },
-          "customer": {
-            "description": "Customer information for the SIM swap request.",
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-Customer"
-          },
-          "identity": {
-            "description": "Identity information of the subscriber for verification.",
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-Identity"
-          },
-          "device": {
-            "description": "Information about the device associated with the subscriber.",
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-Device"
-          },
-          "verification": {
-            "description": "Verification details related to the SIM swap request.",
-            "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-Verification"
-          },
-          "preferredActivationTime": {
-            "type": "string",
-            "description": "Preferred activation time for the new SIM card.",
-            "example": "2026-07-23T09:00:00Z"
-          },
-          "salesChannel": {
-            "type": "string",
-            "description": "Sales channel through which the request is made.",
-            "example": "RETAIL_STORE"
-          },
-          "storeId": {
-            "type": "string",
-            "description": "Identifier of the store processing the request.",
-            "example": "STORE-101"
-          },
-          "agentId": {
-            "type": "string",
-            "description": "Identifier of the agent handling the request.",
-            "example": "EMP-1001"
-          },
-          "priority": {
-            "type": "string",
-            "description": "Priority level of the SIM swap request.",
-            "example": "HIGH"
-          },
-          "notificationRequired": {
-            "type": "boolean",
-            "description": "Indicates whether notification is required.",
-            "example": true
-          },
-          "replacementFee": {
-            "type": "integer",
-            "description": "Fee associated with the replacement of the SIM card.",
-            "format": "int32",
-            "example": 15
-          },
-          "currency": {
-            "type": "string",
-            "description": "Currency in which the replacement fee is denominated.",
-            "example": "USD"
-          },
-          "esim": {
-            "type": "boolean",
-            "description": "Indicates whether the new SIM is an eSIM.",
-            "example": false
-          }
-        },
-        "example": {
-          "subscriberId": "SUB-10001",
-          "mobileNumber": "+15551234567",
-          "oldSimSerialNo": "89014103211118510720",
-          "newSimSerial": "89014103211118510999",
-          "swapReason": true,
-          "requestedBy": "CUSTOMER",
-          "customer": {
-            "firstName": "John",
-            "lastName": "Doe",
-            "email": "john.doe@example.com"
-          },
-          "identity": {
-            "documentType": "PASSPORT",
-            "documentNumber": "P123456789"
-          },
-          "device": {
-            "imei": "356789123456789",
-            "manufacturer": "Samsung",
-            "model": "Galaxy S25"
-          },
-          "verification": {
-            "otpVerified": true,
-            "biometricVerified": false
-          },
-          "preferredActivationTime": "2026-07-23T09:00:00Z",
-          "salesChannel": "RETAIL_STORE",
-          "storeId": "STORE-101",
-          "agentId": "EMP-1001",
-          "priority": "HIGH",
-          "notificationRequired": true,
-          "replacementFee": 15,
-          "currency": "USD",
-          "esim": false
-        }
-      },
-      "MICROSERVICE_DEV_createSimSwap-Customer": {
-        "title": "Customer Information",
-        "type": "object",
-        "properties": {
-          "firstName": {
-            "type": "string",
-            "description": "First name of the customer.",
-            "example": "John"
-          },
-          "lastName": {
-            "type": "string",
-            "description": "Last name of the customer.",
-            "example": "Doe"
-          },
-          "email": {
-            "type": "string",
-            "description": "Email address of the customer.",
-            "example": "john.doe@example.com"
-          }
-        }
-      },
-      "MICROSERVICE_DEV_createSimSwap-Identity": {
-        "title": "Identity Information",
-        "type": "object",
-        "properties": {
-          "documentType": {
-            "type": "string",
-            "description": "Type of identity document.",
-            "example": "passport"
-          },
-          "documentNumber": {
-            "type": "string",
-            "description": "Number of the identity document.",
-            "example": "A12345678"
-          }
-        }
-      },
-      "MICROSERVICE_DEV_createSimSwap-Device": {
-        "type": "object",
-        "properties": {
-          "manufacturer": {
-            "type": "string",
-            "description": "The name of the device manufacturer.",
-            "example": "Apple"
-          },
-          "model": {
-            "type": "string",
-            "description": "The model of the device.",
-            "example": "iPhone 13"
-          }
-        },
-        "description": "Information about the device used during the SIM swap."
-      },
-      "MICROSERVICE_DEV_createSimSwap-Verification": {
-        "type": "object",
-        "properties": {
-          "otpVerified": {
-            "type": "boolean",
-            "description": "Indicates whether the OTP verification was successful.",
-            "example": false
-          },
-          "biometricVerified": {
-            "type": "boolean",
-            "description": "Indicates whether the biometric verification was successful.",
-            "example": false
-          }
-        },
-        "description": "Contains details about the verification status of the swap operation."
-      },
-      "MICROSERVICE_DEV_createSimSwap-CreateSimSwapResponse_201": {
-        "type": "object",
-        "properties": {
-          "swapId": {
-            "type": "string",
-            "description": "Identifier for the swap transaction.",
-            "example": "SWAP-10001"
-          },
-          "subscriberId": {
-            "type": "string",
-            "description": "Identifier for the subscriber associated with the swap.",
-            "example": "SUB-10001"
-          },
-          "mobileNumber": {
-            "type": "string",
-            "description": "Mobile number involved in the swap.",
-            "example": "+15551234567"
-          },
           "status": {
             "type": "string",
-            "description": "Current status of the SIM swap.",
+            "description": "Current status of the SIM swap operation.",
             "example": "COMPLETED"
           },
           "oldSimStatus": {
@@ -589,52 +151,52 @@
           },
           "activationTime": {
             "type": "string",
-            "description": "Time when the new SIM is activated.",
+            "description": "Time when the new SIM was activated.",
             "example": "2026-07-23T09:02:30Z"
           },
           "replacementFee": {
             "type": "integer",
-            "description": "Fee charged for the replacement of the SIM.",
+            "description": "Fee charged for replacing the SIM.",
             "format": "int32",
             "example": 15
           },
           "currency": {
             "type": "string",
-            "description": "Currency code for the replacement fee.",
+            "description": "Currency for the replacement fee.",
             "example": "USD"
           },
           "serviceRequestId": {
             "type": "string",
-            "description": "Identifier for the service request associated with the swap.",
+            "description": "Identifier for the service request related to the SIM swap.",
             "example": "SR-900001"
           },
           "verification": {
-            "description": "Verification details for the swap operation.",
+            "description": "Verification status of the SIM swap.",
             "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-Verification"
           },
           "device": {
-            "description": "Device information used during the swap process.",
+            "description": "Information about the device involved in the SIM swap.",
             "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-Device"
           },
           "store": {
-            "description": "Store information where the swap took place.",
+            "description": "Information about the store where the SIM swap occurred.",
             "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-Store"
           },
           "agent": {
-            "description": "Agent information who handled the swap.",
+            "description": "Information about the agent handling the SIM swap.",
             "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-Agent"
           },
           "audit": {
-            "description": "Audit details about the swap operation.",
+            "description": "Audit information related to the SIM swap operation.",
             "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-Audit"
           },
           "message": {
             "type": "string",
-            "description": "Additional message related to the swap operation.",
+            "description": "Optional message providing additional details about the operation.",
             "example": "SIM replacement completed successfully."
           }
         },
-        "description": "Response schema for the successful execution of the SIM swap operation.",
+        "description": "The response schema for the operation of swapping a SIM card.",
         "example": {
           "swapId": "SWAP-10001",
           "subscriberId": "SUB-10001",
@@ -669,21 +231,48 @@
           "message": "SIM replacement completed successfully."
         }
       },
+      "MICROSERVICE_DEV_createSimSwap-Verification": {
+        "type": "object",
+        "properties": {
+          "otpVerified": {
+            "type": "boolean",
+            "description": "Indicates whether the OTP (One Time Password) has been verified.",
+            "example": false
+          }
+        },
+        "description": "Schema representing verification status for the request."
+      },
+      "MICROSERVICE_DEV_createSimSwap-Device": {
+        "type": "object",
+        "properties": {
+          "manufacturer": {
+            "type": "string",
+            "description": "Manufacturer of the device.",
+            "example": "string"
+          },
+          "model": {
+            "type": "string",
+            "description": "Model of the device.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing the device information involved in the SIM swap."
+      },
       "MICROSERVICE_DEV_createSimSwap-Store": {
         "type": "object",
         "properties": {
           "storeId": {
             "type": "string",
             "description": "Unique identifier for the store.",
-            "example": "STORE123"
+            "example": "string"
           },
           "storeName": {
             "type": "string",
             "description": "Name of the store.",
-            "example": "Main Street Store"
+            "example": "string"
           }
         },
-        "description": "Information about the store where the SIM swap occurred."
+        "description": "Schema representing information about the store where the SIM swap took place."
       },
       "MICROSERVICE_DEV_createSimSwap-Agent": {
         "type": "object",
@@ -691,31 +280,412 @@
           "agentId": {
             "type": "string",
             "description": "Unique identifier for the agent.",
-            "example": "AGENT999"
+            "example": "string"
           },
           "agentName": {
             "type": "string",
             "description": "Name of the agent.",
-            "example": "John Doe"
+            "example": "string"
           }
         },
-        "description": "Information about the agent who facilitated the SIM swap."
+        "description": "Schema representing information about the agent handling the SIM swap."
       },
       "MICROSERVICE_DEV_createSimSwap-Audit": {
         "type": "object",
         "properties": {
           "createdBy": {
             "type": "string",
-            "description": "User or system that created the entry.",
-            "example": "SYSTEM"
+            "description": "Identifier for the user who created the record.",
+            "example": "string"
           },
           "createdAt": {
             "type": "string",
-            "description": "Timestamp when the entry was created.",
-            "example": "2023-10-10T09:50:00Z"
+            "description": "Timestamp indicating when the record was created.",
+            "example": "string"
           }
         },
-        "description": "Details about the auditing of the swap operation."
+        "description": "Schema representing audit information for the SIM swap operation."
+      },
+      "MICROSERVICE_DEV_createSimSwap-CreateSimSwapResponse_400": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "description": "A code representing the type of error that occurred",
+            "example": "VALIDATION_ERROR"
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error",
+            "example": "SIM replacement request validation failed."
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code representing the error type",
+            "format": "int32",
+            "example": 400
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "The time at which the error occurred in ISO 8601 format",
+            "example": "2026-07-22T10:30:00Z"
+          },
+          "path": {
+            "type": "string",
+            "description": "The path of the resource that was accessed when the error occurred",
+            "example": "/v1/telkom/sim-swaps"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "A unique identifier for the request that can be used for tracing in logs",
+            "example": "60e2bbd3-ac11-475b-bd58-24214c9f2396"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "A unique identifier for the client request",
+            "example": "REQ-SIM-10001"
+          },
+          "errors": {
+            "type": "array",
+            "description": "An array of specific validation errors encountered",
+            "example": [
+              {
+                "field": "subscriberId",
+                "reason": "must not be empty"
+              },
+              {
+                "field": "mobileNumber",
+                "reason": "invalid mobile number"
+              },
+              {
+                "field": "newSimSerial",
+                "reason": "SIM serial number is required"
+              },
+              {
+                "field": "identity.documentNumber",
+                "reason": "identity verification failed"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-ErrorDetail"
+            }
+          },
+          "validationId": {
+            "type": "string",
+            "description": "An identifier for validation that can be used for reference",
+            "example": "VAL-SIM-1001"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "An identifier used to correlate logs for debugging",
+            "example": "CORR-SIM-2001"
+          },
+          "severity": {
+            "type": "string",
+            "description": "The severity level of the error",
+            "example": "HIGH"
+          },
+          "retryAllowed": {
+            "type": "boolean",
+            "description": "Indicates if the request can be retried",
+            "example": false
+          },
+          "documentation": {
+            "type": "string",
+            "description": "URL pointing to the documentation for the error",
+            "example": "/docs/errors/sim-swap-validation"
+          }
+        },
+        "description": "Schema representing the standard error response for a failed operation",
+        "example": {
+          "errorCode": "VALIDATION_ERROR",
+          "message": "SIM replacement request validation failed.",
+          "status": 400,
+          "timestamp": "2026-07-22T10:30:00Z",
+          "path": "/v1/telkom/sim-swaps",
+          "traceId": "60e2bbd3-ac11-475b-bd58-24214c9f2396",
+          "requestId": "REQ-SIM-10001",
+          "errors": [
+            {
+              "field": "subscriberId",
+              "reason": "must not be empty"
+            },
+            {
+              "field": "mobileNumber",
+              "reason": "invalid mobile number"
+            },
+            {
+              "field": "newSimSerial",
+              "reason": "SIM serial number is required"
+            },
+            {
+              "field": "identity.documentNumber",
+              "reason": "identity verification failed"
+            }
+          ],
+          "validationId": "VAL-SIM-1001",
+          "correlationId": "CORR-SIM-2001",
+          "severity": "HIGH",
+          "retryAllowed": false,
+          "documentation": "/docs/errors/sim-swap-validation"
+        }
+      },
+      "MICROSERVICE_DEV_createSimSwap-ErrorDetail": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "The name of the field that caused the validation error",
+            "example": "email"
+          },
+          "reason": {
+            "type": "string",
+            "description": "The reason why the field is invalid",
+            "example": "Email format is incorrect"
+          }
+        },
+        "description": "Detailed information about a specific validation error"
+      },
+      "MICROSERVICE_DEV_createSimSwap-CreateSimSwapRequest": {
+        "type": "object",
+        "properties": {
+          "subscriberId": {
+            "type": "string",
+            "description": "Unique identifier for the subscriber.",
+            "example": "SUB-10001"
+          },
+          "mobileNumber": {
+            "type": "string",
+            "description": "The mobile number associated with the subscriber.",
+            "example": "+15551234567"
+          },
+          "oldSimSerial": {
+            "type": "string",
+            "description": "Serial number of the old SIM card.",
+            "example": "89014103211118510720"
+          },
+          "newSimSerial": {
+            "type": "string",
+            "description": "Serial number of the new SIM card.",
+            "example": "89014103211118510999"
+          },
+          "swapReason": {
+            "type": "string",
+            "description": "The reason for swapping the SIM cards.",
+            "example": "DAMAGED_SIM"
+          },
+          "requestedBy": {
+            "type": "string",
+            "description": "Identifier for who requested the SIM swap.",
+            "example": "CUSTOMER"
+          },
+          "customer": {
+            "description": "Information about the customer requesting the SIM swap.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-Customer"
+          },
+          "identity": {
+            "description": "Identity information for the subscriber.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-Identity"
+          },
+          "verification": {
+            "description": "Verification status related to the SIM swap.",
+            "$ref": "#/components/schemas/MICROSERVICE_DEV_createSimSwap-Verification"
+          },
+          "salesChannel": {
+            "type": "string",
+            "description": "The sales channel through which the SIM swap was requested.",
+            "example": "RETAIL_STORE"
+          },
+          "storeId": {
+            "type": "string",
+            "description": "Identifier for the store handling the SIM swap.",
+            "example": "STORE-101"
+          },
+          "agentId": {
+            "type": "string",
+            "description": "Identifier for the agent who is processing the SIM swap.",
+            "example": "EMP-1001"
+          },
+          "priority": {
+            "type": "string",
+            "description": "Priority level of the SIM swap request.",
+            "example": "HIGH"
+          },
+          "notificationRequired": {
+            "type": "boolean",
+            "description": "Indicates if notification is required after the SIM swap.",
+            "example": true
+          },
+          "replacementFee": {
+            "type": "integer",
+            "description": "Fee associated with replacing the SIM card.",
+            "format": "int32",
+            "example": 15
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency type for the replacement fee.",
+            "example": "USD"
+          },
+          "esim": {
+            "type": "boolean",
+            "description": "Indicates if the new SIM is an eSIM.",
+            "example": false
+          }
+        },
+        "description": "Request body schema for performing a SIM swap operation.",
+        "example": {
+          "subscriberId": "SUB-10001",
+          "mobileNumber": "+15551234567",
+          "oldSimSerial": "89014103211118510720",
+          "newSimSerial": "89014103211118510999",
+          "swapReason": "DAMAGED_SIM",
+          "requestedBy": "CUSTOMER",
+          "customer": {
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "identity": {
+            "documentType": "PASSPORT",
+            "documentNumber": "P123456789"
+          },
+          "verification": {
+            "otpVerified": true
+          },
+          "salesChannel": "RETAIL_STORE",
+          "storeId": "STORE-101",
+          "agentId": "EMP-1001",
+          "priority": "HIGH",
+          "notificationRequired": true,
+          "replacementFee": 15,
+          "currency": "USD",
+          "esim": false
+        }
+      },
+      "MICROSERVICE_DEV_createSimSwap-Customer": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "The first name of the customer.",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The last name of the customer.",
+            "example": "Doe"
+          }
+        },
+        "description": "Schema representing the customer details."
+      },
+      "MICROSERVICE_DEV_createSimSwap-Identity": {
+        "type": "object",
+        "properties": {
+          "documentType": {
+            "type": "string",
+            "description": "Type of the identity document.",
+            "example": "Passport"
+          },
+          "documentNumber": {
+            "type": "string",
+            "description": "Unique number of the identity document.",
+            "example": "A123456789"
+          }
+        },
+        "description": "Schema representing subscriber identity details."
+      },
+      "MICROSERVICE_DEV_createSimSwap-CreateSimSwapResponse_500": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "description": "The unique code identifying the error.",
+            "example": "INTERNAL_SERVER_ERROR"
+          },
+          "message": {
+            "type": "string",
+            "description": "A descriptive message providing more details about the error.",
+            "example": "Unable to process SIM replacement."
+          },
+          "status": {
+            "type": "integer",
+            "description": "The HTTP status code associated with the error.",
+            "format": "int32",
+            "example": 500
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "The time when the error occurred, formatted as an ISO 8601 string.",
+            "example": "2026-07-22T10:30:00Z"
+          },
+          "path": {
+            "type": "string",
+            "description": "The path of the request that caused the error.",
+            "example": "/v1/telkom/sim-swaps"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "A unique identifier used to trace the request in logs.",
+            "example": "60e2bbd3-ac11-475b-bd58-24214c9f2396"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "A unique identifier for this specific request.",
+            "example": "REQ-SIM-10002"
+          },
+          "referenceId": {
+            "type": "string",
+            "description": "An optional reference ID for tracking purposes.",
+            "example": "ERR-SIM-500001"
+          },
+          "supportContact": {
+            "type": "string",
+            "description": "Contact information for support related to the error.",
+            "example": "support@telkom.com"
+          },
+          "retryable": {
+            "type": "boolean",
+            "description": "Indicates whether the operation can be retried.",
+            "example": true
+          },
+          "incidentId": {
+            "type": "string",
+            "description": "An ID for the incident related to the error, if applicable.",
+            "example": "INC-SIM-9001"
+          },
+          "serviceRegion": {
+            "type": "string",
+            "description": "The region of the service where the error occurred.",
+            "example": "US-WEST"
+          },
+          "failureCategory": {
+            "type": "string",
+            "description": "A category indicating the type of failure that occurred.",
+            "example": "SIM_PROVISIONING"
+          },
+          "estimatedResolution": {
+            "type": "string",
+            "description": "An estimate of when the issue might be resolved, if known.",
+            "example": "2026-07-22T12:00:00Z"
+          }
+        },
+        "description": "Schema representing the error response for a failed operation in the simulation swaps API.",
+        "example": {
+          "errorCode": "INTERNAL_SERVER_ERROR",
+          "message": "Unable to process SIM replacement.",
+          "status": 500,
+          "timestamp": "2026-07-22T10:30:00Z",
+          "path": "/v1/telkom/sim-swaps",
+          "traceId": "60e2bbd3-ac11-475b-bd58-24214c9f2396",
+          "requestId": "REQ-SIM-10002",
+          "referenceId": "ERR-SIM-500001",
+          "supportContact": "support@telkom.com",
+          "retryable": true,
+          "incidentId": "INC-SIM-9001",
+          "serviceRegion": "US-WEST",
+          "failureCategory": "SIM_PROVISIONING",
+          "estimatedResolution": "2026-07-22T12:00:00Z"
+        }
       }
     },
     "parameters": {
@@ -789,25 +759,16 @@
         "schema": {
           "type": "string",
           "enum": [
+            "_201",
             "_400",
-            "_500",
-            "_201"
+            "_500"
           ]
         }
       }
     },
     "headers": {
-      "content-type": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "application/json"
-        },
-        "example": "application/json"
-      },
       "Location": {
-        "description": "This header provides the URI of the newly created resource after a successful POST operation. It indicates where the created resource can be accessed.",
+        "description": "The URI of the newly created resource, providing a direct link to access the created swap operation.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -815,6 +776,16 @@
           "example": "/v1/telkom/sim-swaps/SWAP-10001"
         },
         "example": "/v1/telkom/sim-swaps/SWAP-10001"
+      },
+      "content-type": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "description": "Specifies the media type of the resource returned in the response.",
+          "example": "application/json"
+        },
+        "example": "application/json"
       }
     }
   }

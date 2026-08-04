@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Health APIs",
-    "description": "The Lab Results Submission API allows healthcare providers to securely submit laboratory test results into the health system. This endpoint is designed for use by medical facilities, laboratories, and practitioners who need to report or update patient test outcomes efficiently. By integrating lab results directly into a patient's record, healthcare providers can enhance the quality of care through timely access to diagnostic information. The API supports various laboratory result types and ensures compliance with health data regulations.",
+    "description": "The Prescription Management API enables healthcare providers to efficiently manage patient prescriptions. This API allows authorized users to create, update, and submit prescriptions, ensuring that patients receive their medications in a timely manner. Typical consumers include pharmacies, clinics, and telehealth services seeking to streamline their prescription processes. By integrating this API, developers can enhance their applications to support better medication adherence and patient care.",
     "version": "1.0"
   },
   "servers": [
@@ -18,14 +18,14 @@
     }
   ],
   "paths": {
-    "/health/v1/labresults": {
+    "/health/v1/prescriptions": {
       "post": {
         "tags": [
-          "Lab Results"
+          "Prescription Management"
         ],
-        "summary": "Create a new lab result.",
-        "description": "This operation allows you to create a new lab result in the system. Ensure that all required fields are populated and formatted correctly before submitting the request.",
-        "operationId": "createLabResult",
+        "summary": "Create a new prescription.",
+        "description": "This endpoint allows authorized users to create a new prescription for a patient, including all necessary details such as medication type, dosage, and duration.",
+        "operationId": "createPrescription",
         "parameters": [
           {
             "$ref": "#/components/parameters/host"
@@ -62,33 +62,18 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to submit lab results for processing. It should contain all required fields with the appropriate data types, ensuring that each entry adheres to the defined schema.",
+          "description": "This request body is used to create a new prescription. It should include all necessary details such as the patient information, medication details, dosage, frequency, and any special instructions required for the prescription. Please ensure that all fields are filled out correctly to avoid processing errors.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createLabResult-CreateLabResultRequest"
+                "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionRequest"
               }
             }
           }
         },
         "responses": {
-          "400": {
-            "description": "The request parameters are invalid.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createLabResult-CreateLabResultResponse_400"
-                }
-              }
-            }
-          },
           "200": {
-            "description": "The request was completed successfully.",
+            "description": "Request completed successfully and the prescription data is retrieved.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -97,43 +82,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createLabResult-CreateLabResultResponse_200"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The requested resource could not be found.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createLabResult-CreateLabResultResponse_404"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "An unexpected error occurred on the server.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createLabResult-CreateLabResultResponse_500"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_200"
                 }
               }
             }
           },
           "201": {
-            "description": "A new resource was created successfully.",
+            "description": "Resource created successfully; a new prescription has been added.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -142,7 +97,52 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createLabResult-CreateLabResultResponse_201"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_201"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters; please check the input data.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_400"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Requested resource not found; the specified prescription does not exist.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error; please try again later.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_500"
                 }
               }
             }
@@ -158,77 +158,88 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV-TEST_createLabResult-CreateLabResultResponse_400": {
-        "title": "Lab Results Operation Error Response",
+      "MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_200": {
+        "title": "Prescription Response",
         "type": "object",
         "properties": {},
-        "description": "This schema represents the error response returned when a POST operation for lab results fails with a 400 status code.",
+        "description": "Schema representing the response for successfully created prescriptions via POST operation.",
         "example": {}
       },
-      "MICROSERVICE_DEV-TEST_createLabResult-CreateLabResultResponse_200": {
-        "title": "Lab Results Operation Response",
+      "MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_201": {
+        "title": "Prescription Creation Response",
         "type": "object",
         "properties": {},
-        "description": "Response schema for a successful operation of retrieving lab results.",
+        "description": "This schema defines the structure of the response returned upon successful creation of a prescription.",
         "example": {}
       },
-      "MICROSERVICE_DEV-TEST_createLabResult-CreateLabResultResponse_404": {
+      "MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_400": {
+        "title": "BadRequestResponse",
+        "type": "object",
+        "description": "Response schema indicating a bad request due to validation errors or invalid input.",
+        "example": {}
+      },
+      "MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_404": {
         "type": "object",
         "properties": {},
-        "description": "The response schema for a 404 Not Found error when attempting to create lab results. This schema may contain information about the missing resource.",
+        "description": "Response schema for a 404 Not Found error when trying to create a prescription.",
         "example": {}
       },
-      "MICROSERVICE_DEV-TEST_createLabResult-CreateLabResultResponse_500": {
-        "title": "Lab Results Operations Error Response",
-        "type": "object",
-        "properties": {},
-        "description": "Represents the structure of the error response for lab results operations when a server error (500) occurs.",
-        "example": {}
-      },
-      "MICROSERVICE_DEV-TEST_createLabResult-CreateLabResultRequest": {
-        "title": "Lab Results Submission Request",
+      "MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionRequest": {
+        "title": "Prescription Request",
         "type": "object",
         "properties": {
-          "labOrderId": {
+          "prescriptionId": {
             "type": "string",
-            "description": "The unique identifier for the lab order.",
-            "example": "LAB-753400"
+            "description": "A unique identifier for the prescription.",
+            "example": "RX-621591"
           },
           "patientId": {
             "type": "string",
-            "description": "The unique identifier for the patient.",
-            "example": "PAT-727951"
+            "description": "A unique identifier for the patient receiving the prescription.",
+            "example": "PAT-244976"
           },
-          "testType": {
+          "medication": {
             "type": "string",
-            "description": "The type of test performed.",
-            "example": "Lipid Panel"
+            "description": "The name of the medication prescribed.",
+            "example": "Lisinopril"
           },
-          "resultStatus": {
+          "dosage": {
             "type": "string",
-            "description": "The status of the test result.",
-            "example": "ABNORMAL"
+            "description": "The dosage of the medication to be taken.",
+            "example": "250mg"
           },
-          "reportedDate": {
+          "frequency": {
             "type": "string",
-            "description": "The date when the test results were reported.",
-            "example": "2026-07-29T18:00:54.698Z"
+            "description": "How often the medication should be taken.",
+            "example": "Twice daily"
+          },
+          "prescribedBy": {
+            "type": "string",
+            "description": "The identifier or name of the healthcare provider who prescribed the medication.",
+            "example": "DOC-4119"
+          },
+          "issuedDate": {
+            "type": "string",
+            "description": "The date when the prescription was issued.",
+            "example": "2026-07-26T21:58:20.668Z"
           }
         },
-        "description": "Schema representing the request body for submitting lab results.",
+        "description": "This schema represents the request body for creating a new prescription.",
         "example": {
-          "labOrderId": "LAB-753400",
-          "patientId": "PAT-727951",
-          "testType": "Lipid Panel",
-          "resultStatus": "ABNORMAL",
-          "reportedDate": "2026-07-29T18:00:54.698Z"
+          "prescriptionId": "RX-621591",
+          "patientId": "PAT-244976",
+          "medication": "Lisinopril",
+          "dosage": "250mg",
+          "frequency": "Twice daily",
+          "prescribedBy": "DOC-4119",
+          "issuedDate": "2026-07-26T21:58:20.668Z"
         }
       },
-      "MICROSERVICE_DEV-TEST_createLabResult-CreateLabResultResponse_201": {
-        "title": "Lab Results Creation Response",
+      "MICROSERVICE_DEV-TEST_createPrescription-CreatePrescriptionResponse_500": {
+        "title": "Error Response for Prescription Creation",
         "type": "object",
         "properties": {},
-        "description": "Schema representing the response returned upon successfully creating lab results.",
+        "description": "This schema defines the structure of the response returned when a prescription creation operation fails with a 500 server error.",
         "example": {}
       }
     },
@@ -363,11 +374,11 @@
         "schema": {
           "type": "string",
           "enum": [
-            "_400",
             "_200",
+            "_201",
+            "_400",
             "_404",
-            "_500",
-            "_201"
+            "_500"
           ]
         }
       }
