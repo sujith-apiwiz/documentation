@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE_DEV_Hotel Room Availability API",
-    "description": "The Hotel Room Availability API allows users to check the availability of hotel rooms for specific dates. This API serves hotel booking platforms, travel agencies, and other applications seeking to display real-time room availability. It provides critical information about which rooms are available for booking, enabling seamless travel planning. Users can easily integrate this API to enhance their services and improve customer experience by offering up-to-date availability details.",
+    "title": "MICROSERVICE_DEV_Hotel Booking Management API",
+    "description": "The Hotel Booking Management API allows businesses to facilitate the booking of hotel rooms efficiently. This endpoint enables users to create new bookings, ensuring they can reserve accommodations as per their requirements. Typical consumers include travel agencies, hotel management systems, and hospitality applications. With robust features, this API streamlines the reservation process, enhancing customer satisfaction and operational efficiency.",
     "version": "1.0"
   },
   "servers": [
@@ -19,14 +19,14 @@
     }
   ],
   "paths": {
-    "/hotel/v1/rooms/availability": {
-      "get": {
+    "/hotel/v1/bookings": {
+      "post": {
         "tags": [
-          "Room Management"
+          "Bookings"
         ],
-        "summary": "Retrieve Room Availability",
-        "description": "This endpoint returns the availability status of rooms, allowing users to check which rooms are currently available for booking and any specific timeframes.",
-        "operationId": "getRoomAvailability",
+        "summary": "Create a new booking.",
+        "description": "This operation allows you to create a new booking in the system by providing the necessary booking details. Ensure all required fields are included to successfully process the booking.",
+        "operationId": "createBooking",
         "parameters": [
           {
             "$ref": "#/components/parameters/host"
@@ -63,33 +63,18 @@
           }
         ],
         "requestBody": {
-          "description": "Request payload for checking room availability. This should include the necessary parameters for querying the availability of rooms, such as the date range and room type.",
+          "description": "The request body to create a new booking. It must include all required fields specified in the schema.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityRequest"
+                "$ref": "#/components/schemas/MICROSERVICE_DEV_createBooking-CreateBookingRequest"
               }
             }
           }
         },
         "responses": {
-          "400": {
-            "description": "The request contains invalid parameters. Please review your request and try again.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_400"
-                }
-              }
-            }
-          },
           "200": {
-            "description": "The request was successful, and the availability data is returned.",
+            "description": "Request completed successfully, returning the booking details.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -98,43 +83,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_200"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The requested resource related to room availability was not found.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_404"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "An unexpected server error occurred. Please try again later.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_500"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createBooking-CreateBookingResponse_200"
                 }
               }
             }
           },
           "201": {
-            "description": "A new resource related to room availability was created successfully.",
+            "description": "Resource created successfully; a new booking has been generated.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -143,7 +98,52 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_201"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createBooking-CreateBookingResponse_201"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters, please check your input.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createBooking-CreateBookingResponse_400"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Requested resource not found; please verify the booking ID.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createBooking-CreateBookingResponse_404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error; please try again later.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createBooking-CreateBookingResponse_500"
                 }
               }
             }
@@ -159,118 +159,168 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_400": {
-        "title": "ErrorResponse",
-        "required": [
-          "code",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The HTTP status code representing the error."
-          },
-          "message": {
-            "type": "string",
-            "description": "Detailed error message providing information about what went wrong."
-          },
-          "details": {
-            "type": "array",
-            "description": "A list of details about the error, which can provide additional context.",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "description": "Schema representing the error response for a failed room availability query.",
-        "example": {}
-      },
-      "MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_200": {
-        "title": "Room Availability Response",
+      "MICROSERVICE_DEV_createBooking-CreateBookingResponse_200": {
+        "title": "Booking Operation Response",
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status of the room availability request.",
+            "description": "The status message indicating the result of the booking operation.",
             "example": "ok"
           },
           "example": {
             "type": "string",
-            "description": "An example field for demonstration purposes.",
-            "example": "Room is available for booking."
+            "description": "An example string to illustrate the response format.",
+            "example": "This is an example response."
           }
         },
-        "description": "Schema representing the response for the room availability check operation.",
+        "description": "This schema represents the response structure for a successful booking operation.",
         "example": {
           "status": "ok"
         }
       },
-      "MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_404": {
-        "title": "Rooms Availability Error Response",
-        "type": "object",
-        "properties": {},
-        "description": "This schema represents the error response for a failed request when checking availability of rooms. The request returns a 404 status indicating that the requested resource could not be found.",
-        "example": {}
-      },
-      "MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_500": {
-        "title": "Rooms Availability Error Response",
+      "MICROSERVICE_DEV_createBooking-CreateBookingResponse_400": {
+        "title": "Error Response for Booking Operations",
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status message indicating the nature of the error.",
+            "description": "A brief description of the error status.",
             "example": "ok"
           },
           "example": {
             "type": "string",
-            "description": "An example message or further information about the error.",
-            "example": "An unexpected error occurred while trying to fetch room availability."
+            "description": "A string providing an example of the error response message.",
+            "example": "The provided booking date is not available."
           }
         },
-        "description": "Response schema for the error that occurs when there's a server issue related to room availability.",
+        "description": "This schema defines the structure of the error response returned when a booking operation fails due to client-side issues (HTTP status code 400).",
         "example": {
           "status": "ok"
         }
       },
-      "MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityRequest": {
-        "title": "Room Availability Request",
+      "MICROSERVICE_DEV_createBooking-CreateBookingResponse_500": {
+        "title": "Error Response for Booking Operations",
         "type": "object",
         "properties": {
+          "status": {
+            "type": "string",
+            "description": "The status of the error response, providing a summary of the error.",
+            "example": "ok"
+          },
+          "example": {
+            "type": "string",
+            "description": "An example string that provides additional context or information about the error.",
+            "example": "An unexpected error occurred while processing the booking."
+          }
+        },
+        "description": "Schema representing the error response for booking operations.",
+        "example": {
+          "status": "ok"
+        }
+      },
+      "MICROSERVICE_DEV_createBooking-CreateBookingResponse_201": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "The status of the booking operation.",
+            "example": "ok"
+          },
+          "example": {
+            "type": "string",
+            "description": "An example string for illustrative purposes.",
+            "example": "This is an example response string."
+          }
+        },
+        "description": "Response structure for a successful booking operation.",
+        "example": {
+          "status": "ok"
+        }
+      },
+      "MICROSERVICE_DEV_createBooking-CreateBookingRequest": {
+        "title": "Booking Request",
+        "type": "object",
+        "properties": {
+          "bookingId": {
+            "type": "string",
+            "description": "Unique identifier for the booking.",
+            "example": "HB-428000"
+          },
           "hotelId": {
             "type": "string",
-            "description": "The unique identifier for the hotel.",
-            "example": "HTL-8843"
+            "description": "Unique identifier for the hotel being booked.",
+            "example": "HTL-7581"
+          },
+          "guestName": {
+            "type": "string",
+            "description": "Name of the guest making the booking.",
+            "example": "Carlos Doe"
           },
           "roomType": {
             "type": "string",
-            "description": "The type of room being queried for availability.",
-            "example": "SINGLE"
+            "description": "Type of room booked (e.g., single, double, suite).",
+            "example": "SUITE"
           },
-          "availableRooms": {
+          "checkInDate": {
+            "type": "string",
+            "description": "Check-in date for the booking in ISO 8601 format.",
+            "example": "2026-08-09T23:19:28.187Z"
+          },
+          "checkOutDate": {
+            "type": "string",
+            "description": "Check-out date for the booking in ISO 8601 format.",
+            "example": "2026-08-15T14:10:14.569Z"
+          },
+          "guests": {
             "type": "integer",
-            "description": "The number of rooms available for the specified room type.",
+            "description": "Total number of guests for the booking.",
             "format": "int32",
-            "example": 29
+            "example": 4
           },
-          "pricePerNight": {
+          "totalAmount": {
             "type": "number",
-            "description": "The price per night for the available rooms.",
-            "example": 156.65
+            "description": "Total amount for the booking.",
+            "example": 1561.33
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency in which the total amount is expressed (e.g., USD, EUR).",
+            "example": "EUR"
+          },
+          "paymentStatus": {
+            "type": "string",
+            "description": "Current payment status of the booking (e.g., paid, pending, canceled).",
+            "example": "REFUNDED"
           }
         },
-        "description": "Schema representing the request body for fetching room availability information.",
+        "description": "This schema represents the request body for creating a new booking.",
         "example": {
-          "hotelId": "HTL-8843",
-          "roomType": "SINGLE",
-          "availableRooms": 29,
-          "pricePerNight": 156.65
+          "bookingId": "HB-428000",
+          "hotelId": "HTL-7581",
+          "guestName": "Carlos Doe",
+          "roomType": "SUITE",
+          "checkInDate": "2026-08-09T23:19:28.187Z",
+          "checkOutDate": "2026-08-15T14:10:14.569Z",
+          "guests": 4,
+          "totalAmount": 1561.33,
+          "currency": "EUR",
+          "paymentStatus": "REFUNDED"
         }
       },
-      "MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_201": {
+      "MICROSERVICE_DEV_createBooking-CreateBookingResponse_404": {
         "type": "object",
-        "properties": {},
-        "description": "Schema representing the response for the availability of rooms after a GET operation.",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Description of the error that occurred, indicating that the requested resource was not found."
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "The HTTP status code for the error response, which in this case is typically 404."
+          }
+        },
+        "description": "Represents the response for a 'Not Found' error when trying to create a booking via the POST operation.",
         "example": {}
       }
     },
@@ -405,18 +455,17 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_DEV_400",
             "MICROSERVICE_DEV_200",
+            "MICROSERVICE_DEV_201",
+            "MICROSERVICE_DEV_400",
             "MICROSERVICE_DEV_404",
-            "MICROSERVICE_DEV_500",
-            "MICROSERVICE_DEV_201"
+            "MICROSERVICE_DEV_500"
           ]
         }
       }
     },
     "headers": {
       "Vary": {
-        "description": "Specifies the request headers that trigger a cache variation for the response content.",
         "style": "simple",
         "explode": false,
         "schema": {

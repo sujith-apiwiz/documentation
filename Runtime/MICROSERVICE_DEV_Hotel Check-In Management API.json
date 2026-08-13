@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE_DEV-TEST_Hotel Room Availability API",
-    "description": "The Hotel Room Availability API provides a mechanism for retrieving the current availability status of hotel rooms. Users can query specific dates and room types to determine if accommodations are available for booking. This API is essential for travel applications and booking platforms that aim to provide users with real-time options for their travel plans. Typical consumers include travel agents, hotel booking websites, and mobile travel apps, allowing them to enhance the user experience with up-to-date information.",
+    "title": "MICROSERVICE_DEV_Hotel Check-In Management API",
+    "description": "The Hotel Check-In Management API facilitates the seamless check-in process for guests at hotels. This endpoint enables hotel staff to register guests' arrival, associate them with their bookings, and initiate their stay. Users such as receptionists and hotel management systems can utilize this API to enhance operational efficiency and improve guest experience. The API supports critical applications in the hospitality sector, ensuring timely service and accurate guest data handling.",
     "version": "1.0"
   },
   "servers": [
@@ -19,14 +19,14 @@
     }
   ],
   "paths": {
-    "/hotel/v1/rooms/availability": {
-      "get": {
+    "/hotel/v1/checkin": {
+      "post": {
         "tags": [
-          "Room Management"
+          "Check-in Management"
         ],
-        "summary": "Retrieve available rooms.",
-        "description": "This endpoint allows you to check the availability of rooms, helping users find suitable accommodation based on their preferences and requirements.",
-        "operationId": "getRoomsAvailability",
+        "summary": "Create a new check-in record.",
+        "description": "This endpoint allows users to create a new check-in record for their visit. Provide the necessary details to log your attendance at the specified location.",
+        "operationId": "createCheckin",
         "parameters": [
           {
             "$ref": "#/components/parameters/host"
@@ -62,9 +62,19 @@
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
+        "requestBody": {
+          "description": "This endpoint allows users to check in, providing necessary information for the check-in process.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MICROSERVICE_DEV_createCheckin-CreateCheckinRequest"
+              }
+            }
+          }
+        },
         "responses": {
-          "201": {
-            "description": "Successfully created a resource for room availability.",
+          "200": {
+            "description": "Request completed successfully, returning the check-in details.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -73,13 +83,28 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getRoomsAvailability-GetRoomsAvailabilityResponse_201"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createCheckin-CreateCheckinResponse_200"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Resource created successfully, check-in has been recorded.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createCheckin-CreateCheckinResponse_201"
                 }
               }
             }
           },
           "400": {
-            "description": "Request parameters are invalid; check your input.",
+            "description": "Invalid request parameters provided.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -88,43 +113,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getRoomsAvailability-GetRoomsAvailabilityResponse_400"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Request was successful; availability data returned.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getRoomsAvailability-GetRoomsAvailabilityResponse_200"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "An unexpected error occurred on the server.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getRoomsAvailability-GetRoomsAvailabilityResponse_500"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createCheckin-CreateCheckinResponse_400"
                 }
               }
             }
           },
           "404": {
-            "description": "The requested room availability resource was not found.",
+            "description": "Requested resource not found. Check the provided identifiers.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -133,7 +128,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_getRoomsAvailability-GetRoomsAvailabilityResponse_404"
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createCheckin-CreateCheckinResponse_404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error, please try again later.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_DEV_createCheckin-CreateCheckinResponse_500"
                 }
               }
             }
@@ -149,61 +159,99 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV-TEST_getRoomsAvailability-GetRoomsAvailabilityResponse_201": {
-        "title": "Room Availability Response",
-        "type": "object",
-        "properties": {},
-        "description": "A response object indicating the availability of rooms.",
-        "example": {}
-      },
-      "MICROSERVICE_DEV-TEST_getRoomsAvailability-GetRoomsAvailabilityResponse_400": {
-        "title": "Rooms Availability Error Response",
+      "MICROSERVICE_DEV_createCheckin-CreateCheckinResponse_200": {
+        "title": "Check-in Operation Response",
         "type": "object",
         "properties": {
-          "error": {
+          "status": {
             "type": "string",
-            "description": "A message describing the error due to invalid parameters or request format."
+            "description": "The status of the check-in operation.",
+            "example": "ok"
           },
-          "code": {
-            "type": "integer",
-            "description": "The specific error code representing the type of error."
-          },
-          "details": {
-            "type": "object",
-            "properties": {
-              "field": {
-                "type": "string",
-                "description": "The name of the field that caused the validation error."
-              },
-              "message": {
-                "type": "string",
-                "description": "A message providing more context about the field error."
-              }
-            },
-            "description": "Additional details regarding the error, if applicable."
+          "example": {
+            "type": "string",
+            "description": "An example response string.",
+            "example": "Check-in successful"
           }
         },
-        "description": "This schema represents the response structure for a 400 Bad Request error when accessing room availability operations.",
-        "example": {}
+        "description": "Response schema for successful check-in operation.",
+        "example": {
+          "status": "ok"
+        }
       },
-      "MICROSERVICE_DEV-TEST_getRoomsAvailability-GetRoomsAvailabilityResponse_200": {
+      "MICROSERVICE_DEV_createCheckin-CreateCheckinResponse_400": {
+        "title": "Error Response for Check-in Operations",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "The status message indicating the reason for the error.",
+            "example": "ok"
+          },
+          "example": {
+            "type": "string",
+            "description": "An example error message or additional information pertaining to the error response.",
+            "example": "Invalid check-in data"
+          }
+        },
+        "description": "This schema represents the response structure for a 400 Bad Request error from the check-in operations. It includes the status of the error message.",
+        "example": {
+          "status": "ok"
+        }
+      },
+      "MICROSERVICE_DEV_createCheckin-CreateCheckinResponse_404": {
+        "title": "Checkin Operation 404 Response",
         "type": "object",
         "properties": {},
-        "description": "Schema representing the response for the operation to get room availability.",
+        "description": "This schema represents the response object returned when a check-in operation results in a 404 Not Found error.",
         "example": {}
       },
-      "MICROSERVICE_DEV-TEST_getRoomsAvailability-GetRoomsAvailabilityResponse_500": {
-        "title": "Error Response for Rooms Availability Fetch",
+      "MICROSERVICE_DEV_createCheckin-CreateCheckinResponse_500": {
+        "title": "Check-in Operations Error Response",
         "type": "object",
         "properties": {},
-        "description": "This schema represents the error response returned when there is an issue retrieving rooms availability.",
+        "additionalProperties": false,
+        "description": "This schema defines the structure of the error response returned when a check-in operation fails with a 500 status code.",
         "example": {}
       },
-      "MICROSERVICE_DEV-TEST_getRoomsAvailability-GetRoomsAvailabilityResponse_404": {
-        "title": "Rooms Availability - 404 Response",
+      "MICROSERVICE_DEV_createCheckin-CreateCheckinRequest": {
+        "title": "Check-in Request Body",
         "type": "object",
-        "properties": {},
-        "description": "Schema representing the response when a request for room availability returns a 404 Not Found status.",
+        "properties": {
+          "bookingId": {
+            "type": "string",
+            "description": "Unique identifier for the booking.",
+            "example": "HB-850850"
+          },
+          "guestName": {
+            "type": "string",
+            "description": "Name of the guest checking in.",
+            "example": "Alex Khan"
+          },
+          "roomNumber": {
+            "type": "integer",
+            "description": "The number of the room assigned to the guest.",
+            "format": "int32",
+            "example": 354
+          },
+          "checkinTime": {
+            "type": "string",
+            "description": "The check-in time in ISO 8601 format.",
+            "example": "2026-07-19T01:10:13.098Z"
+          }
+        },
+        "description": "The request body schema for the check-in operation, containing details about the booking and guest.",
+        "example": {
+          "bookingId": "HB-850850",
+          "guestName": "Alex Khan",
+          "roomNumber": 354,
+          "checkinTime": "2026-07-19T01:10:13.098Z"
+        }
+      },
+      "MICROSERVICE_DEV_createCheckin-CreateCheckinResponse_201": {
+        "title": "Check-In Response",
+        "type": "object",
+        "description": "This schema represents the response structure when a successful check-in operation is performed.",
         "example": {}
       }
     },
@@ -338,11 +386,11 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_DEV-TEST_201",
-            "MICROSERVICE_DEV-TEST_400",
-            "MICROSERVICE_DEV-TEST_200",
-            "MICROSERVICE_DEV-TEST_500",
-            "MICROSERVICE_DEV-TEST_404"
+            "MICROSERVICE_DEV_200",
+            "MICROSERVICE_DEV_201",
+            "MICROSERVICE_DEV_400",
+            "MICROSERVICE_DEV_404",
+            "MICROSERVICE_DEV_500"
           ]
         }
       }
