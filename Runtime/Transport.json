@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Transport",
-    "description": "The Bus Ticketing API enables users to streamline the purchasing process for bus tickets. It allows customers to book and secure tickets for various bus routes efficiently. This API is intended for transportation companies and travel service providers looking to integrate ticketing solutions into their platforms. Typical use cases include online travel agencies, mobile apps for public transport, and corporate travel management systems.",
+    "description": "The Bus Route Information API provides detailed access to bus routes within the transport network. Users can retrieve information about available bus routes, including their start and end points, stops, and schedules. This API is designed for transportation service providers, mobile app developers, and urban planners requiring up-to-date data on public transport routes. By utilizing this API, developers can enhance user experiences with accurate travel information and streamline public transport management.",
     "version": "1.0"
   },
   "servers": [
@@ -18,14 +18,14 @@
     }
   ],
   "paths": {
-    "/transport/bus/v1/tickets": {
-      "post": {
+    "/transport/bus/v1/routes": {
+      "get": {
         "tags": [
-          "Ticket Management"
+          "Routes"
         ],
-        "summary": "Create a new ticket",
-        "description": "This endpoint allows users to create a new ticket in the system. Include all required details to ensure the ticket is processed correctly.",
-        "operationId": "createTicketV1",
+        "summary": "Retrieve a list of routes.",
+        "description": "This endpoint allows clients to fetch a comprehensive list of available routes in the system. Users can utilize this data to plan trips or understand the routing options provided.",
+        "operationId": "getRoutes",
         "parameters": [
           {
             "$ref": "#/components/parameters/host"
@@ -61,19 +61,9 @@
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
-        "requestBody": {
-          "description": "Creates a new ticket with the provided details. Ensure all required fields are filled according to the specifications.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createTicketV1-CreateTicketV1Request"
-              }
-            }
-          }
-        },
         "responses": {
-          "500": {
-            "description": "An unexpected error occurred while processing the request.",
+          "201": {
+            "description": "Resource created successfully.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -82,13 +72,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createTicketV1-CreateTicketV1Response_500"
+                  "$ref": "#/components/schemas/MICROSERVICE_Documentation_getRoutes-GetRoutesResponse_201"
                 }
               }
             }
           },
           "200": {
-            "description": "Request completed successfully and data retrieved.",
+            "description": "Request completed successfully.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -97,13 +87,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createTicketV1-CreateTicketV1Response_200"
+                  "$ref": "#/components/schemas/MICROSERVICE_Documentation_getRoutes-GetRoutesResponse_200"
                 }
               }
             }
           },
           "404": {
-            "description": "The requested resource could not be found.",
+            "description": "Requested resource not found.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -112,28 +102,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createTicketV1-CreateTicketV1Response_404"
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "New resource created successfully.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createTicketV1-CreateTicketV1Response_201"
+                  "$ref": "#/components/schemas/MICROSERVICE_Documentation_getRoutes-GetRoutesResponse_404"
                 }
               }
             }
           },
           "400": {
-            "description": "The request parameters are invalid or malformed.",
+            "description": "Invalid request parameters.",
             "headers": {
               "Vary": {
                 "$ref": "#/components/headers/Vary"
@@ -142,7 +117,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV-TEST_createTicketV1-CreateTicketV1Response_400"
+                  "$ref": "#/components/schemas/MICROSERVICE_Documentation_getRoutes-GetRoutesResponse_400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "headers": {
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MICROSERVICE_Documentation_getRoutes-GetRoutesResponse_500"
                 }
               }
             }
@@ -158,116 +148,100 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV-TEST_createTicketV1-CreateTicketV1Response_500": {
-        "title": "Error Response for Ticket Creation",
+      "MICROSERVICE_Documentation_getRoutes-GetRoutesResponse_201": {
+        "type": "object",
+        "properties": {
+          "routes": {
+            "type": "array",
+            "description": "An array of route objects returned in the response.",
+            "items": {
+              "$ref": "#/components/schemas/MICROSERVICE_Documentation_getRoutes-Route"
+            }
+          }
+        },
+        "description": "Schema representing the response for a successful GET operation on routes.",
+        "example": {}
+      },
+      "MICROSERVICE_Documentation_getRoutes-Route": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for the route."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the route."
+          },
+          "length": {
+            "type": "number",
+            "description": "The total length of the route in kilometers."
+          },
+          "startLocation": {
+            "description": "The starting location of the route.",
+            "$ref": "#/components/schemas/MICROSERVICE_Documentation_getRoutes-Location"
+          },
+          "endLocation": {
+            "description": "The ending location of the route.",
+            "$ref": "#/components/schemas/MICROSERVICE_Documentation_getRoutes-Location"
+          }
+        },
+        "description": "Schema representing a single route."
+      },
+      "MICROSERVICE_Documentation_getRoutes-Location": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "The latitude coordinate of the location."
+          },
+          "longitude": {
+            "type": "number",
+            "description": "The longitude coordinate of the location."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name or description of the location."
+          }
+        },
+        "description": "Schema representing a location."
+      },
+      "MICROSERVICE_Documentation_getRoutes-GetRoutesResponse_200": {
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status message indicating the error type.",
+            "description": "The status of the operation.",
             "example": "ok"
           },
           "example": {
             "type": "string",
-            "description": "An additional string providing context or details regarding the error.",
-            "example": "An unexpected error occurred while processing your request."
+            "description": "An example value for the response.",
+            "example": "example string"
           }
         },
-        "description": "This schema represents the structure of the error response returned when there is a server error during the ticket creation operation.",
+        "description": "Response schema for the GET operation on routes, indicating the operation's status.",
         "example": {
           "status": "ok"
         }
       },
-      "MICROSERVICE_DEV-TEST_createTicketV1-CreateTicketV1Response_200": {
-        "title": "Create Ticket Response",
+      "MICROSERVICE_Documentation_getRoutes-GetRoutesResponse_404": {
+        "title": "404 Not Found Response",
         "type": "object",
         "properties": {},
-        "description": "Response schema for the successful creation of a ticket through the API.",
+        "description": "This schema represents the response object returned when a requested resource cannot be found.",
         "example": {}
       },
-      "MICROSERVICE_DEV-TEST_createTicketV1-CreateTicketV1Response_404": {
-        "title": "Ticket Operation Not Found Response",
+      "MICROSERVICE_Documentation_getRoutes-GetRoutesResponse_400": {
+        "title": "Error Response for GET Routes Operation",
+        "type": "object",
+        "description": "Schema representing the structure of the error response when a GET request to the routes operation fails with a 400 status code.",
+        "example": {}
+      },
+      "MICROSERVICE_Documentation_getRoutes-GetRoutesResponse_500": {
         "type": "object",
         "properties": {},
-        "additionalProperties": false,
-        "description": "This schema represents the response returned when a ticket operation is not found (HTTP 404). It indicates that the requested resource could not be located.",
-        "example": {}
-      },
-      "MICROSERVICE_DEV-TEST_createTicketV1-CreateTicketV1Response_201": {
-        "title": "Create Ticket Response",
-        "type": "object",
-        "description": "Response schema for a successful ticket creation operation.",
-        "example": {}
-      },
-      "MICROSERVICE_DEV-TEST_createTicketV1-CreateTicketV1Request": {
-        "title": "Ticket Creation Request",
-        "type": "object",
-        "properties": {
-          "ticketId": {
-            "type": "string",
-            "description": "Unique identifier for the ticket.",
-            "example": "BT-655141"
-          },
-          "busId": {
-            "type": "string",
-            "description": "Identifier for the bus associated with the ticket.",
-            "example": "BUS-8979"
-          },
-          "routeId": {
-            "type": "string",
-            "description": "Identifier for the route that the bus follows.",
-            "example": "RT-718"
-          },
-          "passengerName": {
-            "type": "string",
-            "description": "Name of the passenger who bought the ticket.",
-            "example": "Liam Rossi"
-          },
-          "seatNumber": {
-            "type": "integer",
-            "description": "The seat number assigned to the passenger.",
-            "format": "int32",
-            "example": 47
-          },
-          "origin": {
-            "type": "string",
-            "description": "The starting point of the bus journey.",
-            "example": "Airport Hub"
-          },
-          "destination": {
-            "type": "string",
-            "description": "The end point of the bus journey.",
-            "example": "Downtown"
-          },
-          "fare": {
-            "type": "number",
-            "description": "The cost of the ticket.",
-            "example": 39.46
-          },
-          "departureTime": {
-            "type": "string",
-            "description": "The scheduled departure time of the bus.",
-            "example": "2026-08-01T18:20:27.726Z"
-          }
-        },
-        "description": "Schema representing the details required to create a bus ticket.",
-        "example": {
-          "ticketId": "BT-655141",
-          "busId": "BUS-8979",
-          "routeId": "RT-718",
-          "passengerName": "Liam Rossi",
-          "seatNumber": 47,
-          "origin": "Airport Hub",
-          "destination": "Downtown",
-          "fare": 39.46,
-          "departureTime": "2026-08-01T18:20:27.726Z"
-        }
-      },
-      "MICROSERVICE_DEV-TEST_createTicketV1-CreateTicketV1Response_400": {
-        "title": "ErrorResponse",
-        "type": "object",
-        "properties": {},
-        "description": "Schema representing a 400 Bad Request error response for ticket operation.",
+        "description": "Schema representing the response structure for a 500 Internal Server Error for the GET operation in the Routes API.",
         "example": {}
       }
     },
@@ -402,17 +376,18 @@
         "schema": {
           "type": "string",
           "enum": [
-            "_500",
+            "_201",
             "_200",
             "_404",
-            "_201",
-            "_400"
+            "_400",
+            "_500"
           ]
         }
       }
     },
     "headers": {
       "Vary": {
+        "description": "Indicates the response headers that can vary in the event of a server error. Understanding these can help clients handle responses more effectively.",
         "style": "simple",
         "explode": false,
         "schema": {
