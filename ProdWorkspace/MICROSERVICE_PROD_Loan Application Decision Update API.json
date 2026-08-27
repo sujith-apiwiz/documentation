@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE_PROD_Loan Decision Management API",
-    "description": "The Loan Decision Management API facilitates the update of loan application decisions within the system. This endpoint allows financial institutions to modify the status or attributes of existing loan decisions identified by a unique decision ID. Typical users include loan officers and underwriting teams who utilize this API to maintain accurate and timely decision records. By leveraging this API, organizations can ensure efficient handling of loan applications and enhance their decision-making processes.",
+    "title": "MICROSERVICE_PROD_Loan Application Decision Update API",
+    "description": "The Loan Application Decision Update API allows authorized users to modify the decision status of a specific loan application. By targeting a unique loan application ID and a decision ID, this endpoint facilitates real-time changes to the approval or rejection status. Typical consumers include loan officers and administrative staff who need to ensure up-to-date information in the loan processing workflow. This API is essential for enhancing decision-making processes and maintaining accurate records in the lending system.",
     "version": "1.0"
   },
   "servers": [
@@ -20,24 +20,24 @@
   ],
   "paths": {
     "/v5/loans/loan-applications/{param1}/decisions/{decisionId}": {
-      "put": {
+      "patch": {
         "tags": [
-          "Loan Management"
+          "Loan Applications"
         ],
-        "summary": "Update the decision for a specific loan application.",
-        "description": "This endpoint allows you to update the decision associated with a loan application identified by its unique ID. It ensures that the latest decision is recorded and processed accordingly, helping to streamline the loan management workflow.",
-        "operationId": "putLoanApplicationDecisionRes100045",
+        "summary": "Update the decision of a specific loan application.",
+        "description": "This endpoint allows you to update the decision for a loan application identified by RES-100045. Send the necessary data in the request body to modify the decision status and any relevant details regarding the loan application.",
+        "operationId": "updateLoanApplicationDecisionRes100045",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to submit an update to the decision associated with the loan application identified by RES-100045. It includes necessary information detailing the decision process and outcome, allowing for a structured update to the loan application status.",
+          "description": "The request body for updating the loan application decision. This body must conform to the specified JSON schema, which includes required and optional fields for the decision update process.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PutLoanApplicationDecisionRes100045Request"
+                "$ref": "#/components/schemas/UpdateLoanApplicationDecisionRes100045Request"
               }
             }
           }
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PutLoanApplicationDecisionRes100045Response_200"
+                  "$ref": "#/components/schemas/UpdateLoanApplicationDecisionRes100045Response_200"
                 }
               }
             }
@@ -76,18 +76,13 @@
   },
   "components": {
     "schemas": {
-      "PutLoanApplicationDecisionRes100045Request": {
-        "title": "Decision Request Body",
+      "UpdateLoanApplicationDecisionRes100045Request": {
+        "title": "Loan Application Decision Request",
         "type": "object",
         "properties": {
           "decision": {
             "type": "string",
-            "description": "The decision outcome for the loan application.",
-            "example": "STANDARD"
-          },
-          "decisionSource": {
-            "type": "string",
-            "description": "Source of the decision, e.g., automated system or manual review.",
+            "description": "The decision made regarding the loan application.",
             "example": "STANDARD"
           },
           "provisional": {
@@ -95,61 +90,40 @@
             "description": "Indicates if the decision is provisional.",
             "example": true
           },
-          "scorecardName": {
-            "type": "string",
-            "description": "Name of the scorecard used for evaluation.",
-            "example": "Northstar Banking Service"
-          },
-          "creditScore": {
-            "type": "integer",
-            "description": "The credit score of the applicant.",
-            "format": "int32",
-            "example": 1
-          },
           "riskGrade": {
             "type": "string",
             "description": "Risk grade assigned to the loan application.",
             "example": "STANDARD"
           },
-          "probabilityOfDefaultPercent": {
-            "type": "string",
-            "description": "Estimated probability of default as a percentage.",
-            "example": "STANDARD"
-          },
-          "debtToIncomePercent": {
-            "type": "string",
-            "description": "Debt to income ratio as a percentage.",
-            "example": "STANDARD"
-          },
           "approvedPrincipal": {
-            "description": "Approved loan principal details, including amount and currency.",
+            "description": "The principal amount approved.",
             "$ref": "#/components/schemas/ApprovedPrincipal"
           },
           "approvedTermMonths": {
             "type": "integer",
-            "description": "The approved loan term in months.",
+            "description": "The term of the loan in months that has been approved.",
             "format": "int32",
             "example": 1
           },
           "approvedAnnualInterestRatePercent": {
             "type": "string",
-            "description": "Approved annual interest rate as a percentage.",
+            "description": "The annual interest rate percentage for the approved loan.",
             "example": "STANDARD"
           },
           "reasonCodes": {
             "type": "array",
-            "description": "List of reason codes related to the decision.",
+            "description": "List of reason codes related to the loan decision.",
             "example": [
               "STANDARD"
             ],
             "items": {
               "type": "string",
-              "example": "HighRisk"
+              "example": "R01"
             }
           },
           "conditions": {
             "type": "array",
-            "description": "List of conditions that must be met to finalize the decision.",
+            "description": "List of conditions associated with the approved loan.",
             "example": [
               {
                 "code": "SUCCESS",
@@ -164,29 +138,19 @@
           },
           "comments": {
             "type": "string",
-            "description": "Additional comments regarding the decision.",
+            "description": "Any additional comments regarding the loan application decision.",
             "example": "STANDARD"
           },
-          "supersedesDecisionId": {
-            "type": "string",
-            "description": "ID of the decision that this decision supersedes, if applicable.",
-            "example": "b281f07f-36ee-1c6c-8817-ef57aca98009"
-          },
           "requestContext": {
-            "description": "Context information regarding the request.",
+            "description": "Context of the request that includes metadata.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Schema representing the request body for a loan decision.",
+        "description": "Schema representing a decision request for loan applications.",
         "example": {
           "decision": "STANDARD",
-          "decisionSource": "STANDARD",
           "provisional": true,
-          "scorecardName": "Northstar Banking Service",
-          "creditScore": 1,
           "riskGrade": "STANDARD",
-          "probabilityOfDefaultPercent": "STANDARD",
-          "debtToIncomePercent": "STANDARD",
           "approvedPrincipal": {
             "currency": "USD",
             "amount": "1250.75"
@@ -205,65 +169,62 @@
             }
           ],
           "comments": "STANDARD",
-          "supersedesDecisionId": "b281f07f-36ee-1c6c-8817-ef57aca98009",
           "requestContext": {
-            "requestId": "0e94e5e6-6296-5511-a98d-167e821e53c9",
-            "correlationId": "d5cac494-0f6c-5e79-9fc1-500c3b3a774d",
-            "idempotencyKey": "bf29cc52-4b24-54f6-b776-1af89a62d9e4",
+            "requestId": "4527a4bd-3a29-5435-a1c8-d447321f8c6a",
+            "correlationId": "d416ef19-ef99-5488-9256-64564aac09f5",
+            "idempotencyKey": "1de70363-2c43-53ed-8aa2-b5f0a868805a",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-858630"
+              "deviceId": "DEV-402434"
             }
           }
         }
       },
       "ApprovedPrincipal": {
-        "title": "Approved Principal",
         "type": "object",
         "properties": {
           "currency": {
             "type": "string",
-            "description": "Currency in which the approved amount is stated.",
+            "description": "The currency code for the approved principal.",
             "example": "USD"
           },
           "amount": {
             "type": "string",
-            "description": "The amount of the approved principal.",
-            "example": "100000"
+            "description": "The amount of approved principal.",
+            "example": "15000"
           }
         },
-        "description": "Details about the approved principal amount for the loan."
+        "description": "Represents the approved principal amount for the loan application."
       },
       "Condition": {
-        "title": "Condition",
         "type": "object",
         "properties": {
           "code": {
             "type": "string",
-            "description": "Code representing the specific condition.",
+            "description": "The code representing the condition.",
             "example": "DOC_REQ"
           },
           "description": {
             "type": "string",
-            "description": "Description of the condition that needs to be fulfilled.",
-            "example": "Additional documentation required."
+            "description": "Detailed description of the condition.",
+            "example": "Further documentation required."
           },
           "dueBefore": {
             "type": "string",
-            "description": "The due date before which the condition must be fulfilled.",
-            "example": "2023-10-30"
+            "description": "The date before which the condition must be fulfilled.",
+            "example": "2023-11-01"
           },
           "status": {
             "type": "string",
-            "description": "Current status of the condition (e.g., Pending, Fulfilled).",
+            "description": "Current status of the condition.",
             "example": "Pending"
           }
         },
-        "description": "Represents a condition that must be met for a loan approval."
+        "description": "Represents a condition that must be met for the loan application."
       },
       "RequestContext": {
         "title": "Request Context",
@@ -272,39 +233,39 @@
           "requestId": {
             "type": "string",
             "description": "Unique identifier for the request.",
-            "example": "req-123456789"
+            "example": "req-123456"
           },
           "correlationId": {
             "type": "string",
-            "description": "ID used for tracing requests across systems.",
-            "example": "correlation-987654321"
+            "description": "ID used to correlate related requests.",
+            "example": "corr-123456"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key used to prevent duplicate processing of the same request.",
-            "example": "ido-abcdefgh"
+            "description": "Key for ensuring idempotent request handling.",
+            "example": "idemp-123456"
           },
           "requestedAt": {
             "type": "string",
             "description": "Timestamp when the request was made.",
-            "example": "2023-10-23T12:34:56Z"
+            "example": "2023-10-01T12:00:00Z"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "System that made the request.",
-            "example": "LoanOriginatorSystem"
+            "description": "The system from which the request originated.",
+            "example": "CRM"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "Application from which the request originated.",
-            "example": "LoanApplicationApp"
+            "description": "The application that made the request.",
+            "example": "LoanProcessingApp"
           },
           "channel": {
-            "description": "Channel used for the request.",
+            "description": "Details about the channel through which the request was made.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Schema representing the context of the request made for the loan decision."
+        "description": "Schema representing the contextual metadata around the request."
       },
       "Channel": {
         "title": "Channel",
@@ -312,34 +273,34 @@
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "channel-001"
+            "description": "Identifier for the channel used.",
+            "example": "channel-12345"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of the channel (e.g., mobile, web).",
+            "description": "Type of the channel (e.g., Web, Mobile).",
             "example": "Web"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier of the device used to make the request.",
-            "example": "device-123456"
+            "description": "Identifier for the device used to make the request.",
+            "example": "device-12345"
           }
         },
         "description": "Schema representing the channel through which the request was made."
       },
-      "PutLoanApplicationDecisionRes100045Response_200": {
+      "UpdateLoanApplicationDecisionRes100045Response_200": {
         "title": "Loan Application Decision Response",
         "type": "object",
         "properties": {
           "decision": {
             "type": "string",
-            "description": "The decision on the loan application (e.g., APPROVED, DECLINED).",
+            "description": "The decision made on the loan application.",
             "example": "STANDARD"
           },
           "decisionSource": {
             "type": "string",
-            "description": "The source from which the decision was derived.",
+            "description": "The source from where the decision was made.",
             "example": "STANDARD"
           },
           "provisional": {
@@ -349,7 +310,7 @@
           },
           "scorecardName": {
             "type": "string",
-            "description": "The name of the scorecard used for the decision.",
+            "description": "The name of the scorecard used to evaluate the loan application.",
             "example": "Northstar Banking Service"
           },
           "creditScore": {
@@ -370,7 +331,7 @@
           },
           "debtToIncomePercent": {
             "type": "string",
-            "description": "The percentage ratio of debt to income.",
+            "description": "The debt-to-income ratio percentage.",
             "example": "STANDARD"
           },
           "approvedPrincipal": {
@@ -385,23 +346,23 @@
           },
           "approvedAnnualInterestRatePercent": {
             "type": "string",
-            "description": "The annual interest rate percentage for the loan.",
+            "description": "The approved annual interest rate percentage.",
             "example": "STANDARD"
           },
           "reasonCodes": {
             "type": "array",
-            "description": "A list of reason codes associated with the decision.",
+            "description": "List of reason codes for the decision.",
             "example": [
               "STANDARD"
             ],
             "items": {
               "type": "string",
-              "description": "A code representing a specific reason."
+              "example": "Excellent credit history"
             }
           },
           "conditions": {
             "type": "array",
-            "description": "List of conditions that must be met for the approval.",
+            "description": "A list of conditions that must be met.",
             "example": [
               {
                 "code": "SUCCESS",
@@ -416,39 +377,39 @@
           },
           "comments": {
             "type": "string",
-            "description": "Additional comments regarding the decision.",
+            "description": "Any comments related to the decision.",
             "example": "STANDARD"
           },
           "supersedesDecisionId": {
             "type": "string",
-            "description": "The ID of the decision that this decision supersedes, if applicable.",
-            "example": "1e3c9614-db0d-2413-3e37-e895728b62d2"
+            "description": "The ID of the decision this decision supersedes, if applicable.",
+            "example": "b8851652-8b73-73c7-4b8f-88bd86afd2ea"
           },
           "id": {
             "type": "string",
-            "description": "Unique identifier for this decision.",
-            "example": "b50df68f-1958-9dc7-d4c8-f65d5a1f556c"
+            "description": "The unique identifier for the decision.",
+            "example": "32dfb345-d698-8735-61a0-98340a7492e2"
           },
           "decidedAt": {
             "type": "string",
-            "description": "Timestamp when the decision was made.",
+            "description": "The timestamp when the decision was made.",
             "example": "2026-08-11T12:00:00Z"
           },
           "decidedBy": {
             "type": "string",
-            "description": "Identifier for the user or system that made the decision.",
+            "description": "The identifier of the user or system that made the decision.",
             "example": "STANDARD"
           },
           "audit": {
-            "description": "Audit information related to this decision.",
-            "$ref": "#/components/schemas/Audit"
+            "description": "Audit information related to the decision.",
+            "$ref": "#/components/schemas/AuditInfo"
           },
           "metadata": {
-            "description": "Metadata about the application processing.",
+            "description": "Additional metadata related to the decision.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for loan application decision containing the details about the decision made on a loan application.",
+        "description": "Represents the response for a loan application decision.",
         "example": {
           "decision": "STANDARD",
           "decisionSource": "STANDARD",
@@ -476,8 +437,8 @@
             }
           ],
           "comments": "STANDARD",
-          "supersedesDecisionId": "1e3c9614-db0d-2413-3e37-e895728b62d2",
-          "id": "b50df68f-1958-9dc7-d4c8-f65d5a1f556c",
+          "supersedesDecisionId": "b8851652-8b73-73c7-4b8f-88bd86afd2ea",
+          "id": "32dfb345-d698-8735-61a0-98340a7492e2",
           "decidedAt": "2026-08-11T12:00:00Z",
           "decidedBy": "STANDARD",
           "audit": {
@@ -488,72 +449,70 @@
             "version": 1
           },
           "metadata": {
-            "responseId": "d8b4ac4b-a263-5e0b-af78-08b2d480647a",
-            "correlationId": "d5cac494-0f6c-5e79-9fc1-500c3b3a774d",
+            "responseId": "2144c9ce-be87-50c6-8e54-fd6b74ffe6d6",
+            "correlationId": "d416ef19-ef99-5488-9256-64564aac09f5",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "Audit": {
-        "title": "Audit",
+      "AuditInfo": {
         "type": "object",
         "properties": {
           "createdAt": {
             "type": "string",
-            "description": "Timestamp of when the decision was created.",
-            "example": "2023-10-20T14:00:00Z"
+            "description": "The timestamp when the decision was created.",
+            "example": "2023-10-12T10:00:00Z"
           },
           "createdBy": {
             "type": "string",
-            "description": "Identifier of the user or system that created the decision.",
-            "example": "user-001"
+            "description": "The user who created the decision.",
+            "example": "SystemAdmin"
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp of the last update to the decision.",
-            "example": "2023-10-20T14:10:00Z"
+            "description": "The timestamp when the decision was last updated.",
+            "example": "2023-10-12T10:00:00Z"
           },
           "updatedBy": {
             "type": "string",
-            "description": "Identifier of the user or system that last updated the decision.",
-            "example": "user-001"
+            "description": "The user who last updated the decision.",
+            "example": "SystemAdmin"
           },
           "version": {
             "type": "integer",
-            "description": "Version number of the decision record.",
+            "description": "The version number of the decision.",
             "format": "int32",
             "example": 1
           }
         },
-        "description": "Audit information related to the loan decision process."
+        "description": "Information related to the audit of the decision."
       },
       "Metadata": {
-        "title": "Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Identifier for the response generated for the loan application.",
-            "example": "resp-123456"
+            "description": "The unique identifier of the response.",
+            "example": "RESP123456"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation ID for tracking requests across systems.",
-            "example": "corr-123456"
+            "description": "The correlation ID for tracing.",
+            "example": "CORR789012"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the response was generated.",
-            "example": "2023-10-20T14:20:00Z"
+            "description": "The timestamp when the metadata was generated.",
+            "example": "2023-10-12T10:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the application processing occurred.",
+            "description": "The region where the processing occurred.",
             "example": "US-East"
           }
         },
-        "description": "Metadata related to the processing of the loan application."
+        "description": "Additional metadata associated with the decision."
       }
     },
     "parameters": {
@@ -574,17 +533,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the API endpoint being called.",
+        "description": "A unique identifier for the API endpoint that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "banking-loans-openapi-replace-credit-decision"
+          "example": "banking-loans-openapi-update-credit-decision"
         },
-        "example": "banking-loans-openapi-replace-credit-decision"
+        "example": "banking-loans-openapi-update-credit-decision"
       },
       "X-Runtime-App": {
-        "description": "The name of the application executing the request.",
+        "description": "The name of the application runtime environment that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -597,7 +556,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the Bearer authentication scheme, which allows clients to authenticate using a JWT (JSON Web Token). The token should be included in the Authorization header of the request, prefixed by the word 'Bearer'.",
+        "description": "This security scheme uses JSON Web Tokens (JWT) for authentication. Clients must include a valid JWT in the Authorization header of their requests to access secured endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
