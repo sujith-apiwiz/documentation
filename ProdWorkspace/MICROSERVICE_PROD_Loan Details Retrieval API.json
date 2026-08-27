@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Loan Details Retrieval API",
-    "description": "The Loan Details Retrieval API allows users to access specific information about a loan using its unique identifier. This endpoint serves financial institutions and service providers needing to manage loan data effectively. Typical use cases include retrieving loan status, terms, and borrower information for customer inquiries or reporting purposes. By facilitating quick access to detailed loan records, it enhances user experience and operational efficiency.",
+    "description": "The Loan Details Retrieval API allows users to access comprehensive loan information associated with specific customer accounts. By providing a customer ID and account ID, developers can retrieve detailed loan data, including loan amounts, terms, and repayment statuses. This API is vital for financial institutions and technology providers looking to enhance customer experience and facilitate better financial decision-making. Typical consumers include banking applications and financial analysis tools that require real-time loan information.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/loans/loans/{loanId}": {
+    "/v5/aggregation/customers/{customerId}/accounts/{accountId}/loandetails": {
       "get": {
         "tags": [
-          "Loans"
+          "Customer Accounts"
         ],
-        "summary": "Retrieve a specific loan by its ID.",
-        "description": "This endpoint allows you to fetch detailed information about a specific loan identified by its unique ID. Use this operation to access loan details, including terms, payments, and borrower information.",
-        "operationId": "getLoanById",
+        "summary": "Retrieve loan details for a specific customer account.",
+        "description": "This endpoint allows you to fetch detailed information about the loans associated with a specific customer account. Provide the customer ID and account ID in the URL to get comprehensive loan data, including amounts, interest rates, payment schedules, and more.",
+        "operationId": "getLoanDetailsForCustomerAccount",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "Request body for retrieving details associated with loan LOAN-500045. The request body should include any necessary identifiers or parameters required by the API to process the request correctly.",
+          "description": "Request body for fetching loan details associated with a specific account of a customer. It contains the necessary parameters required to retrieve the loan details in a structured format.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetLoanByIdRequest"
+                "$ref": "#/components/schemas/GetLoanDetailsForCustomerAccountRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved loan details.",
+            "description": "Successfully retrieved loan details for the specified account.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetLoanByIdResponse_200"
+                  "$ref": "#/components/schemas/GetLoanDetailsForCustomerAccountResponse_200"
                 }
               }
             }
@@ -76,261 +76,230 @@
   },
   "components": {
     "schemas": {
-      "GetLoanByIdRequest": {
+      "GetLoanDetailsForCustomerAccountRequest": {
         "type": "string",
-        "description": "This schema represents the request body for the GET operation on loan 500045. It is currently defined as a string.",
+        "description": "This schema represents the request body for the GET operation to retrieve loan details for a specific customer and account.",
         "example": "{}"
       },
-      "GetLoanByIdResponse_200": {
-        "title": "Loan Operations Response",
+      "GetLoanDetailsForCustomerAccountResponse_200": {
         "type": "object",
         "properties": {
-          "sourceApplicationId": {
+          "loanNumber": {
             "type": "string",
-            "description": "Identifier for the source application.",
-            "example": "APP-576916"
-          },
-          "productId": {
-            "type": "string",
-            "description": "Identifier for the product associated with the loan.",
-            "example": "PROD-806275"
-          },
-          "primaryCustomerId": {
-            "type": "string",
-            "description": "Identifier for the primary customer who has taken the loan.",
-            "example": "CUST-263976"
-          },
-          "borrowerCustomerIds": {
-            "type": "array",
-            "description": "List of identifiers for all borrowers associated with the loan.",
-            "example": [
-              "CUST-585799"
-            ],
-            "items": {
-              "type": "string",
-              "example": "string"
-            }
-          },
-          "principal": {
-            "description": "The principal amount of the loan.",
-            "$ref": "#/components/schemas/LoanAmount"
-          },
-          "termMonths": {
-            "type": "integer",
-            "description": "The term of the loan in months.",
-            "format": "int32",
-            "example": 1
-          },
-          "annualInterestRatePercent": {
-            "type": "string",
-            "description": "The annual interest rate applicable to the loan.",
+            "description": "The unique identifier of the loan.",
             "example": "STANDARD"
           },
-          "interestRateType": {
+          "loanPaymentNumber": {
             "type": "string",
-            "description": "Type of interest rate (fixed, variable, etc.).",
+            "description": "The payment number associated with the loan.",
             "example": "STANDARD"
           },
-          "repaymentFrequency": {
+          "loanPaymentAddress": {
             "type": "string",
-            "description": "Frequency of repayment (monthly, quarterly, etc.).",
+            "description": "The address for loan payments.",
             "example": "STANDARD"
           },
-          "bookingDate": {
-            "type": "string",
-            "description": "The date when the loan was booked.",
-            "example": "2026-09-15"
-          },
-          "firstPaymentDate": {
-            "type": "string",
-            "description": "The date when the first payment is due.",
-            "example": "2026-09-15"
-          },
-          "maturityDate": {
-            "type": "string",
-            "description": "The maturity date of the loan.",
-            "example": "2026-09-15"
-          },
-          "repaymentAccountNumber": {
-            "type": "string",
-            "description": "Account number used for repayment of the loan.",
-            "example": "STANDARD"
-          },
-          "servicingBranchCode": {
-            "type": "string",
-            "description": "Branch code for servicing the loan.",
-            "example": "CODE-889"
-          },
-          "relationshipManagerId": {
-            "type": "string",
-            "description": "Identifier for the relationship manager handling the loan.",
-            "example": "STANDARD"
-          },
-          "purpose": {
-            "type": "string",
-            "description": "Purpose for which the loan was taken.",
-            "example": "STANDARD"
-          },
-          "id": {
-            "type": "string",
-            "description": "Unique identifier for the loan.",
-            "example": "b92b6954-65c6-06ff-8b83-6bca5b87411a"
-          },
-          "accountNumber": {
-            "type": "string",
-            "description": "Account number associated with the loan.",
-            "example": "STANDARD"
-          },
-          "status": {
-            "type": "string",
-            "description": "Current status of the loan (active, closed, etc.).",
-            "example": "ACTIVE"
-          },
-          "balance": {
-            "description": "Current balance details of the loan.",
-            "$ref": "#/components/schemas/LoanBalance"
-          },
-          "totalDisbursed": {
-            "description": "Total amount disbursed for the loan.",
-            "$ref": "#/components/schemas/LoanAmount"
-          },
-          "totalRepaid": {
-            "description": "Total amount repaid towards the loan.",
-            "$ref": "#/components/schemas/LoanAmount"
+          "accountDetail": {
+            "description": "Details regarding the associated account.",
+            "$ref": "#/components/schemas/AccountDetail"
           },
           "metadata": {
-            "description": "Metadata related to the response.",
-            "$ref": "#/components/schemas/ResponseMetadata"
+            "description": "Additional metadata regarding the response.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Represents the schema for the response of the Loan Operations GET request.",
+        "description": "Response schema that includes details about the loan and associated accounts.",
         "example": {
-          "sourceApplicationId": "APP-576916",
-          "productId": "PROD-806275",
-          "primaryCustomerId": "CUST-263976",
-          "borrowerCustomerIds": [
-            "CUST-585799"
-          ],
-          "principal": {
-            "currency": "USD",
-            "amount": "1250.75"
-          },
-          "termMonths": 1,
-          "annualInterestRatePercent": "STANDARD",
-          "interestRateType": "STANDARD",
-          "repaymentFrequency": "STANDARD",
-          "bookingDate": "2026-09-15",
-          "firstPaymentDate": "2026-09-15",
-          "maturityDate": "2026-09-15",
-          "repaymentAccountNumber": "STANDARD",
-          "servicingBranchCode": "CODE-889",
-          "relationshipManagerId": "STANDARD",
-          "purpose": "STANDARD",
-          "id": "b92b6954-65c6-06ff-8b83-6bca5b87411a",
-          "accountNumber": "STANDARD",
-          "status": "ACTIVE",
-          "balance": {
-            "principalOutstanding": {
-              "currency": "USD",
-              "amount": "1250.75"
-            },
-            "accruedInterest": {
-              "currency": "USD",
-              "amount": "1250.75"
-            },
-            "feesOutstanding": {
-              "currency": "USD",
-              "amount": "1250.75"
-            },
-            "penaltiesOutstanding": {
-              "currency": "USD",
-              "amount": "1250.75"
-            },
-            "totalOutstanding": {
-              "currency": "USD",
-              "amount": "1250.75"
-            },
-            "availableToDraw": {
-              "currency": "USD",
-              "amount": "1250.75"
-            }
-          },
-          "totalDisbursed": {
-            "currency": "USD",
-            "amount": "1250.75"
-          },
-          "totalRepaid": {
-            "currency": "USD"
+          "loanNumber": "STANDARD",
+          "loanPaymentNumber": "STANDARD",
+          "loanPaymentAddress": "STANDARD",
+          "accountDetail": {
+            "accountId": "ACC-103246",
+            "accountNumber": "STANDARD",
+            "accountPaymentNumber": "STANDARD",
+            "accountPaymentAddress": "STANDARD",
+            "amount": 100.0,
+            "accountFuturePayoffDate": "2026-09-15",
+            "groupDetail": [
+              {
+                "accountId": "ACC-611579",
+                "groupNumber": "STANDARD",
+                "groupPaymentNumber": "STANDARD",
+                "groupPaymentAddress": "STANDARD",
+                "groupFuturePayoffAmount": 100.0,
+                "groupFuturePayoffDate": "2026-09-15",
+                "groupLoanDetail": [
+                  {
+                    "accountId": "ACC-579816",
+                    "loanNumber": "STANDARD",
+                    "loanPaymentNumber": "STANDARD",
+                    "loanPaymentAddress": "STANDARD",
+                    "loanFuturePayoffAmount": 100.0,
+                    "loanFuturePayoffDate": "2026-09-15"
+                  }
+                ]
+              }
+            ],
+            "loanDetail": [
+              {
+                "accountId": "ACC-157612",
+                "loanNumber": "STANDARD",
+                "loanPaymentNumber": "STANDARD",
+                "loanPaymentAddress": "STANDARD",
+                "loanFuturePayoffAmount": 100.0,
+                "loanFuturePayoffDate": "2026-09-15"
+              }
+            ]
           },
           "metadata": {
-            "responseId": "ad155b85-9b1b-5437-b33a-71b30994de6c",
-            "correlationId": "eafc7be2-eda5-5d4b-a3c8-9abbb26eee29",
+            "responseId": "a4ca79c6-361f-54d3-be6c-62cb22e32e92",
+            "correlationId": "55eb9240-0ff9-5fa7-9f30-da4bb5801ca3",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "LoanAmount": {
-        "title": "Loan Amount",
+      "AccountDetail": {
         "type": "object",
         "properties": {
-          "currency": {
+          "accountId": {
             "type": "string",
-            "description": "Currency of the amount.",
-            "example": "USD"
+            "description": "The unique identifier of the account.",
+            "example": "ACC-200045"
+          },
+          "accountNumber": {
+            "type": "string",
+            "description": "The account number.",
+            "example": "ACCOUNT123456"
+          },
+          "accountPaymentNumber": {
+            "type": "string",
+            "description": "Payment number for the specific account.",
+            "example": "AP-001"
+          },
+          "accountPaymentAddress": {
+            "type": "string",
+            "description": "Payment address for the account.",
+            "example": "123 Main St, Anytown, USA"
           },
           "amount": {
+            "type": "number",
+            "description": "The current amount associated with the account.",
+            "example": 1500.75
+          },
+          "accountFuturePayoffDate": {
             "type": "string",
-            "description": "The amount of money.",
-            "example": "1000.00"
+            "description": "Future payoff date for the account.",
+            "example": "2025-12-31"
+          },
+          "groupDetail": {
+            "type": "array",
+            "description": "Details of groups associated with the account.",
+            "items": {
+              "$ref": "#/components/schemas/GroupDetail"
+            }
+          },
+          "loanDetail": {
+            "type": "array",
+            "description": "Details of loans associated with the account.",
+            "items": {
+              "$ref": "#/components/schemas/LoanDetail"
+            }
           }
         },
-        "description": "Represents the amount and currency of the loan."
+        "description": "Details regarding an individual account."
       },
-      "LoanBalance": {
-        "title": "Loan Balance",
+      "GroupDetail": {
         "type": "object",
         "properties": {
-          "principalOutstanding": {
-            "description": "Outstanding principal amount.",
-            "$ref": "#/components/schemas/LoanAmount"
+          "accountId": {
+            "type": "string",
+            "description": "The unique identifier of the group account.",
+            "example": "ACC-200045"
           },
-          "accruedInterest": {
-            "description": "Total accrued interest amount.",
-            "$ref": "#/components/schemas/LoanAmount"
+          "groupNumber": {
+            "type": "string",
+            "description": "The group number associated with the account.",
+            "example": "GROUP-001"
           },
-          "feesOutstanding": {
-            "description": "Total outstanding fees.",
-            "$ref": "#/components/schemas/LoanAmount"
+          "groupPaymentNumber": {
+            "type": "string",
+            "description": "Payment number for the specific group.",
+            "example": "GP-001"
           },
-          "penaltiesOutstanding": {
-            "description": "Total outstanding penalties.",
-            "$ref": "#/components/schemas/LoanAmount"
+          "groupPaymentAddress": {
+            "type": "string",
+            "description": "Payment address for the group.",
+            "example": "123 Main St, Anytown, USA"
           },
-          "totalOutstanding": {
-            "description": "Total outstanding amount, including principal and interest.",
-            "$ref": "#/components/schemas/LoanAmount"
+          "groupFuturePayoffAmount": {
+            "type": "number",
+            "description": "Future payoff amount for the group.",
+            "example": 5000.0
           },
-          "availableToDraw": {
-            "description": "Amount available to draw from the loan.",
-            "$ref": "#/components/schemas/LoanAmount"
+          "groupFuturePayoffDate": {
+            "type": "string",
+            "description": "Future payoff date for the group.",
+            "example": "2026-12-31"
+          },
+          "groupLoanDetail": {
+            "type": "array",
+            "description": "Details of loans associated with the group.",
+            "items": {
+              "$ref": "#/components/schemas/LoanDetail"
+            }
           }
         },
-        "description": "Represents the balance details of the loan."
+        "description": "Details regarding a group associated with accounts."
       },
-      "ResponseMetadata": {
-        "title": "Response Metadata",
+      "LoanDetail": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "The unique identifier of the account associated with the loan.",
+            "example": "ACC-200045"
+          },
+          "loanNumber": {
+            "type": "string",
+            "description": "The unique identifier of the loan.",
+            "example": "LN-123456"
+          },
+          "loanPaymentNumber": {
+            "type": "string",
+            "description": "The payment number associated with the loan.",
+            "example": "LP-001"
+          },
+          "loanPaymentAddress": {
+            "type": "string",
+            "description": "The address for loan payments.",
+            "example": "123 Main St, Anytown, USA"
+          },
+          "loanFuturePayoffAmount": {
+            "type": "number",
+            "description": "Future payoff amount for the loan.",
+            "example": 2000.0
+          },
+          "loanFuturePayoffDate": {
+            "type": "string",
+            "description": "Future payoff date for the loan.",
+            "example": "2027-12-31"
+          }
+        },
+        "description": "Details about a loan."
+      },
+      "Metadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
             "description": "Unique identifier for the response.",
-            "example": "response-12345"
+            "example": "RESP-0001"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation ID for tracking request/response pairs.",
-            "example": "correlation-67890"
+            "description": "ID used for tracing the request across systems.",
+            "example": "CORR-12345"
           },
           "generatedAt": {
             "type": "string",
@@ -339,11 +308,11 @@
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the response was processed.",
+            "description": "Region in which the processing occurred.",
             "example": "us-east-1"
           }
         },
-        "description": "Metadata information about the response."
+        "description": "Metadata associated with the response."
       }
     },
     "parameters": {
@@ -364,28 +333,30 @@
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "An identifier for the endpoint being accessed, allowing for better tracking and analytics of request usage.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "banking-loans-openapi-banking-loans-openapi-get-loan"
+          "example": "open-finance-api-get-loan-payment-details"
         },
-        "example": "banking-loans-openapi-banking-loans-openapi-get-loan"
+        "example": "open-finance-api-get-loan-payment-details"
       },
       "X-Runtime-App": {
+        "description": "The name of the application that generated the request. This helps in identifying the source of API calls.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "lending-credit"
+          "example": "accounts-deposits"
         },
-        "example": "lending-credit"
+        "example": "accounts-deposits"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses Bearer Authentication, commonly implemented using JSON Web Tokens (JWT). Clients must include a valid JWT in the Authorization header when making requests to access protected resources.",
+        "description": "This security scheme uses HTTP Bearer authentication, which requires a bearer token. The token must be a valid JSON Web Token (JWT).",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
