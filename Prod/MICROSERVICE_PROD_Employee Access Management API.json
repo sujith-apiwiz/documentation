@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Employee Access Management API",
-    "description": "The Employee Access Management API facilitates the retrieval of employee access information within the organization's banking and human resource management systems. This endpoint allows authorized users to query specific access privileges assigned to employees, enabling efficient handling of access control and compliance tasks. Typical consumers of this API include HR personnel and systems integrators who require detailed insights into employee access rights. By streamlining access management processes, this API supports enhanced operational efficiency and security.",
+    "description": "The Employee Access Management API enables secure retrieval of access information for employees within the organization. This endpoint allows users to query specific access permissions and roles based on unique employee identifiers. Typical consumers include HR managers and system administrators who need to ensure compliance and manage access rights efficiently. With this API, organizations can streamline their human resource management processes and reinforce data security protocols.",
     "version": "1.0"
   },
   "servers": [
@@ -30,32 +30,35 @@
     }
   ],
   "paths": {
-    "/v5/banking/human-resource-management/employee-access": {
+    "/v5/banking/human-resource-management/employee-access/{param1}": {
       "get": {
         "tags": [
           "Employee Management"
         ],
-        "summary": "Retrieve employee access details.",
-        "description": "This endpoint allows you to fetch details regarding employee access in the human resource management system. You can use this to verify various access controls and permissions assigned to employees.",
-        "operationId": "getEmployeeAccess",
+        "summary": "Retrieve employee access information.",
+        "description": "This endpoint allows you to fetch detailed access information for a specific employee identified by their ID. Use this to understand the permissions and access levels granted to the employee in the human resource management system.",
+        "operationId": "getEmployeeAccessById",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to specify the access details for the employee management operations. It should contain necessary parameters to retrieve employee-specific data or manage access permissions.",
+          "description": "This request body is used to retrieve specific employee access details for the employee with ID EMP-900045. Ensure that the necessary parameters and authentication details are included.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetEmployeeAccessRequest"
+                "$ref": "#/components/schemas/GetEmployeeAccessByIdRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved employee access information.",
+            "description": "Request completed successfully, employee data retrieved.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -67,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetEmployeeAccessResponse_200"
+                  "$ref": "#/components/schemas/GetEmployeeAccessByIdResponse_200"
                 }
               }
             }
@@ -87,187 +90,124 @@
   },
   "components": {
     "schemas": {
-      "GetEmployeeAccessRequest": {
-        "title": "Employee Access Request Body",
+      "GetEmployeeAccessByIdRequest": {
         "type": "string",
-        "description": "This schema represents the request body for accessing employee information in the Human Resource Management system. It is a simple string representation for the request.",
+        "description": "This schema represents the request body for accessing employee data.",
         "example": "{}"
       },
-      "GetEmployeeAccessResponse_200": {
+      "GetEmployeeAccessByIdResponse_200": {
         "title": "Employee Access Response",
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "description": "List of employee access records.",
-            "example": [
-              {
-                "employeeId": "EMP-957439",
-                "assignmentId": "STANDARD",
-                "departmentId": "STANDARD",
-                "effectiveDate": "2026-09-15",
-                "countryCode": "US",
-                "employmentType": "STANDARD",
-                "managerId": "STANDARD",
-                "workLocation": "STANDARD",
-                "recordStatus": "ACTIVE",
-                "updatedAt": "2026-09-15T14:30:00Z"
-              }
-            ],
-            "items": {
-              "$ref": "#/components/schemas/EmployeeAccessRecord"
-            }
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/Pagination"
-          },
-          "sort": {
-            "type": "string",
-            "description": "Sorting criteria applied on the results.",
-            "example": "STANDARD"
-          },
-          "metadata": {
-            "$ref": "#/components/schemas/Metadata"
-          }
-        },
-        "description": "Response schema for employee access operation indicating the requested employee details along with pagination and metadata.",
-        "example": {
-          "items": [
-            {
-              "employeeId": "EMP-957439",
-              "assignmentId": "STANDARD",
-              "departmentId": "STANDARD",
-              "effectiveDate": "2026-09-15",
-              "countryCode": "US",
-              "employmentType": "STANDARD",
-              "managerId": "STANDARD",
-              "workLocation": "STANDARD",
-              "recordStatus": "ACTIVE",
-              "updatedAt": "2026-09-15T14:30:00Z"
-            }
-          ],
-          "pagination": {
-            "page": 1,
-            "pageSize": 1,
-            "totalItems": 1
-          },
-          "sort": "STANDARD",
-          "metadata": {
-            "responseId": "89f20275-ecfa-5583-a566-d9d89cf1d572",
-            "correlationId": "754b5e01-4b22-5a60-88ab-b43a0ed9bc55",
-            "generatedAt": "2026-09-15T14:30:00Z",
-            "processingRegion": "us-east-1"
-          }
-        }
-      },
-      "EmployeeAccessRecord": {
-        "title": "Employee Access Record",
         "type": "object",
         "properties": {
           "employeeId": {
             "type": "string",
             "description": "Unique identifier for the employee.",
-            "example": "12345"
+            "example": "EMP-338753"
           },
           "assignmentId": {
             "type": "string",
-            "description": "Identifier for the specific assignment of the employee.",
-            "example": "A123"
+            "description": "Identifier for the employee's current assignment.",
+            "example": "STANDARD"
           },
           "departmentId": {
             "type": "string",
-            "description": "Identifier for the department where the employee is assigned.",
-            "example": "D001"
+            "description": "Identifier for the department the employee is associated with.",
+            "example": "STANDARD"
           },
           "effectiveDate": {
             "type": "string",
-            "description": "Date when the employee's assignment became effective.",
-            "example": "2023-01-01"
+            "description": "The date when the employee's assignment becomes effective.",
+            "example": "2026-09-15"
           },
           "countryCode": {
             "type": "string",
-            "description": "Country code where the employee is located.",
+            "description": "The country code where the employee is located.",
             "example": "US"
           },
           "employmentType": {
             "type": "string",
-            "description": "Type of employment (e.g., Full-Time, Part-Time).",
-            "example": "Full-Time"
+            "description": "The type of employment (e.g., full-time, part-time).",
+            "example": "STANDARD"
           },
           "managerId": {
             "type": "string",
             "description": "Identifier for the employee's manager.",
-            "example": "M678"
+            "example": "STANDARD"
           },
           "workLocation": {
             "type": "string",
-            "description": "Location where the employee works.",
-            "example": "Remote"
+            "description": "The primary location where the employee works.",
+            "example": "STANDARD"
           },
           "recordStatus": {
             "type": "string",
-            "description": "Current status of the employee record (e.g., Active, Inactive).",
-            "example": "Active"
+            "description": "The current status of the employee record.",
+            "example": "ACTIVE"
           },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp when the employee record was last updated.",
-            "example": "2023-10-01T12:34:56Z"
-          }
-        },
-        "description": "Schema representing an individual employee access record."
-      },
-      "Pagination": {
-        "title": "Pagination",
-        "type": "object",
-        "properties": {
-          "page": {
+          "version": {
             "type": "integer",
-            "description": "Current page number of the paginated results.",
+            "description": "Version number of the employee record.",
             "format": "int32",
             "example": 1
           },
-          "pageSize": {
-            "type": "integer",
-            "description": "Number of items per page.",
-            "format": "int32",
-            "example": 10
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp of when the employee record was last updated.",
+            "example": "2026-09-15T14:30:00Z"
           },
-          "totalItems": {
-            "type": "integer",
-            "description": "Total number of items available across all pages.",
-            "format": "int32",
-            "example": 100
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "responseId": {
+                "type": "string",
+                "description": "Unique identifier for the response.",
+                "example": "RES123456"
+              },
+              "correlationId": {
+                "type": "string",
+                "description": "Identifier used to track the request.",
+                "example": "CORR78910"
+              },
+              "generatedAt": {
+                "type": "string",
+                "description": "Timestamp of when the response was generated.",
+                "example": "2023-10-25T10:01:00Z"
+              },
+              "processingRegion": {
+                "type": "string",
+                "description": "Region where the processing occurred.",
+                "example": "us-east-1"
+              }
+            },
+            "description": "Metadata information related to the response.",
+            "example": {
+              "responseId": "1a747833-88f1-50b6-9c95-ae0aeab38559",
+              "correlationId": "9e688156-aa3f-555c-a221-547f3ae7231e",
+              "generatedAt": "2026-09-15T14:30:00Z",
+              "processingRegion": "us-east-1"
+            }
           }
         },
-        "description": "Schema representing the pagination information for the response."
-      },
-      "Metadata": {
-        "title": "Metadata",
-        "type": "object",
-        "properties": {
-          "responseId": {
-            "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "resp_001"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier to correlate requests and responses.",
-            "example": "corr_001"
-          },
-          "generatedAt": {
-            "type": "string",
-            "description": "Timestamp when the response was generated.",
-            "example": "2023-10-01T12:34:56Z"
-          },
-          "processingRegion": {
-            "type": "string",
-            "description": "Region where the processing was performed.",
-            "example": "us-west-1"
+        "description": "Schema representing the response for accessing employee details.",
+        "example": {
+          "employeeId": "EMP-338753",
+          "assignmentId": "STANDARD",
+          "departmentId": "STANDARD",
+          "effectiveDate": "2026-09-15",
+          "countryCode": "US",
+          "employmentType": "STANDARD",
+          "managerId": "STANDARD",
+          "workLocation": "STANDARD",
+          "recordStatus": "ACTIVE",
+          "version": 1,
+          "updatedAt": "2026-09-15T14:30:00Z",
+          "metadata": {
+            "responseId": "1a747833-88f1-50b6-9c95-ae0aeab38559",
+            "correlationId": "9e688156-aa3f-555c-a221-547f3ae7231e",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
           }
-        },
-        "description": "Schema representing additional metadata about the response."
+        }
       }
     },
     "parameters": {
@@ -284,6 +224,16 @@
             "MICROSERVICE_PROD_200"
           ]
         }
+      },
+      "param1": {
+        "name": "param1",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
       }
     },
     "headers": {
@@ -292,9 +242,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "employee-access-search-employee-access"
+          "example": "employee-access-get-employee-access"
         },
-        "example": "employee-access-search-employee-access"
+        "example": "employee-access-get-employee-access"
       },
       "X-Runtime-App": {
         "style": "simple",
@@ -309,7 +259,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a bearer authentication method implemented via JSON Web Tokens (JWT). Clients should provide the JWT in the 'Authorization' header when making API requests.",
+        "description": "This security scheme utilizes the Bearer authentication method, which requires a valid JSON Web Token (JWT) to be included in the Authorization header of requests. The token must be issued by a trusted authority and provides a way to securely transmit information between parties.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

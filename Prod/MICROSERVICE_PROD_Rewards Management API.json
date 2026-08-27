@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Rewards Management API",
-    "description": "The Rewards Management API allows businesses to update and adjust specific reward details efficiently. By targeting individual rewards identified by their unique rewardId, this API facilitates modifications to existing incentives in the rewards program. It is particularly useful for customer service teams or application administrators who need to correct or enhance reward offerings based on user feedback or changing business strategies. This service ensures that rewards remain relevant and valuable to customers, fostering ongoing engagement and satisfaction.",
+    "description": "The Rewards Management API provides access to the rewards program associated with banking services, allowing users to retrieve detailed information about available rewards, their status, and eligibility criteria. This endpoint is designed for financial service providers and customer relationship management systems that aim to enhance user engagement through rewards offerings. Typical consumers include banks, credit unions, and fintech platforms that wish to integrate reward tracking and management into their applications. By leveraging this API, businesses can easily offer personalized reward experiences to their customers, driving loyalty and satisfaction.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/operational-services/rewards/{rewardId}": {
-      "patch": {
+    "/v5/banking/operational-services/rewards": {
+      "get": {
         "tags": [
-          "Rewards Management"
+          "Operational Services"
         ],
-        "summary": "Update a reward",
-        "description": "This endpoint allows you to update the details of the reward identified by the given resource ID. Use this operation to modify reward attributes as needed.",
-        "operationId": "updateRewardsRes100045",
+        "summary": "Retrieve operational rewards",
+        "description": "This endpoint allows clients to fetch the current rewards available in the operational services. It provides essential details that can be used for user benefits and promotions.",
+        "operationId": "getRewardsOperationalServices",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
-          },
-          {
-            "$ref": "#/components/parameters/rewardId"
           }
         ],
         "requestBody": {
-          "description": "This PATCH request updates specific fields of the rewards service identified by the unique identifier RES-100045. Ensure all necessary fields are included, and only the fields that need to be changed are sent in the request body.",
+          "description": "This request body is used to retrieve operational service rewards. It should include the necessary parameters within the JSON structure to specify what rewards information is being requested.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateRewardsRes100045Request"
+                "$ref": "#/components/schemas/GetRewardsOperationalServicesRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successfully updated the resource.",
+            "description": "Request completed successfully, returns the rewards data.",
             "headers": {
               "x-endpoint-id": {
                 "$ref": "#/components/headers/x-endpoint-id"
@@ -70,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateRewardsRes100045Response_200"
+                  "$ref": "#/components/schemas/GetRewardsOperationalServicesResponse_200"
                 }
               }
             }
@@ -90,208 +87,166 @@
   },
   "components": {
     "schemas": {
-      "UpdateRewardsRes100045Request": {
-        "title": "Operations Patch Request Body",
+      "GetRewardsOperationalServicesRequest": {
+        "type": "string",
+        "description": "This schema represents the request body for the GET operation on rewards operational services in JSON format.",
+        "example": "{}"
+      },
+      "GetRewardsOperationalServicesResponse_200": {
+        "title": "Rewards Response",
         "type": "object",
         "properties": {
-          "changes": {
-            "description": "Object containing the changes to be made in the operation.",
-            "$ref": "#/components/schemas/Changes"
-          },
-          "changeReason": {
-            "type": "string",
-            "description": "The reason for the change being requested.",
-            "example": "STANDARD"
-          },
-          "effectiveAt": {
-            "type": "string",
-            "description": "The effective date and time for the changes being applied.",
-            "example": "2026-09-15T14:30:00Z"
-          },
-          "requestedBy": {
-            "type": "string",
-            "description": "Identifier of the user or system that requested the change.",
-            "example": "STANDARD"
-          },
-          "requestContext": {
-            "description": "Contextual information about the request.",
-            "$ref": "#/components/schemas/RequestContext"
-          }
-        },
-        "description": "Schema representing the request body for the PATCH request to update operations related to rewards.",
-        "example": {
-          "changes": {
-            "loyaltyAccountId": "ACC-411260",
-            "customerId": "CUST-277988",
-            "activityType": "STANDARD"
-          },
-          "changeReason": "STANDARD",
-          "effectiveAt": "2026-09-15T14:30:00Z",
-          "requestedBy": "STANDARD",
-          "requestContext": {
-            "requestId": "af589cd2-2a72-541c-8238-1eb04ef090fe",
-            "correlationId": "6e08197d-fd90-56e9-a705-67c24a922e63",
-            "idempotencyKey": "8017d1a2-612d-5511-889e-4dc18692f703",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-145279"
+          "items": {
+            "type": "array",
+            "description": "Array of reward items.",
+            "example": [
+              {
+                "loyaltyAccountId": "ACC-555819",
+                "customerId": "CUST-323340",
+                "activityType": "STANDARD",
+                "points": 1,
+                "partnerCode": "CODE-168",
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/RewardItem"
             }
-          }
-        }
-      },
-      "Changes": {
-        "title": "Changes",
-        "type": "object",
-        "properties": {
-          "loyaltyAccountId": {
-            "type": "string",
-            "description": "Unique identifier for the loyalty account.",
-            "example": "loyalty123"
           },
-          "customerId": {
-            "type": "string",
-            "description": "Unique identifier for the customer.",
-            "example": "customer456"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationInfo"
           },
-          "activityType": {
+          "sort": {
             "type": "string",
-            "description": "Type of activity being recorded against the loyalty account.",
-            "example": "EXCHANGE"
-          }
-        },
-        "description": "Schema representing the specific changes to be applied in the operation."
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req-789"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier used to correlate multiple requests.",
-            "example": "corr-101112"
-          },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "Key used to ensure the request is idempotent.",
-            "example": "idemp-131415"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp for when the request was made.",
-            "example": "2023-10-01T09:55:00Z"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "The system from which the request originated.",
-            "example": "WebApp"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "The application name that initiated the request.",
-            "example": "RewardsApp"
-          },
-          "channel": {
-            "description": "Information about the channel through which the request was made.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Schema containing details about the context in which the request was made."
-      },
-      "Channel": {
-        "title": "Channel",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "channel-161718"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "The type of channel (e.g., web, mobile, etc.).",
-            "example": "mobile"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier for the device used to make the request.",
-            "example": "device-192021"
-          }
-        },
-        "description": "Schema representing the communication channel used for the request."
-      },
-      "UpdateRewardsRes100045Response_200": {
-        "title": "Operations Patch Response",
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "integer",
-            "description": "The version number of the API response.",
-            "format": "int32",
-            "example": 1
-          },
-          "status": {
-            "type": "string",
-            "description": "The status message of the response, indicating the outcome of the PATCH operation.",
-            "example": "ACTIVE"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "The timestamp indicating when the resource was last updated.",
-            "example": "2026-09-15T14:30:00Z"
+            "description": "Indicates the sorting order of the items.",
+            "example": "STANDARD"
           },
           "metadata": {
-            "description": "Contains additional metadata about the response.",
-            "$ref": "#/components/schemas/Metadata"
+            "$ref": "#/components/schemas/ResponseMetadata"
           }
         },
-        "description": "This schema represents the response structure for the Operations PATCH API call in the Rewards service.",
+        "description": "Response schema for the operational services rewards operations GET request.",
         "example": {
-          "version": 1,
-          "status": "ACTIVE",
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "items": [
+            {
+              "loyaltyAccountId": "ACC-555819",
+              "customerId": "CUST-323340",
+              "activityType": "STANDARD",
+              "points": 1,
+              "partnerCode": "CODE-168",
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
+          },
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "00b04b40-7f04-5cab-92e1-79ed399f4567",
-            "correlationId": "6e08197d-fd90-56e9-a705-67c24a922e63",
+            "responseId": "86e51ab8-8069-51f0-b5ed-d88247959456",
+            "correlationId": "00e38edd-8462-5b9f-86c3-7df97434e7a7",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "Metadata": {
+      "RewardItem": {
+        "title": "Reward Item",
+        "type": "object",
+        "properties": {
+          "loyaltyAccountId": {
+            "type": "string",
+            "description": "Unique identifier for the loyalty account.",
+            "example": "string"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "Identifier for the customer associated with the reward.",
+            "example": "string"
+          },
+          "activityType": {
+            "type": "string",
+            "description": "Type of activity that generated the reward.",
+            "example": "string"
+          },
+          "points": {
+            "type": "integer",
+            "description": "Number of points awarded for the activity.",
+            "format": "int32",
+            "example": 0
+          },
+          "partnerCode": {
+            "type": "string",
+            "description": "Code identifying the partner associated with the reward.",
+            "example": "string"
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "Current status of the reward record.",
+            "example": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp of when the reward record was last updated.",
+            "example": "string"
+          }
+        },
+        "description": "Details about a reward item associated with a loyalty account."
+      },
+      "PaginationInfo": {
+        "title": "Pagination Information",
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number.",
+            "format": "int32",
+            "example": 0
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32",
+            "example": 0
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available.",
+            "format": "int32",
+            "example": 0
+          }
+        },
+        "description": "Information about pagination for reward items."
+      },
+      "ResponseMetadata": {
         "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "A unique identifier for the response.",
+            "description": "Unique identifier for the response.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "A correlation identifier for tracking requests across services.",
+            "description": "Identifier used to correlate requests and responses.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "A timestamp indicating when the response was generated.",
+            "description": "Timestamp indicating when the response was generated.",
             "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing of the request took place.",
+            "description": "Geographical region where the processing took place.",
             "example": "string"
           }
         },
-        "description": "This schema represents the metadata included in the API response, providing additional context."
+        "description": "Metadata related to the response from the API."
       }
     },
     "parameters": {
@@ -308,31 +263,21 @@
             "MICROSERVICE_PROD_200"
           ]
         }
-      },
-      "rewardId": {
-        "name": "rewardId",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
-        }
       }
     },
     "headers": {
       "x-endpoint-id": {
-        "description": "The unique identifier for the specific endpoint that processes the request, useful for tracking and logging.",
+        "description": "A unique identifier for the endpoint that processed the request, useful for tracing and debugging.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "reward-points-awards-and-redemption-update-reward-points-awards-and-redemption"
+          "example": "reward-points-awards-and-redemption-search-reward-points-awards-and-redemption"
         },
-        "example": "reward-points-awards-and-redemption-update-reward-points-awards-and-redemption"
+        "example": "reward-points-awards-and-redemption-search-reward-points-awards-and-redemption"
       },
       "x-runtime-app": {
-        "description": "Indicates the version of the application runtime that handled the request, aiding in debugging and version management.",
+        "description": "The version of the application that handled the request, which helps in identifying the specific changes related to this request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -345,7 +290,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication scheme that uses a Bearer token composed of JSON Web Tokens (JWT). This method allows the client to authenticate by including the token in the Authorization header of requests.",
+        "description": "This security scheme uses the Bearer authentication method with JSON Web Tokens (JWT). Clients must provide a valid JWT in the Authorization header to access secured endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

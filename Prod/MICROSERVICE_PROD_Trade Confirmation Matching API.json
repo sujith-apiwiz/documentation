@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Trade Confirmation Matching API",
-    "description": "The Trade Confirmation Matching API facilitates the verification and reconciliation of trade confirmations between parties to ensure accuracy and agreement on trade details. This API enables financial institutions and trading entities to efficiently confirm trades, minimizing discrepancies and enhancing operational efficiency in trade processing. Typical users include traders, risk managers, and compliance officers who require reliable confirmation data for audit and reporting purposes. By leveraging this API, organizations can streamline their market operations and improve overall trade accuracy.",
+    "description": "The Trade Confirmation Matching API facilitates the synchronization and validation of trade confirmations between trading parties. This endpoint allows users to update the confirmation statuses and reconcile discrepancies efficiently. Typical consumers include trading platforms, compliance systems, and financial institutions that require accurate matching of trade confirmations to ensure regulatory compliance. By leveraging this API, users can streamline their operations, reduce unintended risks, and enhance communication between counterparties.",
     "version": "1.0"
   },
   "servers": [
@@ -30,32 +30,35 @@
     }
   ],
   "paths": {
-    "/v5/banking/market-operations/trade-confirmation-matching": {
-      "get": {
+    "/v5/banking/market-operations/trade-confirmation-matching/{param1}": {
+      "patch": {
         "tags": [
           "Trade Operations"
         ],
-        "summary": "Retrieve trade confirmation matching details.",
-        "description": "This endpoint allows users to retrieve details related to trade confirmation matching operations, providing insights into the status and results of trade confirmations within the market operations.",
-        "operationId": "getTradeConfirmationMatching",
+        "summary": "Update Trade Confirmation Matching",
+        "description": "This endpoint allows you to update the details related to the trade confirmation matching for the specified resource. It is designed to ensure that the latest information is accurately reflected in the system.",
+        "operationId": "patchTradeConfirmationMatchingRes100045",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "This request body is designed to match trade confirmations and must adhere to the specified schema. Ensure that the required fields are provided to facilitate accurate matching of trade confirmations.",
+          "description": "This request body is used to update the trade confirmation matching for the specified operation. Ensure that the necessary fields are included in the payload to achieve the desired update.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetTradeConfirmationMatchingRequest"
+                "$ref": "#/components/schemas/PatchTradeConfirmationMatchingRes100045Request"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Trade confirmation matching request completed successfully.",
+            "description": "Successfully updated the trade confirmation.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -67,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetTradeConfirmationMatchingResponse_200"
+                  "$ref": "#/components/schemas/PatchTradeConfirmationMatchingRes100045Response_200"
                 }
               }
             }
@@ -87,195 +90,205 @@
   },
   "components": {
     "schemas": {
-      "GetTradeConfirmationMatchingRequest": {
-        "title": "Trade Confirmation Matching Request Body",
-        "type": "string",
-        "description": "This schema represents the request body for the GET Trade Confirmation Matching operation in the market operations API.",
-        "example": "{}"
+      "PatchTradeConfirmationMatchingRes100045Request": {
+        "title": "Trade Confirmation Matching Request",
+        "type": "object",
+        "properties": {
+          "changes": {
+            "$ref": "#/components/schemas/TradeChanges"
+          },
+          "changeReason": {
+            "type": "string",
+            "description": "The reason for the change being requested.",
+            "example": "STANDARD"
+          },
+          "effectiveAt": {
+            "type": "string",
+            "description": "The datetime when the changes should take effect in ISO 8601 format.",
+            "example": "2026-09-15T14:30:00Z"
+          },
+          "requestedBy": {
+            "type": "string",
+            "description": "The identifier of the user or system requesting the change.",
+            "example": "STANDARD"
+          },
+          "requestContext": {
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "Schema for the request body of the PATCH operation related to trade confirmation matching.",
+        "example": {
+          "changes": {
+            "tradeId": "STANDARD",
+            "instrumentId": "STANDARD",
+            "settlementDate": "2026-09-15"
+          },
+          "changeReason": "STANDARD",
+          "effectiveAt": "2026-09-15T14:30:00Z",
+          "requestedBy": "STANDARD",
+          "requestContext": {
+            "requestId": "56357d56-4f42-5cd0-b5a6-afb86438eb59",
+            "correlationId": "df2eeba6-2809-5b68-8545-4765df1fd452",
+            "idempotencyKey": "44bc9c8f-1149-5710-9040-13eed4b757ff",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-591173"
+            }
+          }
+        }
       },
-      "GetTradeConfirmationMatchingResponse_200": {
+      "TradeChanges": {
+        "title": "Trade Changes",
+        "type": "object",
+        "properties": {
+          "tradeId": {
+            "type": "string",
+            "description": "The unique identifier for the trade.",
+            "example": "T123456"
+          },
+          "instrumentId": {
+            "type": "string",
+            "description": "The unique identifier for the financial instrument involved in the trade.",
+            "example": "I654321"
+          },
+          "settlementDate": {
+            "type": "string",
+            "description": "The new settlement date for the trade in ISO 8601 format.",
+            "example": "2023-10-02"
+          }
+        },
+        "description": "Schema representing the changes to be made to the trade."
+      },
+      "RequestContext": {
+        "title": "Request Context",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique identifier for the request.",
+            "example": "R0987654"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier to trace the request across systems.",
+            "example": "C987654"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Key used to ensure that a request is not processed multiple times.",
+            "example": "IDEMPOTENT_KEY_123"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "The datetime when the request was made in ISO 8601 format.",
+            "example": "2023-10-01T09:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The system from which the request originates.",
+            "example": "TradeSystemDev"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application that made the request.",
+            "example": "TradingApp"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Contextual information related to the request."
+      },
+      "Channel": {
+        "title": "Request Channel",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Unique identifier for the channel used in the request.",
+            "example": "Channel_001"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "The type of the channel used to make the request (e.g., API, UI, etc.).",
+            "example": "API"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Identifier for the device used to send the request.",
+            "example": "Device_123"
+          }
+        },
+        "description": "Information about the channel through which the request was made."
+      },
+      "PatchTradeConfirmationMatchingRes100045Response_200": {
         "title": "Trade Confirmation Matching Response",
         "type": "object",
         "properties": {
-          "items": {
-            "type": "array",
-            "description": "List of trade confirmation items.",
-            "example": [
-              {
-                "tradeId": "STANDARD",
-                "instrumentId": "STANDARD",
-                "settlementDate": "2026-09-15",
-                "quantity": 1,
-                "settlementCurrency": "USD",
-                "custodianId": "STANDARD",
-                "clearingHouseId": "STANDARD",
-                "settlementMethod": "STANDARD",
-                "matchingStatus": "ACTIVE",
-                "recordStatus": "ACTIVE",
-                "updatedAt": "2026-09-15T14:30:00Z"
-              }
-            ],
-            "items": {
-              "$ref": "#/components/schemas/TradeConfirmationItem"
-            }
+          "version": {
+            "type": "integer",
+            "description": "The version of the response schema.",
+            "format": "int32",
+            "example": 1
           },
-          "pagination": {
-            "$ref": "#/components/schemas/Pagination"
-          },
-          "sort": {
+          "status": {
             "type": "string",
-            "description": "Sorting criteria for the trade confirmations.",
-            "example": "STANDARD"
+            "description": "The status of the operation, indicating success or failure.",
+            "example": "ACTIVE"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the response was updated.",
+            "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "$ref": "#/components/schemas/Metadata"
+            "description": "Metadata associated with the response.",
+            "$ref": "#/components/schemas/ResponseMetadata"
           }
         },
-        "description": "Schema representing the response structure for trade confirmation matching operations.",
+        "description": "Response schema for the trade confirmation matching operation, indicating the result of a PATCH request.",
         "example": {
-          "items": [
-            {
-              "tradeId": "STANDARD",
-              "instrumentId": "STANDARD",
-              "settlementDate": "2026-09-15",
-              "quantity": 1,
-              "settlementCurrency": "USD",
-              "custodianId": "STANDARD",
-              "clearingHouseId": "STANDARD",
-              "settlementMethod": "STANDARD",
-              "matchingStatus": "ACTIVE",
-              "recordStatus": "ACTIVE",
-              "updatedAt": "2026-09-15T14:30:00Z"
-            }
-          ],
-          "pagination": {
-            "page": 1,
-            "pageSize": 1,
-            "totalItems": 1
-          },
-          "sort": "STANDARD",
+          "version": 1,
+          "status": "ACTIVE",
+          "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "b9b2cb18-9832-57de-9a4a-82b633e06c67",
-            "correlationId": "9b6ddcac-9e02-5daa-8a57-17cd40145870",
+            "responseId": "04a43f0e-ab61-5915-972f-57384ed30346",
+            "correlationId": "df2eeba6-2809-5b68-8545-4765df1fd452",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "TradeConfirmationItem": {
-        "title": "Trade Confirmation Item",
-        "type": "object",
-        "properties": {
-          "tradeId": {
-            "type": "string",
-            "description": "Unique identifier for the trade.",
-            "example": "string"
-          },
-          "instrumentId": {
-            "type": "string",
-            "description": "Unique identifier for the financial instrument involved in the trade.",
-            "example": "string"
-          },
-          "settlementDate": {
-            "type": "string",
-            "description": "Date on which the trade is set to be settled.",
-            "example": "string"
-          },
-          "quantity": {
-            "type": "integer",
-            "description": "The quantity of the instrument being traded.",
-            "format": "int32",
-            "example": 0
-          },
-          "settlementCurrency": {
-            "type": "string",
-            "description": "Currency in which the settlement is to be made.",
-            "example": "string"
-          },
-          "custodianId": {
-            "type": "string",
-            "description": "Identifier of the custodian handling the trade.",
-            "example": "string"
-          },
-          "clearingHouseId": {
-            "type": "string",
-            "description": "Identifier of the clearing house associated with the trade.",
-            "example": "string"
-          },
-          "settlementMethod": {
-            "type": "string",
-            "description": "Method of settlement for the trade.",
-            "example": "string"
-          },
-          "matchingStatus": {
-            "type": "string",
-            "description": "Current status of trade matching.",
-            "example": "string"
-          },
-          "recordStatus": {
-            "type": "string",
-            "description": "Status of the record for this trade confirmation.",
-            "example": "string"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp of the last update to the trade confirmation.",
-            "example": "string"
-          }
-        },
-        "description": "Schema representing a single trade confirmation item."
-      },
-      "Pagination": {
-        "title": "Pagination",
-        "type": "object",
-        "properties": {
-          "page": {
-            "type": "integer",
-            "description": "Current page number in the paginated response.",
-            "format": "int32",
-            "example": 0
-          },
-          "pageSize": {
-            "type": "integer",
-            "description": "Number of items per page.",
-            "format": "int32",
-            "example": 0
-          },
-          "totalItems": {
-            "type": "integer",
-            "description": "Total number of items available across all pages.",
-            "format": "int32",
-            "example": 0
-          }
-        },
-        "description": "Schema representing pagination details for the response."
-      },
-      "Metadata": {
+      "ResponseMetadata": {
         "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
             "description": "Unique identifier for the response.",
-            "example": "string"
+            "example": "abc123"
           },
           "correlationId": {
             "type": "string",
-            "description": "ID used for correlating requests and responses.",
-            "example": "string"
+            "description": "Identifier for tracking the request across systems.",
+            "example": "xyz789"
           },
           "generatedAt": {
             "type": "string",
             "description": "Timestamp indicating when the response was generated.",
-            "example": "string"
+            "example": "2023-10-01T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing of the request took place.",
-            "example": "string"
+            "description": "The region where the processing occurred.",
+            "example": "us-east-1"
           }
         },
-        "description": "Schema representing metadata information in the response."
+        "description": "Contains additional information regarding the response."
       }
     },
     "parameters": {
@@ -292,21 +305,31 @@
             "MICROSERVICE_PROD_200"
           ]
         }
+      },
+      "param1": {
+        "name": "param1",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "An identifier for the specific endpoint that was called in the request.",
+        "description": "The unique identifier for the endpoint processing the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "trade-confirmation-matching-search-trade-confirmation-matching"
+          "example": "trade-confirmation-matching-update-trade-confirmation-matching"
         },
-        "example": "trade-confirmation-matching-search-trade-confirmation-matching"
+        "example": "trade-confirmation-matching-update-trade-confirmation-matching"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that processed the request, providing context on the environment.",
+        "description": "The name of the application that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -319,7 +342,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This authentication scheme uses a Bearer token, typically formatted as a JSON Web Token (JWT). It is a widely adopted method for securing APIs by requiring the client to include the token in the Authorization header of the request.",
+        "description": "This security scheme uses a Bearer Authentication mechanism that employs JSON Web Tokens (JWT) for secure access to the API. Clients must include a valid JWT in the Authorization header when making requests.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Development Environment Management API",
-    "description": "The Development Environment Management API facilitates the creation and configuration of development environments essential for IT management within the banking sector. This API allows users to set up new environments tailored to their project needs, enabling efficient testing and deployment workflows. Typical consumers include development teams and IT managers aiming to streamline environment provisioning. By leveraging this API, organizations can enhance their productivity and maintain robust development practices.",
+    "description": "The Development Environment Management API enables users to access and manage development environments associated with IT management in the banking sector. This endpoint allows consumers to retrieve configurations and settings of a specified development environment using the unique identifier provided in the request. Typical use cases include developers and IT managers seeking to monitor or adjust parameters for application testing and deployment. The API ensures that stakeholders can efficiently assess and optimize their development setups.",
     "version": "1.0"
   },
   "servers": [
@@ -30,32 +30,35 @@
     }
   ],
   "paths": {
-    "/v5/banking/it-management/development-environment": {
-      "post": {
+    "/v5/banking/it-management/development-environment/{param1}": {
+      "get": {
         "tags": [
-          "IT Management"
+          "Development Environment Management"
         ],
-        "summary": "Create a new development environment for IT management.",
-        "description": "This endpoint allows users to create a new development environment within the IT management system. Ensure all required parameters are provided for successful creation.",
-        "operationId": "createDevelopmentEnvironment",
+        "summary": "Retrieve development environment details",
+        "description": "Fetches the details of a specific development environment identified by the resource ID. This endpoint allows developers to obtain configuration and status information necessary for management and troubleshooting.",
+        "operationId": "getDevelopmentEnvironmentById",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "Request body for creating or updating the development environment in the IT management system. This endpoint requires a JSON payload that adheres to the specified schema, which includes all necessary fields to configure the development environment properly.",
+          "description": "The request body for fetching details about the development environment associated with the specified resource ID. This request expects a payload in JSON format that adheres to the defined schema.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateDevelopmentEnvironmentRequest"
+                "$ref": "#/components/schemas/GetDevelopmentEnvironmentByIdRequest"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Resource successfully created in the development environment.",
+          "200": {
+            "description": "Request completed successfully and data retrieved.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -67,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateDevelopmentEnvironmentResponse_201"
+                  "$ref": "#/components/schemas/GetDevelopmentEnvironmentByIdResponse_200"
                 }
               }
             }
@@ -87,204 +90,112 @@
   },
   "components": {
     "schemas": {
-      "CreateDevelopmentEnvironmentRequest": {
-        "title": "Development Environment Request",
+      "GetDevelopmentEnvironmentByIdRequest": {
+        "type": "string",
+        "description": "This schema represents the body of a request in JSON format for the specific operation in the IT Management Development Environment.",
+        "example": "{}"
+      },
+      "GetDevelopmentEnvironmentByIdResponse_200": {
+        "title": "Development Environment Response",
         "type": "object",
         "properties": {
           "environmentId": {
             "type": "string",
-            "description": "Unique identifier for the development environment.",
+            "description": "The unique identifier for the development environment.",
             "example": "STANDARD"
           },
           "applicationId": {
             "type": "string",
-            "description": "Unique identifier for the application related to the development environment.",
-            "example": "APP-488670"
+            "description": "The unique identifier for the application associated with the environment.",
+            "example": "APP-905090"
           },
           "runtime": {
             "type": "string",
-            "description": "The runtime environment to be used for the application.",
+            "description": "The runtime environment being used.",
             "example": "STANDARD"
           },
           "region": {
             "type": "string",
-            "description": "Geographical region where the environment is hosted.",
+            "description": "The region where the development environment is hosted.",
             "example": "New York"
           },
           "dataClassification": {
             "type": "string",
-            "description": "Classification of the data that will be handled in the environment.",
+            "description": "The classification of data processed in the environment.",
             "example": "STANDARD"
           },
           "expiresAt": {
             "type": "string",
-            "description": "Timestamp indicating when the environment will expire.",
+            "description": "The expiration date of the development environment, if applicable.",
             "example": "2026-08-11T12:00:00Z"
           },
-          "requestContext": {
-            "description": "Context information for the request.",
-            "$ref": "#/components/schemas/RequestContext"
+          "recordStatus": {
+            "type": "string",
+            "description": "The status of the record, indicating if it is active or archived.",
+            "example": "ACTIVE"
+          },
+          "version": {
+            "type": "integer",
+            "description": "The version number of the development environment.",
+            "format": "int32",
+            "example": 1
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "The timestamp of the last update made to the environment.",
+            "example": "2026-09-15T14:30:00Z"
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "responseId": {
+                "type": "string",
+                "description": "The unique identifier for the response.",
+                "example": "resp-123456"
+              },
+              "correlationId": {
+                "type": "string",
+                "description": "The correlation ID for tracking the request.",
+                "example": "corr-789012"
+              },
+              "generatedAt": {
+                "type": "string",
+                "description": "The timestamp when the response was generated.",
+                "example": "2023-10-01T12:00:00Z"
+              },
+              "processingRegion": {
+                "type": "string",
+                "description": "The region where the response was processed.",
+                "example": "us-east-1"
+              }
+            },
+            "description": "Additional metadata associated with the response.",
+            "example": {
+              "responseId": "b835ebf4-093d-5fdb-aa8d-738f7fbfb2d1",
+              "correlationId": "fb11defa-3e9e-577c-aa43-2eb52a9be7c9",
+              "generatedAt": "2026-09-15T14:30:00Z",
+              "processingRegion": "us-east-1"
+            }
           }
         },
-        "description": "Schema representing the request body for creating a development environment.",
+        "description": "This schema represents the response structure for the operations related to a development environment.",
         "example": {
           "environmentId": "STANDARD",
-          "applicationId": "APP-488670",
+          "applicationId": "APP-905090",
           "runtime": "STANDARD",
           "region": "New York",
           "dataClassification": "STANDARD",
           "expiresAt": "2026-08-11T12:00:00Z",
-          "requestContext": {
-            "requestId": "fb548e32-d743-5b77-9a84-9f4d3208cf1f",
-            "correlationId": "1a8a7d57-2ee2-5bd5-bcfa-c6700848c20a",
-            "idempotencyKey": "6fa98b5c-36e9-57eb-a512-82f564b75cd0",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-473179"
-            }
-          }
-        }
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req-8901"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Correlation identifier for tracking related requests.",
-            "example": "corr-2345"
-          },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "Key to ensure the request is idempotent.",
-            "example": "idemp-6789"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp indicating when the request was made.",
-            "example": "2023-10-01T12:00:00Z"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "System from which the request originated.",
-            "example": "inventory-system"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "Application from which the request originated.",
-            "example": "inventory-app"
-          },
-          "channel": {
-            "description": "Channel information through which the request was made.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Schema representing the context of the request."
-      },
-      "Channel": {
-        "title": "Channel",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "channel-0001"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of channel (e.g., API, web, mobile).",
-            "example": "API"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Unique identifier for the device used for the request.",
-            "example": "device-1234"
-          }
-        },
-        "description": "Schema representing the channel information for the request."
-      },
-      "CreateDevelopmentEnvironmentResponse_201": {
-        "type": "object",
-        "properties": {
-          "environmentId": {
-            "type": "string",
-            "description": "Unique identifier for the development environment.",
-            "example": "STANDARD"
-          },
-          "applicationId": {
-            "type": "string",
-            "description": "Unique identifier for the associated application.",
-            "example": "APP-970120"
-          },
-          "resourceId": {
-            "type": "string",
-            "description": "Unique identifier for the associated resource.",
-            "example": "RES-154760"
-          },
-          "status": {
-            "type": "string",
-            "description": "Current status of the development environment.",
-            "example": "ACTIVE"
-          },
-          "createdAt": {
-            "type": "string",
-            "description": "Timestamp of when the development environment was created.",
-            "example": "2026-09-15T14:30:00Z"
-          },
+          "recordStatus": "ACTIVE",
+          "version": 1,
+          "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "description": "Metadata information related to the response.",
-            "$ref": "#/components/schemas/Metadata"
-          }
-        },
-        "description": "Response schema for creating a new development environment.",
-        "example": {
-          "environmentId": "STANDARD",
-          "applicationId": "APP-970120",
-          "resourceId": "RES-154760",
-          "status": "ACTIVE",
-          "createdAt": "2026-09-15T14:30:00Z",
-          "metadata": {
-            "responseId": "40f894be-05bd-5fc2-b57c-5751a64d48e0",
-            "correlationId": "1a8a7d57-2ee2-5bd5-bcfa-c6700848c20a",
+            "responseId": "b835ebf4-093d-5fdb-aa8d-738f7fbfb2d1",
+            "correlationId": "fb11defa-3e9e-577c-aa43-2eb52a9be7c9",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
-      },
-      "Metadata": {
-        "type": "object",
-        "properties": {
-          "responseId": {
-            "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "resp-98765"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier used to correlate this response with other transactions.",
-            "example": "cor-13579"
-          },
-          "generatedAt": {
-            "type": "string",
-            "description": "Timestamp of when the metadata was generated.",
-            "example": "2023-10-01T12:05:00Z"
-          },
-          "processingRegion": {
-            "type": "string",
-            "description": "Region where the request was processed.",
-            "example": "us-east-1"
-          }
-        },
-        "description": "Metadata related to the response of the development environment creation."
       }
     },
     "parameters": {
@@ -298,22 +209,34 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_201"
+            "MICROSERVICE_PROD_200"
           ]
+        }
+      },
+      "param1": {
+        "name": "param1",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "A unique identifier for the endpoint handling the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "development-environment-create-development-environment"
+          "example": "development-environment-get-development-environment"
         },
-        "example": "development-environment-create-development-environment"
+        "example": "development-environment-get-development-environment"
       },
       "X-Runtime-App": {
+        "description": "The name of the application runtime that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -326,7 +249,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a Bearer authentication mechanism where a JSON Web Token (JWT) is provided as part of the authorization header. This token is used to verify the identity of the individual making the request and to determine their access rights.",
+        "description": "Authentication scheme that utilizes a bearer token, typically a JSON Web Token (JWT), which is used to authenticate requests by passing the token in the Authorization header.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

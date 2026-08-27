@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Trade Reporting API",
-    "description": "The Trade Reporting API enables financial institutions to submit trade data for regulatory compliance and reporting purposes. This endpoint facilitates the creation of detailed reports on market operations, allowing users to manage and oversee their trading activities. Ideal for compliance officers and trade operations teams, this API helps ensure transparency and adherence to industry regulations. By utilizing this endpoint, organizations can efficiently streamline their reporting processes and enhance their data accuracy.",
+    "description": "The Trade Reporting API enables users to access detailed reports regarding trade transactions within the banking market operations. It allows consumers, such as financial analysts and compliance officers, to retrieve critical trade data for analysis and reporting purposes. This endpoint provides insights into trading activity, facilitating regulatory compliance and performance evaluation. Use cases include monitoring trading performance, assessing risk exposure, and ensuring adherence to legal reporting requirements.",
     "version": "1.0"
   },
   "servers": [
@@ -30,32 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/market-operations/trade-reporting/reports": {
-      "post": {
+    "/v5/banking/market-operations/trade-reporting": {
+      "get": {
         "tags": [
-          "Trade Reporting"
+          "Market Operations"
         ],
-        "summary": "Create a new trade report.",
-        "description": "This endpoint allows users to generate a new trade report based on the provided data. Ensure that all required fields are correctly filled to successfully create the report.",
-        "operationId": "createTradeReport",
+        "summary": "Retrieve trade reporting data.",
+        "description": "Fetches the latest trade reporting information from the market operations. This endpoint provides detailed insights and statistics regarding trade activities, helping users make informed decisions based on real-time data.",
+        "operationId": "getTradeReporting",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "The request body for creating a new trade reporting report. It should contain all necessary details of the trade operations being reported in JSON format.",
+          "description": "This request body is used to retrieve trade reporting data from the market operations. It should contain the necessary parameters to filter the trade reports according to specific criteria.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateTradeReportRequest"
+                "$ref": "#/components/schemas/GetTradeReportingRequest"
               }
             }
           }
         },
         "responses": {
-          "202": {
-            "description": "Request has been accepted and will be processed shortly.",
+          "200": {
+            "description": "Successful retrieval of trade reporting data.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -67,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateTradeReportResponse_202"
+                  "$ref": "#/components/schemas/GetTradeReportingResponse_200"
                 }
               }
             }
@@ -87,210 +87,172 @@
   },
   "components": {
     "schemas": {
-      "CreateTradeReportRequest": {
+      "GetTradeReportingRequest": {
         "title": "Trade Reporting Request Body",
+        "type": "string",
+        "description": "Represents the request body for the trade reporting operations in JSON format.",
+        "example": "{}"
+      },
+      "GetTradeReportingResponse_200": {
         "type": "object",
         "properties": {
-          "tradeId": {
-            "type": "string",
-            "description": "Unique identifier for the trade.",
-            "example": "STANDARD"
-          },
-          "instrumentId": {
-            "type": "string",
-            "description": "Identifier for the financial instrument involved in the trade.",
-            "example": "STANDARD"
-          },
-          "settlementDate": {
-            "type": "string",
-            "description": "The date when the trade is settled.",
-            "example": "2026-09-15"
-          },
-          "quantity": {
-            "type": "integer",
-            "description": "The number of units involved in the trade.",
-            "format": "int32",
-            "example": 1
-          },
-          "settlementCurrency": {
-            "type": "string",
-            "description": "Currency in which the settlement occurs.",
-            "example": "USD"
-          },
-          "custodianId": {
-            "type": "string",
-            "description": "Identifier for the custodian handling the trade.",
-            "example": "STANDARD"
-          },
-          "requestContext": {
-            "description": "Contextual information about the request.",
-            "$ref": "#/components/schemas/RequestContext"
-          }
-        },
-        "description": "Schema representing the request body for submitting a trade report operation.",
-        "example": {
-          "tradeId": "STANDARD",
-          "instrumentId": "STANDARD",
-          "settlementDate": "2026-09-15",
-          "quantity": 1,
-          "settlementCurrency": "USD",
-          "custodianId": "STANDARD",
-          "requestContext": {
-            "requestId": "2e5b223f-4d56-58e4-b7a6-fbf301313d91",
-            "correlationId": "2244e101-c43d-557a-8665-771e7078f89e",
-            "idempotencyKey": "15e0e6b0-a33f-5c18-b375-5209abc1b809",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-583443"
+          "items": {
+            "type": "array",
+            "description": "A list of trade report items returned by the query.",
+            "example": [
+              {
+                "tradeId": "STANDARD",
+                "instrumentId": "STANDARD",
+                "settlementDate": "2026-09-15",
+                "quantity": 1,
+                "settlementCurrency": "USD",
+                "custodianId": "STANDARD",
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/TradeReportItem"
             }
-          }
-        }
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "string"
           },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier used to correlate multiple requests.",
-            "example": "string"
+          "pagination": {
+            "description": "Information about the pagination of the results.",
+            "$ref": "#/components/schemas/PaginationInfo"
           },
-          "idempotencyKey": {
+          "sort": {
             "type": "string",
-            "description": "Key to ensure the request is idempotent.",
-            "example": "string"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp when the request was made.",
-            "example": "string"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "Identifier for the system that originated the request.",
-            "example": "string"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "Identifier for the application that initiated the request.",
-            "example": "string"
-          },
-          "channel": {
-            "description": "Details about the channel through which the request was sent.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Schema representing the context of the API request."
-      },
-      "Channel": {
-        "title": "Channel Information",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "string"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of the channel (e.g., API, web, mobile).",
-            "example": "string"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier for the device used to send the request.",
-            "example": "string"
-          }
-        },
-        "description": "Schema representing details about the communication channel."
-      },
-      "CreateTradeReportResponse_202": {
-        "type": "object",
-        "properties": {
-          "tradeId": {
-            "type": "string",
-            "description": "Unique identifier for the trade.",
+            "description": "Sorting information applied to the results.",
             "example": "STANDARD"
-          },
-          "instrumentId": {
-            "type": "string",
-            "description": "Unique identifier for the financial instrument.",
-            "example": "STANDARD"
-          },
-          "custodianId": {
-            "type": "string",
-            "description": "Unique identifier for the custodian responsible for the trade.",
-            "example": "STANDARD"
-          },
-          "submissionReference": {
-            "type": "string",
-            "description": "Reference identifier for the submission.",
-            "example": "STANDARD"
-          },
-          "status": {
-            "type": "string",
-            "description": "Current status of the trade operation.",
-            "example": "ACTIVE"
-          },
-          "receivedAt": {
-            "type": "string",
-            "description": "Timestamp indicating when the trade was received.",
-            "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "$ref": "#/components/schemas/TradeMetadata"
+            "description": "Metadata regarding the query response.",
+            "$ref": "#/components/schemas/MetadataInfo"
           }
         },
-        "description": "Schema representing the response for trade reporting operations.",
+        "description": "Response schema for the trade reporting operation query, including trade items, pagination, sorting, and metadata information.",
         "example": {
-          "tradeId": "STANDARD",
-          "instrumentId": "STANDARD",
-          "custodianId": "STANDARD",
-          "submissionReference": "STANDARD",
-          "status": "ACTIVE",
-          "receivedAt": "2026-09-15T14:30:00Z",
+          "items": [
+            {
+              "tradeId": "STANDARD",
+              "instrumentId": "STANDARD",
+              "settlementDate": "2026-09-15",
+              "quantity": 1,
+              "settlementCurrency": "USD",
+              "custodianId": "STANDARD",
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
+          },
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "ce401203-5bed-5bfe-ad82-11963e4d866d",
-            "correlationId": "2244e101-c43d-557a-8665-771e7078f89e",
+            "responseId": "640e2668-edc5-585e-8c4b-9c56f48e216c",
+            "correlationId": "58d3dfc4-60d1-5928-86c3-f2b05df114a0",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "TradeMetadata": {
+      "TradeReportItem": {
+        "type": "object",
+        "properties": {
+          "tradeId": {
+            "type": "string",
+            "description": "Unique identifier for the trade.",
+            "example": "12345"
+          },
+          "instrumentId": {
+            "type": "string",
+            "description": "Unique identifier for the financial instrument.",
+            "example": "ABC123"
+          },
+          "settlementDate": {
+            "type": "string",
+            "description": "The date when the trade will be settled.",
+            "example": "2023-10-01"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The quantity of the instrument traded.",
+            "format": "int32",
+            "example": 100
+          },
+          "settlementCurrency": {
+            "type": "string",
+            "description": "The currency in which the trade will be settled.",
+            "example": "USD"
+          },
+          "custodianId": {
+            "type": "string",
+            "description": "Identifier for the custodian handling the trade.",
+            "example": "Custodian01"
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "Current status of the trade record.",
+            "example": "Completed"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp of when the trade record was last updated.",
+            "example": "2023-10-01T12:00:00Z"
+          }
+        },
+        "description": "Schema representing an individual trade report item."
+      },
+      "PaginationInfo": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number of the results.",
+            "format": "int32",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32",
+            "example": 10
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available across all pages.",
+            "format": "int32",
+            "example": 100
+          }
+        },
+        "description": "Schema for pagination information."
+      },
+      "MetadataInfo": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
             "description": "Unique identifier for the response.",
-            "example": "response_112233"
+            "example": "resp-56789"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate requests and responses.",
-            "example": "correlation_445566"
+            "description": "Identifier to correlate requests and responses.",
+            "example": "corr-98765"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the metadata was generated.",
-            "example": "2023-10-01T12:05:00Z"
+            "description": "Timestamp indicating when the response was generated.",
+            "example": "2023-10-01T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the trade processing took place.",
-            "example": "EU"
+            "description": "Region where the response was processed.",
+            "example": "US-East"
           }
         },
-        "description": "Schema representing additional metadata associated with the trade response."
+        "description": "Schema for metadata related to the response."
       }
     },
     "parameters": {
@@ -304,24 +266,22 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_202"
+            "MICROSERVICE_PROD_200"
           ]
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "The unique identifier for the endpoint that processed the request. This header is used to trace the request in the system.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "trade-and-price-reporting-report-trade-and-price-reporting"
+          "example": "trade-and-price-reporting-search-trade-and-price-reporting"
         },
-        "example": "trade-and-price-reporting-report-trade-and-price-reporting"
+        "example": "trade-and-price-reporting-search-trade-and-price-reporting"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that executed the operation. Useful for identifying which component of the system handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -334,7 +294,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Security scheme that uses a Bearer token for authentication. The token should be a valid JSON Web Token (JWT) which grants access to the API.",
+        "description": "This security scheme uses Bearer authentication with JSON Web Tokens (JWT). Clients should include the JWT in the Authorization header of their requests in the format: 'Authorization: Bearer <token>'.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
