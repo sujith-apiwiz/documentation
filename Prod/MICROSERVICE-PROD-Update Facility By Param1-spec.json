@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Update Facility By Param1-spec",
-    "description": "The Facility Update Management API is designed to streamline the modification of facility details by specific parameters. This endpoint allows users to update information regarding various banking facilities, enhancing operational efficiency and data accuracy. Typically utilized by administrators or facility managers, this API supports integrating changes seamlessly into existing systems. Use cases include updating facility locations, service availability, or operational hours to respond to dynamic business needs.",
+    "description": "This API allows users to modify specific attributes of facilities within a property portfolio, identified by a unique parameter. It enables businesses to maintain accurate and up-to-date information on their banking facilities. Typical consumers include property managers and banking administrators who require efficient updates to their portfolios. The PATCH method allows for granular updates, ensuring that only the intended changes are applied without affecting the entire resource.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/facilities/site-administration/{param1}": {
+    "/v5/banking/facilities/property-portfolio/{param1}": {
       "patch": {
         "tags": [
-          "Facility Management"
+          "Property Portfolio"
         ],
-        "summary": "Update Site Administration for Facility RES-100045",
-        "description": "This operation allows you to update the site administration details for the facility identified by RES-100045. Ensure that all relevant information is provided in the request to successfully apply the changes.",
+        "summary": "Update a specific property portfolio.",
+        "description": "This operation allows you to update the details of a specific property portfolio identified by its unique ID. You can modify information such as attributes, status, or other relevant data associated with the property portfolio.",
         "operationId": "updateFacilityByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "Updates the specified facility's details. The request body must follow the defined schema, including all required fields. Provide the necessary changes in JSON format.",
+          "description": "This request body allows the client to send updated information related to a specific property in the facility's portfolio. The data provided will be used to modify existing attributes of the property identified by the unique RES-100045 identifier.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "The request was successfully processed, and the resource has been updated.",
+            "description": "The request was successfully processed and the resource has been updated.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -91,79 +91,82 @@
   "components": {
     "schemas": {
       "UpdateFacilityByParam1Request": {
+        "title": "Operations Patch Request Body",
         "type": "object",
         "properties": {
           "changes": {
-            "description": "An object containing the details of changes requested.",
+            "description": "An object containing the changes related to the operation.",
             "$ref": "#/components/schemas/Changes"
           },
           "changeReason": {
             "type": "string",
-            "description": "The reason for the change request.",
+            "description": "The reason for the change being requested.",
             "example": "STANDARD"
           },
           "effectiveAt": {
             "type": "string",
-            "description": "The date and time when the changes become effective.",
+            "description": "The date and time when the changes should take effect.",
             "example": "2026-09-15T14:30:00Z"
           },
           "requestedBy": {
             "type": "string",
-            "description": "The identifier of the user requesting the change.",
+            "description": "The identifier of the person requesting the change.",
             "example": "STANDARD"
           },
           "requestContext": {
-            "description": "Contextual information about the request.",
+            "description": "Context information about the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Request body schema for updating operational site details.",
+        "description": "Schema representing the request body for patching operations in the property portfolio.",
         "example": {
           "changes": {
             "siteId": "STANDARD",
             "assetId": "STANDARD",
-            "workOrderId": "ORD-970541"
+            "workOrderId": "ORD-541421"
           },
           "changeReason": "STANDARD",
           "effectiveAt": "2026-09-15T14:30:00Z",
           "requestedBy": "STANDARD",
           "requestContext": {
-            "requestId": "89105e36-02d0-56a2-aec9-84afd9ab792d",
-            "correlationId": "a3dcd6be-b198-5275-b869-a442540aa24c",
-            "idempotencyKey": "2458d4cc-5ef6-5cb6-8a1d-d1b90739ef68",
+            "requestId": "a1d1bd3e-2c2b-5c08-8203-5134bcff0960",
+            "correlationId": "1b97d2f2-f118-5817-b8f6-aba217658183",
+            "idempotencyKey": "2bfbf411-c543-5c26-b33e-c7d57e0a19dc",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-851056"
+              "deviceId": "DEV-428413"
             }
           }
         }
       },
       "Changes": {
+        "title": "Changes",
         "type": "object",
         "properties": {
           "siteId": {
             "type": "string",
-            "description": "The identifier of the site to be changed.",
+            "description": "The ID of the site being changed.",
             "example": "string"
           },
           "assetId": {
             "type": "string",
-            "description": "The identifier of the asset related to the change.",
+            "description": "The ID of the asset being changed.",
             "example": "string"
           },
           "workOrderId": {
             "type": "string",
-            "description": "The identifier of the work order associated with the change.",
+            "description": "The ID of the work order associated with the changes.",
             "example": "string"
           }
         },
-        "description": "Details of the changes being requested."
+        "description": "Schema representing the changes related to the operation."
       },
       "RequestContext": {
+        "title": "Request Context",
         "type": "object",
         "properties": {
           "requestId": {
@@ -173,119 +176,120 @@
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier for correlating multiple requests.",
+            "description": "Identifier for correlating logs or requests.",
             "example": "string"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key used to prevent duplicate processing of the same request.",
+            "description": "A key that ensures the request is processed only once.",
             "example": "string"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the request was made.",
+            "description": "Timestamp at which the request was made.",
             "example": "string"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "Identifier of the system making the request.",
+            "description": "The system from which the request originates.",
             "example": "string"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "Identifier of the application making the request.",
+            "description": "The application from which the request originates.",
             "example": "string"
           },
           "channel": {
-            "description": "Information regarding the channel through which the request was made.",
+            "description": "Information about the channel through which the request is made.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Contextual information regarding the request."
+        "description": "Schema containing context information about the request."
       },
       "Channel": {
+        "title": "Channel",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "Identifier for the communication channel.",
+            "description": "Unique identifier of the channel.",
             "example": "string"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of the communication channel.",
+            "description": "Type of channel through which the request is made.",
             "example": "string"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier for the device used to make the request.",
+            "description": "Identifier of the device being used.",
             "example": "string"
           }
         },
-        "description": "Details about the communication channel used for the request."
+        "description": "Schema representing the channel used for the request."
       },
       "UpdateFacilityByParam1Response_200": {
         "type": "object",
         "properties": {
           "version": {
             "type": "integer",
-            "description": "The version of the response.",
+            "description": "The version of the response",
             "format": "int32",
             "example": 1
           },
           "status": {
             "type": "string",
-            "description": "The status message of the operation.",
+            "description": "The status of the operation",
             "example": "ACTIVE"
           },
           "updatedAt": {
             "type": "string",
-            "description": "The timestamp when the record was last updated.",
+            "description": "Timestamp indicating when the resource was last updated",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Additional metadata related to the response.",
-            "$ref": "#/components/schemas/ResponseMetadata"
+            "description": "Additional metadata related to the response",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the PATCH operation on site administration operations.",
+        "description": "Schema representing the response for the operations PATCH request related to property portfolio.",
         "example": {
           "version": 1,
           "status": "ACTIVE",
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "d6193519-c336-5cbb-95e0-4993f480904f",
-            "correlationId": "a3dcd6be-b198-5275-b869-a442540aa24c",
+            "responseId": "d2e4db1f-666a-5015-b72e-b9174a8a82f6",
+            "correlationId": "1b97d2f2-f118-5817-b8f6-aba217658183",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "ResponseMetadata": {
+      "Metadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
+            "description": "A unique identifier for the response",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier for tracing the request and response.",
+            "description": "A unique identifier for tracking the request across systems",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the response was generated.",
+            "description": "Timestamp indicating when the metadata was generated",
             "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing of the request occurred.",
+            "description": "The region in which the request was processed",
             "example": "string"
           }
         },
-        "description": "Schema for metadata related to the response."
+        "description": "Schema representing additional metadata information."
       }
     },
     "parameters": {
@@ -320,9 +324,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "site-administration-update-site-administration"
+          "example": "property-portfolio-update-property-portfolio"
         },
-        "example": "site-administration-update-site-administration"
+        "example": "property-portfolio-update-property-portfolio"
       },
       "X-Runtime-App": {
         "style": "simple",
@@ -337,7 +341,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This scheme uses Bearer authentication for secure API access. It expects a JSON Web Token (JWT) to be provided in the 'Authorization' header. Ensure that the JWT is valid and properly signed to grant access to protected resources.",
+        "description": "Authentication scheme utilizing JSON Web Tokens (JWT) for secured communication. The client must include the token in the Authorization header when making requests.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
