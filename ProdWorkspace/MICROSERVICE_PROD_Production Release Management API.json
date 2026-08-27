@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Production Release Management API",
-    "description": "The Production Release Management API provides capabilities for updating and coordinating production releases within the IT management domain. This endpoint allows users to modify details of an existing release efficiently, ensuring that all stakeholders are informed of changes. Typical consumers include IT managers and DevOps teams who require real-time updates to production environments. This API plays a crucial role in streamlining release processes and enhancing operational agility.",
+    "description": "The Production Release Management API is designed to facilitate the retrieval of production release information for banking IT management. This API allows users to access crucial data related to software releases, enabling them to track deployment statuses and operational readiness. Typical consumers include IT managers and DevOps teams who need to monitor production releases and ensure smooth transitions. By utilizing this endpoint, stakeholders can make informed decisions based on the latest release insights.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/it-management/production-release/{param1}": {
-      "patch": {
+    "/v5/banking/it-management/production-release": {
+      "get": {
         "tags": [
           "IT Management"
         ],
-        "summary": "Update Production Release Information",
-        "description": "This endpoint allows users to update details about the specified production release (PROD-700045) in the IT management system, facilitating effective release management and tracking.",
-        "operationId": "patchProductionReleaseProd700045",
+        "summary": "Retrieve production release details",
+        "description": "This endpoint allows users to retrieve detailed information about the production release within the IT management context. It provides insights into the current status, versioning, and other relevant metrics related to the release process.",
+        "operationId": "getProductionReleaseItManagement",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to update the details of the production release identified by PROD-700045. Ensure that you provide the necessary fields to accurately reflect the changes required for the release.",
+          "description": "Request body for retrieving the production release information, encapsulating the necessary parameters for the operation.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PatchProductionReleaseProd700045Request"
+                "$ref": "#/components/schemas/GetProductionReleaseItManagementRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, and the resource has been updated.",
+            "description": "Successfully retrieved production release information.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PatchProductionReleaseProd700045Response_200"
+                  "$ref": "#/components/schemas/GetProductionReleaseItManagementResponse_200"
                 }
               }
             }
@@ -76,208 +76,185 @@
   },
   "components": {
     "schemas": {
-      "PatchProductionReleaseProd700045Request": {
-        "title": "Production Release Patch Request Body",
+      "GetProductionReleaseItManagementRequest": {
+        "type": "string",
+        "description": "The request body for the IT Management Production Release operation. This schema represents a plain string containing relevant information or a payload associated with the operation.",
+        "example": "{}"
+      },
+      "GetProductionReleaseItManagementResponse_200": {
         "type": "object",
         "properties": {
-          "changes": {
-            "description": "An object describing the changes being requested for the production release.",
-            "$ref": "#/components/schemas/Changes"
-          },
-          "changeReason": {
-            "type": "string",
-            "description": "The reason for the requested change.",
-            "example": "STANDARD"
-          },
-          "effectiveAt": {
-            "type": "string",
-            "description": "The effective date and time for the change to take place.",
-            "example": "2026-09-15T14:30:00Z"
-          },
-          "requestedBy": {
-            "type": "string",
-            "description": "Identifier for the user or system requesting the change.",
-            "example": "STANDARD"
-          },
-          "requestContext": {
-            "description": "Contextual information related to the request.",
-            "$ref": "#/components/schemas/RequestContext"
-          }
-        },
-        "description": "Schema representing the request body for patching a production release operation.",
-        "example": {
-          "changes": {
-            "systemId": "STANDARD",
-            "environment": "STANDARD",
-            "changeId": "STANDARD"
-          },
-          "changeReason": "STANDARD",
-          "effectiveAt": "2026-09-15T14:30:00Z",
-          "requestedBy": "STANDARD",
-          "requestContext": {
-            "requestId": "08c32e4c-fb39-5e76-b709-bd32436c899b",
-            "correlationId": "62332f57-2afb-52e9-9a62-1f4f02a27756",
-            "idempotencyKey": "1c8e05b0-3004-521e-a3de-b870e46133dd",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-532307"
+          "items": {
+            "type": "array",
+            "description": "A list of production release items.",
+            "example": [
+              {
+                "systemId": "STANDARD",
+                "environment": "STANDARD",
+                "changeId": "STANDARD",
+                "ownerTeam": "STANDARD",
+                "plannedAt": "2026-08-11T12:00:00Z",
+                "leasedAssetId": "STANDARD",
+                "residualValue": {
+                  "amount": 100.0,
+                  "currency": "USD"
+                },
+                "leaseTermMonths": 1,
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ProductionReleaseItem"
             }
-          }
-        }
-      },
-      "Changes": {
-        "title": "Changes",
-        "type": "object",
-        "properties": {
-          "systemId": {
-            "type": "string",
-            "description": "Identifier for the system affected by the changes.",
-            "example": "string"
           },
-          "environment": {
-            "type": "string",
-            "description": "The environment where the changes will be applied (e.g., development, testing, production).",
-            "example": "string"
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
           },
-          "changeId": {
+          "sort": {
             "type": "string",
-            "description": "Unique identifier for the change request.",
-            "example": "string"
-          }
-        },
-        "description": "Schema representing the changes requested in the production release."
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "string"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier used to correlate multiple related requests.",
-            "example": "string"
-          },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "Key used to ensure that repeated requests result in the same effect.",
-            "example": "string"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp indicating when the request was made.",
-            "example": "string"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "Identifier for the system that initiated the request.",
-            "example": "string"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "Identifier for the application that initiated the request.",
-            "example": "string"
-          },
-          "channel": {
-            "description": "Information about the channel through which the request was made.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Schema representing the contextual information about the request."
-      },
-      "Channel": {
-        "title": "Channel",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "string"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of the channel (e.g., web, mobile, API).",
-            "example": "string"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier for the device used to make the request.",
-            "example": "string"
-          }
-        },
-        "description": "Schema representing the channel information for the request."
-      },
-      "PatchProductionReleaseProd700045Response_200": {
-        "title": "Production Release Response",
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "integer",
-            "description": "The version number of the production release.",
-            "format": "int32",
-            "example": 1
-          },
-          "status": {
-            "type": "string",
-            "description": "The current status of the production release.",
-            "example": "ACTIVE"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp indicating when the production release was last updated.",
-            "example": "2026-09-15T14:30:00Z"
+            "description": "The sorting order of the returned items.",
+            "example": "STANDARD"
           },
           "metadata": {
-            "description": "Metadata related to the response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the production release operation in the IT management system.",
+        "description": "Schema representing the response structure for a successful retrieval of production release operations.",
         "example": {
-          "version": 1,
-          "status": "ACTIVE",
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "items": [
+            {
+              "systemId": "STANDARD",
+              "environment": "STANDARD",
+              "changeId": "STANDARD",
+              "ownerTeam": "STANDARD",
+              "plannedAt": "2026-08-11T12:00:00Z",
+              "leasedAssetId": "STANDARD",
+              "residualValue": {
+                "amount": 100.0,
+                "currency": "USD"
+              },
+              "leaseTermMonths": 1,
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
+          },
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "d2f4f41a-32cc-5e99-af26-f29c5013dc19",
-            "correlationId": "62332f57-2afb-52e9-9a62-1f4f02a27756",
+            "responseId": "22a4785e-e72d-5f0d-8baf-9aea65f4ec56",
+            "correlationId": "8a3db309-5e0b-5b77-93d9-8535aeb12aaf",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
+      "ProductionReleaseItem": {
+        "type": "object",
+        "properties": {
+          "systemId": {
+            "type": "string",
+            "description": "The unique identifier for the system associated with the production release."
+          },
+          "environment": {
+            "type": "string",
+            "description": "The environment in which the production release is deployed."
+          },
+          "changeId": {
+            "type": "string",
+            "description": "The identifier for the change associated with the production release."
+          },
+          "ownerTeam": {
+            "type": "string",
+            "description": "The team responsible for the production release."
+          },
+          "plannedAt": {
+            "type": "string",
+            "description": "The planned date and time for the production release."
+          },
+          "leasedAssetId": {
+            "type": "string",
+            "description": "The identifier for the leased asset related to the production release."
+          },
+          "residualValue": {
+            "$ref": "#/components/schemas/ResidualValue"
+          },
+          "leaseTermMonths": {
+            "type": "integer",
+            "description": "The lease term in months associated with the production release.",
+            "format": "int32"
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "The status of the production release record."
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "The timestamp of when the production release was last updated."
+          }
+        },
+        "description": "Schema representing a single production release item."
+      },
+      "ResidualValue": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "The amount of residual value."
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency of the residual value."
+          }
+        },
+        "description": "Schema representing the residual value of a leased asset."
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "The current page number of the results.",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The number of items per page.",
+            "format": "int32"
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "The total number of items available across all pages.",
+            "format": "int32"
+          }
+        },
+        "description": "Schema representing pagination information for the response."
+      },
       "Metadata": {
-        "title": "Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "string"
+            "description": "The unique identifier for the response."
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate requests and responses.",
-            "example": "string"
+            "description": "The identifier used to correlate this response with a request."
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the metadata was generated.",
-            "example": "string"
+            "description": "The timestamp indicating when the response was generated."
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region in which the processing occurred.",
-            "example": "string"
+            "description": "The region in which the response was processed."
           }
         },
-        "description": "Metadata information for responses related to production releases."
+        "description": "Schema representing metadata for the response."
       }
     },
     "parameters": {
@@ -298,15 +275,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "The unique identifier for the API endpoint that was called.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "production-release-update-production-release"
+          "example": "production-release-search-production-release"
         },
-        "example": "production-release-update-production-release"
+        "example": "production-release-search-production-release"
       },
       "X-Runtime-App": {
+        "description": "The name of the runtime application that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -319,7 +298,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses HTTP Bearer authentication. It requires a valid JSON Web Token (JWT) to be included in the Authorization header of requests.",
+        "description": "This security scheme uses a bearer token for authorization. The token should be a JSON Web Token (JWT) that is included in the `Authorization` header of the request as `Bearer <token>`. Ensure that the token is securely generated and validated.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
