@@ -1,0 +1,517 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MICROSERVICE_PROD_Reconciliation Runs API",
+    "description": "The Reconciliation Runs API facilitates the automated reconciliation of transactions and data across different systems. This API allows users to initiate reconciliation runs, ensuring that financial records are accurately aligned and discrepancies are swiftly identified. Businesses can use this functionality to maintain data integrity and improve financial reporting. Typical consumers include financial institutions, accounting departments, and software applications focused on transaction management. By leveraging this API, organizations can streamline their reconciliation processes, reducing manual effort and minimizing errors.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://prod-workspace-pwmw.apiwiz.io",
+      "description": "Sandbox server",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "Sandbox server",
+      "x-environmentName": "Sandbox",
+      "x-hide": false,
+      "x-environmentId": "6a7f52236ae9a15654cd5721",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/v5/p2m/reconciliation-runs": {
+      "post": {
+        "tags": [
+          "Reconciliation"
+        ],
+        "summary": "Initiates a new reconciliation run.",
+        "description": "This endpoint allows users to start a new reconciliation run, which is essential for comparing financial records and ensuring accuracy between different data sources. Submitting a request to this endpoint will trigger the reconciliation process and return the status of the operation.",
+        "operationId": "createReconciliationRun",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          }
+        ],
+        "requestBody": {
+          "description": "This request body is used to initiate a reconciliation run. It should contain all necessary data required to perform the reconciliation operations as specified in the schema.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReconciliationRunRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "The request has been accepted and is being processed.",
+            "headers": {
+              "X-Endpoint-Id": {
+                "$ref": "#/components/headers/X-Endpoint-Id"
+              },
+              "X-Runtime-App": {
+                "$ref": "#/components/headers/X-Runtime-App"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateReconciliationRunResponse_202"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateReconciliationRunRequest": {
+        "type": "object",
+        "properties": {
+          "sourceA": {
+            "type": "string",
+            "description": "The identifier for source A.",
+            "example": "STANDARD"
+          },
+          "sourceB": {
+            "type": "string",
+            "description": "The identifier for source B.",
+            "example": "STANDARD"
+          },
+          "businessDate": {
+            "type": "string",
+            "description": "The date for which the reconciliation is being processed.",
+            "example": "2026-09-15"
+          },
+          "merchantId": {
+            "type": "string",
+            "description": "The unique identifier for the merchant.",
+            "example": "MER-466578"
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency code for the reconciliation.",
+            "example": "USD"
+          },
+          "matchingStrategy": {
+            "type": "string",
+            "description": "The strategy used for matching records during reconciliation.",
+            "example": "STANDARD"
+          },
+          "amountTolerance": {
+            "$ref": "#/components/schemas/AmountTolerance"
+          },
+          "requestContext": {
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "This schema represents the request body for the reconciliation runs operation, which contains details about the sources, business date, merchant, currency, matching strategy, amount tolerance, and request context.",
+        "example": {
+          "sourceA": "STANDARD",
+          "sourceB": "STANDARD",
+          "businessDate": "2026-09-15",
+          "merchantId": "MER-466578",
+          "currency": "USD",
+          "matchingStrategy": "STANDARD",
+          "amountTolerance": {
+            "currency": "USD",
+            "value": "STANDARD"
+          },
+          "requestContext": {
+            "requestId": "ed4e6b78-7ab7-5cef-ad1f-2d397d9cbc35",
+            "correlationId": "5941dfdf-88a3-50f8-a53a-b9b06c371cc2",
+            "idempotencyKey": "3c07c1c3-dcf9-5a1b-a90c-ab53830638ac",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-612162"
+            }
+          }
+        }
+      },
+      "AmountTolerance": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "The currency code for the amount tolerance.",
+            "example": "USD"
+          },
+          "value": {
+            "type": "string",
+            "description": "The allowed tolerance value for the reconciliation.",
+            "example": "10.00"
+          }
+        },
+        "description": "This schema defines the amount tolerance settings including currency and value."
+      },
+      "RequestContext": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique identifier for the request.",
+            "example": "req_001"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "ID used to correlate related requests.",
+            "example": "corr_001"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Key used to avoid duplicate processing of requests.",
+            "example": "idempotency_001"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp of when the request was made.",
+            "example": "2023-10-01T12:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The system from which the request originated.",
+            "example": "sourceSystem_X"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application from which the request originated.",
+            "example": "sourceApp_Y"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "This schema contains contextual information about the request such as IDs and timestamps."
+      },
+      "Channel": {
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Unique identifier for the channel.",
+            "example": "channel_001"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "Type of channel such as web, mobile, etc.",
+            "example": "web"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Identifier for the device used in the channel.",
+            "example": "device_001"
+          }
+        },
+        "description": "This schema provides details about the channel through which the request is made."
+      },
+      "CreateReconciliationRunResponse_202": {
+        "title": "ReconciliationRunResponse",
+        "type": "object",
+        "properties": {
+          "reconciliationRunId": {
+            "type": "string",
+            "description": "Unique identifier for the reconciliation run.",
+            "example": "STANDARD"
+          },
+          "sourceA": {
+            "type": "string",
+            "description": "Identifier for source A.",
+            "example": "STANDARD"
+          },
+          "sourceB": {
+            "type": "string",
+            "description": "Identifier for source B.",
+            "example": "STANDARD"
+          },
+          "businessDate": {
+            "type": "string",
+            "description": "The business date for which the reconciliation is performed.",
+            "example": "2026-09-15"
+          },
+          "merchantId": {
+            "type": "string",
+            "description": "Identifier for the merchant involved in the reconciliation.",
+            "example": "MER-861222"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency used in the reconciliation.",
+            "example": "USD"
+          },
+          "matchingStrategy": {
+            "type": "string",
+            "description": "The strategy used for matching transactions.",
+            "example": "STANDARD"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the reconciliation run.",
+            "example": "ACTIVE"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/ReconciliationSummary"
+          },
+          "startedAt": {
+            "type": "string",
+            "description": "Timestamp when the reconciliation started.",
+            "example": "2026-09-15T14:30:00Z"
+          },
+          "completedAt": {
+            "type": "string",
+            "description": "Timestamp when the reconciliation was completed.",
+            "example": "2026-09-15T14:30:00Z"
+          },
+          "audit": {
+            "$ref": "#/components/schemas/AuditInfo"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/Metadata"
+          }
+        },
+        "description": "This schema represents the response structure of a reconciliation run operation.",
+        "example": {
+          "reconciliationRunId": "STANDARD",
+          "sourceA": "STANDARD",
+          "sourceB": "STANDARD",
+          "businessDate": "2026-09-15",
+          "merchantId": "MER-861222",
+          "currency": "USD",
+          "matchingStrategy": "STANDARD",
+          "status": "ACTIVE",
+          "summary": {
+            "sourceACount": 1,
+            "sourceBCount": 1,
+            "matchedCount": 1,
+            "unmatchedSourceACount": 1,
+            "unmatchedSourceBCount": 1,
+            "amountMismatchCount": 1,
+            "duplicateCount": 1,
+            "totalSourceA": {
+              "currency": "USD",
+              "value": "STANDARD"
+            },
+            "totalSourceB": {
+              "currency": "USD",
+              "value": "STANDARD"
+            },
+            "netDifference": {
+              "currency": "USD",
+              "value": "STANDARD"
+            }
+          },
+          "startedAt": "2026-09-15T14:30:00Z",
+          "completedAt": "2026-09-15T14:30:00Z",
+          "audit": {
+            "createdAt": "2026-09-15T14:30:00Z",
+            "createdBy": "STANDARD",
+            "updatedAt": "2026-09-15T14:30:00Z",
+            "updatedBy": "2026-09-15",
+            "version": 1
+          },
+          "metadata": {
+            "responseId": "6e4236b2-7d48-5506-9717-4fe015ecbd80",
+            "correlationId": "5941dfdf-88a3-50f8-a53a-b9b06c371cc2",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
+      },
+      "ReconciliationSummary": {
+        "title": "ReconciliationSummary",
+        "type": "object",
+        "properties": {
+          "sourceACount": {
+            "type": "integer",
+            "description": "Total count of entries from source A.",
+            "format": "int32",
+            "example": 10
+          },
+          "sourceBCount": {
+            "type": "integer",
+            "description": "Total count of entries from source B.",
+            "format": "int32",
+            "example": 8
+          },
+          "matchedCount": {
+            "type": "integer",
+            "description": "Count of matched entries between sources A and B.",
+            "format": "int32",
+            "example": 5
+          },
+          "unmatchedSourceACount": {
+            "type": "integer",
+            "description": "Count of unmatched entries in source A.",
+            "format": "int32",
+            "example": 5
+          },
+          "unmatchedSourceBCount": {
+            "type": "integer",
+            "description": "Count of unmatched entries in source B.",
+            "format": "int32",
+            "example": 3
+          },
+          "amountMismatchCount": {
+            "type": "integer",
+            "description": "Count of entries with amount mismatches.",
+            "format": "int32",
+            "example": 2
+          },
+          "duplicateCount": {
+            "type": "integer",
+            "description": "Count of duplicate entries found.",
+            "format": "int32",
+            "example": 1
+          },
+          "totalSourceA": {
+            "$ref": "#/components/schemas/TransactionTotal"
+          },
+          "totalSourceB": {
+            "$ref": "#/components/schemas/TransactionTotal"
+          },
+          "netDifference": {
+            "$ref": "#/components/schemas/TransactionTotal"
+          }
+        },
+        "description": "Summary of the reconciliation results."
+      },
+      "TransactionTotal": {
+        "title": "TransactionTotal",
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "Currency of the total amount.",
+            "example": "USD"
+          },
+          "value": {
+            "type": "string",
+            "description": "Total value of transactions in the specified currency.",
+            "example": "1000.00"
+          }
+        },
+        "description": "Total amount of transactions for a source."
+      },
+      "AuditInfo": {
+        "title": "AuditInfo",
+        "type": "object",
+        "properties": {
+          "createdAt": {
+            "type": "string",
+            "description": "Timestamp when the reconciliation was created.",
+            "example": "2023-09-30T09:00:00Z"
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "Identifier of the user who created the reconciliation.",
+            "example": "User_001"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp when the reconciliation was last updated.",
+            "example": "2023-10-01T11:00:00Z"
+          },
+          "updatedBy": {
+            "type": "string",
+            "description": "Identifier of the user who last updated the reconciliation.",
+            "example": "User_002"
+          },
+          "version": {
+            "type": "integer",
+            "description": "Version number of the reconciliation entry.",
+            "format": "int32",
+            "example": 1
+          }
+        },
+        "description": "Information related to the audit of the reconciliation run."
+      },
+      "Metadata": {
+        "title": "Metadata",
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "Unique identifier for the response.",
+            "example": "Response_001"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Correlation ID for tracking the request.",
+            "example": "CorrID_001"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "Timestamp when this metadata was generated.",
+            "example": "2023-10-01T12:00:00Z"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "Region where the reconciliation was processed.",
+            "example": "US-West"
+          }
+        },
+        "description": "Additional metadata for the reconciliation run response."
+      }
+    },
+    "parameters": {
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "MICROSERVICE_PROD_202"
+          ]
+        }
+      }
+    },
+    "headers": {
+      "X-Endpoint-Id": {
+        "description": "The unique identifier for the endpoint that processed the request.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "banking-p2m-openapi-create-reconciliation-run"
+        },
+        "example": "banking-p2m-openapi-create-reconciliation-run"
+      },
+      "X-Runtime-App": {
+        "description": "The name of the application that handled the request.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "payments"
+        },
+        "example": "payments"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "Authentication scheme that utilizes JSON Web Tokens (JWT) for secure transmission of information, allowing users to prove their identity by presenting a bearer token.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
