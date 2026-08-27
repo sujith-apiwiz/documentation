@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Outlets Management API",
-    "description": "The Outlets Management API enables businesses to efficiently manage their outlet information and configurations. This endpoint specifically allows for partial updates to existing outlets, facilitating quick adjustments to outlet details that may be needed due to changing operations or promotions. Typical consumers include retail managers and developers of point-of-sale systems needing real-time updates. With this API, users can ensure that their outlet data remains current and accurate across various applications.",
+    "description": "The Outlets Management API empowers businesses to efficiently manage their outlet locations by enabling the addition and configuration of new outlets in the system. This functionality is essential for retailers and service providers looking to expand their operations or enhance customer engagement across multiple locations. The API allows for the seamless integration of outlet-specific information, catering especially to businesses that require precise location management and data synchronization capabilities. Typical users include retail managers and developers working on applications that support outlet operations.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/p2m/outlets/{outletId}": {
-      "patch": {
+    "/v5/p2m/outlets": {
+      "post": {
         "tags": [
           "Outlet Management"
         ],
-        "summary": "Update outlet details",
-        "description": "This operation allows for updating the specific details of an outlet identified by its unique identifier. Ensure to provide the necessary data in your request to successfully apply the changes.",
-        "operationId": "updateOutletRes100045",
+        "summary": "Create a new outlet.",
+        "description": "This endpoint allows developers to create a new outlet in the system. It requires necessary information about the outlet in the request body.",
+        "operationId": "createOutlet",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
-          },
-          {
-            "$ref": "#/components/parameters/outletId"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to update properties of a specific outlet with the identifier RES-100045. The JSON payload must adhere to the schema defined for updating outlet properties, ensuring that only valid data is provided.",
+          "description": "This request body is used to create a new outlet. The client must provide the required outlet details in JSON format. Ensure that all mandatory fields are included as specified in the schema.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateOutletRes100045Request"
+                "$ref": "#/components/schemas/CreateOutletRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "The request was successful, and the outlet details have been updated.",
+          "201": {
+            "description": "The outlet has been created successfully.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateOutletRes100045Response_200"
+                  "$ref": "#/components/schemas/CreateOutletResponse_201"
                 }
               }
             }
@@ -90,35 +87,57 @@
   },
   "components": {
     "schemas": {
-      "UpdateOutletRes100045Request": {
+      "CreateOutletRequest": {
         "type": "object",
         "properties": {
+          "merchantId": {
+            "type": "string",
+            "description": "The unique identifier for the merchant.",
+            "example": "MER-690468"
+          },
           "name": {
             "type": "string",
             "description": "The name of the outlet.",
             "example": "Northstar Banking Service"
           },
+          "outletType": {
+            "type": "string",
+            "description": "The type of the outlet.",
+            "example": "STANDARD"
+          },
           "address": {
-            "description": "The address details of the outlet.",
+            "description": "The address of the outlet.",
             "$ref": "#/components/schemas/Address"
           },
           "contact": {
-            "description": "The contact information for the outlet.",
+            "description": "The contact details for the outlet.",
             "$ref": "#/components/schemas/Contact"
           },
-          "status": {
+          "timezone": {
             "type": "string",
-            "description": "The current operational status of the outlet.",
-            "example": "ACTIVE"
+            "description": "The timezone of the outlet.",
+            "example": "America/New_York"
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency used by the outlet.",
+            "example": "USD"
+          },
+          "externalReference": {
+            "type": "string",
+            "description": "An external reference identifier for the outlet.",
+            "example": "STANDARD"
           },
           "requestContext": {
-            "description": "Contextual information regarding the request.",
+            "description": "Contextual information about the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Request body schema for updating outlet information.",
+        "description": "Request body for creating or updating an outlet.",
         "example": {
+          "merchantId": "MER-690468",
           "name": "Northstar Banking Service",
+          "outletType": "STANDARD",
           "address": {
             "line1": "350 Fifth Avenue",
             "line2": "Suite 4200",
@@ -132,18 +151,20 @@
             "phone": "+1-212-555-0147",
             "website": "https://example.com/resource"
           },
-          "status": "ACTIVE",
+          "timezone": "America/New_York",
+          "currency": "USD",
+          "externalReference": "STANDARD",
           "requestContext": {
-            "requestId": "4a03eef7-813e-5bf8-a8f4-90c43f119971",
-            "correlationId": "2332933a-c88d-57ab-9a11-b3464ed90f7d",
-            "idempotencyKey": "f55bdc72-d6a2-5eda-9829-8497e559b8c1",
+            "requestId": "d7076ae9-bb4a-5221-9070-6839591bd12e",
+            "correlationId": "30288efc-a722-5059-a7d1-9c9e2b85dcc4",
+            "idempotencyKey": "4d012c7f-d0a8-5175-ac86-ead81ee28edd",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-380105"
+              "deviceId": "DEV-566377"
             }
           }
         }
@@ -154,36 +175,36 @@
         "properties": {
           "line1": {
             "type": "string",
-            "description": "First line of the address.",
+            "description": "The first line of the address.",
             "example": "123 Main St"
           },
           "line2": {
             "type": "string",
-            "description": "Second line of the address (optional).",
+            "description": "The second line of the address (optional).",
             "example": "Suite 100"
           },
           "city": {
             "type": "string",
-            "description": "City where the outlet is located.",
-            "example": "Anytown"
+            "description": "The city where the outlet is located.",
+            "example": "New York"
           },
           "stateOrProvince": {
             "type": "string",
-            "description": "State or province where the outlet is located.",
-            "example": "CA"
+            "description": "The state or province where the outlet is located.",
+            "example": "NY"
           },
           "postalCode": {
             "type": "string",
-            "description": "Postal code for the outlet's address.",
-            "example": "12345"
+            "description": "The postal code of the outlet location.",
+            "example": "10001"
           },
           "country": {
             "type": "string",
-            "description": "Country where the outlet is located.",
+            "description": "The country where the outlet is located.",
             "example": "USA"
           }
         },
-        "description": "Schema representing the address of an outlet."
+        "description": "This schema represents an address structure."
       },
       "Contact": {
         "title": "Contact",
@@ -191,21 +212,21 @@
         "properties": {
           "email": {
             "type": "string",
-            "description": "Email address for contacting the outlet.",
-            "example": "contact@example.com"
+            "description": "The email address for contacting the outlet.",
+            "example": "info@coffeeshop.com"
           },
           "phone": {
             "type": "string",
-            "description": "Phone number for contacting the outlet.",
-            "example": "+123456789"
+            "description": "The phone number for contacting the outlet.",
+            "example": "+12125552368"
           },
           "website": {
             "type": "string",
-            "description": "Website URL for the outlet.",
-            "example": "https://example.com"
+            "description": "The website URL for the outlet.",
+            "example": "https://www.coffeeshop.com"
           }
         },
-        "description": "Schema representing the contact information for an outlet."
+        "description": "This schema represents contact information for the outlet."
       },
       "RequestContext": {
         "type": "object",
@@ -213,39 +234,39 @@
           "requestId": {
             "type": "string",
             "description": "Unique identifier for the request.",
-            "example": "req-123456789"
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier to track related requests.",
-            "example": "cor-987654321"
+            "description": "Identifier to trace the request across systems.",
+            "example": "string"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key to ensure idempotency of the request.",
-            "example": "idempotent-key-abc123"
+            "description": "Key used to ensure that requests are idempotent.",
+            "example": "string"
           },
           "requestedAt": {
             "type": "string",
             "description": "Timestamp when the request was made.",
-            "example": "2023-01-01T12:00:00Z"
+            "example": "string"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "The system that originated the request.",
-            "example": "BackendSystem"
+            "description": "Identifier for the source system making the request.",
+            "example": "string"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application that made the request.",
-            "example": "MobileApp"
+            "description": "Identifier for the source application making the request.",
+            "example": "string"
           },
           "channel": {
             "description": "Information about the channel through which the request was made.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Context information for the request."
+        "description": "Context information related to the request."
       },
       "Channel": {
         "type": "object",
@@ -253,86 +274,86 @@
           "channelId": {
             "type": "string",
             "description": "Identifier for the communication channel.",
-            "example": "channel-123"
+            "example": "string"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of communication channel (e.g., Web, Mobile).",
-            "example": "Mobile"
+            "description": "Type of the channel (e.g. web, mobile).",
+            "example": "string"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier for the device used for the request.",
-            "example": "device-456"
+            "description": "Identifier for the device used in the channel.",
+            "example": "string"
           }
         },
-        "description": "Schema representing the communication channel details."
+        "description": "Details about the channel through which the request was made."
       },
-      "UpdateOutletRes100045Response_200": {
-        "title": "Outlet Response",
+      "CreateOutletResponse_201": {
+        "title": "Outlet Creation Response",
         "type": "object",
         "properties": {
           "outletId": {
             "type": "string",
-            "description": "Unique identifier for the outlet.",
+            "description": "The unique identifier for the outlet.",
             "example": "STANDARD"
           },
           "merchantId": {
             "type": "string",
-            "description": "Identifier for the merchant associated with the outlet.",
-            "example": "MER-523448"
+            "description": "The unique identifier for the merchant associated with the outlet.",
+            "example": "MER-173069"
           },
           "name": {
             "type": "string",
-            "description": "Name of the outlet.",
+            "description": "The name of the outlet.",
             "example": "Northstar Banking Service"
           },
           "outletType": {
             "type": "string",
-            "description": "Type of the outlet (e.g., restaurant, retail).",
+            "description": "The type or category of the outlet.",
             "example": "STANDARD"
           },
           "address": {
-            "description": "Physical address of the outlet.",
+            "description": "The physical address of the outlet.",
             "$ref": "#/components/schemas/Address"
           },
           "contact": {
-            "description": "Contact information for the outlet.",
+            "description": "The contact information for the outlet.",
             "$ref": "#/components/schemas/Contact"
           },
           "timezone": {
             "type": "string",
-            "description": "Timezone in which the outlet operates.",
+            "description": "The timezone of the outlet.",
             "example": "America/New_York"
           },
           "currency": {
             "type": "string",
-            "description": "Currency used by the outlet.",
+            "description": "The currency used at the outlet.",
             "example": "USD"
           },
           "externalReference": {
             "type": "string",
-            "description": "External reference linked to the outlet.",
+            "description": "An optional external reference associated with the outlet.",
             "example": "STANDARD"
           },
           "status": {
             "type": "string",
-            "description": "Current status of the outlet (e.g., active, inactive).",
+            "description": "The current status of the outlet.",
             "example": "ACTIVE"
           },
           "audit": {
-            "description": "Audit information for the outlet.",
+            "description": "Audit information regarding the creation and updates to the outlet.",
             "$ref": "#/components/schemas/Audit"
           },
           "metadata": {
-            "description": "Additional metadata related to the outlet response.",
+            "description": "Metadata related to the response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Schema representing the response for an outlet update operation.",
+        "description": "This schema represents the response body for the successful creation of an outlet.",
         "example": {
           "outletId": "STANDARD",
-          "merchantId": "MER-523448",
+          "merchantId": "MER-173069",
           "name": "Northstar Banking Service",
           "outletType": "STANDARD",
           "address": {
@@ -360,8 +381,8 @@
             "version": 1
           },
           "metadata": {
-            "responseId": "7b72d381-0f48-5694-9644-05448bd56bc2",
-            "correlationId": "2332933a-c88d-57ab-9a11-b3464ed90f7d",
+            "responseId": "f0d0ab9a-1eda-5a29-9492-f1b9edb54f05",
+            "correlationId": "30288efc-a722-5059-a7d1-9c9e2b85dcc4",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
@@ -373,32 +394,32 @@
         "properties": {
           "createdAt": {
             "type": "string",
-            "description": "Timestamp of when the outlet was created.",
-            "example": "2023-10-10T10:00:00Z"
+            "description": "The timestamp when the outlet was created.",
+            "example": "2023-01-01T12:00:00Z"
           },
           "createdBy": {
             "type": "string",
-            "description": "Identifier of the user who created the outlet.",
-            "example": "admin"
+            "description": "The user or system that created the outlet.",
+            "example": "admin_user"
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp of when the outlet was last updated.",
-            "example": "2023-10-10T12:00:00Z"
+            "description": "The timestamp when the outlet was last updated.",
+            "example": "2023-01-10T12:00:00Z"
           },
           "updatedBy": {
             "type": "string",
-            "description": "Identifier of the user who last updated the outlet.",
-            "example": "admin"
+            "description": "The user or system that last updated the outlet.",
+            "example": "admin_user"
           },
           "version": {
             "type": "integer",
-            "description": "Version number of the outlet information.",
+            "description": "The version number of the outlet entity.",
             "format": "int32",
             "example": 1
           }
         },
-        "description": "Schema containing audit information about the outlet."
+        "description": "This schema represents audit information for the outlet."
       },
       "Metadata": {
         "title": "Metadata",
@@ -406,26 +427,26 @@
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Identifier for the response.",
-            "example": "abcd-1234"
+            "description": "A unique identifier for the response.",
+            "example": "RESP123"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation ID for tracing the response.",
-            "example": "xyz-5678"
+            "description": "A correlation ID for tracking requests through systems.",
+            "example": "CORRELATE456"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp of when the response was generated.",
-            "example": "2023-10-10T10:05:00Z"
+            "description": "The timestamp when the response was generated.",
+            "example": "2023-01-01T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the response was processed.",
-            "example": "us-west-1"
+            "description": "The region where the processing occurred.",
+            "example": "US-East"
           }
         },
-        "description": "Schema representing additional metadata related to the outlet response."
+        "description": "This schema represents additional metadata for the response."
       }
     },
     "parameters": {
@@ -439,32 +460,24 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_200"
+            "MICROSERVICE_PROD_201"
           ]
-        }
-      },
-      "outletId": {
-        "name": "outletId",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "This header uniquely identifies the endpoint requested by the client.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "banking-p2m-openapi-update-outlet"
+          "example": "banking-p2m-openapi-create-outlet"
         },
-        "example": "banking-p2m-openapi-update-outlet"
+        "example": "banking-p2m-openapi-create-outlet"
       },
       "X-Runtime-App": {
+        "description": "This header indicates the application context in which the request was processed.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -477,7 +490,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses Bearer Authentication with JSON Web Tokens (JWT). Clients must include a bearer token in the Authorization header of requests to access protected resources.",
+        "description": "Authentication scheme that uses JSON Web Tokens (JWT) to securely transmit information between parties. The client is expected to send the token in the 'Authorization' header with the format 'Bearer <token>'.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

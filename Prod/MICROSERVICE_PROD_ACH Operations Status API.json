@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE_PROD_ACH Operations Management API",
-    "description": "The ACH Operations Management API provides users with the necessary tools to retrieve information regarding Automated Clearing House (ACH) transactions. This endpoint allows consumers to access details about specific ACH operations, facilitating efficient financial transaction management. Typical users include financial institutions and businesses that require insights into their ACH payment activities. By utilizing this API, developers can streamline their banking operations and enhance payment processing workflows.",
+    "title": "MICROSERVICE_PROD_ACH Operations Status API",
+    "description": "The ACH Operations Status API provides real-time insights into the status of Automated Clearing House (ACH) payment operations. This endpoint allows users to retrieve the current status of specific ACH transactions, enabling financial institutions and businesses to effectively track and manage their payment processes. Typical consumers include banking personnel and finance teams who utilize this API to ensure accurate payment processing and timely resolution of discrepancies. By leveraging this API, organizations can enhance operational efficiency and improve customer service through timely payment updates.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/payments/ach-operations/{param1}": {
+    "/v5/banking/payments/ach-operations/status": {
       "get": {
         "tags": [
           "Payments"
         ],
-        "summary": "Retrieve ACH operation details",
-        "description": "This endpoint allows you to fetch the details of a specific ACH operation using its unique identifier. Ensure you provide the correct RES ID to retrieve accurate information.",
-        "operationId": "getAchOperationById",
+        "summary": "Retrieve the status of ACH operations.",
+        "description": "This endpoint allows you to check the current status of ACH operations in the system. It provides detailed information regarding the status of transactions, enabling users to monitor their financial activities effectively.",
+        "operationId": "getAchOperationsStatus",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
-          },
-          {
-            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "Request body for retrieving ACH operation details for the specified resource. This includes all necessary parameters required to perform the operation successfully.",
+          "description": "This request body allows you to retrieve the status of ACH operations based on the specified parameters. The content type must be application/json, and it should follow the schema provided to ensure proper processing.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetAchOperationByIdRequest"
+                "$ref": "#/components/schemas/GetAchOperationsStatusRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, returning the operation details.",
+            "description": "Successfully retrieved the current status of ACH operations.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetAchOperationByIdResponse_200"
+                  "$ref": "#/components/schemas/GetAchOperationsStatusResponse_200"
                 }
               }
             }
@@ -90,66 +87,63 @@
   },
   "components": {
     "schemas": {
-      "GetAchOperationByIdRequest": {
+      "GetAchOperationsStatusRequest": {
         "type": "string",
-        "description": "This schema represents the request body for the GET operation on ACH payments. It contains the necessary string data for processing the request.",
+        "description": "This schema represents the status of ACH operations in a JSON formatted string.",
         "example": "{}"
       },
-      "GetAchOperationByIdResponse_200": {
-        "title": "ACH Operation Response",
+      "GetAchOperationsStatusResponse_200": {
         "type": "object",
         "properties": {
           "paymentId": {
             "type": "string",
-            "description": "The unique identifier for the payment.",
+            "description": "Unique identifier for the payment.",
             "example": "PAY-209291"
           },
           "debtorAccountId": {
             "type": "string",
-            "description": "The account ID of the debtor.",
+            "description": "Identifier for the debtor's account.",
             "example": "ACC-139384"
           },
           "creditorAccountId": {
             "type": "string",
-            "description": "The account ID of the creditor.",
+            "description": "Identifier for the creditor's account.",
             "example": "ACC-629884"
           },
           "instructedAmount": {
-            "description": "Details about the instructed amount for the operation.",
             "$ref": "#/components/schemas/InstructedAmount"
           },
           "requestedExecutionDate": {
             "type": "string",
-            "description": "The date when the operation is requested to be executed.",
+            "description": "Date when the payment is requested to be executed.",
             "example": "2026-09-15"
           },
           "remittanceInformation": {
             "type": "string",
-            "description": "Information regarding the remittance.",
+            "description": "Information related to the remittance.",
             "example": "STANDARD"
           },
           "recordStatus": {
             "type": "string",
-            "description": "The current status of the record.",
+            "description": "Current status of the record.",
             "example": "ACTIVE"
           },
           "version": {
             "type": "integer",
-            "description": "The version number of the operation details.",
+            "description": "Version of the payment record.",
             "format": "int32",
             "example": 1
           },
           "updatedAt": {
             "type": "string",
-            "description": "The date and time when the record was last updated.",
+            "description": "Timestamp of the last update.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Additional information regarding the operation.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "This schema represents the response details for an ACH operation request.",
+        "description": "Schema representing the response for ACH operations status.",
         "example": {
           "paymentId": "PAY-209291",
           "debtorAccountId": "ACC-139384",
@@ -172,48 +166,46 @@
         }
       },
       "InstructedAmount": {
-        "title": "Instructed Amount",
         "type": "object",
         "properties": {
           "amount": {
             "type": "number",
-            "description": "The amount of money instructed for the transaction.",
-            "example": 100.0
+            "description": "The monetary amount specified for the transaction.",
+            "example": 0.0
           },
           "currency": {
             "type": "string",
-            "description": "The currency of the instructed amount.",
-            "example": "USD"
+            "description": "The currency code for the transaction amount.",
+            "example": "string"
           }
         },
-        "description": "Details about the amount and currency involved in the transaction."
+        "description": "Schema representing the instructed amount and currency."
       },
       "Metadata": {
-        "title": "Metadata Information",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "The unique identifier for the response.",
-            "example": "resp_67890"
+            "description": "Unique identifier for the response.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "An identifier used to correlate requests and responses.",
-            "example": "corr_112233"
+            "description": "Identifier used for correlating requests and responses.",
+            "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp when the response was generated.",
-            "example": "2023-10-01T12:34:56Z"
+            "description": "Timestamp indicating when the response was generated.",
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The geographical region where the processing took place.",
-            "example": "US-East"
+            "description": "Region where the processing took place.",
+            "example": "string"
           }
         },
-        "description": "Metadata associated with the operation, including identifiers and processing details."
+        "description": "Schema containing metadata related to the response."
       }
     },
     "parameters": {
@@ -230,20 +222,11 @@
             "MICROSERVICE_PROD_200"
           ]
         }
-      },
-      "param1": {
-        "name": "param1",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
-        }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "A unique identifier for the specific endpoint that was called.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -253,6 +236,7 @@
         "example": "ach-operations-get-ach-operations"
       },
       "X-Runtime-App": {
+        "description": "The name of the application where the operation was executed.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -265,7 +249,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "An HTTP authentication scheme that uses bearer tokens, typically in the form of JSON Web Tokens (JWT). This mechanism allows clients to securely access APIs by including a token in the Authorization header of their requests.",
+        "description": "This security scheme uses Bearer Authentication, which involves sending a token as part of the HTTP Authorization header. The token must conform to the JSON Web Token (JWT) format for secure verification.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
