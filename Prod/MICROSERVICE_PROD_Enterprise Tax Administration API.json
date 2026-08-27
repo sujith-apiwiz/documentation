@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Enterprise Tax Administration API",
-    "description": "The Enterprise Tax Administration API enables efficient management of tax-related processes within enterprises. This API facilitates the submission and tracking of tax filings, ensuring compliance with regulatory requirements. Typical consumers include finance and accounting departments looking to streamline their tax operations and enhance reporting accuracy. By leveraging this API, organizations can automate their tax administration tasks, leading to improved efficiency and reduced risks associated with tax compliance.",
+    "description": "The Enterprise Tax Administration API provides access to a comprehensive suite of tools for managing enterprise-level tax processes. Users can retrieve information on tax regulations, track payments, and manage compliance across various jurisdictions. This API is designed for financial institutions, enterprises, and tax professionals looking to streamline their tax administration efforts. With this API, developers can integrate essential tax functionalities into their applications, ensuring accurate and timely tax management.",
     "version": "1.0"
   },
   "servers": [
@@ -31,55 +31,43 @@
   ],
   "paths": {
     "/v5/banking/finance/enterprise-tax-administration": {
-      "post": {
+      "get": {
         "tags": [
-          "Finance"
+          "Tax Management"
         ],
-        "summary": "Create a new enterprise tax administration record.",
-        "description": "This endpoint allows users to create a new entry in the enterprise tax administration system. It is designed for financial administrators to efficiently set up and manage tax information for enterprises.",
-        "operationId": "createEnterpriseTaxAdministration",
+        "summary": "Retrieve enterprise tax administration details.",
+        "description": "This endpoint allows users to fetch information related to enterprise tax administration, including relevant regulations, procedures, and important deadlines to ensure compliance.",
+        "operationId": "getEnterpriseTaxAdministration",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "Request body for submitting enterprise tax administration operations. This payload should contain all necessary details regarding the tax administration requests for the enterprise.",
+          "description": "The request body for retrieving enterprise tax administration information. This request should provide all necessary parameters in JSON format to ensure a successful operation.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateEnterpriseTaxAdministrationRequest"
+                "$ref": "#/components/schemas/GetEnterpriseTaxAdministrationRequest"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Resource successfully created.",
+          "200": {
+            "description": "Request completed successfully, returning enterprise tax administration data.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
               },
               "X-Runtime-App": {
                 "$ref": "#/components/headers/X-Runtime-App"
-              },
-              "X-Workflow-Id": {
-                "$ref": "#/components/headers/X-Workflow-Id"
-              },
-              "X-Workflow-Name": {
-                "$ref": "#/components/headers/X-Workflow-Name"
-              },
-              "X-Workflow-State": {
-                "$ref": "#/components/headers/X-Workflow-State"
-              },
-              "X-Workflow-Execution-Id": {
-                "$ref": "#/components/headers/X-Workflow-Execution-Id"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateEnterpriseTaxAdministrationResponse_201"
+                  "$ref": "#/components/schemas/GetEnterpriseTaxAdministrationResponse_200"
                 }
               }
             }
@@ -99,216 +87,182 @@
   },
   "components": {
     "schemas": {
-      "CreateEnterpriseTaxAdministrationRequest": {
-        "title": "Enterprise Tax Administration Operation Request",
+      "GetEnterpriseTaxAdministrationRequest": {
+        "type": "string",
+        "description": "This schema represents the request body for the GET operation related to enterprise tax administration operations in finance.",
+        "example": "{}"
+      },
+      "GetEnterpriseTaxAdministrationResponse_200": {
+        "title": "Enterprise Tax Administration Response",
         "type": "object",
         "properties": {
-          "legalEntityId": {
-            "type": "string",
-            "description": "The unique identifier for the legal entity.",
-            "example": "STANDARD"
-          },
-          "ledgerId": {
-            "type": "string",
-            "description": "The identifier for the ledger associated with the operation.",
-            "example": "STANDARD"
-          },
-          "accountingPeriod": {
-            "type": "string",
-            "description": "The accounting period for which the transaction is being recorded.",
-            "example": "STANDARD"
-          },
-          "amount": {
-            "description": "The monetary amount involved in the transaction.",
-            "$ref": "#/components/schemas/Amount"
-          },
-          "postingDate": {
-            "type": "string",
-            "description": "The date the transaction is posted.",
-            "example": "2026-09-15"
-          },
-          "requestContext": {
-            "description": "Contextual information about the request.",
-            "$ref": "#/components/schemas/RequestContext"
-          }
-        },
-        "description": "Schema for the request body of the Enterprise Tax Administration operation. This schema contains all the necessary properties for submitting financial operations related to tax administration.",
-        "example": {
-          "legalEntityId": "STANDARD",
-          "ledgerId": "STANDARD",
-          "accountingPeriod": "STANDARD",
-          "amount": {
-            "value": 100.0,
-            "currency": "USD"
-          },
-          "postingDate": "2026-09-15",
-          "requestContext": {
-            "requestId": "61e77c36-7285-54dd-8214-4ccde625acbb",
-            "correlationId": "1199906c-5abe-5269-9141-f2e49510fd8d",
-            "idempotencyKey": "d4c04e6e-5438-5715-be7b-ee501ac2d7fe",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-538128"
+          "items": {
+            "type": "array",
+            "description": "A list of tax administration entries.",
+            "example": [
+              {
+                "legalEntityId": "STANDARD",
+                "ledgerId": "STANDARD",
+                "accountingPeriod": "STANDARD",
+                "amount": {
+                  "value": 100.0,
+                  "currency": "USD"
+                },
+                "postingDate": "2026-09-15",
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/TaxAdministrationItem"
             }
-          }
-        }
-      },
-      "Amount": {
-        "title": "Amount",
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "number",
-            "description": "The numeric value of the amount.",
-            "example": 1000.0
           },
-          "currency": {
-            "type": "string",
-            "description": "The currency code (e.g., USD, EUR) for the amount.",
-            "example": "USD"
-          }
-        },
-        "description": "Schema representing a monetary amount with associated currency."
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "The unique identifier for the request.",
-            "example": "REQ123456"
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
           },
-          "correlationId": {
+          "sort": {
             "type": "string",
-            "description": "The identifier used to correlate different parts of a transaction.",
-            "example": "CORR123456"
-          },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "A key used to ensure that repeated requests do not affect changes.",
-            "example": "IDEMP123456"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "The timestamp when the request was made.",
-            "example": "2023-09-15T10:00:00Z"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "The name of the system from which the request originates.",
-            "example": "FinanceSystem"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "The application that initiated the request.",
-            "example": "AccountingApp"
-          },
-          "channel": {
-            "description": "Information about the channel through which the request was made.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Schema containing contextual information for the request."
-      },
-      "Channel": {
-        "title": "Channel",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "The unique identifier for the communication channel.",
-            "example": "CHNL123456"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "The type of channel used (e.g., API, Web, Mobile).",
-            "example": "API"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "The identifier for the device used to make the request.",
-            "example": "DEV123456"
-          }
-        },
-        "description": "Schema representing the channel details through which the request is made."
-      },
-      "CreateEnterpriseTaxAdministrationResponse_201": {
-        "type": "object",
-        "properties": {
-          "legalEntityId": {
-            "type": "string",
-            "description": "The unique identifier for the legal entity.",
+            "description": "Sort order for the response.",
             "example": "STANDARD"
-          },
-          "ledgerId": {
-            "type": "string",
-            "description": "The identifier for the ledger associated with this operation.",
-            "example": "STANDARD"
-          },
-          "resourceId": {
-            "type": "string",
-            "description": "The unique identifier for the specific resource created or modified.",
-            "example": "RES-654180"
-          },
-          "status": {
-            "type": "string",
-            "description": "The status of the operation (e.g., 'success', 'failure').",
-            "example": "ACTIVE"
-          },
-          "createdAt": {
-            "type": "string",
-            "description": "The timestamp of when the resource was created, in ISO 8601 format.",
-            "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "$ref": "#/components/schemas/ResponseMetadata"
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the Enterprise Tax Administration operation, indicating the results of a POST request.",
+        "description": "A schema representing the response structure for the Enterprise Tax Administration GET operation, including items, pagination, sorting, and metadata.",
         "example": {
-          "legalEntityId": "STANDARD",
-          "ledgerId": "STANDARD",
-          "resourceId": "RES-654180",
-          "status": "ACTIVE",
-          "createdAt": "2026-09-15T14:30:00Z",
+          "items": [
+            {
+              "legalEntityId": "STANDARD",
+              "ledgerId": "STANDARD",
+              "accountingPeriod": "STANDARD",
+              "amount": {
+                "value": 100.0,
+                "currency": "USD"
+              },
+              "postingDate": "2026-09-15",
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
+          },
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "75eece5d-4d8b-5479-a787-805a2fc487eb",
-            "correlationId": "1199906c-5abe-5269-9141-f2e49510fd8d",
+            "responseId": "55ea886e-fcfb-5ff8-a9a8-278836b637d4",
+            "correlationId": "c17ab32e-1e8c-5e47-a192-7583891d5f4b",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "ResponseMetadata": {
+      "TaxAdministrationItem": {
+        "title": "Tax Administration Item",
+        "type": "object",
+        "properties": {
+          "legalEntityId": {
+            "type": "string",
+            "description": "The unique identifier for the legal entity.",
+            "example": "12345"
+          },
+          "ledgerId": {
+            "type": "string",
+            "description": "The unique identifier for the ledger to which the entry belongs.",
+            "example": "ledger001"
+          },
+          "accountingPeriod": {
+            "type": "string",
+            "description": "The accounting period for the entry.",
+            "example": "2023-10"
+          },
+          "amount": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "number",
+                "description": "The numerical value of the amount.",
+                "example": 1000.0
+              },
+              "currency": {
+                "type": "string",
+                "description": "The currency in which the amount is denominated.",
+                "example": "USD"
+              }
+            },
+            "description": "The amount associated with the tax administration entry."
+          },
+          "postingDate": {
+            "type": "string",
+            "description": "The date the entry was posted.",
+            "example": "2023-10-01"
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "The status of the record (e.g., Posted, Draft).",
+            "example": "Posted"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "The date and time when the entry was last updated.",
+            "example": "2023-10-15"
+          }
+        },
+        "description": "Represents a single entry in the tax administration items list."
+      },
+      "Pagination": {
+        "title": "Pagination Info",
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "The current page number of the results.",
+            "format": "int32",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The size of each page (number of items per page).",
+            "format": "int32",
+            "example": 10
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "The total number of items available.",
+            "format": "int32",
+            "example": 100
+          }
+        },
+        "description": "Contains pagination details for the response."
+      },
+      "Metadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "The unique identifier for this response.",
-            "example": "string"
+            "description": "A unique identifier for the response.",
+            "example": "response123"
           },
           "correlationId": {
             "type": "string",
-            "description": "An identifier used to correlate this response with other related requests.",
-            "example": "string"
+            "description": "An identifier for tracing the request through the system.",
+            "example": "correlation456"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp of when the response was generated, in ISO 8601 format.",
-            "example": "string"
+            "description": "The timestamp of when the response was generated.",
+            "example": "2023-10-15T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
             "description": "The region where the processing took place.",
-            "example": "string"
+            "example": "us-east-1"
           }
         },
-        "description": "Metadata associated with the response, providing additional context about the operation."
+        "description": "Metadata information related to the response."
       }
     },
     "parameters": {
@@ -322,24 +276,24 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_201"
+            "MICROSERVICE_PROD_200"
           ]
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint being accessed.",
+        "description": "The unique identifier for the API endpoint that was called.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "enterprise-tax-administration-create-enterprise-tax-administration"
+          "example": "enterprise-tax-administration-search-enterprise-tax-administration"
         },
-        "example": "enterprise-tax-administration-create-enterprise-tax-administration"
+        "example": "enterprise-tax-administration-search-enterprise-tax-administration"
       },
       "X-Runtime-App": {
-        "description": "The application runtime identifier, indicating which application processed the request.",
+        "description": "The name of the application runtime that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -347,52 +301,12 @@
           "example": "enterprise-support"
         },
         "example": "enterprise-support"
-      },
-      "X-Workflow-Id": {
-        "description": "Identifier for the workflow associated with the request. This helps in tracking the flow of operations.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "WF-092"
-        },
-        "example": "WF-092"
-      },
-      "X-Workflow-Name": {
-        "description": "The name of the workflow being executed, which represents the specific process in the tax administration system.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "Corporate Tax Assessment and Payment"
-        },
-        "example": "Corporate Tax Assessment and Payment"
-      },
-      "X-Workflow-State": {
-        "description": "The current state of the workflow, indicating its progress or status in the tax administration process.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "IN_PROGRESS"
-        },
-        "example": "IN_PROGRESS"
-      },
-      "X-Workflow-Execution-Id": {
-        "description": "A unique identifier for the execution instance of the workflow, useful for tracking and logging purposes.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "976b8642-502f-44dc-a450-fd7c137be16c"
-        },
-        "example": "976b8642-502f-44dc-a450-fd7c137be16c"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the Bearer authentication method. JWT (JSON Web Token) format is supported for token transmission, which is commonly used in API authentication.",
+        "description": "This security scheme utilizes JSON Web Tokens (JWT) for authentication. Clients must include a valid JWT token in the 'Authorization' header using the 'Bearer' scheme to access protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
