@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Contact Center Operations API",
-    "description": "The Contact Center Operations API enables seamless access to channel-specific contact center data and operations. This API serves as a resource for retrieving comprehensive information regarding customer interactions, service requests, and performance metrics across different banking channels. Typical consumers include customer service agents and management systems looking to analyze and optimize customer support workflows. By leveraging this API, organizations can enhance their customer relationship management and improve operational efficiency.",
+    "description": "The Contact Center Operations API provides businesses with the tools to access vital information regarding their contact center operations. Users can retrieve detailed analytics and performance metrics related to customer interactions across various banking channels. This API serves as a key resource for contact center managers and business analysts looking to enhance customer service efficiency and streamline operational workflows. Typical use cases include monitoring service levels, analyzing customer feedback, and making data-driven decisions to improve overall contact center performance.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/channel-specific/contact-center-operations/{param1}": {
+    "/v5/banking/channel-specific/contact-center-operations": {
       "get": {
         "tags": [
           "Contact Center Operations"
         ],
-        "summary": "Retrieve specific contact center operation details.",
-        "description": "This endpoint allows you to access detailed information about a specific contact center operation identified by its unique resource ID. It provides essential data and insights related to the operation for effective management and analysis.",
-        "operationId": "getContactCenterOperationById",
+        "summary": "Retrieve contact center operations for a specific channel.",
+        "description": "This endpoint allows developers to access operations related to the contact center for a specific communication channel. This includes details about various operational activities that can be performed in the context of the contact center.",
+        "operationId": "getChannelSpecificContactCenterOperations",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "Request body for retrieving channel-specific contact center operations. The expected JSON structure should align with the defined schema to ensure proper processing of the request.",
+          "description": "This request body is used to retrieve operations related to channel-specific contact centers. It contains the necessary parameters to specify the desired operations.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetContactCenterOperationByIdRequest"
+                "$ref": "#/components/schemas/GetChannelSpecificContactCenterOperationsRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, returning the requested data.",
+            "description": "Request completed successfully and data retrieved.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetContactCenterOperationByIdResponse_200"
+                  "$ref": "#/components/schemas/GetChannelSpecificContactCenterOperationsResponse_200"
                 }
               }
             }
@@ -76,138 +76,214 @@
   },
   "components": {
     "schemas": {
-      "GetContactCenterOperationByIdRequest": {
+      "GetChannelSpecificContactCenterOperationsRequest": {
         "type": "string",
-        "description": "Represents the request body for the GET operation in the contact center operations channel specific API. This request body is expected to be a string.",
+        "description": "This schema represents the JSON string content for the request body in contact center operations' GET operations.",
         "example": "{}"
       },
-      "GetContactCenterOperationByIdResponse_200": {
-        "title": "Channel-specific Contact Center Operations Response",
+      "GetChannelSpecificContactCenterOperationsResponse_200": {
         "type": "object",
         "properties": {
-          "channelId": {
+          "items": {
+            "type": "array",
+            "description": "List of contact center operational items.",
+            "example": [
+              {
+                "channelId": "MOBILE-US",
+                "regionCode": "US-EAST-1",
+                "serviceWindow": {
+                  "opensAt": "STANDARD",
+                  "closesAt": "STANDARD"
+                },
+                "dailyCapacity": 1,
+                "queueId": "STANDARD",
+                "skillGroup": "STANDARD",
+                "targetAnswerSeconds": 1,
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ContactCenterOperationItem"
+            }
+          },
+          "pagination": {
+            "description": "Pagination details for the response.",
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "sort": {
             "type": "string",
-            "description": "Unique identifier for the communication channel.",
-            "example": "MOBILE-US"
-          },
-          "regionCode": {
-            "type": "string",
-            "description": "Code indicating the geographical region of operation.",
-            "example": "US-EAST-1"
-          },
-          "serviceWindow": {
-            "description": "Operational hours during which the service is available.",
-            "$ref": "#/components/schemas/ServiceWindow"
-          },
-          "dailyCapacity": {
-            "type": "integer",
-            "description": "Maximum number of operations that can be handled in a day.",
-            "format": "int32",
-            "example": 1
-          },
-          "queueId": {
-            "type": "string",
-            "description": "Unique identifier for the operational queue.",
+            "description": "Sort order applied to the items.",
             "example": "STANDARD"
-          },
-          "skillGroup": {
-            "type": "string",
-            "description": "Identifier for the skill group assigned to handle operations.",
-            "example": "STANDARD"
-          },
-          "targetAnswerSeconds": {
-            "type": "integer",
-            "description": "Target response time in seconds for incoming operations.",
-            "format": "int32",
-            "example": 1
-          },
-          "recordStatus": {
-            "type": "string",
-            "description": "Current status of the operational record.",
-            "example": "ACTIVE"
-          },
-          "version": {
-            "type": "integer",
-            "description": "Version number of the operation record.",
-            "format": "int32",
-            "example": 1
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp indicating when the record was last updated.",
-            "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Additional metadata related to the operational response.",
-            "$ref": "#/components/schemas/Metadata"
+            "description": "Metadata related to the response.",
+            "$ref": "#/components/schemas/ResponseMetadata"
           }
         },
-        "description": "Schema representing the response for channel-specific contact center operations, detailing operational parameters such as service windows, capacity, and metadata.",
+        "description": "Response schema for the GET operation on Contact Center operations specific to channels.",
         "example": {
-          "channelId": "MOBILE-US",
-          "regionCode": "US-EAST-1",
-          "serviceWindow": {
-            "opensAt": "STANDARD",
-            "closesAt": "STANDARD"
+          "items": [
+            {
+              "channelId": "MOBILE-US",
+              "regionCode": "US-EAST-1",
+              "serviceWindow": {
+                "opensAt": "STANDARD",
+                "closesAt": "STANDARD"
+              },
+              "dailyCapacity": 1,
+              "queueId": "STANDARD",
+              "skillGroup": "STANDARD",
+              "targetAnswerSeconds": 1,
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
           },
-          "dailyCapacity": 1,
-          "queueId": "STANDARD",
-          "skillGroup": "STANDARD",
-          "targetAnswerSeconds": 1,
-          "recordStatus": "ACTIVE",
-          "version": 1,
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "d693df1b-c77d-514f-908b-049aca41f8e3",
-            "correlationId": "f957561b-0f0d-5a80-ab3d-1cc08409923d",
+            "responseId": "33532b94-bf07-52ce-8fa4-70a6f5952168",
+            "correlationId": "31146ae4-e4a3-54e1-8236-50f92f1a7aba",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
+      "ContactCenterOperationItem": {
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Identifier for the channel.",
+            "example": "channel-1"
+          },
+          "regionCode": {
+            "type": "string",
+            "description": "Code representing the operational region.",
+            "example": "us-east"
+          },
+          "serviceWindow": {
+            "description": "Details about the service window for the operation.",
+            "$ref": "#/components/schemas/ServiceWindow"
+          },
+          "dailyCapacity": {
+            "type": "integer",
+            "description": "Total capacity for the operation on a daily basis.",
+            "format": "int32",
+            "example": 100
+          },
+          "queueId": {
+            "type": "string",
+            "description": "Identifier for the queue associated with this operation.",
+            "example": "queue-1"
+          },
+          "skillGroup": {
+            "type": "string",
+            "description": "Skill group associated with this operation.",
+            "example": "support"
+          },
+          "targetAnswerSeconds": {
+            "type": "integer",
+            "description": "Target time in seconds for answering calls.",
+            "format": "int32",
+            "example": 30
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "Current status of the record.",
+            "example": "active"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp of the last update.",
+            "example": "2023-10-01T12:00:00Z"
+          }
+        },
+        "description": "Represents a single contact center operation item.",
+        "example": {
+          "channelId": "channel-1",
+          "regionCode": "us-east",
+          "serviceWindow": {
+            "opensAt": "08:00",
+            "closesAt": "18:00"
+          },
+          "dailyCapacity": 100,
+          "queueId": "queue-1",
+          "skillGroup": "support",
+          "targetAnswerSeconds": 30,
+          "recordStatus": "active",
+          "updatedAt": "2023-10-01T12:00:00Z"
+        }
+      },
       "ServiceWindow": {
-        "title": "Service Window",
         "type": "object",
         "properties": {
           "opensAt": {
             "type": "string",
-            "description": "Time when the service opens.",
-            "example": "09:00"
+            "description": "Opening time of the service window, formatted as HH:mm.",
+            "example": "08:00"
           },
           "closesAt": {
             "type": "string",
-            "description": "Time when the service closes.",
-            "example": "17:00"
+            "description": "Closing time of the service window, formatted as HH:mm.",
+            "example": "18:00"
           }
         },
-        "description": "Defines the opening and closing times during which the service is accessible."
+        "description": "The operational hours for the contact center."
       },
-      "Metadata": {
-        "title": "Metadata",
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number.",
+            "format": "int32",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32",
+            "example": 10
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available.",
+            "format": "int32",
+            "example": 100
+          }
+        },
+        "description": "Pagination information for the list of items."
+      },
+      "ResponseMetadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
             "description": "Unique identifier for the response.",
-            "example": "string"
+            "example": "abc-123"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier to track the flow of requests and responses related to a specific operation.",
-            "example": "string"
+            "description": "ID used to trace the request across systems.",
+            "example": "def-456"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the metadata was generated.",
-            "example": "2023-01-01T12:00:00Z"
+            "description": "Timestamp when the response was generated.",
+            "example": "2023-10-01T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the request was processed.",
-            "example": "us-west-1"
+            "description": "Region where the response was processed.",
+            "example": "us-east"
           }
         },
-        "description": "Contains additional contextual information related to the operational response."
+        "description": "Metadata associated with the API response."
       }
     },
     "parameters": {
@@ -228,17 +304,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint being accessed.",
+        "description": "Unique identifier for the endpoint that was hit, useful for tracing and debugging.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "contact-center-operations-get-contact-center-operations"
+          "example": "contact-center-operations-search-contact-center-operations"
         },
-        "example": "contact-center-operations-get-contact-center-operations"
+        "example": "contact-center-operations-search-contact-center-operations"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that processed the request.",
+        "description": "The name of the application in which the request was processed, providing context for response tracking.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -251,7 +327,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication method that uses a bearer token in the HTTP Authorization header to authenticate to the API. The token format is JSON Web Token (JWT), which allows for secure information exchange between parties.",
+        "description": "This security scheme uses the Bearer authentication method, which allows clients to authenticate via a JSON Web Token (JWT). Clients must include the JWT in the Authorization header when making requests to protected endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

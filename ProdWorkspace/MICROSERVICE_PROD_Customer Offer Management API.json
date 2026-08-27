@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Customer Offer Management API",
-    "description": "The Customer Offer Management API enables businesses to create and manage customer-specific offers within the banking and sales domain. This endpoint facilitates the submission of new offers tailored to individual customer needs, enhancing customer engagement and satisfaction. Typical consumers of this API include marketing teams and sales departments looking to personalize their offerings and improve customer retention. By efficiently handling offer submissions, businesses can drive sales and streamline their customer relationship management processes.",
+    "description": "The Customer Offer Management API allows for the dynamic modification of customer offers in the banking sales system. This API is designed for financial institutions seeking to update existing offers based on changing customer needs and preferences. Typical consumers include sales teams and customer service representatives who require real-time updates to offer details. Utilizing this API ensures that customers always receive the most relevant promotions, optimizing customer satisfaction and engagement.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/sales/customer-offer": {
-      "post": {
+    "/v5/banking/sales/customer-offer/{param1}": {
+      "patch": {
         "tags": [
-          "Sales"
+          "Customer Offers"
         ],
-        "summary": "Create a new customer offer.",
-        "description": "This endpoint allows you to create a new offer for a customer. You will need to provide the relevant details in the request body to successfully create the offer. Make sure to include all necessary fields to ensure the offer is processed correctly.",
-        "operationId": "createCustomerOffer",
+        "summary": "Update a customer's offer details.",
+        "description": "This operation allows for updating the offer details for a specific customer identified by their unique ID (CUST-100045). Ensure to provide the necessary data in the request body to make the desired changes to the customer's offer.",
+        "operationId": "updateCustomerOfferCUST100045",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to create a new customer offer in the sales system. It should contain all necessary information about the offer, including customer details and terms of the offer.",
+          "description": "This request body is used to update the customer offer details for the specified customer ID (CUST-100045). It contains the necessary fields for modifying the existing offer and is expected to be provided in JSON format.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateCustomerOfferRequest"
+                "$ref": "#/components/schemas/UpdateCustomerOfferCUST100045Request"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Resource successfully created, and the offer has been processed.",
+          "200": {
+            "description": "Request completed successfully and the offer has been updated.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateCustomerOfferResponse_201"
+                  "$ref": "#/components/schemas/UpdateCustomerOfferCUST100045Response_200"
                 }
               }
             }
@@ -76,221 +76,206 @@
   },
   "components": {
     "schemas": {
-      "CreateCustomerOfferRequest": {
+      "UpdateCustomerOfferCUST100045Request": {
+        "title": "Customer Offer Patch Request Body",
         "type": "object",
         "properties": {
-          "prospectId": {
+          "changes": {
+            "description": "An object containing the changes to be applied to the customer offer.",
+            "$ref": "#/components/schemas/CustomerOfferChanges"
+          },
+          "changeReason": {
             "type": "string",
-            "description": "Unique identifier for the prospect.",
+            "description": "The reason for the change to the customer offer.",
             "example": "STANDARD"
           },
-          "productCode": {
+          "effectiveAt": {
             "type": "string",
-            "description": "Code representing the product being offered.",
-            "example": "CHK-PREMIUM-US"
+            "description": "The date and time at which the changes become effective.",
+            "example": "2026-09-15T14:30:00Z"
           },
-          "salesChannel": {
+          "requestedBy": {
             "type": "string",
-            "description": "The sales channel through which the offer is made.",
+            "description": "The identifier of the person requesting the change.",
             "example": "STANDARD"
-          },
-          "relationshipManagerId": {
-            "type": "string",
-            "description": "Identifier for the relationship manager handling this offer.",
-            "example": "STANDARD"
-          },
-          "expectedValue": {
-            "description": "Details about the expected financial value of the offer.",
-            "$ref": "#/components/schemas/ExpectedValue"
           },
           "requestContext": {
-            "description": "Context information for the API request.",
+            "description": "Context surrounding the request, including identifiers and timestamps.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Schema for the request body of the Customer Offer POST operation.",
+        "description": "Schema representing the request body for a PATCH operation on a customer offer.",
         "example": {
-          "prospectId": "STANDARD",
-          "productCode": "CHK-PREMIUM-US",
-          "salesChannel": "STANDARD",
-          "relationshipManagerId": "STANDARD",
-          "expectedValue": {
-            "amount": 100.0,
-            "currency": "USD"
+          "changes": {
+            "prospectId": "STANDARD",
+            "productCode": "CHK-PREMIUM-US",
+            "salesChannel": "STANDARD"
           },
+          "changeReason": "STANDARD",
+          "effectiveAt": "2026-09-15T14:30:00Z",
+          "requestedBy": "STANDARD",
           "requestContext": {
-            "requestId": "dedc4fc4-86a9-5dfc-a09a-87179e3a8438",
-            "correlationId": "97fba1cc-051c-5049-81d3-ea6c1d4c5712",
-            "idempotencyKey": "dbcb7f81-c2fc-5965-ad71-775ad087be44",
+            "requestId": "d69568e4-09af-58db-84da-0a24249155b7",
+            "correlationId": "5b41b6a9-2ef5-5701-ac76-db996353279c",
+            "idempotencyKey": "7a1e6f80-6372-5ca4-94ab-ed7549d1d8db",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-973307"
+              "deviceId": "DEV-447005"
             }
           }
         }
       },
-      "ExpectedValue": {
+      "CustomerOfferChanges": {
+        "title": "Customer Offer Changes",
         "type": "object",
         "properties": {
-          "amount": {
-            "type": "number",
-            "description": "The monetary amount expected from this offer.",
-            "example": 1000.0
-          },
-          "currency": {
+          "prospectId": {
             "type": "string",
-            "description": "The currency in which the amount is specified.",
-            "example": "USD"
+            "description": "The identifier of the prospect related to this offer.",
+            "example": "prospect_456"
+          },
+          "productCode": {
+            "type": "string",
+            "description": "The code of the product being offered.",
+            "example": "PRODUCT_789"
+          },
+          "salesChannel": {
+            "type": "string",
+            "description": "The sales channel through which the offer is made.",
+            "example": "online"
           }
         },
-        "description": "Details of the expected value associated with the offer."
+        "description": "Schema representing the specific changes to be made for a customer offer."
       },
       "RequestContext": {
+        "title": "Request Context",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
             "description": "Unique identifier for the request.",
-            "example": "request_67890"
+            "example": "request_001"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier for tracking the request across systems.",
-            "example": "correlation_xyz"
+            "description": "Identifier used to track the request across different systems.",
+            "example": "correlation_002"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key used to ensure that repeated requests have the same effect.",
-            "example": "idempotency_key_abc"
+            "description": "Key used to ensure that a request is processed only once.",
+            "example": "idempotency_key_003"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp for when the request was made.",
-            "example": "2023-10-01T00:00:00Z"
+            "description": "Timestamp of when the request was made.",
+            "example": "2023-10-10T09:00:00Z"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "Name of the system that initiated the request.",
-            "example": "CRM"
+            "description": "The system from which the request originated.",
+            "example": "CRM_SYSTEM"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "Name of the application from which the request originated.",
+            "description": "The application from which the request originated.",
             "example": "SalesApp"
           },
           "channel": {
-            "description": "Details about the channel through which the request was made.",
-            "$ref": "#/components/schemas/Channel"
+            "description": "Information regarding the channel through which the request was made.",
+            "$ref": "#/components/schemas/RequestChannel"
           }
         },
-        "description": "Contextual information related to the API request."
+        "description": "Schema representing the context of the request, including various identifiers and timestamps."
       },
-      "Channel": {
+      "RequestChannel": {
+        "title": "Request Channel",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "channel_005"
+            "description": "Identifier for the channel used for the request.",
+            "example": "channel_004"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of channel (e.g., web, mobile, etc.).",
+            "description": "Type of the channel used for the request (e.g., web, mobile).",
             "example": "web"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier for the device used to make the request.",
-            "example": "device_001"
+            "description": "Identifier of the device used for the request, if applicable.",
+            "example": "device_005"
           }
         },
-        "description": "Information about the channel used for the request."
+        "description": "Schema representing the details of the channel used to make the request."
       },
-      "CreateCustomerOfferResponse_201": {
-        "title": "CustomerOfferResponse",
+      "UpdateCustomerOfferCUST100045Response_200": {
         "type": "object",
         "properties": {
-          "prospectId": {
-            "type": "string",
-            "description": "Unique identifier for the prospect.",
-            "example": "STANDARD"
-          },
-          "productCode": {
-            "type": "string",
-            "description": "Code representing the product being offered.",
-            "example": "CHK-PREMIUM-US"
-          },
-          "relationshipManagerId": {
-            "type": "string",
-            "description": "Unique identifier for the relationship manager handling the prospect.",
-            "example": "STANDARD"
-          },
-          "resourceId": {
-            "type": "string",
-            "description": "Unique identifier for the resource related to the offer.",
-            "example": "RES-324468"
+          "version": {
+            "type": "integer",
+            "description": "The version number of the response.",
+            "format": "int32",
+            "example": 1
           },
           "status": {
             "type": "string",
-            "description": "Current status of the customer offer operation.",
+            "description": "The status of the operation.",
             "example": "ACTIVE"
           },
-          "createdAt": {
+          "updatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the offer was created.",
+            "description": "The timestamp of when the resource was last updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Additional metadata related to the response.",
+            "description": "Information about the response's context and metadata.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the customer offer operation indicating the result of a POST request.",
+        "description": "Response schema for the PATCH operation on customer offer CUST-100045.",
         "example": {
-          "prospectId": "STANDARD",
-          "productCode": "CHK-PREMIUM-US",
-          "relationshipManagerId": "STANDARD",
-          "resourceId": "RES-324468",
+          "version": 1,
           "status": "ACTIVE",
-          "createdAt": "2026-09-15T14:30:00Z",
+          "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "6800be4f-f5ba-555d-96b6-dc961eff5a17",
-            "correlationId": "97fba1cc-051c-5049-81d3-ea6c1d4c5712",
+            "responseId": "130de826-67b1-54ee-ab2d-b2df1c12664a",
+            "correlationId": "5b41b6a9-2ef5-5701-ac76-db996353279c",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
       "Metadata": {
-        "title": "Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "response123"
+            "description": "A unique identifier for the response.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate the request with the response.",
-            "example": "correlation456"
+            "description": "An identifier used to correlate requests and responses.",
+            "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the metadata was generated.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "The timestamp when the response was generated.",
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing occurred.",
-            "example": "us-west"
+            "description": "The region where the processing occurred.",
+            "example": "string"
           }
         },
-        "description": "Contains additional information about the response."
+        "description": "Metadata associated with the response, providing additional context and identifiers."
       }
     },
     "parameters": {
@@ -304,24 +289,22 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_201"
+            "MICROSERVICE_PROD_200"
           ]
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the API endpoint being called, used for tracking and logging purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "customer-offer-create-customer-offer"
+          "example": "customer-offer-update-customer-offer"
         },
-        "example": "customer-offer-create-customer-offer"
+        "example": "customer-offer-update-customer-offer"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that is currently executing the operation, helping to identify its origin.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -334,7 +317,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication method using Bearer tokens, specifically JSON Web Tokens (JWT). Clients must include this token in the Authorization header to access protected resources.",
+        "description": "This security scheme uses the Bearer authentication method to transmit a JSON Web Token (JWT) in the Authorization header for authenticated access to the API.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
