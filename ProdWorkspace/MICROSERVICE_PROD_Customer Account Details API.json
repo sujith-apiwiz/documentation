@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Customer Account Details API",
-    "description": "The Customer Account Details API enables users to access detailed information about specific customer accounts. By using the API, developers can retrieve data related to accounts linked to individual customers, facilitating effective account management and analysis. This API is commonly used by financial services and customer support teams to provide insights into account statuses and transactions. Use cases include generating reports, troubleshooting account issues, and enhancing user experiences through personalized account information.",
+    "description": "The Customer Account Details API provides access to detailed information about a specific customer account. By querying the endpoint with the unique identifiers of a customer and their account, clients can retrieve essential account data, such as transaction history and current balances. This API is particularly useful for customer service representatives and financial analysts who need to review account specifics for inquiries or reporting tasks. Seamlessly integrating this API into applications aids businesses in enhancing their customer support and financial management capabilities.",
     "version": "1.0"
   },
   "servers": [
@@ -19,13 +19,13 @@
     }
   ],
   "paths": {
-    "/v5/microentry/customers/{customerId}/accounts/{accountId}": {
+    "/v5/aggregation/customers/{customerId}/accounts/{accountId}/details": {
       "get": {
         "tags": [
-          "Customer Management"
+          "Customer Accounts"
         ],
         "summary": "Retrieve account details for a specific customer.",
-        "description": "This endpoint allows you to fetch detailed information about a specific account belonging to a customer. You can use this data to understand account balances, transaction history, and account status.",
+        "description": "This endpoint allows you to fetch detailed information about a specific account belonging to a customer. You can retrieve attributes such as account status, balance, and transaction history.",
         "operationId": "getCustomerAccountDetails",
         "parameters": [
           {
@@ -33,7 +33,7 @@
           }
         ],
         "requestBody": {
-          "description": "Request body for retrieving account information for a specific customer and account. This body should include any necessary parameters or filters required to customize the response.",
+          "description": "Request body for retrieving the details of a specific account associated with a customer. This request will return detailed information related to the account specified by the account ID.",
           "content": {
             "application/json": {
               "schema": {
@@ -46,11 +46,11 @@
           "200": {
             "description": "Successfully retrieved account details.",
             "headers": {
-              "x-endpoint-id": {
-                "$ref": "#/components/headers/x-endpoint-id"
+              "X-Endpoint-Id": {
+                "$ref": "#/components/headers/X-Endpoint-Id"
               },
-              "x-runtime-app": {
-                "$ref": "#/components/headers/x-runtime-app"
+              "X-Runtime-App": {
+                "$ref": "#/components/headers/X-Runtime-App"
               }
             },
             "content": {
@@ -77,97 +77,65 @@
   "components": {
     "schemas": {
       "GetCustomerAccountDetailsRequest": {
-        "title": "Customer Account Operations Request Body",
         "type": "string",
-        "description": "This schema represents the request body for operations related to a specific customer account. It is currently defined as a string.",
+        "description": "This schema represents the request body for retrieving account details for a specific customer and account.",
         "example": "{}"
       },
       "GetCustomerAccountDetailsResponse_200": {
         "type": "object",
         "properties": {
-          "status": {
-            "type": "string",
-            "description": "The status of the account retrieval operation.",
-            "example": "ACTIVE"
-          },
-          "statusDescription": {
-            "type": "string",
-            "description": "Description of the status of the operation.",
-            "example": "STANDARD"
-          },
-          "creationDate": {
-            "type": "string",
-            "description": "The date when the account was created.",
-            "example": "2026-09-15"
-          },
           "routingNumber": {
             "type": "string",
             "description": "The routing number associated with the account.",
             "example": "021000021"
           },
-          "accountNumberLast4": {
+          "realAccountNumber": {
             "type": "string",
-            "description": "The last four digits of the account number.",
-            "example": "STANDARD"
-          },
-          "autoVerifiedAccount": {
-            "type": "integer",
-            "description": "Indicates whether the account was auto-verified (1) or not (0).",
-            "format": "int32",
-            "example": 1
-          },
-          "railType": {
-            "type": "string",
-            "description": "The type of rail used for processing the account.",
+            "description": "The real account number for the customer.",
             "example": "STANDARD"
           },
           "metadata": {
-            "description": "Additional metadata regarding the account retrieval operation.",
-            "$ref": "#/components/schemas/Metadata"
+            "description": "Metadata related to the account response.",
+            "$ref": "#/components/schemas/AccountMetadata"
           }
         },
-        "description": "Response schema for retrieving account details of a customer.",
+        "description": "Represents the details of a specific account response for a given customer.",
         "example": {
-          "status": "ACTIVE",
-          "statusDescription": "STANDARD",
-          "creationDate": "2026-09-15",
           "routingNumber": "021000021",
-          "accountNumberLast4": "STANDARD",
-          "autoVerifiedAccount": 1,
-          "railType": "STANDARD",
+          "realAccountNumber": "STANDARD",
           "metadata": {
-            "responseId": "a4d3763d-f633-5a0c-8ef8-48ef2ed28555",
-            "correlationId": "c61dd9a7-4a02-5a9e-8981-c3dbcd68e20d",
+            "responseId": "fbe75368-6fe0-5f74-8fd3-5038df19bc24",
+            "correlationId": "d6fc352e-ea26-5cac-b109-38365037b63f",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "Metadata": {
+      "AccountMetadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
             "description": "Unique identifier for the response.",
-            "example": "resp-12345"
+            "example": "resp-001"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to track the request across services.",
-            "example": "corr-67890"
+            "description": "ID used to correlate this request with other requests.",
+            "example": "cor-001"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the metadata was generated.",
-            "example": "2023-01-01T00:00:01Z"
+            "description": "Timestamp indicating when the response was generated.",
+            "example": "2023-10-05T14:48:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the account processing took place.",
+            "description": "Region where the processing occurred.",
             "example": "US-East"
           }
         },
-        "description": "Metadata regarding the account retrieval operation."
+        "description": "Contains metadata information regarding the account response."
       }
     },
     "parameters": {
@@ -187,31 +155,31 @@
       }
     },
     "headers": {
-      "x-endpoint-id": {
-        "description": "A unique identifier for the specific API endpoint being accessed.",
+      "X-Endpoint-Id": {
+        "description": "Unique identifier for the API endpoint that has been called, which helps in tracing the request for support or analysis.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "open-finance-api-get-micro-deposits-details"
+          "example": "open-finance-api-get-account-ach-details"
         },
-        "example": "open-finance-api-get-micro-deposits-details"
+        "example": "open-finance-api-get-account-ach-details"
       },
-      "x-runtime-app": {
-        "description": "The version of the application runtime environment utilized for processing the request.",
+      "X-Runtime-App": {
+        "description": "Name of the application where the request is processed, useful for identifying the source application during request handling.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "operations-openfinance"
+          "example": "accounts-deposits"
         },
-        "example": "operations-openfinance"
+        "example": "accounts-deposits"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authorization scheme that uses Bearer tokens, specifically JSON Web Tokens (JWT), for securing API endpoints. This scheme allows clients to authenticate by providing the JWT in the Authorization header.",
+        "description": "This security scheme uses a Bearer Token for authentication, utilizing JSON Web Tokens (JWT) as the format for the token. It allows the API to authenticate requests made by clients by verifying the provided token.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
