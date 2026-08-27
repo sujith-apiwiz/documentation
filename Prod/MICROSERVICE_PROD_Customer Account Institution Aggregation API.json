@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE_PROD_Customer Accounts Aggregation API",
-    "description": "The Customer Accounts Aggregation API enables businesses to fetch a comprehensive list of accounts associated with a specific customer. By utilizing this endpoint, authorized users can retrieve detailed account information, enhancing customer insights and supporting effective account management. This API is useful for financial institutions and customer service teams that need to access a customer's accounts for reporting and operational purposes. With this operation, developers can streamline account retrieval processes, ensuring quick access to essential account data.",
+    "title": "MICROSERVICE_PROD_Customer Account Institution Aggregation API",
+    "description": "The Customer Account Institution Aggregation API provides businesses with the ability to retrieve and aggregate details about accounts associated with specific institutions for a designated customer. This endpoint allows developers to query financial account information, facilitating financial analysis and account management. Typical consumers include financial institutions, fintech applications, and customer service platforms handling account-related inquiries. By leveraging this endpoint, organizations can enhance customer service and improve decision-making based on comprehensive account data.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,38 @@
     }
   ],
   "paths": {
-    "/v5/aggregation/customers/{customerId}/accounts": {
+    "/v5/aggregation/customers/{customerId}/institutions/{institutionId}/accounts": {
       "get": {
         "tags": [
           "Customer Management"
         ],
-        "summary": "Retrieve Customer's Accounts",
-        "description": "This endpoint allows the client to fetch all accounts associated with a specific customer identified by their unique ID. It provides crucial information for managing customer finances and monitoring account status.",
-        "operationId": "getAccountsForCustomerCUST100045",
+        "summary": "Retrieve Accounts for a Specific Customer Institution",
+        "description": "This endpoint allows you to retrieve all accounts associated with a specific institution for a given customer. Useful for managing customer finances and institution relationships.",
+        "operationId": "getCustomerInstitutionAccounts",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           },
           {
             "$ref": "#/components/parameters/customerId"
+          },
+          {
+            "$ref": "#/components/parameters/institutionId"
           }
         ],
         "requestBody": {
-          "description": "Request body for retrieving account information associated with a specific customer (CUST-100045).",
+          "description": "Request body for retrieving account information associated with a specific customer and institution. This body is required to specify any necessary filters or parameters to tailor the account retrieval according to business needs.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetAccountsForCustomerCUST100045Request"
+                "$ref": "#/components/schemas/GetCustomerInstitutionAccountsRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved account information for the specified customer.",
+            "description": "Successfully retrieved the list of accounts.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +73,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetAccountsForCustomerCUST100045Response_200"
+                  "$ref": "#/components/schemas/GetCustomerInstitutionAccountsResponse_200"
                 }
               }
             }
@@ -90,17 +93,17 @@
   },
   "components": {
     "schemas": {
-      "GetAccountsForCustomerCUST100045Request": {
+      "GetCustomerInstitutionAccountsRequest": {
         "type": "string",
-        "description": "This schema represents the JSON request body for retrieving account information for a specific customer.",
+        "description": "This schema represents the JSON body structure expected in the request when retrieving account information for a specific customer and institution.",
         "example": "{}"
       },
-      "GetAccountsForCustomerCUST100045Response_200": {
+      "GetCustomerInstitutionAccountsResponse_200": {
         "type": "object",
         "properties": {
           "accounts": {
             "type": "array",
-            "description": "List of accounts belonging to the customer.",
+            "description": "A list of accounts associated with the customer.",
             "example": [
               {
                 "id": "STANDARD",
@@ -112,7 +115,7 @@
                 "type": "STANDARD",
                 "aggregationStatusCode": 1,
                 "status": "ACTIVE",
-                "customerId": "CUST-815850",
+                "customerId": "CUST-882564",
                 "institutionId": "STANDARD",
                 "balanceDate": 1,
                 "aggregationSuccessDate": 1,
@@ -150,7 +153,7 @@
             "$ref": "#/components/schemas/ResponseMetadata"
           }
         },
-        "description": "Response schema for retrieving accounts associated with a specific customer.",
+        "description": "Response schema containing account information for a specific customer and institution.",
         "example": {
           "accounts": [
             {
@@ -163,7 +166,7 @@
               "type": "STANDARD",
               "aggregationStatusCode": 1,
               "status": "ACTIVE",
-              "customerId": "CUST-815850",
+              "customerId": "CUST-882564",
               "institutionId": "STANDARD",
               "balanceDate": 1,
               "aggregationSuccessDate": 1,
@@ -194,8 +197,8 @@
             }
           ],
           "metadata": {
-            "responseId": "7e2a54a8-97f3-5860-9182-f53d5ad00ee2",
-            "correlationId": "781e49cc-038e-5546-96cd-08735fbc5047",
+            "responseId": "97d9e12c-83d9-5161-9cf6-d00a0755e4a8",
+            "correlationId": "46f0eb56-59bb-5dce-a722-80b08eceff7e",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
@@ -211,12 +214,12 @@
           },
           "number": {
             "type": "string",
-            "description": "The account number.",
+            "description": "Account number in the bank system.",
             "example": "string"
           },
           "accountNumberDisplay": {
             "type": "string",
-            "description": "Displayable version of the account number.",
+            "description": "The account number formatted for display.",
             "example": "string"
           },
           "realAccountNumberLast4": {
@@ -226,7 +229,7 @@
           },
           "name": {
             "type": "string",
-            "description": "Name of the account.",
+            "description": "The name associated with the account.",
             "example": "string"
           },
           "balance": {
@@ -236,45 +239,45 @@
           },
           "type": {
             "type": "string",
-            "description": "Type of the account (e.g., savings, checking).",
+            "description": "Type of the account (e.g., checking, savings).",
             "example": "string"
           },
           "aggregationStatusCode": {
             "type": "integer",
-            "description": "Status code representing the aggregation result.",
+            "description": "The current status of account aggregation.",
             "format": "int32",
             "example": 0
           },
           "status": {
             "type": "string",
-            "description": "Current status of the account (e.g., active, closed).",
+            "description": "Current status of the account.",
             "example": "string"
           },
           "customerId": {
             "type": "string",
-            "description": "Identifier for the customer associated with this account.",
+            "description": "Unique identifier of the customer associated with the account.",
             "example": "string"
           },
           "institutionId": {
             "type": "string",
-            "description": "Identifier for the financial institution managing this account.",
+            "description": "Unique identifier of the institution associated with the account.",
             "example": "string"
           },
           "balanceDate": {
             "type": "integer",
-            "description": "Date when the balance was last updated.",
+            "description": "The date the balance was last updated.",
             "format": "int32",
             "example": 0
           },
           "aggregationSuccessDate": {
             "type": "integer",
-            "description": "Date when the account aggregation was successful.",
+            "description": "Date when aggregation was successful.",
             "format": "int32",
             "example": 0
           },
           "aggregationAttemptDate": {
             "type": "integer",
-            "description": "Date when the last aggregation attempt was made.",
+            "description": "Date when the aggregation was attempted.",
             "format": "int32",
             "example": 0
           },
@@ -292,29 +295,29 @@
           },
           "marketSegment": {
             "type": "string",
-            "description": "Market segment associated with the account.",
+            "description": "Market segment the account belongs to.",
             "example": "string"
           },
           "currency": {
             "type": "string",
-            "description": "Currency in which the account balance is denominated.",
+            "description": "Currency in which the account is held.",
             "example": "string"
           },
           "lastTransactionDate": {
             "type": "integer",
-            "description": "Date of the last transaction on the account.",
+            "description": "Date of the last transaction made on the account.",
             "format": "int32",
             "example": 0
           },
           "oldestTransactionDate": {
             "type": "integer",
-            "description": "Date of the oldest transaction on the account.",
+            "description": "Date of the oldest transaction made on the account.",
             "format": "int32",
             "example": 0
           },
           "institutionLoginId": {
             "type": "integer",
-            "description": "Login ID for accessing the financial institution's services.",
+            "description": "Login ID used for the institution.",
             "format": "int32",
             "example": 0
           },
@@ -322,7 +325,7 @@
             "$ref": "#/components/schemas/AccountDetail"
           }
         },
-        "description": "Schema representing a bank account with various attributes."
+        "description": "Information about a specific account."
       },
       "AccountDetail": {
         "type": "object",
@@ -335,7 +338,7 @@
           },
           "availableBalanceAmount": {
             "type": "number",
-            "description": "Amount available for withdrawal or transaction.",
+            "description": "Amount available in the account after accounting for pending transactions.",
             "example": 0.0
           },
           "openDate": {
@@ -346,44 +349,44 @@
           },
           "periodStartDate": {
             "type": "integer",
-            "description": "Start date of the current period for interest calculating.",
+            "description": "Start date of the reporting period for the account.",
             "format": "int32",
             "example": 0
           },
           "periodEndDate": {
             "type": "integer",
-            "description": "End date of the current period for interest calculation.",
+            "description": "End date of the reporting period for the account.",
             "format": "int32",
             "example": 0
           },
           "periodInterestRate": {
             "type": "number",
-            "description": "Interest rate applicable for the current period.",
+            "description": "Interest rate applicable during the reporting period.",
             "example": 0.0
           },
           "periodDepositAmount": {
             "type": "number",
-            "description": "Total amount deposited during the current interest period.",
+            "description": "Total deposit amount during the reporting period.",
             "example": 0.0
           },
           "periodInterestAmount": {
             "type": "number",
-            "description": "Interest amount accrued during the current interest period.",
+            "description": "Total interest earned during the reporting period.",
             "example": 0.0
           },
           "interestYtdAmount": {
             "type": "number",
-            "description": "Total interest earned year-to-date.",
+            "description": "Year to date interest earned on the account.",
             "example": 0.0
           },
           "interestPriorYtdAmount": {
             "type": "number",
-            "description": "Total interest earned prior year-to-date.",
+            "description": "Interest earned prior year to date.",
             "example": 0.0
           },
           "maturityDate": {
             "type": "integer",
-            "description": "Date when the account matures (if applicable).",
+            "description": "Maturity date of the account if applicable.",
             "format": "int32",
             "example": 0
           },
@@ -394,16 +397,16 @@
           },
           "creditAvailableAmount": {
             "type": "number",
-            "description": "Amount available for credit.",
+            "description": "Amount of credit available on the account.",
             "example": 0.0
           },
           "creditMaxAmount": {
             "type": "number",
-            "description": "Maximum credit limit available for this account.",
+            "description": "Maximum credit amount allowed on the account.",
             "example": 0.0
           }
         },
-        "description": "Schema representing detailed information of an account."
+        "description": "Detailed information about the account."
       },
       "ResponseMetadata": {
         "type": "object",
@@ -415,21 +418,21 @@
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate requests and responses.",
+            "description": "Correlation ID for tracing requests.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the response was generated.",
+            "description": "Timestamp for when the response was generated.",
             "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the response was processed.",
+            "description": "Region where the request was processed.",
             "example": "string"
           }
         },
-        "description": "Schema providing metadata about the response."
+        "description": "Metadata information related to the API response."
       }
     },
     "parameters": {
@@ -456,19 +459,31 @@
         "schema": {
           "type": "string"
         }
+      },
+      "institutionId": {
+        "name": "institutionId",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "A unique identifier for the endpoint associated with the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "open-finance-api-get-customer-accounts"
+          "example": "open-finance-api-get-customer-accounts-by-institution"
         },
-        "example": "open-finance-api-get-customer-accounts"
+        "example": "open-finance-api-get-customer-accounts-by-institution"
       },
       "X-Runtime-App": {
+        "description": "The name of the application that is executing the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -481,7 +496,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses HTTP Bearer Authentication, where security tokens are issued in the form of JSON Web Tokens (JWT). Clients must include the JWT in the Authorization header when making requests to protected endpoints.",
+        "description": "This security scheme uses a Bearer Authentication method based on JSON Web Tokens (JWT). Clients must include a valid JWT in the 'Authorization' header when making requests to secure endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
