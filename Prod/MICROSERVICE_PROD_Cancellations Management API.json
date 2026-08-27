@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Cancellations Management API",
-    "description": "The Cancellations Management API facilitates the processing of payment instruction cancellations within the banking system. This endpoint allows authorized users to submit cancellation requests for existing payment instructions, ensuring efficient and reliable transaction management. Typical consumers include financial institutions and payment service providers who need to amend transaction workflows. By using this API, businesses can enhance their operational agility and offer better service to their customers, adapting to changes in payment schedules as needed.",
+    "description": "The Cancellations Management API enables users to process cancellation requests for servicing orders within the banking ecosystem. It allows clients to submit cancellation notifications and manage the lifecycle of these requests. Typical consumers include customer service representatives and automated systems that handle order management. This API streamlines the interactions involved in cancelling orders, ensuring efficient tracking and processing of customer requests.",
     "version": "1.0"
   },
   "servers": [
@@ -18,7 +18,7 @@
       "x-basePath": "/"
     },
     {
-      "url": "https://payments-app:9002",
+      "url": "https://35.162.152.203:9000",
       "description": "PROD",
       "variables": {},
       "x-schema": "https://",
@@ -30,36 +30,15 @@
     }
   ],
   "paths": {
-    "/v5/banking/payments/payment-instruction/{param1}/cancellations": {
+    "/v5/banking/servicing/servicing-order/{param1}/cancellations": {
       "post": {
         "tags": [
-          "Payment Instructions"
+          "Servicing"
         ],
-        "summary": "Cancel a payment instruction.",
-        "description": "This endpoint allows you to cancel a specific payment instruction identified by its unique ID. Use this operation to stop processing a payment that is no longer needed or has been erroneously created.",
-        "operationId": "cancelPaymentInstructionPay300045",
+        "summary": "Cancel a servicing order.",
+        "description": "This operation allows you to cancel a specified servicing order identified by the unique order ID. Ensure that all necessary validations are in place to confirm the cancellation of the order.",
+        "operationId": "cancelServicingOrderRes100045",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/x-workflow-id"
-          },
-          {
-            "$ref": "#/components/parameters/idempotency-key"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-step"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-branch"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-decision"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-internal"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-execution-id"
-          },
           {
             "$ref": "#/components/parameters/x-mock-response"
           },
@@ -68,42 +47,30 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to cancel a specific payment instruction identified by PAY-300045. Ensure that all required fields are filled out correctly to process the cancellation successfully.",
+          "description": "This request body is used to initiate a cancellation for a servicing order. It requires a valid JSON representation of the cancellation request that includes necessary details specified in the schema.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CancelPaymentInstructionPay300045Request"
+                "$ref": "#/components/schemas/CancelServicingOrderRes100045Request"
               }
             }
           }
         },
         "responses": {
           "202": {
-            "description": "Request has been accepted and is being processed.",
+            "description": "The request has been accepted and is being processed.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
               },
               "X-Runtime-App": {
                 "$ref": "#/components/headers/X-Runtime-App"
-              },
-              "X-Workflow-Id": {
-                "$ref": "#/components/headers/X-Workflow-Id"
-              },
-              "X-Workflow-Name": {
-                "$ref": "#/components/headers/X-Workflow-Name"
-              },
-              "X-Workflow-State": {
-                "$ref": "#/components/headers/X-Workflow-State"
-              },
-              "X-Workflow-Execution-Id": {
-                "$ref": "#/components/headers/X-Workflow-Execution-Id"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CancelPaymentInstructionPay300045Response_202"
+                  "$ref": "#/components/schemas/CancelServicingOrderRes100045Response_202"
                 }
               }
             }
@@ -123,35 +90,28 @@
   },
   "components": {
     "schemas": {
-      "CancelPaymentInstructionPay300045Request": {
-        "title": "Cancellation Request Payload",
-        "required": [
-          "cancellationReason",
-          "instructionReference",
-          "requestContext",
-          "requestedAt",
-          "requestedBy"
-        ],
+      "CancelServicingOrderRes100045Request": {
+        "title": "Cancellation Request",
         "type": "object",
         "properties": {
           "cancellationReason": {
             "type": "string",
-            "description": "The reason for the cancellation of the payment instruction.",
+            "description": "Reason for the cancellation of the order.",
             "example": "STANDARD"
           },
           "instructionReference": {
             "type": "string",
-            "description": "A reference identifier for the payment instruction that is being cancelled.",
+            "description": "Reference identifier for the cancellation instruction.",
             "example": "STANDARD"
           },
           "requestedBy": {
             "type": "string",
-            "description": "The identifier of the user or entity who is requesting the cancellation.",
+            "description": "Identifier of the user who requested the cancellation.",
             "example": "STANDARD"
           },
           "requestedAt": {
             "type": "string",
-            "description": "The timestamp when the cancellation request was made.",
+            "description": "Timestamp when the cancellation request was made.",
             "example": "2026-08-11T12:00:00Z"
           },
           "requestContext": {
@@ -159,23 +119,23 @@
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Schema for the cancellation request of a payment instruction.",
+        "description": "Schema representing the request body for a cancellation operation.",
         "example": {
           "cancellationReason": "STANDARD",
           "instructionReference": "STANDARD",
           "requestedBy": "STANDARD",
           "requestedAt": "2026-08-11T12:00:00Z",
           "requestContext": {
-            "requestId": "2daec975-bbb3-5c9c-841c-05c9b0a2247a",
-            "correlationId": "1a2ff482-c7ac-519d-ba33-c137aedfc1b0",
-            "idempotencyKey": "ae21e983-a86f-58f0-ab76-6d2bce4f8875",
+            "requestId": "e3d81e5d-634b-5773-b212-6050a55c461a",
+            "correlationId": "f21339de-fc71-5eb7-95fc-23306040a629",
+            "idempotencyKey": "f9a6cf9c-c14a-5b8b-b72e-f120087726d4",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-759883"
+              "deviceId": "DEV-531259"
             }
           }
         }
@@ -191,35 +151,35 @@
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier to correlate log messages for tracing purposes.",
-            "example": "CORR-12345"
+            "description": "Correlation identifier to track requests across services.",
+            "example": "CORR-321"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key used to ensure the idempotency of the request.",
-            "example": "IDEM-KEY-001"
+            "description": "Key used to ensure that requests are idempotent.",
+            "example": "IDEMP-654321"
           },
           "requestedAt": {
             "type": "string",
-            "description": "The timestamp when the request was initiated.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "Timestamp when the request was initiated.",
+            "example": "2023-10-01T10:00:00Z"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "The system from which the request originated.",
-            "example": "PaymentGateway"
+            "description": "Indicates the system from which the request originated.",
+            "example": "OrderManagementSystem"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application from which the request is coming.",
-            "example": "MobileApp"
+            "description": "Name of the application originating the request.",
+            "example": "WebApp"
           },
           "channel": {
-            "description": "Details regarding the channel through which the request was made.",
+            "description": "Information about the communication channel used for the request.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Schema providing contextual information about the request."
+        "description": "Schema representing the contextual information for a request."
       },
       "Channel": {
         "title": "Channel Information",
@@ -228,38 +188,38 @@
           "channelId": {
             "type": "string",
             "description": "Unique identifier for the communication channel.",
-            "example": "CHANNEL-001"
+            "example": "CH-56789"
           },
           "channelType": {
             "type": "string",
             "description": "Type of the communication channel (e.g., web, mobile).",
-            "example": "Mobile"
+            "example": "Web"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier for the device used for the request.",
-            "example": "DEVICE-12345"
+            "description": "Identifier of the device used for the request, if applicable.",
+            "example": "DEVICE-1234"
           }
         },
-        "description": "Schema for information about the communication channel used."
+        "description": "Schema representing the communication channel details."
       },
-      "CancelPaymentInstructionPay300045Response_202": {
-        "title": "Payment Instruction Cancellation Response",
+      "CancelServicingOrderRes100045Response_202": {
+        "title": "CancellationResponse",
         "type": "object",
         "properties": {
           "actionReference": {
             "type": "string",
-            "description": "A reference identifier for the action taken regarding the payment instruction cancellation.",
+            "description": "A reference identifier for the action taken.",
             "example": "STANDARD"
           },
           "actionType": {
             "type": "string",
-            "description": "The type of action being performed, e.g., 'CANCEL' or 'REVOKE'.",
+            "description": "The type of action performed.",
             "example": "STANDARD"
           },
           "status": {
             "type": "string",
-            "description": "The status of the cancellation request, indicating if it was successful or failed.",
+            "description": "The current status of the cancellation.",
             "example": "ACTIVE"
           },
           "processedAt": {
@@ -268,36 +228,35 @@
             "example": "2026-08-11T12:00:00Z"
           },
           "metadata": {
-            "description": "Additional metadata related to the processing of the cancellation.",
-            "$ref": "#/components/schemas/Metadata"
+            "$ref": "#/components/schemas/CancellationMetadata"
           }
         },
-        "description": "Response object containing details about the cancellation of a payment instruction. It includes action references, status, and metadata regarding the processing of the cancellation.",
+        "description": "Schema representing the response from a cancellation operation.",
         "example": {
           "actionReference": "STANDARD",
           "actionType": "STANDARD",
           "status": "ACTIVE",
           "processedAt": "2026-08-11T12:00:00Z",
           "metadata": {
-            "responseId": "5f13c376-6362-5ac6-8695-c2577ef6b130",
-            "correlationId": "1a2ff482-c7ac-519d-ba33-c137aedfc1b0",
+            "responseId": "5f89d6aa-bc0c-5ed2-afb5-2cea97f703a3",
+            "correlationId": "f21339de-fc71-5eb7-95fc-23306040a629",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "Metadata": {
-        "title": "Cancellation Metadata",
+      "CancellationMetadata": {
+        "title": "CancellationMetadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "A unique identifier for the cancellation response.",
+            "description": "Unique identifier for the response.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "An identifier that correlates this cancellation with other related actions.",
+            "description": "Identifier used to correlate related requests.",
             "example": "string"
           },
           "generatedAt": {
@@ -307,98 +266,14 @@
           },
           "processingRegion": {
             "type": "string",
-            "description": "The geographical region where the cancellation was processed.",
+            "description": "Region where the processing took place.",
             "example": "string"
           }
         },
-        "description": "Metadata related to the cancellation process, including response identifiers and timestamps."
+        "description": "Metadata associated with the cancellation operation."
       }
     },
     "parameters": {
-      "x-workflow-id": {
-        "name": "x-workflow-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "WF-016"
-        },
-        "example": "WF-016"
-      },
-      "idempotency-key": {
-        "name": "idempotency-key",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "3b097ceb-087f-4589-b5bb-ab0f7a592159"
-        },
-        "example": "3b097ceb-087f-4589-b5bb-ab0f7a592159"
-      },
-      "x-workflow-step": {
-        "name": "x-workflow-step",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "1"
-        },
-        "example": "1"
-      },
-      "x-workflow-branch": {
-        "name": "x-workflow-branch",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "main"
-        },
-        "example": "main"
-      },
-      "x-workflow-decision": {
-        "name": "x-workflow-decision",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "NORMAL"
-        },
-        "example": "NORMAL"
-      },
-      "x-workflow-internal": {
-        "name": "x-workflow-internal",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "true"
-        },
-        "example": "true"
-      },
-      "x-workflow-execution-id": {
-        "name": "x-workflow-execution-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "a5df8196-321b-423f-9f99-3b3fed82ed50"
-        },
-        "example": "a5df8196-321b-423f-9f99-3b3fed82ed50"
-      },
       "x-mock-response": {
         "name": "x-mock-response",
         "in": "header",
@@ -426,67 +301,30 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "Unique identifier for the endpoint that processed the payment instruction.",
+        "description": "Unique identifier for the endpoint that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "payment-instruction-cancel-payment-instruction"
+          "example": "servicing-order-cancel-servicing-order"
         },
-        "example": "payment-instruction-cancel-payment-instruction"
+        "example": "servicing-order-cancel-servicing-order"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that executed the payment cancellation operation.",
+        "description": "Name of the application that executed the operation.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "payments"
+          "example": "customer-channel"
         },
-        "example": "payments"
-      },
-      "X-Workflow-Id": {
-        "description": "Identifier for the workflow process under which the cancellation was processed.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "WF-016"
-        },
-        "example": "WF-016"
-      },
-      "X-Workflow-Name": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "Direct Debit Mandate Setup and Collection"
-        },
-        "example": "Direct Debit Mandate Setup and Collection"
-      },
-      "X-Workflow-State": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "IN_PROGRESS"
-        },
-        "example": "IN_PROGRESS"
-      },
-      "X-Workflow-Execution-Id": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "a5df8196-321b-423f-9f99-3b3fed82ed50"
-        },
-        "example": "a5df8196-321b-423f-9f99-3b3fed82ed50"
+        "example": "customer-channel"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication method using a bearer token, following the JSON Web Token (JWT) standard. This allows clients to authenticate by including a JWT in the 'Authorization' header of their HTTP requests.",
+        "description": "Authentication scheme that uses a Bearer token. The token is a JSON Web Token (JWT) that must be included in the Authorization header of requests to access protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
