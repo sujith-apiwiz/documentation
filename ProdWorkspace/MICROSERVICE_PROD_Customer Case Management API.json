@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Customer Case Management API",
-    "description": "The Customer Case Management API enables businesses to efficiently create and manage customer service cases. This endpoint allows authorized users to log new cases related to customer inquiries or issues, ensuring proper tracking and resolution of customer needs. Commonly used by support teams and customer service representatives, this API facilitates responsive interaction with customers by documenting their concerns and initiating follow-up actions. With real-time case management capabilities, organizations can enhance customer satisfaction and streamline their support operations.",
+    "description": "The Customer Case Management API enables users to efficiently access and manage customer service cases within the banking domain. This endpoint provides a comprehensive view of customer cases, allowing service representatives to retrieve current case statuses, updates, and details. Typical consumers include customer support agents and service managers who require insights into customer interactions. The API facilitates improved customer service through timely access to relevant case information, enhancing the ability to resolve issues effectively.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/servicing/customer-case": {
-      "post": {
+    "/v5/banking/servicing/customer-case-management": {
+      "get": {
         "tags": [
-          "Customer Service"
+          "Customer Support"
         ],
-        "summary": "Create a new customer case.",
-        "description": "This endpoint allows the creation of a new customer case in the servicing system. It requires the necessary details about the customer and the nature of the case to be submitted.",
-        "operationId": "createCustomerCase",
+        "summary": "Retrieve Customer Case Management data.",
+        "description": "This endpoint allows you to fetch detailed information regarding customer case management activities, facilitating better service and support for customers.",
+        "operationId": "getCustomerCaseManagement",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "The payload for creating a new customer case. Ensure that the JSON object conforms to the specified schema, which outlines all the required fields necessary for successful creation of the customer case.",
+          "description": "Request payload to retrieve customer case management data. This body defines the parameters required for filtering and pagination in the response.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateCustomerCaseRequest"
+                "$ref": "#/components/schemas/GetCustomerCaseManagementRequest"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Resource created successfully, indicating that the customer case has been successfully registered.",
+          "200": {
+            "description": "Request completed successfully, returning the customer case data.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateCustomerCaseResponse_201"
+                  "$ref": "#/components/schemas/GetCustomerCaseManagementResponse_200"
                 }
               }
             }
@@ -76,218 +76,188 @@
   },
   "components": {
     "schemas": {
-      "CreateCustomerCaseRequest": {
-        "title": "Customer Case Creation Request",
+      "GetCustomerCaseManagementRequest": {
+        "type": "string",
+        "description": "This schema represents the request body as a JSON string for the customer case management GET operation.",
+        "example": "{}"
+      },
+      "GetCustomerCaseManagementResponse_200": {
+        "title": "Customer Case Management Response",
         "type": "object",
         "properties": {
-          "customerId": {
-            "type": "string",
-            "description": "Unique identifier for the customer.",
-            "example": "CUST-814153"
-          },
-          "caseId": {
-            "type": "string",
-            "description": "Unique identifier assigned to the case.",
-            "example": "CASE-580751"
-          },
-          "requestCategory": {
-            "type": "string",
-            "description": "Category of the request.",
-            "example": "STANDARD"
-          },
-          "priority": {
-            "type": "string",
-            "description": "Priority level of the case.",
-            "example": "NORMAL"
-          },
-          "originatingChannel": {
-            "type": "string",
-            "description": "Channel through which the case originated.",
-            "example": "STANDARD"
-          },
-          "caseReason": {
-            "type": "string",
-            "description": "Reason for creating the case.",
-            "example": "STANDARD"
-          },
-          "serviceLevelDueAt": {
-            "type": "string",
-            "description": "Date and time when the service level is due.",
-            "example": "2026-08-11T12:00:00Z"
-          },
-          "customerContactPreference": {
-            "type": "string",
-            "description": "Preferred method of contact for the customer.",
-            "example": "STANDARD"
-          },
-          "requestContext": {
-            "description": "Contextual information related to the request.",
-            "$ref": "#/components/schemas/RequestContext"
-          }
-        },
-        "description": "Schema representing a request to create a new customer case.",
-        "example": {
-          "customerId": "CUST-814153",
-          "caseId": "CASE-580751",
-          "requestCategory": "STANDARD",
-          "priority": "NORMAL",
-          "originatingChannel": "STANDARD",
-          "caseReason": "STANDARD",
-          "serviceLevelDueAt": "2026-08-11T12:00:00Z",
-          "customerContactPreference": "STANDARD",
-          "requestContext": {
-            "requestId": "5c125277-94fa-5491-b85d-29d2eda8ce1d",
-            "correlationId": "21cd6614-1464-5ec0-9b2b-c2302d287735",
-            "idempotencyKey": "3fa90324-7f68-5094-915f-6dd73c175f0d",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-744766"
+          "items": {
+            "type": "array",
+            "description": "List of customer case management items.",
+            "example": [
+              {
+                "customerId": "CUST-645121",
+                "caseId": "CASE-609074",
+                "requestCategory": "STANDARD",
+                "priority": "NORMAL",
+                "originatingChannel": "STANDARD",
+                "caseReason": "STANDARD",
+                "serviceLevelDueAt": "2026-08-11T12:00:00Z",
+                "customerContactPreference": "STANDARD",
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CustomerCase"
             }
-          }
-        }
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req-123"
           },
-          "correlationId": {
-            "type": "string",
-            "description": "ID used to correlate requests across systems.",
-            "example": "corr-456"
+          "pagination": {
+            "description": "Pagination information for the response.",
+            "$ref": "#/components/schemas/Pagination"
           },
-          "idempotencyKey": {
+          "sort": {
             "type": "string",
-            "description": "Unique key to prevent duplicate processing.",
-            "example": "idemp-789"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp when the request was made.",
-            "example": "2023-10-01T12:00:00Z"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "System from which the request originated.",
-            "example": "CRM"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "Application from which the request was made.",
-            "example": "Support App"
-          },
-          "channel": {
-            "description": "Information about the channel used for the request.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Schema containing contextual information for the request."
-      },
-      "Channel": {
-        "title": "Channel Information",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "channel-101"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of the communication channel.",
-            "example": "Email"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier for the device used in the channel, if applicable.",
-            "example": "device-202"
-          }
-        },
-        "description": "Schema representing information about the communication channel."
-      },
-      "CreateCustomerCaseResponse_201": {
-        "title": "Customer Case Response",
-        "type": "object",
-        "properties": {
-          "customerId": {
-            "type": "string",
-            "description": "The unique identifier for the customer.",
-            "example": "CUST-659433"
-          },
-          "caseId": {
-            "type": "string",
-            "description": "The unique identifier for the case created.",
-            "example": "CASE-931777"
-          },
-          "resourceId": {
-            "type": "string",
-            "description": "The unique identifier for the resource associated with the case.",
-            "example": "RES-989009"
-          },
-          "status": {
-            "type": "string",
-            "description": "The current status of the case.",
-            "example": "ACTIVE"
-          },
-          "createdAt": {
-            "type": "string",
-            "description": "The timestamp indicating when the case was created.",
-            "example": "2026-09-15T14:30:00Z"
+            "description": "Sorting order applied to the list of items.",
+            "example": "STANDARD"
           },
           "metadata": {
-            "description": "Additional metadata related to the case response.",
+            "description": "Metadata related to the response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response object for the customer case creation operation.",
+        "description": "Response schema for retrieving customer case management data.",
         "example": {
-          "customerId": "CUST-659433",
-          "caseId": "CASE-931777",
-          "resourceId": "RES-989009",
-          "status": "ACTIVE",
-          "createdAt": "2026-09-15T14:30:00Z",
+          "items": [
+            {
+              "customerId": "CUST-645121",
+              "caseId": "CASE-609074",
+              "requestCategory": "STANDARD",
+              "priority": "NORMAL",
+              "originatingChannel": "STANDARD",
+              "caseReason": "STANDARD",
+              "serviceLevelDueAt": "2026-08-11T12:00:00Z",
+              "customerContactPreference": "STANDARD",
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
+          },
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "054f1e64-2179-5a9d-a25c-620685048d68",
-            "correlationId": "21cd6614-1464-5ec0-9b2b-c2302d287735",
+            "responseId": "d0369709-2d40-5a91-9dd4-15341da3febc",
+            "correlationId": "76c9638f-8227-599a-83d9-e146177103a3",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
+      "CustomerCase": {
+        "title": "Customer Case",
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "description": "Unique identifier for the customer.",
+            "example": "12345"
+          },
+          "caseId": {
+            "type": "string",
+            "description": "Unique identifier for the case.",
+            "example": "abc123"
+          },
+          "requestCategory": {
+            "type": "string",
+            "description": "Category of the request made by the customer.",
+            "example": "General Inquiry"
+          },
+          "priority": {
+            "type": "string",
+            "description": "Priority level of the case.",
+            "example": "High"
+          },
+          "originatingChannel": {
+            "type": "string",
+            "description": "The channel through which the case was created.",
+            "example": "Web"
+          },
+          "caseReason": {
+            "type": "string",
+            "description": "Reason for opening the case.",
+            "example": "Request for information"
+          },
+          "serviceLevelDueAt": {
+            "type": "string",
+            "description": "Date and time by when the case should be addressed.",
+            "example": "2023-10-01T12:00:00Z"
+          },
+          "customerContactPreference": {
+            "type": "string",
+            "description": "Customer's preferred method of contact.",
+            "example": "Email"
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "Current status of the case.",
+            "example": "Open"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp of the last update to the case.",
+            "example": "2023-09-30T12:00:00Z"
+          }
+        },
+        "description": "Represents a customer case in the case management system."
+      },
+      "Pagination": {
+        "title": "Pagination",
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number.",
+            "format": "int32",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32",
+            "example": 10
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available across all pages.",
+            "format": "int32",
+            "example": 100
+          }
+        },
+        "description": "Pagination information for API responses."
+      },
       "Metadata": {
-        "title": "Metadata",
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "The unique identifier for the response.",
-            "example": "resp-121314"
+            "description": "Unique identifier for the response.",
+            "example": "xyz987"
           },
           "correlationId": {
             "type": "string",
-            "description": "A unique identifier used to correlate requests and responses.",
-            "example": "corr-151617"
+            "description": "Correlation ID for tracking requests.",
+            "example": "corr456"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp when the response was generated.",
-            "example": "2023-10-10T14:48:00Z"
+            "description": "Timestamp indicating when the response was generated.",
+            "example": "2023-09-30T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing of the request took place.",
-            "example": "us-west"
+            "description": "Region where the response was processed.",
+            "example": "US-West"
           }
         },
-        "description": "Metadata information related to the case response."
+        "description": "Metadata associated with the API response."
       }
     },
     "parameters": {
@@ -301,7 +271,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_201"
+            "MICROSERVICE_PROD_200"
           ]
         }
       }
@@ -312,15 +282,17 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "customer-case-create-customer-case"
+          "description": "A unique identifier for the endpoint that was called.",
+          "example": "customer-case-management-search-customer-case-management"
         },
-        "example": "customer-case-create-customer-case"
+        "example": "customer-case-management-search-customer-case-management"
       },
       "X-Runtime-App": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
+          "description": "The name of the application that handled the request, indicating the backend service responsible for processing.",
           "example": "customer-channel"
         },
         "example": "customer-channel"
@@ -329,7 +301,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the Bearer authentication method, where security tokens are passed in the Authorization header of requests. The expected format for the token is JSON Web Token (JWT).",
+        "description": "This security scheme uses a bearer token for authorization. The token is expected to be a JSON Web Token (JWT) which must be included in the Authorization header of the request.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
