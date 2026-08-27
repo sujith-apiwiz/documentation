@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Investment Account Management API",
-    "description": "The Investment Account Management API enables users to update key details of their investment accounts. This endpoint is designed for financial institutions and developers to facilitate account modifications such as adjusting investment preferences, updating contact information, or revising account settings. Typical consumers include financial service providers, account managers, and user application developers. By utilizing this API, organizations can streamline the management of client investment accounts efficiently and securely.",
+    "description": "The Investment Account Management API enables users to access and manage their investment accounts efficiently. This API allows financial institutions and investment managers to retrieve detailed information about accounts, including balances, transaction history, and account performance metrics. Typical users include financial advisors, wealth management platforms, and accounting software providers looking to integrate investment account insights into their systems. By leveraging this API, organizations can enhance their client services and streamline investment management processes.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/investment-management/investment-account/{param1}": {
-      "patch": {
+    "/v5/banking/investment-management/investment-account": {
+      "get": {
         "tags": [
           "Investment Management"
         ],
-        "summary": "Update Investment Account Details",
-        "description": "This endpoint allows you to update the details of a specific investment account. You can modify various attributes associated with the account to ensure the information remains current and reflects any changes required by the account holder.",
-        "operationId": "patchInvestmentAccountACC200045",
+        "summary": "Retrieve Investment Account Details",
+        "description": "This endpoint allows users to fetch detailed information about a specific investment account, including current holdings, transactions, and account performance metrics. Use this to monitor and manage investment assets effectively.",
+        "operationId": "getInvestmentAccount",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
-          },
-          {
-            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to update the investment account identified by ACC-200045. It allows clients to submit various fields for modification, which should be included in the payload based on the schema defined. Ensure that all required fields are populated correctly to execute a successful update.",
+          "description": "Request body for retrieving the details of an investment account. Ensure that the required parameters are correctly specified in the request to get the desired account information.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PatchInvestmentAccountACC200045Request"
+                "$ref": "#/components/schemas/GetInvestmentAccountRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully and the resource was updated.",
+            "description": "Successfully retrieved the investment account details.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PatchInvestmentAccountACC200045Response_200"
+                  "$ref": "#/components/schemas/GetInvestmentAccountResponse_200"
                 }
               }
             }
@@ -90,199 +87,149 @@
   },
   "components": {
     "schemas": {
-      "PatchInvestmentAccountACC200045Request": {
+      "GetInvestmentAccountRequest": {
+        "type": "string",
+        "description": "Represents the request body for the GET operation on investment account operations in the investment management system.",
+        "example": "{}"
+      },
+      "GetInvestmentAccountResponse_200": {
         "type": "object",
         "properties": {
-          "changes": {
-            "$ref": "#/components/schemas/InvestmentAccountChanges"
-          },
-          "changeReason": {
-            "type": "string",
-            "description": "The reason for the change being requested.",
-            "example": "STANDARD"
-          },
-          "effectiveAt": {
-            "type": "string",
-            "description": "The date and time when the changes will take effect.",
-            "example": "2026-09-15T14:30:00Z"
-          },
-          "requestedBy": {
-            "type": "string",
-            "description": "The identifier of the user or system requesting the changes.",
-            "example": "STANDARD"
-          },
-          "requestContext": {
-            "$ref": "#/components/schemas/RequestContext"
-          }
-        },
-        "description": "Request body for patching investment account operations.",
-        "example": {
-          "changes": {
-            "portfolioId": "PORT-996483",
-            "investmentAccountId": "ACC-353603",
-            "investmentObjective": "STANDARD"
-          },
-          "changeReason": "STANDARD",
-          "effectiveAt": "2026-09-15T14:30:00Z",
-          "requestedBy": "STANDARD",
-          "requestContext": {
-            "requestId": "d62aa2c2-d679-5ad6-bf03-6cfc64b63887",
-            "correlationId": "fd85ecc3-1faa-5735-8987-8dfb3ae90a00",
-            "idempotencyKey": "73826ccd-ea9c-5d11-a1c0-262c55c9f1ea",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-573742"
+          "items": {
+            "type": "array",
+            "description": "An array of investment account details.",
+            "example": [
+              {
+                "portfolioId": "PORT-887785",
+                "investmentAccountId": "ACC-360586",
+                "investmentObjective": "STANDARD",
+                "riskProfile": "STANDARD",
+                "baseCurrency": "USD",
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/InvestmentAccount"
             }
-          }
-        }
-      },
-      "InvestmentAccountChanges": {
-        "type": "object",
-        "properties": {
-          "portfolioId": {
-            "type": "string",
-            "description": "The ID of the portfolio associated with the investment account.",
-            "example": "portfolio_67890"
           },
-          "investmentAccountId": {
-            "type": "string",
-            "description": "The ID of the investment account being modified.",
-            "example": "account_12345"
+          "pagination": {
+            "description": "An object containing pagination details for the result set.",
+            "$ref": "#/components/schemas/Pagination"
           },
-          "investmentObjective": {
+          "sort": {
             "type": "string",
-            "description": "The investment objective for the account.",
-            "example": "Growth"
-          }
-        },
-        "description": "Contains the changes to be made to the investment account."
-      },
-      "RequestContext": {
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req_98765"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier used for correlating logs or events.",
-            "example": "corr_54321"
-          },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "Key to ensure the operation is idempotent.",
-            "example": "idempotency_key_abcde"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp indicating when the request was made.",
-            "example": "2023-09-30T09:00:00Z"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "The system from which the request originated.",
-            "example": "CRM"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "The application through which the request was made.",
-            "example": "InvestmentApp"
-          },
-          "channel": {
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Contextual information about the request."
-      },
-      "Channel": {
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier of the channel.",
-            "example": "channel_112233"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of the channel (e.g., Web, Mobile, API).",
-            "example": "Web"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier of the device used to make the request.",
-            "example": "device_55678"
-          }
-        },
-        "description": "Information about the channel used for the request."
-      },
-      "PatchInvestmentAccountACC200045Response_200": {
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "integer",
-            "description": "The version number of the response.",
-            "format": "int32",
-            "example": 1
-          },
-          "status": {
-            "type": "string",
-            "description": "The status of the operation.",
-            "example": "ACTIVE"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "The timestamp indicating when the resource was last updated.",
-            "example": "2026-09-15T14:30:00Z"
+            "description": "The sorting criteria applied to the results.",
+            "example": "STANDARD"
           },
           "metadata": {
-            "description": "Contains metadata information related to the response.",
+            "description": "Metadata related to the API response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the PATCH operation on the investment account.",
+        "description": "Schema representing the response structure for the GET operation on investment accounts.",
         "example": {
-          "version": 1,
-          "status": "ACTIVE",
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "items": [
+            {
+              "portfolioId": "PORT-887785",
+              "investmentAccountId": "ACC-360586",
+              "investmentObjective": "STANDARD",
+              "riskProfile": "STANDARD",
+              "baseCurrency": "USD",
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
+          },
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "07373cb5-5da7-59d6-9a38-76361494b02a",
-            "correlationId": "fd85ecc3-1faa-5735-8987-8dfb3ae90a00",
+            "responseId": "02f253ec-6c6a-5be6-bb78-fed5828d6d61",
+            "correlationId": "87fd2a9e-57a7-5c47-889c-b62940e0a8fc",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
+      },
+      "InvestmentAccount": {
+        "type": "object",
+        "properties": {
+          "portfolioId": {
+            "type": "string",
+            "description": "The unique identifier for the portfolio associated with the investment account."
+          },
+          "investmentAccountId": {
+            "type": "string",
+            "description": "The unique identifier for the investment account."
+          },
+          "investmentObjective": {
+            "type": "string",
+            "description": "The investment objective assigned to the account."
+          },
+          "riskProfile": {
+            "type": "string",
+            "description": "The risk profile of the investment account."
+          },
+          "baseCurrency": {
+            "type": "string",
+            "description": "The base currency used for the investment account."
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "The current status of the investment account record."
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "The timestamp of when the investment account was last updated."
+          }
+        },
+        "description": "Schema representing the details of a single investment account."
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "The current page number in the paginated results.",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The number of items per page.",
+            "format": "int32"
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "The total number of items available across all pages.",
+            "format": "int32"
+          }
+        },
+        "description": "Schema representing pagination details for API responses."
       },
       "Metadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "string"
+            "description": "A unique identifier for the response."
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate multiple requests and responses.",
-            "example": "string"
+            "description": "An identifier used for tracking the request-response correlation."
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the metadata was generated.",
-            "example": "string"
+            "description": "The timestamp of when the response was generated."
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing took place.",
-            "example": "string"
+            "description": "The region where the processing of the request occurred."
           }
         },
-        "description": "Metadata information about the operation response."
+        "description": "Schema representing metadata related to the API response."
       }
     },
     "parameters": {
@@ -299,31 +246,19 @@
             "MICROSERVICE_PROD_200"
           ]
         }
-      },
-      "param1": {
-        "name": "param1",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
-        }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "The unique identifier for the endpoint processing the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "investment-account-update-investment-account"
+          "example": "investment-account-search-investment-account"
         },
-        "example": "investment-account-update-investment-account"
+        "example": "investment-account-search-investment-account"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that executed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -336,7 +271,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This authentication scheme uses Bearer Tokens, typically formatted as JSON Web Tokens (JWT), allowing secure transmission of user authentication information.",
+        "description": "This security scheme allows the use of Bearer tokens for authentication. Clients need to provide a valid JSON Web Token (JWT) in the Authorization header for secure access to the API resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
