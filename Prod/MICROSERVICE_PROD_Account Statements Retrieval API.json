@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE_PROD_Account Statement Retrieval API",
-    "description": "The Account Statement Retrieval API enables users to retrieve detailed financial statements for specific accounts. This endpoint is particularly valuable for financial institutions and fintech applications that require seamless access to client account information for reporting and analysis. By leveraging this API, developers can integrate account statement functionalities into their applications, enhancing user experience and ensuring compliance with regulatory demands in the open banking landscape. Typical consumers include banks, financial service providers, and application developers focused on providing insights into customer account activity.",
+    "title": "MICROSERVICE_PROD_Account Statements Retrieval API",
+    "description": "The Account Statements Retrieval API enables users to access specific financial statements associated with a designated bank account. By utilizing this endpoint, consumers can retrieve detailed transaction records, facilitating transparency and informed financial decision-making. This API is particularly beneficial for financial institutions and third-party applications that require access to users' financial data as part of open banking services. It ensures compliance with banking regulations while enhancing user experience through easy access to their financial information.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,38 @@
     }
   ],
   "paths": {
-    "/v5/open-banking/aisp/accounts/{accountId}/statements": {
+    "/v5/open-banking/aisp/accounts/{accountId}/statements/{statementId}": {
       "get": {
         "tags": [
           "Account Management"
         ],
-        "summary": "Retrieve account statements",
-        "description": "This endpoint allows you to fetch the statements for a specific account identified by ACC-200045. You can use this information to review transaction history, manage financial records, or for reporting purposes.",
-        "operationId": "getAccountStatementsAispAcc200045",
+        "summary": "Retrieve account statements for a specific account.",
+        "description": "This endpoint allows users to fetch the account statements for the specified account identified by its unique account number. It provides detailed transaction history and other relevant information within the given timeframe.",
+        "operationId": "getAccountStatementsForAccount",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           },
           {
             "$ref": "#/components/parameters/accountId"
+          },
+          {
+            "$ref": "#/components/parameters/statementId"
           }
         ],
         "requestBody": {
-          "description": "This request body contains the necessary parameters for retrieving the account statements associated with account ACC-200045. Ensure that the values specified comply with the data types and constraints defined in the referenced schema.",
+          "description": "Request body for retrieving statements for a specific account. This may include details for filtering or formatting the returned data.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetAccountStatementsAispAcc200045Request"
+                "$ref": "#/components/schemas/GetAccountStatementsForAccountRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, returning the account statements.",
+            "description": "Successful retrieval of account statements.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +73,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetAccountStatementsAispAcc200045Response_200"
+                  "$ref": "#/components/schemas/GetAccountStatementsForAccountResponse_200"
                 }
               }
             }
@@ -90,12 +93,13 @@
   },
   "components": {
     "schemas": {
-      "GetAccountStatementsAispAcc200045Request": {
+      "GetAccountStatementsForAccountRequest": {
         "type": "string",
-        "description": "Represents the request body for retrieving account statements for a specific account.",
+        "description": "The request body for the GET operation on statements for the specified account. It contains a string representation of the request data.",
         "example": "{}"
       },
-      "GetAccountStatementsAispAcc200045Response_200": {
+      "GetAccountStatementsForAccountResponse_200": {
+        "title": "Account Statements Response",
         "type": "object",
         "properties": {
           "Data": {
@@ -104,16 +108,17 @@
               "Statement": {
                 "type": "array",
                 "description": "List of account statements.",
+                "example": [],
                 "items": {
-                  "$ref": "#/components/schemas/Statement"
+                  "$ref": "#/components/schemas/AccountStatement"
                 }
               }
             },
-            "description": "Contains information related to the account statements.",
+            "description": "Container for the account statements data.",
             "example": {
               "Statement": [
                 {
-                  "AccountId": "ACC-994897",
+                  "AccountId": "ACC-126158",
                   "id": "STANDARD",
                   "reference": "STANDARD",
                   "Type": "STANDARD",
@@ -186,39 +191,39 @@
               "responseId": {
                 "type": "string",
                 "description": "Unique identifier for the response.",
-                "example": "string"
+                "example": "resp-12345"
               },
               "correlationId": {
                 "type": "string",
-                "description": "Identifier used to track the request and response correlation.",
-                "example": "string"
+                "description": "Identifier used to correlate requests and responses.",
+                "example": "corr-67890"
               },
               "generatedAt": {
                 "type": "string",
-                "description": "Timestamp when the response was generated.",
-                "example": "string"
+                "description": "Timestamp of when the response was generated.",
+                "example": "2023-10-05T10:20:30Z"
               },
               "processingRegion": {
                 "type": "string",
                 "description": "Region where the processing occurred.",
-                "example": "string"
+                "example": "EU"
               }
             },
-            "description": "Metadata information about the response.",
+            "description": "Metadata related to the response, such as identifiers and timestamps.",
             "example": {
-              "responseId": "b2e0b451-8672-5784-8f10-5861ab6ba531",
-              "correlationId": "51a9e4e4-6fd2-5485-8d6e-9ee0db922bb5",
+              "responseId": "0c66d769-2c7f-54a7-a86e-914c65e80d77",
+              "correlationId": "2c51fada-c3c3-574a-b2c5-633dd9cfb577",
               "generatedAt": "2026-09-15T14:30:00Z",
               "processingRegion": "us-east-1"
             }
           }
         },
-        "description": "Response object containing account statements and associated metadata.",
+        "description": "Response schema for account statements retrieval. Contains data about the fetched statements, including associated metadata.",
         "example": {
           "Data": {
             "Statement": [
               {
-                "AccountId": "ACC-994897",
+                "AccountId": "ACC-126158",
                 "id": "STANDARD",
                 "reference": "STANDARD",
                 "Type": "STANDARD",
@@ -285,89 +290,89 @@
             ]
           },
           "metadata": {
-            "responseId": "b2e0b451-8672-5784-8f10-5861ab6ba531",
-            "correlationId": "51a9e4e4-6fd2-5485-8d6e-9ee0db922bb5",
+            "responseId": "0c66d769-2c7f-54a7-a86e-914c65e80d77",
+            "correlationId": "2c51fada-c3c3-574a-b2c5-633dd9cfb577",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "Statement": {
+      "AccountStatement": {
         "type": "object",
         "properties": {
           "AccountId": {
             "type": "string",
-            "description": "Identifier for the account associated with the statement.",
-            "example": "string"
+            "description": "The identifier of the account associated with the statement.",
+            "example": "acc-200045"
           },
           "id": {
             "type": "string",
             "description": "Unique identifier for the statement.",
-            "example": "string"
+            "example": "stmt-100045"
           },
           "reference": {
             "type": "string",
-            "description": "Reference number of the statement.",
-            "example": "string"
+            "description": "Reference code for the statement.",
+            "example": "ref-12345"
           },
           "Type": {
             "type": "string",
             "description": "Type of the statement.",
-            "example": "string"
+            "example": "credit"
           },
           "StartDateTime": {
             "type": "string",
             "description": "Start date and time of the statement period.",
-            "example": "string"
+            "example": "2023-01-01T00:00:00Z"
           },
           "EndDateTime": {
             "type": "string",
             "description": "End date and time of the statement period.",
-            "example": "string"
+            "example": "2023-01-31T23:59:59Z"
           },
           "CreationDateTime": {
             "type": "string",
-            "description": "Creation date and time of the statement.",
-            "example": "string"
+            "description": "Date and time when the statement was created.",
+            "example": "2023-02-01T12:00:00Z"
           },
           "description": {
             "type": "array",
-            "description": "Detailed descriptions associated with the statement.",
+            "description": "Array of descriptions related to the statement.",
             "items": {
               "type": "string",
-              "example": "string"
+              "example": "Monthly statement"
             }
           },
           "benefit": {
             "type": "array",
-            "description": "List of benefits associated with the statement.",
+            "description": "Array of benefits associated with the statement.",
             "items": {
               "$ref": "#/components/schemas/Benefit"
             }
           },
           "fee": {
             "type": "array",
-            "description": "List of fees charged associated with the statement.",
+            "description": "Array of fees associated with the statement.",
             "items": {
               "$ref": "#/components/schemas/Fee"
             }
           },
           "interest": {
             "type": "array",
-            "description": "List of interest charges associated with the statement.",
+            "description": "Array of interests accrued from the statement.",
             "items": {
               "$ref": "#/components/schemas/Interest"
             }
           },
           "amount": {
             "type": "array",
-            "description": "List of amounts associated with the statement.",
+            "description": "Array of amounts related to the statement.",
             "items": {
-              "$ref": "#/components/schemas/Amount"
+              "$ref": "#/components/schemas/AmountDetail"
             }
           }
         },
-        "description": "Details of an individual account statement."
+        "description": "Schema representing a single account statement entry."
       },
       "Benefit": {
         "type": "object",
@@ -375,26 +380,26 @@
           "Type": {
             "type": "string",
             "description": "Type of the benefit.",
-            "example": "string"
+            "example": "cashback"
           },
           "Amount": {
             "type": "object",
             "properties": {
               "Amount": {
                 "type": "string",
-                "description": "Value of the benefit.",
-                "example": "string"
+                "description": "Total amount of the benefit.",
+                "example": "10.00"
               },
               "Currency": {
                 "type": "string",
-                "description": "Currency of the benefit amount.",
-                "example": "string"
+                "description": "Currency in which the benefit is expressed.",
+                "example": "USD"
               }
             },
-            "description": "Amount details of the benefit."
+            "description": "Details about the benefit amount."
           }
         },
-        "description": "Details of a benefit associated with an account statement."
+        "description": "Schema representing a benefit associated with an account statement."
       },
       "Fee": {
         "type": "object",
@@ -402,51 +407,51 @@
           "Description": {
             "type": "string",
             "description": "Description of the fee.",
-            "example": "string"
+            "example": "Monthly maintenance fee"
           },
           "CreditDebitIndicator": {
             "type": "string",
-            "description": "Indicates if the fee is a credit or debit.",
-            "example": "string"
+            "description": "Indicator if the fee is a credit or debit.",
+            "example": "debit"
           },
           "Type": {
             "type": "string",
-            "description": "Type of fee.",
-            "example": "string"
+            "description": "Type of the fee.",
+            "example": "service"
           },
           "Rate": {
             "type": "number",
-            "description": "Rate of the fee.",
-            "example": 0.0
+            "description": "Rate associated with the fee.",
+            "example": 5.0
           },
           "RateType": {
             "type": "string",
-            "description": "Type of the rate applicable to the fee.",
-            "example": "string"
+            "description": "Type of the rate.",
+            "example": "percentage"
           },
           "Frequency": {
             "type": "string",
-            "description": "Frequency of the fee.",
-            "example": "string"
+            "description": "Frequency of the fee occurrence.",
+            "example": "monthly"
           },
           "Amount": {
             "type": "object",
             "properties": {
               "Amount": {
                 "type": "string",
-                "description": "Value of the fee.",
-                "example": "string"
+                "description": "Total amount of the fee.",
+                "example": "5.00"
               },
               "Currency": {
                 "type": "string",
-                "description": "Currency of the fee amount.",
-                "example": "string"
+                "description": "Currency in which the fee is expressed.",
+                "example": "USD"
               }
             },
-            "description": "Amount details of the fee."
+            "description": "Details about the fee amount."
           }
         },
-        "description": "Information about fees associated with an account statement."
+        "description": "Schema representing a fee associated with an account statement."
       },
       "Interest": {
         "type": "object",
@@ -454,109 +459,109 @@
           "Description": {
             "type": "string",
             "description": "Description of the interest.",
-            "example": "string"
+            "example": "Annual interest"
           },
           "CreditDebitIndicator": {
             "type": "string",
-            "description": "Indicates if the interest is a credit or debit.",
-            "example": "string"
+            "description": "Indicator if the interest is a credit or debit.",
+            "example": "credit"
           },
           "Type": {
             "type": "string",
-            "description": "Type of interest.",
-            "example": "string"
+            "description": "Type of the interest.",
+            "example": "annual"
           },
           "Rate": {
             "type": "number",
-            "description": "Rate of interest.",
-            "example": 0.0
+            "description": "Rate of the interest.",
+            "example": 3.5
           },
           "RateType": {
             "type": "string",
-            "description": "Type of the rate applicable to the interest.",
-            "example": "string"
+            "description": "Type of the rate.",
+            "example": "percentage"
           },
           "Frequency": {
             "type": "string",
-            "description": "Frequency of the interest charge.",
-            "example": "string"
+            "description": "Frequency of interest application.",
+            "example": "monthly"
           },
           "Amount": {
             "type": "object",
             "properties": {
               "Amount": {
                 "type": "string",
-                "description": "Value of the interest charge.",
-                "example": "string"
+                "description": "Total amount of the interest.",
+                "example": "15.50"
               },
               "Currency": {
                 "type": "string",
-                "description": "Currency of the interest amount.",
-                "example": "string"
+                "description": "Currency in which the interest is expressed.",
+                "example": "USD"
               }
             },
-            "description": "Amount details of the interest charge."
+            "description": "Details about the interest amount."
           }
         },
-        "description": "Information about interest charges associated with an account statement."
+        "description": "Schema representing interest charged or accrued on the account statement."
       },
-      "Amount": {
+      "AmountDetail": {
         "type": "object",
         "properties": {
           "CreditDebitIndicator": {
             "type": "string",
-            "description": "Indicates whether the amount is a credit or debit.",
-            "example": "string"
+            "description": "Indicator if the amount is a credit or debit.",
+            "example": "credit"
           },
           "Type": {
             "type": "string",
             "description": "Type of the amount.",
-            "example": "string"
+            "example": "payment"
           },
           "Amount": {
             "type": "object",
             "properties": {
               "Amount": {
                 "type": "string",
-                "description": "Value of the amount.",
-                "example": "string"
+                "description": "Total amount.",
+                "example": "100.00"
               },
               "Currency": {
                 "type": "string",
-                "description": "Currency of the amount.",
-                "example": "string"
+                "description": "Currency in which the amount is expressed.",
+                "example": "USD"
               },
               "SubType": {
                 "type": "string",
                 "description": "Sub-type of the amount.",
-                "example": "string"
+                "example": "transfer"
               }
             },
-            "description": "Amount details."
+            "description": "Details about the amount."
           },
           "LocalAmount": {
             "type": "object",
             "properties": {
               "Amount": {
                 "type": "string",
-                "description": "Value of the local amount.",
-                "example": "string"
+                "description": "Total local amount.",
+                "example": "100.00"
               },
               "Currency": {
                 "type": "string",
                 "description": "Currency of the local amount.",
-                "example": "string"
+                "example": "USD"
               },
               "SubType": {
                 "type": "string",
                 "description": "Sub-type of the local amount.",
-                "example": "string"
+                "example": "transfer"
               }
             },
-            "description": "Local amount details."
+            "description": "Details about the local amount, if applicable."
           }
         },
-        "description": "Details about amounts related to the account statement."
+        "description": "Schema representing an amount entry associated with the statement."
       }
     },
     "parameters": {
@@ -583,21 +588,31 @@
         "schema": {
           "type": "string"
         }
+      },
+      "statementId": {
+        "name": "statementId",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "The unique identifier for the endpoint being called in the API request.",
+        "description": "The unique identifier for the API endpoint that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "accounts-api-get-accounts-account-id-statements"
+          "example": "accounts-api-get-accounts-account-id-statements-statement-id"
         },
-        "example": "accounts-api-get-accounts-account-id-statements"
+        "example": "accounts-api-get-accounts-account-id-statements-statement-id"
       },
       "X-Runtime-App": {
-        "description": "The name of the application runtime that processed the request.",
+        "description": "Indicates the application responsible for handling the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -610,7 +625,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme utilizes a Bearer token for authentication, specifically using JSON Web Tokens (JWT). Ensure the token is presented in the Authorization header as 'Bearer {token}'.",
+        "description": "Utilizes JSON Web Tokens (JWT) for secure authentication, ensuring that the client can access protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
