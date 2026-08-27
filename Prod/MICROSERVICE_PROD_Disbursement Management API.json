@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Disbursement Management API",
-    "description": "The Disbursement Management API allows businesses to efficiently track and manage disbursement transactions. This endpoint enables users to retrieve detailed information regarding disbursement activities, enhancing visibility into financial operations. Typical consumers of this API include financial institutions and accounting systems that require real-time data on disbursement status. By integrating this API, developers can streamline workflows related to financial disbursements, ensuring accurate reporting and oversight.",
+    "description": "This API facilitates the management of disbursements associated with loans. It allows users to modify the details of a specific disbursement by referencing the unique identifiers of both the loan and the disbursement. Typical consumers of this API include loan servicing systems and financial institutions that need to adjust disbursement data in response to changes or corrections. By providing an efficient means to update disbursement information, the API supports improved accuracy and customer service in financial transactions.",
     "version": "1.0"
   },
   "servers": [
@@ -18,7 +18,7 @@
       "x-basePath": "/"
     },
     {
-      "url": "https://35.162.152.203:9009",
+      "url": "https://35.162.152.203:9004",
       "description": "PROD",
       "variables": {},
       "x-schema": "https://",
@@ -30,44 +30,50 @@
     }
   ],
   "paths": {
-    "/v5/banking/operational-services/disbursement": {
-      "get": {
+    "/v5/loans/loans/{loanId}/disbursements/{disbursementId}": {
+      "patch": {
         "tags": [
-          "Operational Services"
+          "Loan Management"
         ],
-        "summary": "Retrieve disbursement information.",
-        "description": "This endpoint allows clients to retrieve information regarding disbursements from operational services. It provides necessary details that can be used for further processing or analysis.",
-        "operationId": "getDisbursementOperationalServices",
+        "summary": "Update disbursement details for a specific loan",
+        "description": "This endpoint allows you to update the details of a specific disbursement associated with a loan. You can modify various attributes related to the disbursement, providing a flexible way to manage loan funds.",
+        "operationId": "patchLoanDisbursementRes",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/loanId"
+          },
+          {
+            "$ref": "#/components/parameters/disbursementId"
           }
         ],
         "requestBody": {
-          "description": "This request body is utilized to fetch operational disbursement information. It is expected to adhere to the defined schema for proper processing.",
+          "description": "This request body is used to update the disbursement details for a specific loan. It contains all the necessary data to modify the existing disbursement identified by RES-100045. Ensure that the JSON format conforms to the specified schema.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetDisbursementOperationalServicesRequest"
+                "$ref": "#/components/schemas/PatchLoanDisbursementResRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, returning the requested disbursement data.",
+            "description": "The disbursement update was successful.",
             "headers": {
-              "x-endpoint-id": {
-                "$ref": "#/components/headers/x-endpoint-id"
+              "X-Endpoint-Id": {
+                "$ref": "#/components/headers/X-Endpoint-Id"
               },
-              "x-runtime-app": {
-                "$ref": "#/components/headers/x-runtime-app"
+              "X-Runtime-App": {
+                "$ref": "#/components/headers/X-Runtime-App"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetDisbursementOperationalServicesResponse_200"
+                  "$ref": "#/components/schemas/PatchLoanDisbursementResResponse_200"
                 }
               }
             }
@@ -87,161 +93,566 @@
   },
   "components": {
     "schemas": {
-      "GetDisbursementOperationalServicesRequest": {
-        "type": "string",
-        "description": "This schema represents the request body expected for the Disbursement Operations GET request in JSON format.",
-        "example": "{}"
-      },
-      "GetDisbursementOperationalServicesResponse_200": {
+      "PatchLoanDisbursementResRequest": {
+        "title": "Loan Disbursement Request",
         "type": "object",
         "properties": {
-          "items": {
+          "amount": {
+            "description": "The monetary amount being disbursed, including currency.",
+            "$ref": "#/components/schemas/AmountDetail"
+          },
+          "valueDate": {
+            "type": "string",
+            "description": "The date on which the value is effective.",
+            "example": "2026-09-15"
+          },
+          "beneficiary": {
+            "description": "Details of the beneficiary receiving the disbursement.",
+            "$ref": "#/components/schemas/BeneficiaryDetail"
+          },
+          "deductions": {
             "type": "array",
-            "description": "A list of disbursement operations.",
+            "description": "A list of deductions applied to the disbursement.",
             "example": [
               {
-                "operationId": "STANDARD",
-                "customerId": "CUST-581845",
-                "accountId": "ACC-439978",
-                "requestedAt": "2026-08-11T12:00:00Z",
-                "priority": "NORMAL",
-                "recordStatus": "ACTIVE",
-                "updatedAt": "2026-09-15T14:30:00Z"
+                "type": "STANDARD",
+                "amount": {
+                  "currency": "USD",
+                  "amount": "1250.75"
+                }
               }
             ],
             "items": {
-              "$ref": "#/components/schemas/DisbursementOperation"
+              "$ref": "#/components/schemas/DeductionDetail"
             }
           },
-          "pagination": {
-            "$ref": "#/components/schemas/Pagination"
-          },
-          "sort": {
+          "narrative": {
             "type": "string",
-            "description": "Sort criteria applied to the disbursement operations.",
+            "description": "Narrative or notes related to the disbursement.",
             "example": "STANDARD"
           },
+          "status": {
+            "type": "string",
+            "description": "The current status of the disbursement.",
+            "example": "ACTIVE"
+          },
+          "requestContext": {
+            "description": "Context for the request, including identifiers and metadata.",
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "Schema for the operation to update a loan disbursement.",
+        "example": {
+          "amount": {
+            "currency": "USD",
+            "amount": "1250.75"
+          },
+          "valueDate": "2026-09-15",
+          "beneficiary": {
+            "name": "Northstar Banking Service",
+            "accountNumber": "STANDARD",
+            "bankCode": "CODE-591",
+            "bankName": "Northstar Banking Service",
+            "address": {
+              "line1": "350 Fifth Avenue",
+              "line2": "Suite 4200",
+              "city": "New York",
+              "state": "STANDARD",
+              "postalCode": "10001",
+              "country": "STANDARD"
+            }
+          },
+          "deductions": [
+            {
+              "type": "STANDARD",
+              "amount": {
+                "currency": "USD",
+                "amount": "1250.75"
+              }
+            }
+          ],
+          "narrative": "STANDARD",
+          "status": "ACTIVE",
+          "requestContext": {
+            "requestId": "7e637690-0649-509d-bbd5-59e5e4c67341",
+            "correlationId": "9bc249e7-28ad-5378-a479-d7d547fcd86e",
+            "idempotencyKey": "4a419645-cb68-570c-b821-3b923f7a5df6",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-788779"
+            }
+          }
+        }
+      },
+      "AmountDetail": {
+        "title": "Amount Detail",
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "The currency code (e.g., USD, EUR).",
+            "example": "USD"
+          },
+          "amount": {
+            "type": "string",
+            "description": "The specific amount being disbursed.",
+            "example": "1000.00"
+          }
+        },
+        "description": "Schema representing the amount and its currency."
+      },
+      "BeneficiaryDetail": {
+        "title": "Beneficiary Detail",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the beneficiary.",
+            "example": "John Doe"
+          },
+          "accountNumber": {
+            "type": "string",
+            "description": "The bank account number of the beneficiary.",
+            "example": "123456789"
+          },
+          "bankCode": {
+            "type": "string",
+            "description": "The code identifying the beneficiary's bank.",
+            "example": "XYZBANK"
+          },
+          "bankName": {
+            "type": "string",
+            "description": "The name of the beneficiary's bank.",
+            "example": "XYZ Bank"
+          },
+          "address": {
+            "description": "The address details of the beneficiary.",
+            "$ref": "#/components/schemas/AddressDetail"
+          }
+        },
+        "description": "Schema containing information about the beneficiary."
+      },
+      "AddressDetail": {
+        "title": "Address Detail",
+        "type": "object",
+        "properties": {
+          "line1": {
+            "type": "string",
+            "description": "The first line of the address.",
+            "example": "123 Main St"
+          },
+          "line2": {
+            "type": "string",
+            "description": "The second line of the address (if applicable).",
+            "example": "Apt 4B"
+          },
+          "city": {
+            "type": "string",
+            "description": "The city of the address.",
+            "example": "Springfield"
+          },
+          "state": {
+            "type": "string",
+            "description": "The state of the address.",
+            "example": "IL"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "The postal code of the address.",
+            "example": "62704"
+          },
+          "country": {
+            "type": "string",
+            "description": "The country of the address.",
+            "example": "USA"
+          }
+        },
+        "description": "Schema representing the address of the beneficiary."
+      },
+      "DeductionDetail": {
+        "title": "Deduction Detail",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of deduction (e.g., fee, tax).",
+            "example": "Fee"
+          },
+          "amount": {
+            "description": "The amount that is being deducted, including currency.",
+            "$ref": "#/components/schemas/AmountDetail"
+          }
+        },
+        "description": "Schema defining a deduction that may apply to the disbursement."
+      },
+      "RequestContext": {
+        "title": "Request Context",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "A unique identifier for the request.",
+            "example": "req-7890"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier for tracing related requests.",
+            "example": "corr-1234"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Key to prevent duplicate processing of requests.",
+            "example": "idemp-key-5678"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp when the request was made.",
+            "example": "2023-10-01T12:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The system from which the request originated.",
+            "example": "LoanManagementSystem"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application from which the request was made.",
+            "example": "WebApp"
+          },
+          "channel": {
+            "description": "Information about the channel used for the request.",
+            "$ref": "#/components/schemas/ChannelDetail"
+          }
+        },
+        "description": "Schema containing metadata about the request."
+      },
+      "ChannelDetail": {
+        "title": "Channel Detail",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Identifier for the channel used.",
+            "example": "channel-1"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "Type of channel (e.g., API, Mobile).",
+            "example": "API"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Identifier for the device being used, if applicable.",
+            "example": "device-001"
+          }
+        },
+        "description": "Schema containing details about the channel through which the request was made."
+      },
+      "PatchLoanDisbursementResResponse_200": {
+        "title": "Loan Disbursement Response",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "description": "The total amount disbursed, including currency information.",
+            "$ref": "#/components/schemas/Amount"
+          },
+          "disbursementMethod": {
+            "type": "string",
+            "description": "The method used for the disbursement.",
+            "example": "STANDARD"
+          },
+          "valueDate": {
+            "type": "string",
+            "description": "The date on which the disbursement is effective.",
+            "example": "2026-09-15"
+          },
+          "beneficiary": {
+            "description": "Details of the beneficiary receiving the disbursement.",
+            "$ref": "#/components/schemas/Beneficiary"
+          },
+          "deductions": {
+            "type": "array",
+            "description": "Any deductions applied to the disbursement.",
+            "example": [
+              {
+                "type": "STANDARD",
+                "amount": {
+                  "currency": "USD",
+                  "amount": "1250.75"
+                }
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Deduction"
+            }
+          },
+          "narrative": {
+            "type": "string",
+            "description": "A narrative or description related to the disbursement.",
+            "example": "STANDARD"
+          },
+          "externalReference": {
+            "type": "string",
+            "description": "An external reference identifier for the transaction.",
+            "example": "STANDARD"
+          },
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for the disbursement.",
+            "example": "3488b827-67a1-d70b-dfad-d705d9f9ff15"
+          },
+          "disbursementNumber": {
+            "type": "string",
+            "description": "A unique number assigned to the disbursement.",
+            "example": "STANDARD"
+          },
+          "status": {
+            "type": "string",
+            "description": "The current status of the disbursement.",
+            "example": "ACTIVE"
+          },
+          "grossAmount": {
+            "description": "The total disbursement amount before deductions.",
+            "$ref": "#/components/schemas/Amount"
+          },
+          "netAmount": {
+            "description": "The amount disbursed after deductions.",
+            "$ref": "#/components/schemas/Amount"
+          },
+          "transactionReference": {
+            "type": "string",
+            "description": "A reference for tracking the transaction.",
+            "example": "STANDARD"
+          },
+          "processedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the disbursement was processed.",
+            "example": "2026-08-11T12:00:00Z"
+          },
+          "failureCode": {
+            "type": "string",
+            "description": "Code indicating the failure reason, if applicable.",
+            "example": "CODE-104"
+          },
+          "failureMessage": {
+            "type": "string",
+            "description": "Detailed message explaining the failure, if applicable.",
+            "example": "STANDARD"
+          },
+          "audit": {
+            "description": "Audit information for tracking changes to the disbursement.",
+            "$ref": "#/components/schemas/Audit"
+          },
           "metadata": {
+            "description": "Additional metadata related to the disbursement response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the disbursement operations GET request.",
+        "description": "Schema representing the response data for a loan disbursement operation.",
         "example": {
-          "items": [
+          "amount": {
+            "currency": "USD",
+            "amount": "1250.75"
+          },
+          "disbursementMethod": "STANDARD",
+          "valueDate": "2026-09-15",
+          "beneficiary": {
+            "name": "Northstar Banking Service",
+            "accountNumber": "STANDARD",
+            "bankCode": "CODE-115",
+            "bankName": "Northstar Banking Service",
+            "address": {
+              "line1": "350 Fifth Avenue",
+              "line2": "Suite 4200",
+              "city": "New York",
+              "state": "STANDARD",
+              "postalCode": "10001",
+              "country": "STANDARD"
+            }
+          },
+          "deductions": [
             {
-              "operationId": "STANDARD",
-              "customerId": "CUST-581845",
-              "accountId": "ACC-439978",
-              "requestedAt": "2026-08-11T12:00:00Z",
-              "priority": "NORMAL",
-              "recordStatus": "ACTIVE",
-              "updatedAt": "2026-09-15T14:30:00Z"
+              "type": "STANDARD",
+              "amount": {
+                "currency": "USD",
+                "amount": "1250.75"
+              }
             }
           ],
-          "pagination": {
-            "page": 1,
-            "pageSize": 1,
-            "totalItems": 1
+          "narrative": "STANDARD",
+          "externalReference": "STANDARD",
+          "id": "3488b827-67a1-d70b-dfad-d705d9f9ff15",
+          "disbursementNumber": "STANDARD",
+          "status": "ACTIVE",
+          "grossAmount": {
+            "currency": "USD",
+            "amount": "1250.75"
           },
-          "sort": "STANDARD",
+          "netAmount": {
+            "currency": "USD",
+            "amount": "1250.75"
+          },
+          "transactionReference": "STANDARD",
+          "processedAt": "2026-08-11T12:00:00Z",
+          "failureCode": "CODE-104",
+          "failureMessage": "STANDARD",
+          "audit": {
+            "createdAt": "2026-09-15T14:30:00Z",
+            "createdBy": "STANDARD",
+            "updatedAt": "2026-09-15T14:30:00Z",
+            "updatedBy": "2026-09-15",
+            "version": 1
+          },
           "metadata": {
-            "responseId": "0c83632f-d6a3-5f06-aef6-ee6d5bba37c3",
-            "correlationId": "6ae96ce5-b6ad-53de-b328-f8e07743b374",
+            "responseId": "8af5c522-992c-51d1-827f-fa25348b103c",
+            "correlationId": "9bc249e7-28ad-5378-a479-d7d547fcd86e",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "DisbursementOperation": {
+      "Amount": {
+        "title": "Amount",
         "type": "object",
         "properties": {
-          "operationId": {
+          "currency": {
             "type": "string",
-            "description": "Unique identifier for the operation.",
-            "example": "op-12345"
+            "description": "The currency code for the amount."
           },
-          "customerId": {
+          "amount": {
             "type": "string",
-            "description": "Identifier for the customer associated with the operation.",
-            "example": "cust-67890"
+            "description": "The amount of money in the specified currency."
+          }
+        },
+        "description": "Schema representing an amount of money, including currency details."
+      },
+      "Beneficiary": {
+        "title": "Beneficiary",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the beneficiary."
           },
-          "accountId": {
+          "accountNumber": {
             "type": "string",
-            "description": "Identifier for the account involved in the operation.",
-            "example": "acc-112233"
+            "description": "The bank account number of the beneficiary."
           },
-          "requestedAt": {
+          "bankCode": {
             "type": "string",
-            "description": "Timestamp when the operation was requested.",
-            "example": "2023-04-01T12:00:00Z"
+            "description": "The code identifying the beneficiary's bank."
           },
-          "priority": {
+          "bankName": {
             "type": "string",
-            "description": "Priority level of the operation.",
-            "example": "high"
+            "description": "The name of the bank where the beneficiary holds the account."
           },
-          "recordStatus": {
+          "address": {
+            "description": "The address details of the beneficiary.",
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        "description": "Schema representing the details of the beneficiary."
+      },
+      "Address": {
+        "title": "Address",
+        "type": "object",
+        "properties": {
+          "line1": {
             "type": "string",
-            "description": "Current status of the operation record.",
-            "example": "completed"
+            "description": "The first line of the address."
+          },
+          "line2": {
+            "type": "string",
+            "description": "The second line of the address (optional)."
+          },
+          "city": {
+            "type": "string",
+            "description": "The city of the beneficiary."
+          },
+          "state": {
+            "type": "string",
+            "description": "The state of the beneficiary."
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "The postal code for the address."
+          },
+          "country": {
+            "type": "string",
+            "description": "The country of the beneficiary."
+          }
+        },
+        "description": "Schema representing an address with various components."
+      },
+      "Deduction": {
+        "title": "Deduction",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type/category of the deduction."
+          },
+          "amount": {
+            "description": "The amount of the deduction, including currency details.",
+            "$ref": "#/components/schemas/Amount"
+          }
+        },
+        "description": "Schema representing a deduction applied to the disbursement."
+      },
+      "Audit": {
+        "title": "Audit",
+        "type": "object",
+        "properties": {
+          "createdAt": {
+            "type": "string",
+            "description": "Timestamp of when the disbursement was created."
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "Identifier of the user who created the disbursement."
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp when the operation was last updated.",
-            "example": "2023-04-02T12:00:00Z"
+            "description": "Timestamp of when the disbursement was last updated."
+          },
+          "updatedBy": {
+            "type": "string",
+            "description": "Identifier of the user who last updated the disbursement."
+          },
+          "version": {
+            "type": "integer",
+            "description": "The version number of the disbursement record.",
+            "format": "int32"
           }
         },
-        "description": "Details of a disbursement operation."
-      },
-      "Pagination": {
-        "type": "object",
-        "properties": {
-          "page": {
-            "type": "integer",
-            "description": "Current page number.",
-            "format": "int32",
-            "example": 1
-          },
-          "pageSize": {
-            "type": "integer",
-            "description": "Number of items per page.",
-            "format": "int32",
-            "example": 20
-          },
-          "totalItems": {
-            "type": "integer",
-            "description": "Total number of items available across all pages.",
-            "format": "int32",
-            "example": 100
-          }
-        },
-        "description": "Information about pagination of the results."
+        "description": "Schema representing audit information for the disbursement."
       },
       "Metadata": {
+        "title": "Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "resp-98765"
+            "description": "Unique identifier for the response."
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier for tracking the request across services.",
-            "example": "corr-54321"
+            "description": "Identifier used to correlate logs across systems."
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the response was generated.",
-            "example": "2023-04-01T12:05:00Z"
+            "description": "Timestamp indicating when the metadata was generated."
           },
           "processingRegion": {
             "type": "string",
-            "description": "Geographic region where the operation was processed.",
-            "example": "us-west-2"
+            "description": "Region where the processing occurred."
           }
         },
-        "description": "Metadata related to the response."
+        "description": "Schema representing metadata associated with the disbursement response."
       }
     },
     "parameters": {
@@ -258,34 +669,54 @@
             "MICROSERVICE_PROD_200"
           ]
         }
+      },
+      "loanId": {
+        "name": "loanId",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "disbursementId": {
+        "name": "disbursementId",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
       }
     },
     "headers": {
-      "x-endpoint-id": {
-        "description": "A unique identifier for the endpoint that processed the request. This value helps in tracking the request's processing correlation.",
+      "X-Endpoint-Id": {
+        "description": "A unique identifier for the endpoint that processed the request, allowing for tracking of which service handled the operation.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "disbursement-search-disbursement"
+          "example": "banking-loans-openapi-banking-loans-openapi-update-disbursement"
         },
-        "example": "disbursement-search-disbursement"
+        "example": "banking-loans-openapi-banking-loans-openapi-update-disbursement"
       },
-      "x-runtime-app": {
-        "description": "The name of the application that handled the request. This value can be used for identifying the source of the request.",
+      "X-Runtime-App": {
+        "description": "The name of the application that executed the API request, useful for identifying the source of the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "operations-openfinance"
+          "example": "lending-credit"
         },
-        "example": "operations-openfinance"
+        "example": "lending-credit"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme utilizes bearer authentication, which requires a token to be passed with requests. The token is typically encoded as a JSON Web Token (JWT) and is used to grant access to protected resources.",
+        "description": "This security scheme utilizes JSON Web Tokens (JWT) for authentication. Clients must include a valid JWT token in the Authorization header when making requests to secure endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
