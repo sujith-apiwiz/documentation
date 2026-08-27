@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Corporate Payroll Services API",
-    "description": "The Corporate Payroll Services API enables organizations to efficiently manage payroll processing and related banking functions. This API streamlines employee payment processes by allowing businesses to access and retrieve payroll information securely. Typical consumers include HR departments and financial systems that require integration with payroll data. Use cases include verifying payroll transactions, retrieving payroll schedules, and managing employee payment details. Enhance your corporate finance operations by leveraging this API for seamless payroll management.",
+    "description": "The Corporate Payroll Services API enables organizations to manage and streamline their payroll operations effectively. It provides access to essential features such as retrieving employee payroll data, processing payroll transactions, and managing payroll-related inquiries. This API is designed for HR and finance professionals who seek to integrate payroll functionalities into their applications, ensuring timely and accurate employee payments. Utilize this API to enhance payroll efficiency and maintain compliance within corporate structures.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/trade-banking/corporate-payroll-services/{param1}": {
+    "/v5/banking/trade-banking/corporate-payroll-services": {
       "get": {
         "tags": [
-          "Corporate Payroll Services"
+          "Corporate Banking"
         ],
-        "summary": "Retrieve Corporate Payroll Service Details",
-        "description": "This endpoint allows the user to retrieve detailed information about a specific corporate payroll service identified by its unique ID. Use this operation to access all relevant data associated with the service, including configurations and operational status.",
-        "operationId": "getCorporatePayrollServiceById",
+        "summary": "Retrieve corporate payroll services information.",
+        "description": "This endpoint fetches detailed information about the available corporate payroll services provided by the trade banking division, helping businesses manage their payroll processes efficiently.",
+        "operationId": "getCorporatePayrollServices",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to retrieve information related to corporate payroll services. Ensure that all required parameters are included in the JSON payload to successfully retrieve the relevant data.",
+          "description": "This request body is used to retrieve information related to corporate payroll services offered under trade banking. It allows the client to specify the parameters for the desired payroll operations, ensuring that the relevant details are provided for processing the request.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetCorporatePayrollServiceByIdRequest"
+                "$ref": "#/components/schemas/GetCorporatePayrollServicesRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved the payroll services information.",
+            "description": "Successfully retrieved corporate payroll services data.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetCorporatePayrollServiceByIdResponse_200"
+                  "$ref": "#/components/schemas/GetCorporatePayrollServicesResponse_200"
                 }
               }
             }
@@ -76,131 +76,194 @@
   },
   "components": {
     "schemas": {
-      "GetCorporatePayrollServiceByIdRequest": {
+      "GetCorporatePayrollServicesRequest": {
         "type": "string",
-        "description": "This schema represents the request body for the GET operation related to corporate payroll services in trade banking.",
+        "description": "This schema represents the request body for the corporate payroll services GET operation in the trade banking API.",
         "example": "{}"
       },
-      "GetCorporatePayrollServiceByIdResponse_200": {
-        "title": "Corporate Payroll Service Response",
+      "GetCorporatePayrollServicesResponse_200": {
+        "title": "Corporate Payroll Services Response",
         "type": "object",
         "properties": {
-          "corporateCustomerId": {
-            "type": "string",
-            "description": "Unique identifier for the corporate customer.",
-            "example": "CUST-422367"
+          "items": {
+            "type": "array",
+            "description": "List of payroll records for corporate customers.",
+            "example": [
+              {
+                "corporateCustomerId": "CUST-131978",
+                "payrollBatchId": "STANDARD",
+                "payPeriod": "STANDARD",
+                "employeeCount": 1,
+                "fundingAccountId": "ACC-585262",
+                "totalNetPay": {
+                  "amount": 100.0,
+                  "currency": "USD"
+                },
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/PayrollRecord"
+            }
           },
-          "payrollBatchId": {
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "sort": {
             "type": "string",
-            "description": "Identifier for the payroll batch.",
+            "description": "Sort order of the returned results.",
             "example": "STANDARD"
-          },
-          "payPeriod": {
-            "type": "string",
-            "description": "The pay period for which the payroll is processed.",
-            "example": "STANDARD"
-          },
-          "employeeCount": {
-            "type": "integer",
-            "description": "Number of employees included in this payroll batch.",
-            "format": "int32",
-            "example": 1
-          },
-          "fundingAccountId": {
-            "type": "string",
-            "description": "Identifier for the funding account associated with the payroll.",
-            "example": "ACC-904378"
-          },
-          "totalNetPay": {
-            "description": "Total net pay amount to be distributed for the payroll.",
-            "$ref": "#/components/schemas/TotalNetPay"
-          },
-          "recordStatus": {
-            "type": "string",
-            "description": "Current status of the payroll record.",
-            "example": "ACTIVE"
-          },
-          "version": {
-            "type": "integer",
-            "description": "Version number of the payroll record.",
-            "format": "int32",
-            "example": 1
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp of when the payroll record was last updated.",
-            "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Metadata information related to the response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the corporate payroll service operation request.",
+        "description": "Response schema for the Corporate Payroll Services GET operation, containing payroll information and metadata.",
         "example": {
-          "corporateCustomerId": "CUST-422367",
-          "payrollBatchId": "STANDARD",
-          "payPeriod": "STANDARD",
-          "employeeCount": 1,
-          "fundingAccountId": "ACC-904378",
-          "totalNetPay": {
-            "amount": 100.0,
-            "currency": "USD"
+          "items": [
+            {
+              "corporateCustomerId": "CUST-131978",
+              "payrollBatchId": "STANDARD",
+              "payPeriod": "STANDARD",
+              "employeeCount": 1,
+              "fundingAccountId": "ACC-585262",
+              "totalNetPay": {
+                "amount": 100.0,
+                "currency": "USD"
+              },
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
           },
-          "recordStatus": "ACTIVE",
-          "version": 1,
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "6d09735b-4bc3-5646-9328-f60c264c7258",
-            "correlationId": "5ba91f6b-6fe4-5ddd-8475-d0d09c3345de",
+            "responseId": "08aae477-4eda-5406-9be1-4f1067ba1322",
+            "correlationId": "57e89d99-268c-5601-ad64-d5a72690c25c",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
+      "PayrollRecord": {
+        "title": "Payroll Record",
+        "type": "object",
+        "properties": {
+          "corporateCustomerId": {
+            "type": "string",
+            "description": "Unique identifier for the corporate customer.",
+            "example": "CUST12345"
+          },
+          "payrollBatchId": {
+            "type": "string",
+            "description": "Identifier for the payroll batch.",
+            "example": "BATCH67890"
+          },
+          "payPeriod": {
+            "type": "string",
+            "description": "The pay period for which the payroll applies.",
+            "example": "2023-09"
+          },
+          "employeeCount": {
+            "type": "integer",
+            "description": "The number of employees included in the payroll.",
+            "format": "int32",
+            "example": 50
+          },
+          "fundingAccountId": {
+            "type": "string",
+            "description": "Identifier for the funding account used for payroll.",
+            "example": "ACCOUNT111"
+          },
+          "totalNetPay": {
+            "$ref": "#/components/schemas/TotalNetPay"
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "Status of the payroll record.",
+            "example": "completed"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the record was last updated.",
+            "example": "2023-10-01T12:00:00Z"
+          }
+        },
+        "description": "Represents payroll information for a corporate customer."
+      },
       "TotalNetPay": {
-        "title": "Total Net Pay Amount",
+        "title": "Total Net Pay",
         "type": "object",
         "properties": {
           "amount": {
             "type": "number",
-            "description": "Total net pay amount to be disbursed.",
-            "example": 0.0
+            "description": "Total net pay amount.",
+            "example": 150000.0
           },
           "currency": {
             "type": "string",
-            "description": "Currency code of the total net pay (e.g., USD, EUR).",
-            "example": "string"
+            "description": "Currency code for the total net pay amount.",
+            "example": "USD"
           }
         },
-        "description": "Schema representing the total net pay amount and its currency."
+        "description": "Represents the total net pay details for a payroll record."
+      },
+      "Pagination": {
+        "title": "Pagination",
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number of the results.",
+            "format": "int32",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32",
+            "example": 20
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available.",
+            "format": "int32",
+            "example": 100
+          }
+        },
+        "description": "Details about the pagination of the results."
       },
       "Metadata": {
-        "title": "Response Metadata",
+        "title": "Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
             "description": "Unique identifier for the response.",
-            "example": "string"
+            "example": "RESP123456"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation ID to track the request across systems.",
-            "example": "string"
+            "description": "Identifier used for tracking the request and response.",
+            "example": "CORR78910"
           },
           "generatedAt": {
             "type": "string",
             "description": "Timestamp indicating when the response was generated.",
-            "example": "string"
+            "example": "2023-10-01T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the payroll was processed.",
-            "example": "string"
+            "description": "Region where the processing occurred.",
+            "example": "us-west-2"
           }
         },
-        "description": "Schema containing metadata information about the response."
+        "description": "Additional metadata about the response."
       }
     },
     "parameters": {
@@ -221,17 +284,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the API endpoint being accessed, useful for debugging and tracking requests.",
+        "description": "A unique identifier for the API endpoint that was called.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "corporate-payroll-services-get-corporate-payroll-services"
+          "example": "corporate-payroll-services-search-corporate-payroll-services"
         },
-        "example": "corporate-payroll-services-get-corporate-payroll-services"
+        "example": "corporate-payroll-services-search-corporate-payroll-services"
       },
       "X-Runtime-App": {
-        "description": "The name of the application processing the request, which helps in identifying the service layer involved in the response.",
+        "description": "The name of the application that executed the API request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -244,7 +307,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses HTTP Bearer authentication. It requires a JSON Web Token (JWT) to be sent in the Authorization header of the request. The token should be a valid JWT format.",
+        "description": "This security scheme uses JWT (JSON Web Tokens) as a bearer token for authentication. Clients must include a valid bearer token in the Authorization header to access secured endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
