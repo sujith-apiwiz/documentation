@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Account Reconciliation Management API",
-    "description": "The Account Reconciliation Management API facilitates accurate financial reporting and helps ensure the integrity of banking records through effective reconciliation processes. This API allows users to automate the reconciliation of accounts by submitting relevant transactional data. Financial institutions, accounting departments, and auditors commonly utilize this API to streamline their reconciliation workflows and improve audit readiness. By integrating with this API, businesses can enhance operational efficiency and reduce discrepancies in financial statements.",
+    "description": "The Account Reconciliation Management API provides tools for updating and maintaining account reconciliation statuses in your banking system. Utilizing this API, financial institutions can effectively manage discrepancies and ensure accurate account balances. Key operations include adjusting reconciliation records based on new transactions or customer inputs. This API is particularly suited for banking analysts and financial operations teams who need real-time capabilities for precise account oversight.",
     "version": "1.0"
   },
   "servers": [
@@ -18,7 +18,7 @@
       "x-basePath": "/"
     },
     {
-      "url": "https://accounts-deposits-app:9001",
+      "url": "https://35.162.152.203:9001",
       "description": "PROD",
       "variables": {},
       "x-schema": "https://",
@@ -30,77 +30,47 @@
     }
   ],
   "paths": {
-    "/v5/banking/account-management/account-reconciliation": {
-      "post": {
+    "/v5/banking/account-management/account-reconciliation/{param1}": {
+      "patch": {
         "tags": [
           "Account Management"
         ],
-        "summary": "Reconcile Account Data",
-        "description": "This endpoint allows you to submit reconciliation data for a specific account, ensuring alignment between records and identifying discrepancies.",
-        "operationId": "reconcileAccountPost",
+        "summary": "Update account reconciliation details.",
+        "description": "This endpoint allows developers to update specific details of an account reconciliation identified by the unique ID (ACC-200045). Use this operation to modify relevant information and ensure accurate financial balancing.",
+        "operationId": "patchAccountReconciliationAcc200045",
         "parameters": [
           {
-            "$ref": "#/components/parameters/x-workflow-id"
-          },
-          {
-            "$ref": "#/components/parameters/idempotency-key"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-step"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-branch"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-decision"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-internal"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-execution-id"
-          },
-          {
             "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "This endpoint is used to perform account reconciliation operations. It allows users to submit reconciliation requests, ensuring that account balances are accurate and transactions are accounted for. The request should contain all necessary data to validate and process the reconciliation.",
+          "description": "This request body is used to update the account reconciliation details for the specified account. It contains the necessary fields required to perform the update operation. Ensure all required fields are populated correctly to avoid validation errors.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ReconcileAccountPostRequest"
+                "$ref": "#/components/schemas/PatchAccountReconciliationAcc200045Request"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Resource created successfully and reconciliation initiated.",
+          "200": {
+            "description": "Request processed successfully, updates have been applied.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
               },
               "X-Runtime-App": {
                 "$ref": "#/components/headers/X-Runtime-App"
-              },
-              "X-Workflow-Id": {
-                "$ref": "#/components/headers/X-Workflow-Id"
-              },
-              "X-Workflow-Name": {
-                "$ref": "#/components/headers/X-Workflow-Name"
-              },
-              "X-Workflow-State": {
-                "$ref": "#/components/headers/X-Workflow-State"
-              },
-              "X-Workflow-Execution-Id": {
-                "$ref": "#/components/headers/X-Workflow-Execution-Id"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReconcileAccountPostResponse_201"
+                  "$ref": "#/components/schemas/PatchAccountReconciliationAcc200045Response_200"
                 }
               }
             }
@@ -120,285 +90,206 @@
   },
   "components": {
     "schemas": {
-      "ReconcileAccountPostRequest": {
-        "title": "Account Reconciliation Request",
+      "PatchAccountReconciliationAcc200045Request": {
         "type": "object",
         "properties": {
-          "accountId": {
-            "type": "string",
-            "description": "The unique identifier of the account being reconciled.",
-            "example": "ACC-244892"
+          "changes": {
+            "description": "Contains the changes that need to be applied to the account reconciliation.",
+            "$ref": "#/components/schemas/Changes"
           },
-          "customerId": {
+          "changeReason": {
             "type": "string",
-            "description": "The unique identifier of the customer associated with the account.",
-            "example": "CUST-159756"
+            "description": "The reason for the changes made to the account reconciliation.",
+            "example": "STANDARD"
           },
-          "ledgerDate": {
+          "effectiveAt": {
             "type": "string",
-            "description": "The date of the ledger statement for reconciliation.",
-            "example": "2026-09-15"
+            "description": "The effective date and time for the changes.",
+            "example": "2026-09-15T14:30:00Z"
           },
-          "currency": {
+          "requestedBy": {
             "type": "string",
-            "description": "The currency code for the account balance (e.g., USD, EUR).",
-            "example": "USD"
-          },
-          "ledgerBalance": {
-            "type": "number",
-            "description": "The balance of the account as per the ledger on the specified date.",
-            "example": 100.0
+            "description": "Identifier for the user or system that requested the changes.",
+            "example": "STANDARD"
           },
           "requestContext": {
+            "description": "Contextual information related to the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "This schema defines the request body for the account reconciliation operation, including account identifiers and relevant metadata.",
+        "description": "Request body schema for the PATCH operation on account reconciliation.",
         "example": {
-          "accountId": "ACC-244892",
-          "customerId": "CUST-159756",
-          "ledgerDate": "2026-09-15",
-          "currency": "USD",
-          "ledgerBalance": 100.0,
+          "changes": {
+            "accountId": "ACC-911740",
+            "customerId": "CUST-121479",
+            "ledgerDate": "2026-09-15"
+          },
+          "changeReason": "STANDARD",
+          "effectiveAt": "2026-09-15T14:30:00Z",
+          "requestedBy": "STANDARD",
           "requestContext": {
-            "requestId": "32568cd0-6f78-585b-9336-83854be37b3b",
-            "correlationId": "6ad34070-4ad8-5b3c-932a-a1cdf0f72c00",
-            "idempotencyKey": "20047056-68fc-574f-84b2-132ed8a4ba9c",
+            "requestId": "1de69208-7998-5353-957c-1592c63ea495",
+            "correlationId": "95fc17fc-332f-547a-bcd3-4bd7929b2101",
+            "idempotencyKey": "cbb26877-f918-52f2-b682-e593cbbd46ea",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-414844"
+              "deviceId": "DEV-464217"
             }
           }
         }
       },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "A unique identifier for the request.",
-            "example": "req_001"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "An identifier used to correlate related requests across systems.",
-            "example": "corr_001"
-          },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "A key used to ensure the request is idempotent and can be safely retried.",
-            "example": "key_001"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "The timestamp when the request was made.",
-            "example": "2023-10-01T12:00:00Z"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "The system from which the request originates.",
-            "example": "AccountingSystem"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "The application that initiated the request.",
-            "example": "ReconciliationApp"
-          },
-          "channel": {
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "This schema encapsulates the context of the request, providing identifiers and metadata for tracking purposes."
-      },
-      "Channel": {
-        "title": "Channel Information",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "The unique identifier of the channel used for the request.",
-            "example": "channel_001"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "The type of channel (e.g., mobile, web, API).",
-            "example": "web"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "The unique identifier of the device used to make the request, if applicable.",
-            "example": "device_001"
-          }
-        },
-        "description": "This schema details the channel through which the request was made."
-      },
-      "ReconcileAccountPostResponse_201": {
-        "title": "Account Reconciliation Response",
+      "Changes": {
         "type": "object",
         "properties": {
           "accountId": {
             "type": "string",
-            "description": "The unique identifier for the account.",
-            "example": "ACC-488874"
+            "description": "Unique identifier for the account.",
+            "example": "ACC-123456"
           },
           "customerId": {
             "type": "string",
-            "description": "The unique identifier for the customer associated with the account.",
-            "example": "CUST-441928"
+            "description": "Unique identifier for the customer associated with the account.",
+            "example": "CUST-7890"
           },
-          "resourceId": {
+          "ledgerDate": {
             "type": "string",
-            "description": "The unique identifier for the resource involved in the reconciliation.",
-            "example": "RES-641516"
+            "description": "The date of the ledger for which the changes are being applied.",
+            "example": "2023-10-01"
+          }
+        },
+        "description": "Schema representing the individual changes to be made."
+      },
+      "RequestContext": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique identifier for the request.",
+            "example": "REQ-456789"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier used for correlating the request with its response.",
+            "example": "CORR-123456"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Key used to ensure that the request can be safely retried without causing duplication.",
+            "example": "IDEMPOTENCY-KEY-987654"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp when the request was made.",
+            "example": "2023-10-01T12:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The system that initiated this request.",
+            "example": "AccountManagementSystem"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application through which the request was made.",
+            "example": "WebApp"
+          },
+          "channel": {
+            "description": "Information about the channel through which the request was made.",
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Schema representing the context of the request."
+      },
+      "Channel": {
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Unique identifier for the channel.",
+            "example": "CHANNEL-001"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "Type of the channel (e.g., web, mobile).",
+            "example": "web"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Identifier for the device used for the request.",
+            "example": "DEVICE-123456"
+          }
+        },
+        "description": "Schema representing the channel information for a request."
+      },
+      "PatchAccountReconciliationAcc200045Response_200": {
+        "title": "Account Reconciliation Patch Response",
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "description": "The version of the response schema.",
+            "format": "int32",
+            "example": 1
           },
           "status": {
             "type": "string",
-            "description": "The current status of the reconciliation process.",
+            "description": "The status of the operation.",
             "example": "ACTIVE"
           },
-          "createdAt": {
+          "updatedAt": {
             "type": "string",
-            "description": "The timestamp when the reconciliation request was created.",
+            "description": "Timestamp indicating when the record was last updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Metadata related to the reconciliation operation.",
-            "$ref": "#/components/schemas/ReconciliationMetadata"
+            "$ref": "#/components/schemas/ResponseMetadata"
           }
         },
-        "description": "A response object containing details of the account reconciliation operation.",
+        "description": "Response schema for the account reconciliation operation after a PATCH request.",
         "example": {
-          "accountId": "ACC-488874",
-          "customerId": "CUST-441928",
-          "resourceId": "RES-641516",
+          "version": 1,
           "status": "ACTIVE",
-          "createdAt": "2026-09-15T14:30:00Z",
+          "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "dcc1e9c7-aa37-5d6d-bb79-0a09ba7c9092",
-            "correlationId": "6ad34070-4ad8-5b3c-932a-a1cdf0f72c00",
+            "responseId": "aafe409d-9784-5aa9-b47e-4f2f02a412f7",
+            "correlationId": "95fc17fc-332f-547a-bcd3-4bd7929b2101",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "ReconciliationMetadata": {
-        "title": "Reconciliation Metadata",
+      "ResponseMetadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "The unique identifier for the response of the reconciliation request.",
-            "example": "resp-001"
+            "description": "Unique identifier for the response.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "A unique identifier for correlating related requests.",
-            "example": "corr-001"
+            "description": "Identifier used to correlate requests and responses.",
+            "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp when the metadata was generated.",
-            "example": "2023-10-10T14:48:00.000Z"
+            "description": "Timestamp indicating when the response was generated.",
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the reconciliation processing occurred.",
-            "example": "us-west-2"
+            "description": "The region where the processing occurred.",
+            "example": "string"
           }
         },
-        "description": "Additional metadata related to the reconciliation process."
+        "description": "Metadata information for the response."
       }
     },
     "parameters": {
-      "x-workflow-id": {
-        "name": "x-workflow-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "WF-021"
-        },
-        "example": "WF-021"
-      },
-      "idempotency-key": {
-        "name": "idempotency-key",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "275b3733-40f4-437a-91da-0ecfd9ed400a"
-        },
-        "example": "275b3733-40f4-437a-91da-0ecfd9ed400a"
-      },
-      "x-workflow-step": {
-        "name": "x-workflow-step",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "1"
-        },
-        "example": "1"
-      },
-      "x-workflow-branch": {
-        "name": "x-workflow-branch",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "async-finalization"
-        },
-        "example": "async-finalization"
-      },
-      "x-workflow-decision": {
-        "name": "x-workflow-decision",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "NORMAL"
-        },
-        "example": "NORMAL"
-      },
-      "x-workflow-internal": {
-        "name": "x-workflow-internal",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "true"
-        },
-        "example": "true"
-      },
-      "x-workflow-execution-id": {
-        "name": "x-workflow-execution-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "0ea36a13-417d-4863-a1ca-4af0ee95a823"
-        },
-        "example": "0ea36a13-417d-4863-a1ca-4af0ee95a823"
-      },
       "x-mock-response": {
         "name": "x-mock-response",
         "in": "header",
@@ -409,22 +300,34 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_201"
+            "MICROSERVICE_PROD_200"
           ]
+        }
+      },
+      "param1": {
+        "name": "param1",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "A unique identifier for the endpoint being invoked.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "account-reconciliation-create-account-reconciliation"
+          "example": "account-reconciliation-update-account-reconciliation"
         },
-        "example": "account-reconciliation-create-account-reconciliation"
+        "example": "account-reconciliation-update-account-reconciliation"
       },
       "X-Runtime-App": {
+        "description": "The name or identifier of the application processing the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -432,48 +335,12 @@
           "example": "accounts-deposits"
         },
         "example": "accounts-deposits"
-      },
-      "X-Workflow-Id": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "WF-021"
-        },
-        "example": "WF-021"
-      },
-      "X-Workflow-Name": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "Debit Card Issuance and Activation"
-        },
-        "example": "Debit Card Issuance and Activation"
-      },
-      "X-Workflow-State": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "IN_PROGRESS"
-        },
-        "example": "IN_PROGRESS"
-      },
-      "X-Workflow-Execution-Id": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "0ea36a13-417d-4863-a1ca-4af0ee95a823"
-        },
-        "example": "0ea36a13-417d-4863-a1ca-4af0ee95a823"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme utilizes the Bearer authentication method. It requires a JWT (JSON Web Token) to be included in the Authorization header of requests to authenticate the user.",
+        "description": "Authentication scheme using Bearer tokens. This scheme expects a JWT (JSON Web Token) in the Authorization header of requests to access secured endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
