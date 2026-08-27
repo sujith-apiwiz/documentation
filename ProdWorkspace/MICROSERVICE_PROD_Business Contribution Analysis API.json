@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Business Contribution Analysis API",
-    "description": "The Business Contribution Analysis API provides insights into the performance and contributions of various business units within the organization. It allows users to retrieve detailed analysis data that identifies revenue streams and cost allocations tied to specific business areas. Ideal for financial analysts and decision-makers, this API supports improved strategic planning and resource allocation by delivering actionable intelligence. Access to this data enables users to effectively monitor and enhance business performance, contributing to informed management decisions.",
+    "description": "The Business Contribution Analysis API provides tools for organizations to evaluate and understand the contributions of various aspects of their operations. Through this API, users can submit analysis requests and obtain detailed insights about business performance metrics. This functionality is vital for decision-makers, analysts, and financial planners aiming to optimize resource allocation and enhance profitability. The API streamlines the analysis process, enabling efficient assessment and reporting on business contributions in a variety of sectors.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/business-analysis/contribution-analysis": {
-      "get": {
+    "/v5/banking/business-analysis/contribution-analysis/analyses": {
+      "post": {
         "tags": [
           "Business Analysis"
         ],
-        "summary": "Retrieve Contribution Analysis Data",
-        "description": "This endpoint allows users to access detailed contribution analysis data, which provides insights into various business contributions. The analysis includes metrics that can help evaluate performance and guide strategic decisions.",
-        "operationId": "getContributionAnalysis",
+        "summary": "Create a new contribution analysis.",
+        "description": "This endpoint allows users to create a new contribution analysis for the business, enabling better understanding and tracking of contributions across various parameters.",
+        "operationId": "createContributionAnalysis",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to provide input parameters for the contribution analysis operation in business analysis. Ensure that the provided JSON conforms to the specified schema to retrieve accurate results.",
+          "description": "This request body is used to initiate a contribution analysis within the business analysis framework. It requires specific input parameters structured in a JSON format to efficiently process the analysis request.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetContributionAnalysisRequest"
+                "$ref": "#/components/schemas/CreateContributionAnalysisRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successful retrieval of contribution analysis data.",
+            "description": "Request completed successfully, returning the analysis result.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetContributionAnalysisResponse_200"
+                  "$ref": "#/components/schemas/CreateContributionAnalysisResponse_200"
                 }
               }
             }
@@ -76,168 +76,240 @@
   },
   "components": {
     "schemas": {
-      "GetContributionAnalysisRequest": {
-        "type": "string",
-        "description": "This schema represents the request body for the GET operation in the Business Analysis Contribution Analysis API. It is expected to be a string representing the analysis query or criteria.",
-        "example": "{}"
-      },
-      "GetContributionAnalysisResponse_200": {
+      "CreateContributionAnalysisRequest": {
+        "title": "Contribution Analysis Request Body",
         "type": "object",
         "properties": {
-          "items": {
+          "analysisId": {
+            "type": "string",
+            "description": "A unique identifier for the analysis.",
+            "example": "STANDARD"
+          },
+          "segmentId": {
+            "type": "string",
+            "description": "The ID of the segment associated with the analysis.",
+            "example": "STANDARD"
+          },
+          "periodStart": {
+            "type": "string",
+            "description": "The start date of the analysis period in ISO 8601 format.",
+            "example": "2026-08-11"
+          },
+          "periodEnd": {
+            "type": "string",
+            "description": "The end date of the analysis period in ISO 8601 format.",
+            "example": "2026-08-11"
+          },
+          "baseCurrency": {
+            "type": "string",
+            "description": "The currency code used as the base for the analysis.",
+            "example": "USD"
+          },
+          "scenario": {
+            "type": "string",
+            "description": "A description of the scenario being analyzed.",
+            "example": "STANDARD"
+          },
+          "requestContext": {
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "This schema represents the request body for submitting a contribution analysis in the operations context.",
+        "example": {
+          "analysisId": "STANDARD",
+          "segmentId": "STANDARD",
+          "periodStart": "2026-08-11",
+          "periodEnd": "2026-08-11",
+          "baseCurrency": "USD",
+          "scenario": "STANDARD",
+          "requestContext": {
+            "requestId": "de12c0da-5878-5b83-a716-f1b018a1b98c",
+            "correlationId": "bc62be30-a1ca-57ec-acd0-80dfa70edd9a",
+            "idempotencyKey": "f4ed337e-c425-5cd5-8693-7c807ca8c52c",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-155804"
+            }
+          }
+        }
+      },
+      "RequestContext": {
+        "title": "Request Context",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "A unique identifier for the request.",
+            "example": "request-abc-123"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "An identifier to correlate multiple requests.",
+            "example": "correlation-xyz-789"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "A key that ensures the request is processed only once.",
+            "example": "idempotency-key-456"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "The timestamp when the request was made in ISO 8601 format.",
+            "example": "2023-01-01T12:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The system from which the request originated.",
+            "example": "InternalSystem"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application from which the request originated.",
+            "example": "AnalysisApp"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "This schema contains contextual information about the request."
+      },
+      "Channel": {
+        "title": "Channel Information",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "A unique identifier for the channel.",
+            "example": "channel-111"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "The type of channel (e.g., web, mobile).",
+            "example": "web"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "The ID of the device used to make the request.",
+            "example": "device-222"
+          }
+        },
+        "description": "This schema provides information about the channel through which the request was made."
+      },
+      "CreateContributionAnalysisResponse_200": {
+        "title": "Contribution Analysis Response",
+        "type": "object",
+        "properties": {
+          "analysisId": {
+            "type": "string",
+            "description": "The unique identifier for the analysis.",
+            "example": "STANDARD"
+          },
+          "segmentId": {
+            "type": "string",
+            "description": "The identifier for the segment associated with the analysis.",
+            "example": "STANDARD"
+          },
+          "status": {
+            "type": "string",
+            "description": "The current status of the analysis.",
+            "example": "ACTIVE"
+          },
+          "completedAt": {
+            "type": "string",
+            "description": "The timestamp when the analysis was completed.",
+            "example": "2026-09-15T14:30:00Z"
+          },
+          "findings": {
             "type": "array",
-            "description": "List of contribution analysis items.",
+            "description": "A list of findings produced by the analysis.",
             "example": [
               {
-                "analysisId": "STANDARD",
-                "segmentId": "STANDARD",
-                "periodStart": "2026-08-11",
-                "periodEnd": "2026-08-11",
-                "baseCurrency": "USD",
-                "scenario": "STANDARD",
-                "recordStatus": "ACTIVE",
-                "updatedAt": "2026-09-15T14:30:00Z"
+                "metric": "STANDARD",
+                "value": 100.0,
+                "unit": "STANDARD"
               }
             ],
             "items": {
-              "$ref": "#/components/schemas/ContributionAnalysisItem"
+              "$ref": "#/components/schemas/Finding"
             }
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/Pagination"
-          },
-          "sort": {
-            "type": "string",
-            "description": "Sorting criteria applied to the results.",
-            "example": "STANDARD"
           },
           "metadata": {
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the Contribution Analysis operation.",
+        "description": "A schema representing the response structure for a contribution analysis operation.",
         "example": {
-          "items": [
+          "analysisId": "STANDARD",
+          "segmentId": "STANDARD",
+          "status": "ACTIVE",
+          "completedAt": "2026-09-15T14:30:00Z",
+          "findings": [
             {
-              "analysisId": "STANDARD",
-              "segmentId": "STANDARD",
-              "periodStart": "2026-08-11",
-              "periodEnd": "2026-08-11",
-              "baseCurrency": "USD",
-              "scenario": "STANDARD",
-              "recordStatus": "ACTIVE",
-              "updatedAt": "2026-09-15T14:30:00Z"
+              "metric": "STANDARD",
+              "value": 100.0,
+              "unit": "STANDARD"
             }
           ],
-          "pagination": {
-            "page": 1,
-            "pageSize": 1,
-            "totalItems": 1
-          },
-          "sort": "STANDARD",
           "metadata": {
-            "responseId": "b2a24fe2-a822-5445-b030-5106f153b0a9",
-            "correlationId": "d17964f8-b334-56a7-8bd9-23fe9d264f4f",
+            "responseId": "1d881ef0-2ab1-5fa6-96e2-469af96bb9e6",
+            "correlationId": "bc62be30-a1ca-57ec-acd0-80dfa70edd9a",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "ContributionAnalysisItem": {
+      "Finding": {
+        "title": "Finding",
         "type": "object",
         "properties": {
-          "analysisId": {
+          "metric": {
             "type": "string",
-            "description": "Unique identifier for the analysis.",
-            "example": "analysis-1"
+            "description": "The name of the metric being reported.",
+            "example": "Revenue Growth"
           },
-          "segmentId": {
-            "type": "string",
-            "description": "Identifier for the segment associated with the analysis.",
-            "example": "segment-1"
+          "value": {
+            "type": "number",
+            "description": "The value associated with the metric.",
+            "example": 15.0
           },
-          "periodStart": {
+          "unit": {
             "type": "string",
-            "description": "Start date for the analysis period.",
-            "example": "2023-01-01"
-          },
-          "periodEnd": {
-            "type": "string",
-            "description": "End date for the analysis period.",
-            "example": "2023-01-31"
-          },
-          "baseCurrency": {
-            "type": "string",
-            "description": "Currency used as the base for analysis.",
-            "example": "USD"
-          },
-          "scenario": {
-            "type": "string",
-            "description": "Scenario associated with the analysis.",
-            "example": "scenario-1"
-          },
-          "recordStatus": {
-            "type": "string",
-            "description": "Current status of the analysis record.",
-            "example": "active"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp of the last update to the analysis.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "The unit of measurement for the value.",
+            "example": "percent"
           }
         },
-        "description": "Represents an individual contribution analysis item."
-      },
-      "Pagination": {
-        "type": "object",
-        "properties": {
-          "page": {
-            "type": "integer",
-            "description": "Current page number.",
-            "format": "int32",
-            "example": 1
-          },
-          "pageSize": {
-            "type": "integer",
-            "description": "Number of items per page.",
-            "format": "int32",
-            "example": 10
-          },
-          "totalItems": {
-            "type": "integer",
-            "description": "Total number of items available across all pages.",
-            "format": "int32",
-            "example": 100
-          }
-        },
-        "description": "Metadata about the pagination of the response data."
+        "description": "A schema representing a finding from the contribution analysis."
       },
       "Metadata": {
+        "title": "Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Identifier for the response.",
-            "example": "resp-123"
+            "description": "The identifier for the response.",
+            "example": "response-54321"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation identifier for tracking the request.",
-            "example": "corr-456"
+            "description": "An identifier used to correlate related requests and responses.",
+            "example": "correlation-98765"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the response was generated.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "The timestamp when the response was generated.",
+            "example": "2023-10-05T12:05:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the response was processed.",
-            "example": "us-west"
+            "description": "The region where the analysis was processed.",
+            "example": "us-west-1"
           }
         },
-        "description": "Contains metadata about the response."
+        "description": "Additional metadata related to the analysis response."
       }
     },
     "parameters": {
@@ -258,15 +330,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "A unique identifier for the API endpoint being accessed.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "contribution-analysis-search-contribution-analysis"
+          "example": "contribution-analysis-analyze-contribution-analysis"
         },
-        "example": "contribution-analysis-search-contribution-analysis"
+        "example": "contribution-analysis-analyze-contribution-analysis"
       },
       "X-Runtime-App": {
+        "description": "The name of the application that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -279,7 +353,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a Bearer authentication method that relies on JSON Web Tokens (JWT) for securing API endpoints. Clients must provide a valid JWT in the 'Authorization' header when making requests.",
+        "description": "This security scheme utilizes the Bearer authentication mechanism for securing API endpoints. A valid JSON Web Token (JWT) must be provided in the Authorization header of requests to access protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
