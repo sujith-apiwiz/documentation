@@ -1,0 +1,285 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MICROSERVICE_PROD_Partner Authentication API",
+    "description": "The Partner Authentication API facilitates secure authentication for partners within the microservice ecosystem. Using this endpoint, partners can register their credentials, enabling seamless access to the system's resources. This API is essential for implementing robust security measures and ensuring authenticated interactions. It is typically utilized by partner integrations requiring access to protected resources in environments where secure transactions are critical.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://prod-workspace-pwmw.apiwiz.io",
+      "description": "Sandbox server",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "Sandbox server",
+      "x-environmentName": "Sandbox",
+      "x-hide": false,
+      "x-environmentId": "6a7f52236ae9a15654cd5721",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/v5/aggregation/partners/authentication": {
+      "post": {
+        "tags": [
+          "Partner Management"
+        ],
+        "summary": "Authenticate a partner user.",
+        "description": "This endpoint allows partners to authenticate themselves by providing their credentials. A successful authentication will return a token that can be used for subsequent requests.",
+        "operationId": "authenticatePartner",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          }
+        ],
+        "requestBody": {
+          "description": "This request body is used to authenticate a partner using their credentials. Ensure that the required fields are filled out correctly to obtain a valid authentication token.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticatePartnerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authentication successful; returns user details.",
+            "headers": {
+              "X-Endpoint-Id": {
+                "$ref": "#/components/headers/X-Endpoint-Id"
+              },
+              "X-Runtime-App": {
+                "$ref": "#/components/headers/X-Runtime-App"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticatePartnerResponse_200"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthenticatePartnerRequest": {
+        "title": "Partner Authentication Request",
+        "required": [
+          "partnerId",
+          "partnerSecret",
+          "requestContext"
+        ],
+        "type": "object",
+        "properties": {
+          "partnerId": {
+            "type": "string",
+            "description": "Unique identifier for the partner.",
+            "example": "STANDARD"
+          },
+          "partnerSecret": {
+            "type": "string",
+            "description": "Secret key used for partner authentication.",
+            "example": "STANDARD"
+          },
+          "requestContext": {
+            "description": "Contextual information about the request.",
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "Schema representing the request payload for authenticating a partner.",
+        "example": {
+          "partnerId": "STANDARD",
+          "partnerSecret": "STANDARD",
+          "requestContext": {
+            "requestId": "710c7bd4-d37d-5c53-a219-d949e45699d7",
+            "correlationId": "384ad47a-3cf7-5d7a-9f0b-a2f5531a328f",
+            "idempotencyKey": "2c43429a-6122-570f-b368-68ef48095649",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-132890"
+            }
+          }
+        }
+      },
+      "RequestContext": {
+        "title": "Request Context",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique identifier for the request.",
+            "example": "req-789"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier used to correlate multiple requests in a transaction.",
+            "example": "corr-456"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Key used to ensure that a request is processed only once.",
+            "example": "idemp-abc"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp of when the request was made.",
+            "format": "date-time",
+            "example": 1696949280.0
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "Identifier of the system where the request originated.",
+            "example": "systemA"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "Identifier of the application that initiated the request.",
+            "example": "appB"
+          },
+          "channel": {
+            "description": "Information about the communication channel used for the request.",
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Schema representing the contextual information for the request."
+      },
+      "Channel": {
+        "title": "Channel Information",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Unique identifier for the channel.",
+            "example": "chan-123"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "Type of the channel (e.g. web, mobile, etc.).",
+            "example": "mobile"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Identifier of the device used in the channel.",
+            "example": "device-456"
+          }
+        },
+        "description": "Schema representing the details of the communication channel used."
+      },
+      "AuthenticatePartnerResponse_200": {
+        "title": "Authentication Response",
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "The authentication token issued by the server.",
+            "example": "STANDARD"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/AuthenticationMetadata"
+          }
+        },
+        "description": "Response schema for successful authentication containing token and metadata.",
+        "example": {
+          "token": "STANDARD",
+          "metadata": {
+            "responseId": "a443a872-9517-5487-bb14-4bf651c48447",
+            "correlationId": "384ad47a-3cf7-5d7a-9f0b-a2f5531a328f",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
+      },
+      "AuthenticationMetadata": {
+        "title": "Authentication Metadata",
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "Unique identifier for the response.",
+            "example": "string"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier used to correlate requests and responses.",
+            "example": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the response was generated.",
+            "example": "string"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "Region where the processing took place.",
+            "example": "string"
+          }
+        },
+        "description": "Metadata information related to the authentication response."
+      }
+    },
+    "parameters": {
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "MICROSERVICE_PROD_200"
+          ]
+        }
+      }
+    },
+    "headers": {
+      "X-Endpoint-Id": {
+        "description": "A unique identifier for the endpoint being accessed. This value helps in tracking the requests made to specific endpoints.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "open-finance-api-create-token"
+        },
+        "example": "open-finance-api-create-token"
+      },
+      "X-Runtime-App": {
+        "description": "The name of the application that is processing the request. This header provides context about the origin of the request or the application involved.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "accounts-deposits"
+        },
+        "example": "accounts-deposits"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "This security scheme uses a JSON Web Token (JWT) to authenticate and authorize requests. Clients must include a valid JWT in the 'Authorization' header using the Bearer prefix.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
