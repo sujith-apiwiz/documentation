@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Product Inventory Distribution API",
-    "description": "The Product Inventory Distribution API facilitates the distribution of product inventory across various banking channels. This API allows businesses to efficiently manage and allocate inventory specific to different channels, ensuring optimal resource utilization and availability. Typical consumers include banking institutions and inventory managers looking to streamline their distribution processes. Through this endpoint, users can initiate distribution requests tailored to channel-specific needs, enhancing operational efficiency and decision-making.",
+    "description": "The Product Inventory Distribution API enables users to access and manage product inventory data specific to various banking channels. This API provides capabilities to retrieve detailed information about product availability, allocation, and distribution across different platforms. Typical consumers include banking institutions and financial service providers that need real-time insights into their product inventory to optimize operations and decision-making. By leveraging this API, businesses can ensure effective inventory management and enhance customer service by providing accurate product availability information.",
     "version": "1.0"
   },
   "servers": [
@@ -18,7 +18,7 @@
       "x-basePath": "/"
     },
     {
-      "url": "https://customer-channel-app:9000",
+      "url": "https://35.162.152.203:9000",
       "description": "PROD",
       "variables": {},
       "x-schema": "https://",
@@ -30,77 +30,44 @@
     }
   ],
   "paths": {
-    "/v5/banking/channel-specific/product-inventory-distribution/distributions": {
-      "post": {
+    "/v5/banking/channel-specific/product-inventory-distribution": {
+      "get": {
         "tags": [
-          "Product Inventory Management"
+          "Product Inventory"
         ],
-        "summary": "Create a new distribution for channel-specific product inventory.",
-        "description": "This endpoint allows you to create a distribution for the product inventory specific to a particular channel. Ensure to provide all necessary details in the request body to successfully create a distribution.",
-        "operationId": "createChannelSpecificProductInventoryDistribution",
+        "summary": "Retrieve product inventory distribution for a specific channel.",
+        "description": "This endpoint allows you to fetch the inventory distribution details for products associated with a specific sales channel. You can use this information to assess product availability and optimize inventory management for different channels.",
+        "operationId": "getChannelSpecificProductInventoryDistribution",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/x-workflow-id"
-          },
-          {
-            "$ref": "#/components/parameters/idempotency-key"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-step"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-branch"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-decision"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-internal"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-execution-id"
-          },
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "A request body to initiate the distribution of product inventory specific to a channel. The content should provide relevant data to ensure the correct distribution operation is performed.",
+          "description": "This request body is used to retrieve information about product inventory distribution for a specific channel. Ensure that the payload adheres to the defined schema to successfully query the system.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateChannelSpecificProductInventoryDistributionRequest"
+                "$ref": "#/components/schemas/GetChannelSpecificProductInventoryDistributionRequest"
               }
             }
           }
         },
         "responses": {
-          "202": {
-            "description": "Request has been accepted and is being processed.",
+          "200": {
+            "description": "Successful retrieval of product inventory distribution data.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
               },
               "X-Runtime-App": {
                 "$ref": "#/components/headers/X-Runtime-App"
-              },
-              "X-Workflow-Id": {
-                "$ref": "#/components/headers/X-Workflow-Id"
-              },
-              "X-Workflow-Name": {
-                "$ref": "#/components/headers/X-Workflow-Name"
-              },
-              "X-Workflow-State": {
-                "$ref": "#/components/headers/X-Workflow-State"
-              },
-              "X-Workflow-Execution-Id": {
-                "$ref": "#/components/headers/X-Workflow-Execution-Id"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateChannelSpecificProductInventoryDistributionResponse_202"
+                  "$ref": "#/components/schemas/GetChannelSpecificProductInventoryDistributionResponse_200"
                 }
               }
             }
@@ -120,294 +87,178 @@
   },
   "components": {
     "schemas": {
-      "CreateChannelSpecificProductInventoryDistributionRequest": {
-        "title": "Product Inventory Distribution Request",
+      "GetChannelSpecificProductInventoryDistributionRequest": {
+        "type": "string",
+        "description": "A string representing the request body for operations related to channel-specific product inventory distribution.",
+        "example": "{}"
+      },
+      "GetChannelSpecificProductInventoryDistributionResponse_200": {
+        "title": "Product Inventory Distribution Response",
         "type": "object",
         "properties": {
-          "inventoryItemId": {
-            "type": "string",
-            "description": "Unique identifier for the inventory item.",
-            "example": "STANDARD"
-          },
-          "sku": {
-            "type": "string",
-            "description": "Stock Keeping Unit identifier for the product.",
-            "example": "STANDARD"
-          },
-          "branchId": {
-            "type": "string",
-            "description": "Identifier for the branch managing the inventory.",
-            "example": "STANDARD"
-          },
-          "quantityOnHand": {
-            "type": "integer",
-            "description": "Current quantity of the item on hand in the branch.",
-            "format": "int32",
-            "example": 1
-          },
-          "reorderPoint": {
-            "type": "integer",
-            "description": "Threshold quantity at which new stock should be ordered.",
-            "format": "int32",
-            "example": 1
-          },
-          "distributionQuantity": {
-            "type": "integer",
-            "description": "Quantity of the item to distribute.",
-            "format": "int32",
-            "example": 1
-          },
-          "requestContext": {
-            "$ref": "#/components/schemas/RequestContext"
-          }
-        },
-        "description": "Request body schema for product inventory distribution operations.",
-        "example": {
-          "inventoryItemId": "STANDARD",
-          "sku": "STANDARD",
-          "branchId": "STANDARD",
-          "quantityOnHand": 1,
-          "reorderPoint": 1,
-          "distributionQuantity": 1,
-          "requestContext": {
-            "requestId": "dba2c870-f54f-569d-b73a-38d0f0fe1b3b",
-            "correlationId": "eb8155bc-4eca-58eb-a8eb-c616bc0be9b8",
-            "idempotencyKey": "a47b5822-9b21-5bfc-9035-5c4a000c41ad",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-606200"
+          "items": {
+            "type": "array",
+            "description": "Array of inventory items available in the response.",
+            "example": [
+              {
+                "inventoryItemId": "STANDARD",
+                "sku": "STANDARD",
+                "branchId": "STANDARD",
+                "quantityOnHand": 1,
+                "reorderPoint": 1,
+                "distributionQuantity": 1,
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/InventoryItem"
             }
-          }
-        }
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req-001"
           },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier used to correlate logs and requests.",
-            "example": "corr-001"
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
           },
-          "idempotencyKey": {
+          "sort": {
             "type": "string",
-            "description": "Key used to ensure idempotence of operations.",
-            "example": "idempotent-abc"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp when the request was made.",
-            "example": "2023-10-01T12:00:00Z"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "The system from which the request originated.",
-            "example": "inventory-system"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "The application that sent the request.",
-            "example": "warehouse-app"
-          },
-          "channel": {
-            "$ref": "#/components/schemas/ChannelInfo"
-          }
-        },
-        "description": "Context information for the request."
-      },
-      "ChannelInfo": {
-        "title": "Channel Information",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "channel-01"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of the channel (e.g., online, offline).",
-            "example": "online"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier for the device used to make the request.",
-            "example": "device-001"
-          }
-        },
-        "description": "Information about the channel from which the request was made."
-      },
-      "CreateChannelSpecificProductInventoryDistributionResponse_202": {
-        "title": "ProductInventoryDistributionResponse",
-        "type": "object",
-        "properties": {
-          "inventoryItemId": {
-            "type": "string",
-            "description": "Unique identifier for the inventory item.",
+            "description": "Sorting information for the returned items.",
             "example": "STANDARD"
-          },
-          "branchId": {
-            "type": "string",
-            "description": "Unique identifier for the branch where the inventory item is distributed.",
-            "example": "STANDARD"
-          },
-          "processingReference": {
-            "type": "string",
-            "description": "Reference for tracking the processing of the distribution request.",
-            "example": "STANDARD"
-          },
-          "status": {
-            "type": "string",
-            "description": "Current status of the inventory item distribution.",
-            "example": "ACTIVE"
-          },
-          "acceptedAt": {
-            "type": "string",
-            "description": "Timestamp indicating when the distribution was accepted.",
-            "example": "2026-08-11T12:00:00Z"
           },
           "metadata": {
-            "description": "Additional metadata related to the distribution response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the product inventory distribution operation. Contains details about the inventory item distribution status and metadata.",
+        "description": "Response schema for the product inventory distribution operation. It contains the list of inventory items and associated metadata.",
         "example": {
-          "inventoryItemId": "STANDARD",
-          "branchId": "STANDARD",
-          "processingReference": "STANDARD",
-          "status": "ACTIVE",
-          "acceptedAt": "2026-08-11T12:00:00Z",
+          "items": [
+            {
+              "inventoryItemId": "STANDARD",
+              "sku": "STANDARD",
+              "branchId": "STANDARD",
+              "quantityOnHand": 1,
+              "reorderPoint": 1,
+              "distributionQuantity": 1,
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
+          },
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "fac9b4ed-a2f4-5196-8282-42b29de7436c",
-            "correlationId": "eb8155bc-4eca-58eb-a8eb-c616bc0be9b8",
+            "responseId": "85802ba0-cd70-562e-9d5b-e16c249fd8ef",
+            "correlationId": "731f64e2-e77b-5156-8c8b-a54ff2c209d7",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
+      "InventoryItem": {
+        "title": "Inventory Item",
+        "type": "object",
+        "properties": {
+          "inventoryItemId": {
+            "type": "string",
+            "description": "Unique identifier for the inventory item.",
+            "example": "inventory123"
+          },
+          "sku": {
+            "type": "string",
+            "description": "Stock Keeping Unit identifier for the inventory item.",
+            "example": "SKU12345"
+          },
+          "branchId": {
+            "type": "string",
+            "description": "Identifier for the branch where the inventory item is located.",
+            "example": "branch456"
+          },
+          "quantityOnHand": {
+            "type": "integer",
+            "description": "Current quantity of the inventory item available on hand.",
+            "format": "int32",
+            "example": 10
+          },
+          "reorderPoint": {
+            "type": "integer",
+            "description": "Reorder point for the inventory item to trigger restocking.",
+            "format": "int32",
+            "example": 5
+          },
+          "distributionQuantity": {
+            "type": "integer",
+            "description": "Quantity of the inventory item to be distributed.",
+            "format": "int32",
+            "example": 2
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "Current status of the inventory record.",
+            "example": "active"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp of the last update to the inventory item record.",
+            "example": "2023-10-01T12:00:00Z"
+          }
+        },
+        "description": "Represents an individual inventory item details."
+      },
+      "Pagination": {
+        "title": "Pagination Information",
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number of the results.",
+            "format": "int32",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page provided in the results.",
+            "format": "int32",
+            "example": 20
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available across all pages.",
+            "format": "int32",
+            "example": 100
+          }
+        },
+        "description": "Information regarding the pagination of the response."
+      },
       "Metadata": {
-        "title": "Metadata",
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
             "description": "Unique identifier for the response.",
-            "example": "response-001"
+            "example": "response789"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate requests and responses.",
-            "example": "correlation-002"
+            "description": "Correlation identifier for tracking the request across services.",
+            "example": "correlation101112"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the metadata was generated.",
+            "description": "Timestamp indicating when the response was generated.",
             "example": "2023-10-01T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing occurred.",
+            "description": "The region where the request was processed.",
             "example": "us-west-1"
           }
         },
-        "description": "Metadata information associated with the distribution response."
+        "description": "Metadata information returned with the response."
       }
     },
     "parameters": {
-      "x-workflow-id": {
-        "name": "x-workflow-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "WF-080"
-        },
-        "example": "WF-080"
-      },
-      "idempotency-key": {
-        "name": "idempotency-key",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "15986f90-47e4-4b71-b578-b1152f189b09"
-        },
-        "example": "15986f90-47e4-4b71-b578-b1152f189b09"
-      },
-      "x-workflow-step": {
-        "name": "x-workflow-step",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "1"
-        },
-        "example": "1"
-      },
-      "x-workflow-branch": {
-        "name": "x-workflow-branch",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "main"
-        },
-        "example": "main"
-      },
-      "x-workflow-decision": {
-        "name": "x-workflow-decision",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "NORMAL"
-        },
-        "example": "NORMAL"
-      },
-      "x-workflow-internal": {
-        "name": "x-workflow-internal",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "true"
-        },
-        "example": "true"
-      },
-      "x-workflow-execution-id": {
-        "name": "x-workflow-execution-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "56a6e058-b4a4-4e87-b71a-86058ee101b6"
-        },
-        "example": "56a6e058-b4a4-4e87-b71a-86058ee101b6"
-      },
       "x-mock-response": {
         "name": "x-mock-response",
         "in": "header",
@@ -418,24 +269,22 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_202"
+            "MICROSERVICE_PROD_200"
           ]
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "Unique identifier for the endpoint that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "product-inventory-distribution-distribute-product-inventory-distribution"
+          "example": "product-inventory-distribution-search-product-inventory-distribution"
         },
-        "example": "product-inventory-distribution-distribute-product-inventory-distribution"
+        "example": "product-inventory-distribution-search-product-inventory-distribution"
       },
       "X-Runtime-App": {
-        "description": "Identifier for the application that executed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -443,52 +292,12 @@
           "example": "customer-channel"
         },
         "example": "customer-channel"
-      },
-      "X-Workflow-Id": {
-        "description": "Unique identifier for the workflow associated with the request.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "WF-080"
-        },
-        "example": "WF-080"
-      },
-      "X-Workflow-Name": {
-        "description": "The name of the workflow being executed.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "Product Launch Pricing and Channel Deployment"
-        },
-        "example": "Product Launch Pricing and Channel Deployment"
-      },
-      "X-Workflow-State": {
-        "description": "The current state of the workflow, indicating its progress.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "IN_PROGRESS"
-        },
-        "example": "IN_PROGRESS"
-      },
-      "X-Workflow-Execution-Id": {
-        "description": "A unique identifier for the execution of the workflow.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "56a6e058-b4a4-4e87-b71a-86058ee101b6"
-        },
-        "example": "56a6e058-b4a4-4e87-b71a-86058ee101b6"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme enables the use of bearer authentication with JSON Web Tokens (JWT). Clients can obtain a JWT from the authentication server and then use it in the Authorization header of their requests to access protected resources.",
+        "description": "This security scheme uses Bearer Authentication (also known as token authentication). Clients must include a valid JSON Web Token (JWT) in the Authorization header when making requests to access protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
