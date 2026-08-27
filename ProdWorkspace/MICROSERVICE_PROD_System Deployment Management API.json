@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_System Deployment Management API",
-    "description": "The System Deployment Management API provides functionalities to oversee and retrieve information related to the deployment processes of the MICROSERVICE_PROD banking system. This API enables IT managers and system administrators to access deployment details, including status checks and configuration data, to ensure smooth operational continuity. Typical use cases include monitoring deployment progress, troubleshooting deployment issues, and maintaining system integrity. It serves as a vital tool for enhancing system management efficiency within the banking IT infrastructure.",
+    "description": "The System Deployment Management API enables users to oversee and retrieve deployment details of microservices within the banking IT infrastructure. This API provides essential endpoints for accessing deployment statuses, versions, and configurations, facilitating efficient management of system deployments. Typical consumers include IT administrators and deployment engineers responsible for maintaining system integrity and performance. By utilizing this API, organizations can streamline their deployment processes and ensure seamless integration across banking applications.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/it-management/system-deployment/{param1}": {
+    "/v5/banking/it-management/system-deployment": {
       "get": {
         "tags": [
-          "System Deployment"
+          "IT Management"
         ],
         "summary": "Retrieve system deployment details.",
-        "description": "This endpoint allows you to fetch details of a specific system deployment identified by its unique resource ID. It provides comprehensive information about the deployment, including its current status, associated resources, and configuration settings.",
-        "operationId": "getSystemDeploymentById",
+        "description": "Fetches the information related to system deployments within the IT management framework, providing insights and details necessary for managing deployed systems.",
+        "operationId": "getSystemDeployment",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to obtain detailed information related to the system deployment with the identifier RES-100045. Ensure that the JSON structure adheres to the specified schema for successful processing.",
+          "description": "Request body containing parameters to retrieve information about the system deployment within IT management. Ensure that the structure aligns with the defined schema to guarantee proper processing.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetSystemDeploymentByIdRequest"
+                "$ref": "#/components/schemas/GetSystemDeploymentRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved the requested resource details.",
+            "description": "Successfully retrieved the system deployment information.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetSystemDeploymentByIdResponse_200"
+                  "$ref": "#/components/schemas/GetSystemDeploymentResponse_200"
                 }
               }
             }
@@ -76,122 +76,182 @@
   },
   "components": {
     "schemas": {
-      "GetSystemDeploymentByIdRequest": {
+      "GetSystemDeploymentRequest": {
         "type": "string",
-        "description": "This schema represents the request body for the GET operation related to system deployment in IT management. The body is expected to be a string.",
+        "description": "Request body for the IT management system deployment operations GET request. This document should contain a JSON string defining the required parameters for the deployment operation.",
         "example": "{}"
       },
-      "GetSystemDeploymentByIdResponse_200": {
-        "title": "System Deployment Response",
+      "GetSystemDeploymentResponse_200": {
         "type": "object",
         "properties": {
-          "systemId": {
+          "items": {
+            "type": "array",
+            "description": "An array of system deployment items.",
+            "example": [
+              {
+                "systemId": "STANDARD",
+                "environment": "STANDARD",
+                "changeId": "STANDARD",
+                "ownerTeam": "STANDARD",
+                "plannedAt": "2026-08-11T12:00:00Z",
+                "serviceTier": "STANDARD",
+                "availabilityTargetPercent": 100.0,
+                "maintenanceWindow": "STANDARD",
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/SystemDeployment"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "sort": {
             "type": "string",
-            "description": "The unique identifier for the system.",
+            "description": "Criteria used for sorting the items.",
             "example": "STANDARD"
-          },
-          "environment": {
-            "type": "string",
-            "description": "The deployment environment of the system (e.g., production, staging).",
-            "example": "STANDARD"
-          },
-          "changeId": {
-            "type": "string",
-            "description": "The unique identifier for the change associated with this deployment.",
-            "example": "STANDARD"
-          },
-          "ownerTeam": {
-            "type": "string",
-            "description": "The team responsible for the system.",
-            "example": "STANDARD"
-          },
-          "plannedAt": {
-            "type": "string",
-            "description": "The planned date and time for the deployment.",
-            "example": "2026-08-11T12:00:00Z"
-          },
-          "serviceTier": {
-            "type": "string",
-            "description": "The service tier associated with the deployment.",
-            "example": "STANDARD"
-          },
-          "availabilityTargetPercent": {
-            "type": "number",
-            "description": "The target availability percentage for the system.",
-            "example": 100.0
-          },
-          "maintenanceWindow": {
-            "type": "string",
-            "description": "The scheduled maintenance window for the system.",
-            "example": "STANDARD"
-          },
-          "recordStatus": {
-            "type": "string",
-            "description": "The status of the deployment record.",
-            "example": "ACTIVE"
-          },
-          "version": {
-            "type": "integer",
-            "description": "The version number of the deployment.",
-            "format": "int32",
-            "example": 1
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "The timestamp of the last update to the deployment record.",
-            "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "$ref": "#/components/schemas/DeploymentMetadata"
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "This schema represents the response for the system deployment operation including various attributes related to the deployment.",
+        "description": "Response object for the GET request on system deployment operations, containing a list of system details, pagination info, sorting criteria, and response metadata.",
         "example": {
-          "systemId": "STANDARD",
-          "environment": "STANDARD",
-          "changeId": "STANDARD",
-          "ownerTeam": "STANDARD",
-          "plannedAt": "2026-08-11T12:00:00Z",
-          "serviceTier": "STANDARD",
-          "availabilityTargetPercent": 100.0,
-          "maintenanceWindow": "STANDARD",
-          "recordStatus": "ACTIVE",
-          "version": 1,
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "items": [
+            {
+              "systemId": "STANDARD",
+              "environment": "STANDARD",
+              "changeId": "STANDARD",
+              "ownerTeam": "STANDARD",
+              "plannedAt": "2026-08-11T12:00:00Z",
+              "serviceTier": "STANDARD",
+              "availabilityTargetPercent": 100.0,
+              "maintenanceWindow": "STANDARD",
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
+          },
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "740ed7be-2289-55a0-bfdd-b8944961326d",
-            "correlationId": "b13f482d-91dc-58aa-8314-b3d2cc372c46",
+            "responseId": "d2cccdd7-3520-5e04-a567-894f1bf3504a",
+            "correlationId": "cbddcb39-a87c-5f9d-9a45-768f4d4aef59",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "DeploymentMetadata": {
-        "title": "Deployment Metadata",
+      "SystemDeployment": {
+        "type": "object",
+        "properties": {
+          "systemId": {
+            "type": "string",
+            "description": "Unique identifier for the system.",
+            "example": "example-system-id"
+          },
+          "environment": {
+            "type": "string",
+            "description": "The environment in which the system is deployed (e.g., production, staging).",
+            "example": "production"
+          },
+          "changeId": {
+            "type": "string",
+            "description": "Identifier for the change associated with the deployment.",
+            "example": "example-change-id"
+          },
+          "ownerTeam": {
+            "type": "string",
+            "description": "The team responsible for the system deployment.",
+            "example": "example-owner-team"
+          },
+          "plannedAt": {
+            "type": "string",
+            "description": "The planned date and time for the deployment.",
+            "example": "2023-10-09T12:00:00Z"
+          },
+          "serviceTier": {
+            "type": "string",
+            "description": "The service tier of the system (e.g., basic, premium).",
+            "example": "premium"
+          },
+          "availabilityTargetPercent": {
+            "type": "number",
+            "description": "The target availability percentage for the system.",
+            "example": 99.99
+          },
+          "maintenanceWindow": {
+            "type": "string",
+            "description": "Scheduled maintenance window for the system in ISO 8601 format.",
+            "example": "2023-10-09T01:00:00Z/2023-10-09T02:00:00Z"
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "Current status of the deployment record (e.g., active, inactive).",
+            "example": "active"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp of the last update to the deployment information.",
+            "example": "2023-10-08T12:00:00Z"
+          }
+        },
+        "description": "Represents a single system deployment with relevant details."
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number of the response.",
+            "format": "int32",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32",
+            "example": 10
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available across all pages.",
+            "format": "int32",
+            "example": 100
+          }
+        },
+        "description": "Pagination details for the response, including the current page, page size, and total items."
+      },
+      "Metadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "The unique identifier for the response.",
-            "example": "string"
+            "description": "Unique identifier for the response.",
+            "example": "example-response-id"
           },
           "correlationId": {
             "type": "string",
-            "description": "The correlation identifier used to track the request and response.",
-            "example": "string"
+            "description": "Identifier used to correlate related requests/responses.",
+            "example": "example-correlation-id"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp when the metadata was generated.",
-            "example": "string"
+            "description": "Timestamp when the response was generated.",
+            "example": "2023-10-09T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing occurred.",
-            "example": "string"
+            "description": "The region where the processing of the request occurred.",
+            "example": "us-east-1"
           }
         },
-        "description": "This schema represents the metadata related to a deployment including IDs and timestamps."
+        "description": "Metadata associated with the response, including IDs and timestamps."
       }
     },
     "parameters": {
@@ -216,9 +276,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "system-deployment-get-system-deployment"
+          "example": "system-deployment-search-system-deployment"
         },
-        "example": "system-deployment-get-system-deployment"
+        "example": "system-deployment-search-system-deployment"
       },
       "X-Runtime-App": {
         "style": "simple",
@@ -233,7 +293,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication scheme that uses bearer tokens. This scheme requires a JSON Web Token (JWT) in the Authorization header for secure access to the API.",
+        "description": "This security scheme uses the Bearer authentication method, which allows clients to authenticate using a JSON Web Token (JWT) in the Authorization header of their HTTP requests.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
