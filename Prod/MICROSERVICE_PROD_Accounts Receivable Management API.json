@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Accounts Receivable Management API",
-    "description": "The Accounts Receivable Management API enables businesses to efficiently update and manage their accounts receivable data. This API allows users to adjust details related to specific accounts, ensuring accurate tracking of incoming payments and liabilities. Typical consumers include finance teams and accounting software integrations that require frequent updates to account statuses and payment records. Leverage this API to optimize cash flow management and streamline financial operations.",
+    "description": "The Accounts Receivable Management API facilitates the retrieval of account information related to outstanding payments due to a business. This API provides users with access to vital data, including invoice statuses, payment histories, and customer account details. Typical consumers of this API include financial analysts, accountants, and accounts receivable specialists looking to monitor cash flow and optimize collections. By integrating this API, organizations can enhance their financial operations, ensuring timely payments and improved liquidity.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/account-management/accounts-receivable/{param1}": {
-      "patch": {
+    "/v5/banking/account-management/accounts-receivable": {
+      "get": {
         "tags": [
-          "AccountsReceivableManagement"
+          "Accounts Management"
         ],
-        "summary": "Update Accounts Receivable Details",
-        "description": "This endpoint allows users to update the details of a specific accounts receivable entry identified by the provided account number. Ensure accurate input to modify the account information effectively.",
-        "operationId": "updateAccountsReceivable200045",
+        "summary": "Retrieve a list of accounts receivable.",
+        "description": "This endpoint allows you to retrieve a comprehensive list of accounts receivable, providing details necessary for financial management and analysis.",
+        "operationId": "getAccountsReceivable",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
-          },
-          {
-            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "Updates the details of the accounts receivable identified by ACC-200045. This request allows for partial updates to an existing account's information, ensuring that only the specified fields are modified.",
+          "description": "Request body for retrieving accounts receivable data using the GET method. This request requires a valid JSON structure conforming to the expected schema.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateAccountsReceivable200045Request"
+                "$ref": "#/components/schemas/GetAccountsReceivableRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The request was successful, and the resource has been updated.",
+            "description": "Request completed successfully, returning the accounts receivable data.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateAccountsReceivable200045Response_200"
+                  "$ref": "#/components/schemas/GetAccountsReceivableResponse_200"
                 }
               }
             }
@@ -90,204 +87,163 @@
   },
   "components": {
     "schemas": {
-      "UpdateAccountsReceivable200045Request": {
+      "GetAccountsReceivableRequest": {
+        "type": "string",
+        "description": "Represents the request body for the GET operation on accounts receivable.",
+        "example": "{}"
+      },
+      "GetAccountsReceivableResponse_200": {
         "type": "object",
         "properties": {
-          "changes": {
-            "description": "Contains details about the changes made to the account.",
-            "$ref": "#/components/schemas/AccountChanges"
-          },
-          "changeReason": {
-            "type": "string",
-            "description": "The reason for the change being requested.",
-            "example": "STANDARD"
-          },
-          "effectiveAt": {
-            "type": "string",
-            "description": "The date and time when the changes should become effective.",
-            "example": "2026-09-15T14:30:00Z"
-          },
-          "requestedBy": {
-            "type": "string",
-            "description": "The identifier of the user who is requesting the changes.",
-            "example": "STANDARD"
-          },
-          "requestContext": {
-            "description": "Context information regarding the request.",
-            "$ref": "#/components/schemas/RequestContext"
-          }
-        },
-        "description": "Request body schema for patching account management operations related to accounts receivable.",
-        "example": {
-          "changes": {
-            "accountId": "ACC-904893",
-            "customerId": "CUST-924973",
-            "ledgerDate": "2026-09-15"
-          },
-          "changeReason": "STANDARD",
-          "effectiveAt": "2026-09-15T14:30:00Z",
-          "requestedBy": "STANDARD",
-          "requestContext": {
-            "requestId": "4e893402-4d24-5eb4-b091-3db31834d1bf",
-            "correlationId": "01401f3b-defe-568a-932f-077768240d78",
-            "idempotencyKey": "2aca5475-3e3e-5296-acc1-216a37a9a457",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-155323"
+          "items": {
+            "type": "array",
+            "description": "A list of account items related to accounts receivable.",
+            "example": [
+              {
+                "accountId": "ACC-623846",
+                "customerId": "CUST-212170",
+                "ledgerDate": "2026-09-15",
+                "currency": "USD",
+                "ledgerBalance": 100.0,
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/AccountItem"
             }
-          }
-        }
-      },
-      "AccountChanges": {
-        "type": "object",
-        "properties": {
-          "accountId": {
-            "type": "string",
-            "description": "The unique identifier for the account.",
-            "example": "string"
           },
-          "customerId": {
-            "type": "string",
-            "description": "The unique identifier for the customer associated with the account.",
-            "example": "string"
+          "pagination": {
+            "description": "Pagination information for the response.",
+            "$ref": "#/components/schemas/Pagination"
           },
-          "ledgerDate": {
+          "sort": {
             "type": "string",
-            "description": "The date associated with the ledger entries for the account.",
-            "example": "string"
-          }
-        },
-        "description": "Contains the specific changes related to the account."
-      },
-      "RequestContext": {
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "A unique identifier for the request.",
-            "example": "string"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "An identifier used to trace logs and requests across systems.",
-            "example": "string"
-          },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "A key to ensure that a request is only processed once.",
-            "example": "string"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp of when the request was made.",
-            "example": "string"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "The system that initiated the request.",
-            "example": "string"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "The application that initiated the request.",
-            "example": "string"
-          },
-          "channel": {
-            "description": "Information about the channel used to make the request.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Context information regarding the request, including identifiers and timestamps."
-      },
-      "Channel": {
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "The unique identifier for the channel.",
-            "example": "string"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "The type of channel (e.g., web, mobile).",
-            "example": "string"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "The unique identifier for the device making the request.",
-            "example": "string"
-          }
-        },
-        "description": "Information about the channel through which the request was made."
-      },
-      "UpdateAccountsReceivable200045Response_200": {
-        "title": "Account Management Response",
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "integer",
-            "description": "The version of the response schema.",
-            "format": "int32",
-            "example": 1
-          },
-          "status": {
-            "type": "string",
-            "description": "The status of the operation, indicating success or failure.",
-            "example": "ACTIVE"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp indicating when the entity was last updated.",
-            "example": "2026-09-15T14:30:00Z"
+            "description": "Sorting criteria applied to the returned items.",
+            "example": "STANDARD"
           },
           "metadata": {
-            "description": "Metadata carrying additional information about the response.",
+            "description": "Metadata related to the request such as correlation and response IDs.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "This schema represents the response structure for the Account Management Operations PATCH request.",
+        "description": "Response schema for the accounts receivable operations GET request, detailing a collection of account items and associated metadata.",
         "example": {
-          "version": 1,
-          "status": "ACTIVE",
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "items": [
+            {
+              "accountId": "ACC-623846",
+              "customerId": "CUST-212170",
+              "ledgerDate": "2026-09-15",
+              "currency": "USD",
+              "ledgerBalance": 100.0,
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
+          },
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "a734d52b-4514-51ca-b610-1d86c91fc9df",
-            "correlationId": "01401f3b-defe-568a-932f-077768240d78",
+            "responseId": "2254b06a-cb41-58b9-ab40-3ae36039cac8",
+            "correlationId": "0f0f255e-266a-5d00-835e-87a2b6b23971",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
+      "AccountItem": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Unique identifier for the account.",
+            "example": "account-123"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "Unique identifier for the customer associated with the account.",
+            "example": "customer-123"
+          },
+          "ledgerDate": {
+            "type": "string",
+            "description": "The date of the ledger entry in ISO 8601 format.",
+            "example": "2023-01-01"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency used for the account transactions.",
+            "example": "USD"
+          },
+          "ledgerBalance": {
+            "type": "number",
+            "description": "The current balance of the ledger.",
+            "example": 1500.0
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "The status of the account record (e.g., active, inactive).",
+            "example": "active"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "The date and time when the account record was last updated in ISO 8601 format.",
+            "example": "2023-01-02T12:00:00Z"
+          }
+        },
+        "description": "Details of an individual account item in the accounts receivable."
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "The current page number of the results.",
+            "format": "int32",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The number of items per page.",
+            "format": "int32",
+            "example": 10
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "The total number of items available.",
+            "format": "int32",
+            "example": 50
+          }
+        },
+        "description": "Pagination details for the response."
+      },
       "Metadata": {
-        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
             "description": "Unique identifier for the response.",
-            "example": "abc123"
+            "example": "response-123"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier to correlate requests and responses, useful for tracing.",
-            "example": "xyz789"
+            "description": "ID to track the request across services.",
+            "example": "correlation-123"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the metadata was generated.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "Timestamp indicating when the response was generated in ISO 8601 format.",
+            "example": "2023-01-01T00:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing took place.",
-            "example": "us-west-1"
+            "description": "Region where the processing occurred.",
+            "example": "us-east-1"
           }
         },
-        "description": "This schema represents the metadata structure included in the response."
+        "description": "Metadata containing additional information about the response."
       }
     },
     "parameters": {
@@ -304,31 +260,21 @@
             "MICROSERVICE_PROD_200"
           ]
         }
-      },
-      "param1": {
-        "name": "param1",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
-        }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "The identifier for the endpoint associated with the request.",
+        "description": "A unique identifier for the endpoint which processed the request, providing traceability for operational purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "accounts-receivable-update-accounts-receivable"
+          "example": "accounts-receivable-search-accounts-receivable"
         },
-        "example": "accounts-receivable-update-accounts-receivable"
+        "example": "accounts-receivable-search-accounts-receivable"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that processed the request.",
+        "description": "The name of the application that processed the request, useful for monitoring and debugging.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -341,7 +287,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authorization scheme that uses bearer tokens, specifically JSON Web Tokens (JWT). This method involves providing a token in the Authorization header to authenticate requests.",
+        "description": "This security scheme uses a bearer token for authentication. Clients must include an HTTP Authorization header with 'Bearer {token}' to access secured endpoints. The token should be a JSON Web Token (JWT) that is properly signed and can be verified.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE_PROD_Beneficiary Management API",
-    "description": "The Beneficiary Management API enables users to access and manage their registered beneficiaries within the open banking framework. This endpoint allows consumers to retrieve detailed information regarding beneficiaries for transaction purposes. Typical users of this API include financial institutions and application developers who need to integrate beneficiary data into their platforms for enhanced banking services. By utilizing this API, users can efficiently manage and utilize beneficiary information to facilitate smooth payment processing and customer service.",
+    "title": "MICROSERVICE_PROD_Scheduled Payments Management API",
+    "description": "The Scheduled Payments Management API provides a seamless interface for retrieving information about scheduled payments in an open banking context. This API allows users to access detailed data regarding their upcoming payments, including amounts, due dates, and recipient information. It's designed for financial institutions and developers looking to enhance user experience by integrating scheduled payment functionalities into their applications. Use cases typically involve account management, budgeting tools, and automated payment tracking.",
     "version": "1.0"
   },
   "servers": [
@@ -30,32 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/open-banking/aisp/beneficiaries": {
+    "/v5/open-banking/aisp/scheduled-payments": {
       "get": {
         "tags": [
-          "Banking"
+          "Payments"
         ],
-        "summary": "Retrieve a list of beneficiaries.",
-        "description": "This endpoint allows you to fetch detailed information about all beneficiaries associated with the account. It provides essential data that can be used for financial overview and management.",
-        "operationId": "getAispBeneficiaries",
+        "summary": "Retrieve scheduled payments.",
+        "description": "This endpoint allows developers to fetch a list of scheduled payments, providing insight into upcoming transactions that have been scheduled by the user.",
+        "operationId": "getScheduledPayments",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request retrieves a list of beneficiaries associated with the authenticated user. The client should ensure that the request body complies with the specified schema to receive accurate and expected results.",
+          "description": "Request body for retrieving scheduled payments. This request includes a JSON object that defines the criteria for fetching the scheduled payment details.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetAispBeneficiariesRequest"
+                "$ref": "#/components/schemas/GetScheduledPaymentsRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved the list of beneficiaries.",
+            "description": "Successful retrieval of scheduled payments.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -67,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetAispBeneficiariesResponse_200"
+                  "$ref": "#/components/schemas/GetScheduledPaymentsResponse_200"
                 }
               }
             }
@@ -87,33 +87,39 @@
   },
   "components": {
     "schemas": {
-      "GetAispBeneficiariesRequest": {
+      "GetScheduledPaymentsRequest": {
         "type": "string",
-        "description": "This schema represents the request body for the GET operation related to beneficiaries in the AISP service.",
+        "description": "Represents the request body for the GET operation on scheduled payments.",
         "example": "{}"
       },
-      "GetAispBeneficiariesResponse_200": {
+      "GetScheduledPaymentsResponse_200": {
+        "title": "Scheduled Payments Response",
         "type": "object",
         "properties": {
           "Data": {
             "type": "object",
             "properties": {
-              "Beneficiary": {
+              "ScheduledPayment": {
                 "type": "array",
-                "description": "List of beneficiary details.",
+                "description": "A list of scheduled payment objects.",
                 "items": {
-                  "$ref": "#/components/schemas/Beneficiary"
+                  "$ref": "#/components/schemas/ScheduledPayment"
                 }
               }
             },
-            "description": "Container for the main beneficiary data.",
             "example": {
-              "Beneficiary": [
+              "ScheduledPayment": [
                 {
-                  "AccountId": "ACC-744637",
+                  "AccountId": "ACC-788665",
                   "id": "STANDARD",
-                  "type": "STANDARD",
+                  "dateTime": "2026-09-15T14:30:00Z",
+                  "ScheduledType": "STANDARD",
                   "Reference": "STANDARD",
+                  "DebtorReference": "STANDARD",
+                  "InstructedAmount": {
+                    "Amount": "1250.75",
+                    "Currency": "USD"
+                  },
                   "CreditorAgent": {
                     "SchemeName": "Northstar Banking Service",
                     "Identification": "STANDARD",
@@ -132,7 +138,7 @@
                       "TownLocationName": "Northstar Banking Service",
                       "DistrictName": "Northstar Banking Service",
                       "CareOf": "STANDARD",
-                      "PostCode": "CODE-641",
+                      "PostCode": "CODE-727",
                       "TownName": "Northstar Banking Service",
                       "CountrySubDivision": "STANDARD",
                       "Country": "STANDARD",
@@ -148,77 +154,32 @@
                     "Name": "Northstar Banking Service",
                     "SecondaryIdentification": "STANDARD",
                     "Proxy": {
-                      "Identification": "STANDARD",
-                      "Code": "SUCCESS",
-                      "Type": "STANDARD"
+                      "Identification": "STANDARD"
                     }
                   }
                 }
               ]
             }
           },
-          "Links": {
-            "type": "object",
-            "properties": {
-              "Self": {
-                "type": "string",
-                "description": "Link to the current endpoint.",
-                "example": "https://api.example.com/beneficiary"
-              },
-              "First": {
-                "type": "string",
-                "description": "Link to the first page of beneficiaries.",
-                "example": "https://api.example.com/beneficiary?page=1"
-              }
-            },
-            "description": "Links to navigate through the beneficiaries data.",
-            "example": {
-              "Self": "https://example.com/resource",
-              "First": "https://example.com/resource"
-            }
-          },
           "metadata": {
-            "type": "object",
-            "properties": {
-              "responseId": {
-                "type": "string",
-                "description": "Unique identifier for the response.",
-                "example": "12345"
-              },
-              "correlationId": {
-                "type": "string",
-                "description": "Identifier for tracking the request.",
-                "example": "abcd-efgh-ijkl-mnop"
-              },
-              "generatedAt": {
-                "type": "string",
-                "description": "Timestamp of when the response was generated.",
-                "example": "2023-08-01T12:00:00Z"
-              },
-              "processingRegion": {
-                "type": "string",
-                "description": "Region where the processing of the request occurred.",
-                "example": "us-west-1"
-              }
-            },
-            "description": "Metadata related to the response.",
-            "example": {
-              "responseId": "6840b1b5-7ee2-5ce0-b74c-82056b805026",
-              "correlationId": "508e66bb-908d-54b1-af7b-9b1504111296",
-              "generatedAt": "2026-09-15T14:30:00Z",
-              "processingRegion": "us-east-1"
-            }
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for retrieving beneficiaries in operations.",
+        "description": "Schema representing the response for the scheduled payments request.",
         "example": {
           "Data": {
-            "Beneficiary": [
+            "ScheduledPayment": [
               {
-                "AccountId": "ACC-744637",
+                "AccountId": "ACC-788665",
                 "id": "STANDARD",
-                "type": "STANDARD",
+                "dateTime": "2026-09-15T14:30:00Z",
+                "ScheduledType": "STANDARD",
                 "Reference": "STANDARD",
+                "DebtorReference": "STANDARD",
+                "InstructedAmount": {
+                  "Amount": "1250.75",
+                  "Currency": "USD"
+                },
                 "CreditorAgent": {
                   "SchemeName": "Northstar Banking Service",
                   "Identification": "STANDARD",
@@ -237,7 +198,7 @@
                     "TownLocationName": "Northstar Banking Service",
                     "DistrictName": "Northstar Banking Service",
                     "CareOf": "STANDARD",
-                    "PostCode": "CODE-641",
+                    "PostCode": "CODE-727",
                     "TownName": "Northstar Banking Service",
                     "CountrySubDivision": "STANDARD",
                     "Country": "STANDARD",
@@ -253,242 +214,281 @@
                   "Name": "Northstar Banking Service",
                   "SecondaryIdentification": "STANDARD",
                   "Proxy": {
-                    "Identification": "STANDARD",
-                    "Code": "SUCCESS",
-                    "Type": "STANDARD"
+                    "Identification": "STANDARD"
                   }
                 }
               }
             ]
           },
-          "Links": {
-            "Self": "https://example.com/resource",
-            "First": "https://example.com/resource"
-          },
           "metadata": {
-            "responseId": "6840b1b5-7ee2-5ce0-b74c-82056b805026",
-            "correlationId": "508e66bb-908d-54b1-af7b-9b1504111296",
+            "responseId": "25ca284c-b8e3-558e-af18-b7e6a7778a83",
+            "correlationId": "ead0146e-69a9-5b79-89c0-d02e64eadcde",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "Beneficiary": {
+      "ScheduledPayment": {
+        "title": "Scheduled Payment",
         "type": "object",
         "properties": {
           "AccountId": {
             "type": "string",
-            "description": "Unique identifier for the account of the beneficiary.",
-            "example": "ACC12345678"
+            "description": "The account identifier associated with the scheduled payment.",
+            "example": "string"
           },
           "id": {
             "type": "string",
-            "description": "Unique identifier for the beneficiary.",
-            "example": "BENF987654321"
+            "description": "The unique identifier for the scheduled payment.",
+            "example": "string"
           },
-          "type": {
+          "dateTime": {
             "type": "string",
-            "description": "Type of beneficiary (e.g., individual, organization).",
-            "example": "individual"
+            "description": "The date and time when the payment is scheduled.",
+            "example": "2023-01-01T12:00:00Z"
+          },
+          "ScheduledType": {
+            "type": "string",
+            "description": "The type of scheduled payment.",
+            "example": "Recurring"
           },
           "Reference": {
             "type": "string",
-            "description": "Reference associated with the beneficiary.",
-            "example": "REF123"
+            "description": "Reference information for the scheduled payment.",
+            "example": "Payment for service"
+          },
+          "DebtorReference": {
+            "type": "string",
+            "description": "Reference for the debtor associated with the payment.",
+            "example": "Debtor123"
+          },
+          "InstructedAmount": {
+            "$ref": "#/components/schemas/InstructedAmount"
           },
           "CreditorAgent": {
-            "description": "Details of the creditor agent associated with the beneficiary.",
             "$ref": "#/components/schemas/CreditorAgent"
           },
           "CreditorAccount": {
-            "description": "Details of the creditor account associated with the beneficiary.",
             "$ref": "#/components/schemas/CreditorAccount"
           }
         },
-        "description": "Details of an individual beneficiary."
+        "description": "Schema representing an individual scheduled payment."
       },
-      "CreditorAgent": {
+      "InstructedAmount": {
+        "title": "Instructed Amount",
         "type": "object",
         "properties": {
-          "SchemeName": {
+          "Amount": {
             "type": "string",
-            "description": "Name of the scheme used for the creditor agent.",
-            "example": "SWIFT"
+            "description": "The monetary amount to be instructed.",
+            "example": "100.00"
           },
-          "Identification": {
+          "Currency": {
             "type": "string",
-            "description": "Identifier for the creditor agent.",
-            "example": "123456789"
-          },
-          "Name": {
-            "type": "string",
-            "description": "Name of the creditor agent.",
-            "example": "Bank of Example"
-          },
-          "PostalAddress": {
-            "description": "Postal address details of the creditor agent.",
-            "$ref": "#/components/schemas/PostalAddress"
-          },
-          "LEI": {
-            "type": "string",
-            "description": "Legal Entity Identifier for the creditor agent.",
-            "example": "LEI123456789"
+            "description": "The currency code for the instructed amount.",
+            "example": "USD"
           }
         },
-        "description": "Details of the creditor agent."
+        "description": "Schema representing the amount instructed for the scheduled payment."
       },
-      "CreditorAccount": {
+      "CreditorAgent": {
+        "title": "Creditor Agent",
         "type": "object",
         "properties": {
           "SchemeName": {
             "type": "string",
-            "description": "Name of the scheme used for the creditor account.",
+            "description": "The scheme name of the creditor agent.",
             "example": "IBAN"
           },
           "Identification": {
             "type": "string",
-            "description": "Identifier for the creditor account.",
+            "description": "The identification number of the creditor agent.",
             "example": "GB29NWBK60161331926819"
           },
           "Name": {
             "type": "string",
-            "description": "Name of the creditor account holder.",
+            "description": "The name of the creditor agent.",
+            "example": "National Westminster Bank"
+          },
+          "PostalAddress": {
+            "$ref": "#/components/schemas/PostalAddress"
+          },
+          "LEI": {
+            "type": "string",
+            "description": "The Legal Entity Identifier of the creditor agent.",
+            "example": "LEI123456789"
+          }
+        },
+        "description": "Schema representing information about the creditor's agent."
+      },
+      "CreditorAccount": {
+        "title": "Creditor Account",
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string",
+            "description": "The scheme name of the creditor account.",
+            "example": "IBAN"
+          },
+          "Identification": {
+            "type": "string",
+            "description": "The identification number of the creditor account.",
+            "example": "GB29NWBK60161331926819"
+          },
+          "Name": {
+            "type": "string",
+            "description": "The name of the creditor account holder.",
             "example": "John Doe"
           },
           "SecondaryIdentification": {
             "type": "string",
-            "description": "Secondary identification for the creditor account.",
-            "example": "SEC123"
+            "description": "Additional identification for the creditor account.",
+            "example": "Acc123456"
           },
           "Proxy": {
-            "description": "Proxy details associated with the creditor account.",
             "$ref": "#/components/schemas/Proxy"
           }
         },
-        "description": "Details of the creditor account."
+        "description": "Schema representing the details of the creditor's account."
       },
       "PostalAddress": {
+        "title": "Postal Address",
         "type": "object",
         "properties": {
           "AddressType": {
             "type": "string",
-            "description": "Type of address (e.g., home, work).",
-            "example": "home"
+            "description": "The type of address (e.g., residential, business).",
+            "example": "Business"
           },
           "Department": {
             "type": "string",
-            "description": "Department name if applicable.",
-            "example": "Sales"
+            "description": "Department name, if applicable.",
+            "example": "Accounts"
           },
           "SubDepartment": {
             "type": "string",
-            "description": "Sub-department name if applicable.",
-            "example": "International Sales"
+            "description": "Sub-department name, if applicable.",
+            "example": "Payments"
           },
           "StreetName": {
             "type": "string",
-            "description": "Street name of the address.",
-            "example": "Main Street"
+            "description": "The name of the street.",
+            "example": "High Street"
           },
           "BuildingNumber": {
             "type": "string",
-            "description": "Building number of the address.",
-            "example": "42"
+            "description": "The building number.",
+            "example": "101"
           },
           "BuildingName": {
             "type": "string",
-            "description": "Name of the building if applicable.",
-            "example": "Office Tower"
+            "description": "The name of the building.",
+            "example": "The Landmark"
           },
           "Floor": {
             "type": "string",
-            "description": "Floor number of the address.",
-            "example": "3"
+            "description": "The floor on which the address is located.",
+            "example": "5"
           },
           "UnitNumber": {
             "type": "string",
-            "description": "Unit number of the address.",
-            "example": "2B"
+            "description": "Unit number if applicable.",
+            "example": "B"
           },
           "Room": {
             "type": "string",
-            "description": "Room number if applicable.",
-            "example": "302"
+            "description": "Room number, if applicable.",
+            "example": "501"
           },
           "PostBox": {
             "type": "string",
-            "description": "Post box number if applicable.",
-            "example": "PO Box 123"
+            "description": "Post box number, if applicable.",
+            "example": "POB 123"
           },
           "TownLocationName": {
             "type": "string",
-            "description": "Name of the town location.",
-            "example": "Example Town"
+            "description": "The name of the town or location.",
+            "example": "London"
           },
           "DistrictName": {
             "type": "string",
-            "description": "Name of the district.",
-            "example": "East District"
+            "description": "The name of the district.",
+            "example": "Central"
           },
           "CareOf": {
             "type": "string",
-            "description": "Care of name if applicable.",
-            "example": "Attn: John Smith"
+            "description": "Name of the person or company to care of.",
+            "example": "C/O John Smith"
           },
           "PostCode": {
             "type": "string",
-            "description": "Postal code of the address.",
-            "example": "12345"
+            "description": "The postal code.",
+            "example": "SW1A 1AA"
           },
           "TownName": {
             "type": "string",
-            "description": "Name of the town.",
-            "example": "Example Town"
+            "description": "The name of the town.",
+            "example": "London"
           },
           "CountrySubDivision": {
             "type": "string",
-            "description": "Subdivision within the country.",
-            "example": "California"
+            "description": "The sub-division of the country.",
+            "example": "England"
           },
           "Country": {
             "type": "string",
-            "description": "Country name.",
-            "example": "USA"
+            "description": "The name of the country.",
+            "example": "United Kingdom"
           },
           "AddressLine": {
             "type": "array",
-            "description": "Additional lines for the address.",
-            "example": [
-              "123 Main St",
-              "Suite 101"
-            ],
+            "description": "The address lines.",
             "items": {
-              "type": "string"
+              "type": "string",
+              "example": "string"
             }
           }
         },
-        "description": "Postal address details."
+        "description": "Schema representing the postal address details."
       },
       "Proxy": {
+        "title": "Proxy",
         "type": "object",
         "properties": {
           "Identification": {
             "type": "string",
-            "description": "Unique identifier for the proxy.",
-            "example": "PROXY456"
-          },
-          "Code": {
-            "type": "string",
-            "description": "Code representing the proxy type.",
-            "example": "email"
-          },
-          "Type": {
-            "type": "string",
-            "description": "Type of proxy (e.g., email, phone).",
-            "example": "email"
+            "description": "The proxy identification.",
+            "example": "Proxy123"
           }
         },
-        "description": "Proxy information associated with the creditor account."
+        "description": "Schema representing a proxy identification for the creditor account."
+      },
+      "Metadata": {
+        "title": "Response Metadata",
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "The unique identifier for the response.",
+            "example": "response-123"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "The correlation identifier for tracking related requests.",
+            "example": "correlation-123"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "The timestamp when the response was generated.",
+            "example": "2023-01-01T12:00:00Z"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "The region where the processing took place.",
+            "example": "EU"
+          }
+        },
+        "description": "Schema representing metadata for the response."
       }
     },
     "parameters": {
@@ -509,17 +509,15 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the API endpoint being accessed.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "accounts-api-get-beneficiaries"
+          "example": "accounts-api-get-scheduled-payments"
         },
-        "example": "accounts-api-get-beneficiaries"
+        "example": "accounts-api-get-scheduled-payments"
       },
       "X-Runtime-App": {
-        "description": "The name of the application processing the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -532,7 +530,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses Bearer Authentication with JSON Web Tokens (JWT). The client must include a valid JWT in the Authorization header to access protected resources.",
+        "description": "Authentication scheme that requires a Bearer token in the HTTP Authorization header. This token is typically a JSON Web Token (JWT) that contains the user\u2019s authentication information and is used to verify the user's identity for secure access to resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
