@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_International Payment Consents API",
-    "description": "The International Payment Consents API facilitates the creation and management of payment consents for international transactions. This endpoint allows financial institutions and authorized third-party providers to initiate payment consent requests, ensuring compliance with regulatory requirements. Typical consumers include financial service providers and payment processors who need to obtain consent from customers for processing international payments. Efficiently handle consent operations while providing a seamless user experience for customers engaging in cross-border transactions.",
+    "description": "The International Payment Consents API supports the retrieval of payment consent information for international transactions. This endpoint enables authorized applications to access consent data necessary for processing international payments, ensuring compliant and secure transaction handling. Typical consumers include financial institutions and payment service providers that require visibility into existing payment consents for regulatory or operational purposes. By leveraging this API, developers can build solutions that enhance cross-border payment experiences for their customers.",
     "version": "1.0"
   },
   "servers": [
@@ -19,107 +19,44 @@
     }
   ],
   "paths": {
-    "/v5/open-banking/pisp/international-payment-consents": {
-      "post": {
+    "/v5/open-banking/pisp/international-payment-consents/{param1}": {
+      "get": {
         "tags": [
           "International Payments"
         ],
-        "summary": "Create a new international payment consent.",
-        "description": "This endpoint allows users to create a new international payment consent, enabling the initiation of payments across borders. Ensure that all required information is provided in the request body to successfully create the consent.",
-        "operationId": "createInternationalPaymentConsent",
+        "summary": "Retrieve International Payment Consent Details",
+        "description": "Fetches detailed information about the specified international payment consent based on its unique identifier. This endpoint allows developers to access consent data, including status and associated transaction information.",
+        "operationId": "getInternationalPaymentConsentById",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/x-workflow-id"
-          },
-          {
-            "$ref": "#/components/parameters/idempotency-key"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-step"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-branch"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-decision"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-internal"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-execution-id"
-          },
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to initiate an international payment consent. Ensure that all required fields are populated accurately to facilitate a successful transaction.",
+          "description": "Request body for fetching the international payment consent with the specified ID. This allows the user to retrieve the details of a specific consent in the payment processing system.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateInternationalPaymentConsentRequest"
+                "$ref": "#/components/schemas/GetInternationalPaymentConsentByIdRequest"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Resource created successfully, representing the international payment consent.",
+          "200": {
+            "description": "Successfully retrieved the payment consent details.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
               },
               "X-Runtime-App": {
                 "$ref": "#/components/headers/X-Runtime-App"
-              },
-              "X-Workflow-Id": {
-                "$ref": "#/components/headers/X-Workflow-Id"
-              },
-              "X-Workflow-Name": {
-                "$ref": "#/components/headers/X-Workflow-Name"
-              },
-              "X-Workflow-State": {
-                "$ref": "#/components/headers/X-Workflow-State"
-              },
-              "X-Workflow-Execution-Id": {
-                "$ref": "#/components/headers/X-Workflow-Execution-Id"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateInternationalPaymentConsentResponse_201"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "An unexpected server error occurred while processing the request.",
-            "headers": {
-              "X-Workflow-Id": {
-                "$ref": "#/components/headers/X-Workflow-Id"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateInternationalPaymentConsentResponse_500"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation failed for the input data; check request parameters.",
-            "headers": {
-              "X-Workflow-Id": {
-                "$ref": "#/components/headers/X-Workflow-Id"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateInternationalPaymentConsentResponse_422"
+                  "$ref": "#/components/schemas/GetInternationalPaymentConsentByIdResponse_200"
                 }
               }
             }
@@ -139,35 +76,42 @@
   },
   "components": {
     "schemas": {
-      "CreateInternationalPaymentConsentResponse_201": {
+      "GetInternationalPaymentConsentByIdRequest": {
+        "type": "string",
+        "description": "This schema represents the request body for the GET operation related to international payment consents.",
+        "example": "{}"
+      },
+      "GetInternationalPaymentConsentByIdResponse_200": {
+        "title": "International Payment Consent Response",
         "type": "object",
         "properties": {
           "Data": {
+            "title": "Payment Consent Data",
             "type": "object",
             "properties": {
               "ConsentId": {
                 "type": "string",
-                "description": "Unique identifier for the payment consent.",
+                "description": "Unique identifier for the consent.",
                 "example": "string"
               },
               "CreationDateTime": {
                 "type": "string",
-                "description": "The date and time when the consent was created.",
-                "example": "string"
+                "description": "Timestamp of when the consent was created.",
+                "example": "2023-10-01T12:00:00Z"
               },
               "Status": {
                 "type": "string",
-                "description": "Current status of the payment consent.",
-                "example": "string"
+                "description": "Current status of the consent.",
+                "example": "ACTIVE"
               },
               "StatusReason": {
                 "type": "array",
-                "description": "Reasons for the current status of the payment consent.",
+                "description": "List of reasons associated with the current status.",
                 "example": [
                   {
-                    "code": "string",
-                    "description": "string",
-                    "Path": "string"
+                    "code": "001",
+                    "description": "Pending Review",
+                    "Path": "/payments/consents"
                   }
                 ],
                 "items": {
@@ -176,39 +120,39 @@
               },
               "StatusUpdateDateTime": {
                 "type": "string",
-                "description": "The last date and time when the status was updated.",
-                "example": "string"
+                "description": "Timestamp of the last status update.",
+                "example": "2023-10-01T14:00:00Z"
               },
               "ReadRefundAccount": {
                 "type": "string",
-                "description": "Account for refunds if applicable.",
-                "example": "string"
+                "description": "Indicates whether refund account details are available.",
+                "example": "YES"
               },
               "CutOffDateTime": {
                 "type": "string",
                 "description": "The cutoff date and time for processing the payment.",
-                "example": "string"
+                "example": "2023-10-02T15:00:00Z"
               },
               "ExpectedExecutionDateTime": {
                 "type": "string",
-                "description": "The expected date and time of execution of the payment.",
-                "example": "string"
+                "description": "The expected date and time for the execution of the payment.",
+                "example": "2023-10-03T12:00:00Z"
               },
               "ExpectedSettlementDateTime": {
                 "type": "string",
                 "description": "The expected date and time of settlement of the payment.",
-                "example": "string"
+                "example": "2023-10-03T18:00:00Z"
               },
               "Charges": {
                 "type": "array",
-                "description": "Details of any charges associated with the payment.",
+                "description": "List of charges associated with the payment.",
                 "example": [
                   {
-                    "ChargeBearer": "string",
-                    "Type": "string",
+                    "ChargeBearer": "SHA",
+                    "Type": "Fee",
                     "Amount": {
-                      "Amount": "string",
-                      "Currency": "string"
+                      "Amount": "10.00",
+                      "Currency": "USD"
                     }
                   }
                 ],
@@ -221,9 +165,12 @@
               },
               "Initiation": {
                 "$ref": "#/components/schemas/Initiation"
+              },
+              "metadata": {
+                "$ref": "#/components/schemas/Metadata"
               }
             },
-            "description": "Contains details about the international payment consent.",
+            "description": "Data related to the international payment consent.",
             "example": {
               "ConsentId": "STANDARD",
               "CreationDateTime": "2026-09-15T14:30:00Z",
@@ -281,40 +228,9 @@
                 }
               }
             }
-          },
-          "metadata": {
-            "type": "object",
-            "properties": {
-              "responseId": {
-                "type": "string",
-                "description": "Unique identifier for the response.",
-                "example": "string"
-              },
-              "correlationId": {
-                "type": "string",
-                "description": "Identifier used for tracing the request across systems.",
-                "example": "string"
-              },
-              "generatedAt": {
-                "type": "string",
-                "description": "Timestamp when the response was generated.",
-                "example": "string"
-              },
-              "processingRegion": {
-                "type": "string",
-                "description": "Region where the processing of the payment consent occurred.",
-                "example": "string"
-              }
-            },
-            "description": "Metadata associated with the response.",
-            "example": {
-              "responseId": "c98294d8-ae97-5673-8192-3b9b84987b0a",
-              "correlationId": "4e2a0f45-f01c-5cc7-903f-262ac6b98d80",
-              "generatedAt": "2026-09-15T14:30:00Z",
-              "processingRegion": "us-east-1"
-            }
           }
         },
+        "description": "Response schema for international payment consent operations.",
         "example": {
           "Data": {
             "ConsentId": "STANDARD",
@@ -374,66 +290,67 @@
             }
           },
           "metadata": {
-            "responseId": "c98294d8-ae97-5673-8192-3b9b84987b0a",
-            "correlationId": "4e2a0f45-f01c-5cc7-903f-262ac6b98d80",
+            "responseId": "a88666cd-d04a-5a12-a32b-e4e21461593a",
+            "correlationId": "7aa0c390-0479-5824-8bcc-41dd175d4041",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
       "StatusReason": {
+        "title": "Status Reason",
         "type": "object",
         "properties": {
           "code": {
             "type": "string",
-            "description": "Code that identifies the reason.",
-            "example": "string"
+            "description": "Code indicating the reason for the status.",
+            "example": "001"
           },
           "description": {
             "type": "string",
-            "description": "Descriptive text explaining the reason.",
-            "example": "string"
+            "description": "Detailed description of the reason.",
+            "example": "Pending Review"
           },
           "Path": {
             "type": "string",
-            "description": "Path or context where the reason is applicable.",
-            "example": "string"
+            "description": "The path related to the status reason.",
+            "example": "/payments/consents"
           }
         },
-        "description": "Details about the reason for the status."
+        "description": "Reason for the status of the payment consent."
       },
       "Charge": {
+        "title": "Charge Details",
         "type": "object",
         "properties": {
           "ChargeBearer": {
             "type": "string",
-            "description": "The party responsible for the charge.",
-            "example": "string"
+            "description": "Indicates who bears the charges.",
+            "example": "SHA"
           },
           "Type": {
             "type": "string",
             "description": "Type of the charge.",
-            "example": "string"
+            "example": "Fee"
           },
           "Amount": {
             "type": "object",
             "properties": {
               "Amount": {
                 "type": "string",
-                "description": "Value of the charge.",
-                "example": "string"
+                "description": "Amount of the charge.",
+                "example": "10.00"
               },
               "Currency": {
                 "type": "string",
-                "description": "Currency code for the charge amount.",
-                "example": "string"
+                "description": "Currency of the charge amount.",
+                "example": "USD"
               }
             },
-            "description": "Amount details of the charge.",
-            "example": "string"
+            "description": "Amount details for the charge."
           }
         },
-        "description": "Details about the charge associated with the payment."
+        "description": "Details of the charges associated with the payment."
       },
       "ExchangeRateInformation": {
         "title": "Exchange Rate Information",
@@ -441,533 +358,139 @@
         "properties": {
           "UnitCurrency": {
             "type": "string",
-            "description": "Currency in which the unit exchange rate is expressed.",
-            "example": "string"
+            "description": "Currency in which the exchange rate is expressed.",
+            "example": "EUR"
           },
           "ExchangeRate": {
             "type": "number",
-            "description": "The exchange rate applied to the transfer.",
-            "example": 0.0
+            "description": "Ratio of the currency being converted to the unit currency.",
+            "example": 1.2
           },
           "RateType": {
             "type": "string",
-            "description": "Type of exchange rate, e.g., 'FIXED', 'FLOAT'.",
-            "example": "string"
+            "description": "Type of exchange rate, e.g., fixed or floating.",
+            "example": "FIXED"
           },
           "ContractIdentification": {
             "type": "string",
-            "description": "Identifier for the contract pertaining to the exchange rate.",
-            "example": "string"
+            "description": "Contract ID associated with the exchange rate.",
+            "example": "CONTRACT-123"
+          },
+          "ExpirationDateTime": {
+            "type": "string",
+            "description": "Expiration date and time for the exchange rate.",
+            "example": "2023-10-02T23:59:59Z"
           }
         },
-        "description": "Schema representing the exchange rate details for the transfer."
+        "description": "Contains details regarding exchange rates for cross-currency transactions."
       },
       "Initiation": {
+        "title": "Payment Initiation Details",
         "type": "object",
         "properties": {
           "InstructionIdentification": {
             "type": "string",
-            "description": "Unique identifier for the instruction.",
-            "example": "string"
+            "description": "Identification of the payment instruction.",
+            "example": "INSTRUCTION-001"
           },
           "EndToEndIdentification": {
             "type": "string",
-            "description": "Unique identifier for tracking the payment from start to end.",
-            "example": "string"
+            "description": "Unique identifier for the transaction that ends the payment.",
+            "example": "E2E-001"
           },
           "LocalInstrument": {
             "type": "string",
-            "description": "Indicator of the local payment scheme or instrument.",
-            "example": "string"
+            "description": "Local instrument used for the payment.",
+            "example": "SEPA"
           },
           "InstructionPriority": {
             "type": "string",
-            "description": "Priority level of the payment instruction.",
-            "example": "string"
+            "description": "Priority of the payment instruction.",
+            "example": "NORMAL"
           },
           "ExtendedPurpose": {
             "type": "string",
-            "description": "Extended description of the payment purpose.",
-            "example": "string"
+            "description": "Extended purpose of the payment.",
+            "example": "Invoice Payment"
           },
           "ChargeBearer": {
             "type": "string",
-            "description": "Party responsible for paying the charges of the transaction.",
-            "example": "string"
+            "description": "Indicates who bears the charges.",
+            "example": "SHA"
           },
           "CurrencyOfTransfer": {
             "type": "string",
-            "description": "The currency in which the transfer is made.",
-            "example": "string"
+            "description": "Currency of the transfer amount.",
+            "example": "EUR"
           },
           "DestinationCountryCode": {
             "type": "string",
-            "description": "ISO code of the destination country.",
-            "example": "string"
+            "description": "Country code for the destination of the payment.",
+            "example": "DE"
           },
           "InstructedAmount": {
             "type": "object",
             "properties": {
               "Amount": {
                 "type": "string",
-                "description": "Value of the instructed amount.",
-                "example": "string"
+                "description": "Amount for the instruction.",
+                "example": "100.00"
               },
               "Currency": {
                 "type": "string",
-                "description": "Currency code for the instructed amount.",
-                "example": "string"
+                "description": "Currency of the instructed amount.",
+                "example": "EUR"
               }
             },
-            "description": "Amount to be transferred as part of the payment.",
-            "example": "string"
+            "description": "Amount that is being instructed to be transferred."
           },
           "ExchangeRateInformation": {
-            "type": "object",
-            "properties": {
-              "UnitCurrency": {
-                "type": "string",
-                "description": "Currency in which the exchange rate is expressed.",
-                "example": "string"
-              },
-              "ExchangeRate": {
-                "type": "number",
-                "description": "The applied exchange rate.",
-                "example": 0.0
-              },
-              "RateType": {
-                "type": "string",
-                "description": "Type of exchange rate (e.g., fixed, floating).",
-                "example": "string"
-              },
-              "ContractIdentification": {
-                "type": "string",
-                "description": "Identifier for the exchange rate contract.",
-                "example": "string"
-              }
-            },
-            "description": "Exchange rate information if applicable to the instructed amount.",
-            "example": "string"
+            "description": "Exchange rate information for this payment initiation.",
+            "$ref": "#/components/schemas/ExchangeRateInformation"
           },
           "DebtorAccount": {
             "type": "object",
             "properties": {
               "SchemeName": {
                 "type": "string",
-                "description": "Name of the scheme that identifies the account.",
-                "example": "string"
+                "description": "Name of the scheme for the account.",
+                "example": "IBAN"
               }
             },
-            "description": "Details about the debtor's account making the payment.",
-            "example": "string"
+            "description": "Account details of the debtor."
           }
         },
         "description": "Details regarding the initiation of the payment."
       },
-      "CreateInternationalPaymentConsentResponse_500": {
+      "Metadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
-          "code": {
+          "responseId": {
             "type": "string",
-            "description": "A string representing the error code associated with the failure.",
-            "example": "DOWNSTREAM_CORE_UNAVAILABLE"
-          },
-          "message": {
-            "type": "string",
-            "description": "A descriptive message providing more details about the error encountered.",
-            "example": "A required core banking dependency is unavailable"
-          },
-          "workflow": {
-            "type": "string",
-            "description": "The current workflow status associated with the operation.",
-            "example": "WF-014"
-          },
-          "failedAfterHop": {
-            "type": "integer",
-            "description": "An integer indicating after which hop the failure occurred.",
-            "format": "int32",
-            "example": 3
-          }
-        },
-        "description": "Schema representing the response structure for a failed international payment consent operation.",
-        "example": {
-          "code": "DOWNSTREAM_CORE_UNAVAILABLE",
-          "message": "A required core banking dependency is unavailable",
-          "workflow": "WF-014",
-          "failedAfterHop": 3
-        }
-      },
-      "CreateInternationalPaymentConsentRequest": {
-        "title": "International Payment Consent Request",
-        "type": "object",
-        "properties": {
-          "Data": {
-            "$ref": "#/components/schemas/PaymentConsentData"
-          },
-          "requestContext": {
-            "$ref": "#/components/schemas/RequestContext"
-          }
-        },
-        "description": "Schema representing the request body for creating an international payment consent.",
-        "example": {
-          "Data": {
-            "ReadRefundAccount": "STANDARD",
-            "Initiation": {
-              "InstructionIdentification": "STANDARD",
-              "EndToEndIdentification": "STANDARD",
-              "LocalInstrument": "STANDARD",
-              "InstructionPriority": "STANDARD",
-              "ExtendedPurpose": "STANDARD",
-              "ChargeBearer": "STANDARD",
-              "CurrencyOfTransfer": "STANDARD",
-              "DestinationCountryCode": "US",
-              "InstructedAmount": {
-                "Amount": "1250.75",
-                "Currency": "USD"
-              },
-              "ExchangeRateInformation": {
-                "UnitCurrency": "USD",
-                "ExchangeRate": 100.0,
-                "RateType": "STANDARD",
-                "ContractIdentification": "STANDARD"
-              },
-              "DebtorAccount": {
-                "SchemeName": "Northstar Banking Service",
-                "Identification": "STANDARD",
-                "Name": "Northstar Banking Service",
-                "SecondaryIdentification": "STANDARD",
-                "Proxy": {
-                  "Identification": "STANDARD"
-                }
-              }
-            }
-          },
-          "requestContext": {
-            "requestId": "1fb05f31-3130-5c0d-9c46-4a9d3bc717ae",
-            "correlationId": "4e2a0f45-f01c-5cc7-903f-262ac6b98d80",
-            "idempotencyKey": "8e467f0f-b518-5630-8117-6947e894f974",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-302080"
-            }
-          }
-        }
-      },
-      "PaymentConsentData": {
-        "title": "Payment Consent Data",
-        "type": "object",
-        "properties": {
-          "ReadRefundAccount": {
-            "type": "string",
-            "description": "Indicates whether the refund account details should be read.",
-            "example": "string"
-          },
-          "Initiation": {
-            "$ref": "#/components/schemas/PaymentInitiation"
-          }
-        },
-        "description": "Schema representing the details of the payment consent data."
-      },
-      "PaymentInitiation": {
-        "title": "Payment Initiation",
-        "type": "object",
-        "properties": {
-          "InstructionIdentification": {
-            "type": "string",
-            "description": "A unique identifier for the instruction.",
-            "example": "string"
-          },
-          "EndToEndIdentification": {
-            "type": "string",
-            "description": "An identifier to track the payment end-to-end.",
-            "example": "string"
-          },
-          "LocalInstrument": {
-            "type": "string",
-            "description": "The local instrument used for the payment.",
-            "example": "string"
-          },
-          "InstructionPriority": {
-            "type": "string",
-            "description": "Priority of the instruction, such as 'HIGH', 'NORMAL'.",
-            "example": "string"
-          },
-          "ExtendedPurpose": {
-            "type": "string",
-            "description": "Extended purpose for the payment.",
-            "example": "string"
-          },
-          "ChargeBearer": {
-            "type": "string",
-            "description": "Indicates who bears the charges for the payment.",
-            "example": "string"
-          },
-          "CurrencyOfTransfer": {
-            "type": "string",
-            "description": "Currency in which the transfer is made.",
-            "example": "string"
-          },
-          "DestinationCountryCode": {
-            "type": "string",
-            "description": "Country code of the payment destination.",
-            "example": "string"
-          },
-          "InstructedAmount": {
-            "$ref": "#/components/schemas/InstructedAmount"
-          },
-          "ExchangeRateInformation": {
-            "$ref": "#/components/schemas/ExchangeRateInformation"
-          },
-          "DebtorAccount": {
-            "$ref": "#/components/schemas/DebtorAccount"
-          }
-        },
-        "description": "Schema representing the details needed to initiate a payment."
-      },
-      "InstructedAmount": {
-        "title": "Instructed Amount",
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "type": "string",
-            "description": "The amount of money to be transferred.",
-            "example": "string"
-          },
-          "Currency": {
-            "type": "string",
-            "description": "The currency of the instructed amount.",
-            "example": "string"
-          }
-        },
-        "description": "Schema representing the amount and currency for the payment."
-      },
-      "DebtorAccount": {
-        "title": "Debtor Account",
-        "type": "object",
-        "properties": {
-          "SchemeName": {
-            "type": "string",
-            "description": "The name of the scheme under which the debtor's account is identified.",
-            "example": "string"
-          },
-          "Identification": {
-            "type": "string",
-            "description": "The unique identifier of the debtor's account.",
-            "example": "string"
-          },
-          "Name": {
-            "type": "string",
-            "description": "The name associated with the debtor's account.",
-            "example": "string"
-          },
-          "SecondaryIdentification": {
-            "type": "string",
-            "description": "Any secondary identifier for the debtor's account.",
-            "example": "string"
-          },
-          "Proxy": {
-            "$ref": "#/components/schemas/Proxy"
-          }
-        },
-        "description": "Schema representing the debtor's account details."
-      },
-      "Proxy": {
-        "title": "Proxy",
-        "type": "object",
-        "properties": {
-          "Identification": {
-            "type": "string",
-            "description": "Proxy identifier for the debtor's account.",
-            "example": "string"
-          }
-        },
-        "description": "Schema representing the proxy information associated with the debtor's account."
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "string"
+            "description": "Unique identifier for the response.",
+            "example": "response-001"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier for correlating related requests.",
-            "example": "string"
+            "description": "Identifier for tracking the correlation of requests.",
+            "example": "correlation-001"
           },
-          "idempotencyKey": {
+          "generatedAt": {
             "type": "string",
-            "description": "Key to ensure the idempotency of the request.",
-            "example": "string"
+            "description": "Timestamp when the response was generated.",
+            "example": "2023-10-01T12:00:00Z"
           },
-          "requestedAt": {
+          "processingRegion": {
             "type": "string",
-            "description": "Timestamp when the request was made.",
-            "example": "string"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "The system from which the request originated.",
-            "example": "string"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "The application from which the request originated.",
-            "example": "string"
-          },
-          "channel": {
-            "$ref": "#/components/schemas/Channel"
+            "description": "Region where the response was processed.",
+            "example": "EU"
           }
         },
-        "description": "Schema representing context information for the request."
-      },
-      "Channel": {
-        "title": "Channel",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "string"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of channel (e.g., 'WEB', 'MOBILE').",
-            "example": "string"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier for the device used to make the request.",
-            "example": "string"
-          }
-        },
-        "description": "Schema representing the channel information from which the request was made."
-      },
-      "CreateInternationalPaymentConsentResponse_422": {
-        "title": "International Payment Consent Error Response",
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string",
-            "description": "A string representing the error code associated with the response.",
-            "example": "RISK_REVIEW_REJECTED"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "A unique identifier for the request, useful for tracing and debugging.",
-            "example": "f9dde54b-8a50-4de8-8d4c-891f09679e38"
-          },
-          "message": {
-            "type": "string",
-            "description": "A descriptive error message providing details about why the error occurred.",
-            "example": "Enhanced fraud/compliance review rejected the request"
-          },
-          "workflow": {
-            "type": "string",
-            "description": "The workflow status or state related to the error, giving context to the operation.",
-            "example": "WF-014"
-          }
-        },
-        "description": "This schema represents the error response returned when the international payment consent operation fails with a 422 status code.",
-        "example": {
-          "code": "RISK_REVIEW_REJECTED",
-          "correlationId": "f9dde54b-8a50-4de8-8d4c-891f09679e38",
-          "message": "Enhanced fraud/compliance review rejected the request",
-          "workflow": "WF-014"
-        }
+        "description": "Metadata related to the response."
       }
     },
     "parameters": {
-      "x-workflow-id": {
-        "name": "x-workflow-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "WF-014"
-        },
-        "example": "WF-014"
-      },
-      "idempotency-key": {
-        "name": "idempotency-key",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "21d5cc10-82f8-427e-b3ec-c48536c6d44e"
-        },
-        "example": "21d5cc10-82f8-427e-b3ec-c48536c6d44e"
-      },
-      "x-workflow-step": {
-        "name": "x-workflow-step",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "1"
-        },
-        "example": "1"
-      },
-      "x-workflow-branch": {
-        "name": "x-workflow-branch",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "main"
-        },
-        "example": "main"
-      },
-      "x-workflow-decision": {
-        "name": "x-workflow-decision",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "RISK_REJECT"
-        },
-        "example": "RISK_REJECT"
-      },
-      "x-workflow-internal": {
-        "name": "x-workflow-internal",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "true"
-        },
-        "example": "true"
-      },
-      "x-workflow-execution-id": {
-        "name": "x-workflow-execution-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "ec9c707e-4b3e-4feb-907e-4ae911d28459"
-        },
-        "example": "ec9c707e-4b3e-4feb-907e-4ae911d28459"
-      },
       "x-mock-response": {
         "name": "x-mock-response",
         "in": "header",
@@ -978,26 +501,24 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_201",
-            "MICROSERVICE_PROD_500",
-            "MICROSERVICE_PROD_422"
+            "MICROSERVICE_PROD_200"
           ]
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "Unique identifier for the API endpoint that handled the request.",
+        "description": "The identifier for the endpoint that processed the request. This ID is used for tracing the request in the system.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "payment-initiation-openapi-create-international-payment-consent"
+          "example": "payment-initiation-openapi-get-international-payment-consent"
         },
-        "example": "payment-initiation-openapi-create-international-payment-consent"
+        "example": "payment-initiation-openapi-get-international-payment-consent"
       },
       "X-Runtime-App": {
-        "description": "Identifier of the application runtime handling this request.",
+        "description": "The name of the application runtime that handled the request. This provides context on the environment where the request was executed.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -1005,48 +526,12 @@
           "example": "payments"
         },
         "example": "payments"
-      },
-      "X-Workflow-Id": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "WF-014"
-        },
-        "example": "WF-014"
-      },
-      "X-Workflow-Name": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "International Wire Transfer with FX"
-        },
-        "example": "International Wire Transfer with FX"
-      },
-      "X-Workflow-State": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "IN_PROGRESS"
-        },
-        "example": "IN_PROGRESS"
-      },
-      "X-Workflow-Execution-Id": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "2f100c0a-6af3-477b-b0c1-bfcdfcd3d938"
-        },
-        "example": "2f100c0a-6af3-477b-b0c1-bfcdfcd3d938"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication scheme using Bearer tokens, typically implemented with JSON Web Tokens (JWT). This scheme allows clients to authenticate by including a token in the Authorization header of their requests.",
+        "description": "Authentication scheme that leverages JSON Web Tokens (JWT) for secure access. Ensure to include the token in the Authorization header as 'Bearer {token}' in your requests.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
