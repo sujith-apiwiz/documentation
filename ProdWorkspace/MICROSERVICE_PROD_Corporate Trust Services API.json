@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Corporate Trust Services API",
-    "description": "The Corporate Trust Services API allows users to modify and enhance various aspects of corporate trust management. It provides operations to manage trust accounts, streamline service requests, and update beneficiary information. This API is designed for financial institutions and corporate clients that require dynamic adjustments to their trust services. Common use cases include updating trust beneficiary details, adjusting account settings, and handling service changes efficiently.",
+    "description": "The Corporate Trust Services API facilitates seamless management of corporate trust transactions, including asset administration and fiduciary services. This API allows clients to initiate and manage various trust-related operations in real-time, catering primarily to corporate clients, financial institutions, and asset managers. Users can leverage this API to enhance operational efficiency and ensure compliance with regulatory requirements. It serves as a vital resource for maintaining trust accounts, processing transactions, and generating necessary reports.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/consumer-services/corporate-trust-services/{param1}": {
-      "patch": {
+    "/v5/banking/consumer-services/corporate-trust-services": {
+      "post": {
         "tags": [
           "Corporate Trust Services"
         ],
-        "summary": "Update Corporate Trust Service",
-        "description": "This operation allows the client to update the details of a specific corporate trust service identified by RES-100045. Properly formatted request bodies must be submitted to reflect the new state of the resource.",
-        "operationId": "patchCorporateTrustServiceRes100045",
+        "summary": "Create a new corporate trust service.",
+        "description": "This endpoint allows users to create a new corporate trust service, providing the necessary details and configurations required for the service setup. Ensure all required fields are included in the request body to successfully create the service.",
+        "operationId": "createCorporateTrustService",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to update details related to corporate trust services. Make sure to provide the necessary fields in the JSON format as specified in the schema, which defines the structure and data types required.",
+          "description": "This request body is used to create or update corporate trust services for consumers. It should include all necessary information required for processing the request successfully.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PatchCorporateTrustServiceRes100045Request"
+                "$ref": "#/components/schemas/CreateCorporateTrustServiceRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Request completed successfully and the resource has been updated.",
+          "201": {
+            "description": "Resource created successfully, indicating the operation was completed and the new resource is available.",
             "headers": {
               "x-endpoint-id": {
                 "$ref": "#/components/headers/x-endpoint-id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PatchCorporateTrustServiceRes100045Response_200"
+                  "$ref": "#/components/schemas/CreateCorporateTrustServiceResponse_201"
                 }
               }
             }
@@ -76,199 +76,225 @@
   },
   "components": {
     "schemas": {
-      "PatchCorporateTrustServiceRes100045Request": {
+      "CreateCorporateTrustServiceRequest": {
+        "title": "Corporate Trust Services Request Body",
         "type": "object",
         "properties": {
-          "changes": {
-            "description": "Object containing the changes to be made.",
-            "$ref": "#/components/schemas/Changes"
-          },
-          "changeReason": {
+          "customerId": {
             "type": "string",
-            "description": "The reason for the change being requested.",
-            "example": "STANDARD"
+            "description": "The unique identifier for the customer.",
+            "example": "CUST-229440"
           },
-          "effectiveAt": {
+          "serviceRequestId": {
             "type": "string",
-            "description": "The date and time when the changes should take effect.",
-            "example": "2026-09-15T14:30:00Z"
+            "description": "The unique identifier for the service request.",
+            "example": "0327d8db-4dea-52f0-941a-6864c9a5fa8a"
           },
-          "requestedBy": {
+          "productCode": {
             "type": "string",
-            "description": "The identifier of the user who requested the changes.",
-            "example": "STANDARD"
+            "description": "The code representing the product associated with the request.",
+            "example": "CHK-PREMIUM-US"
+          },
+          "amount": {
+            "description": "The amount associated with the service request.",
+            "$ref": "#/components/schemas/Amount"
+          },
+          "requestedDate": {
+            "type": "string",
+            "description": "The date when the service was requested.",
+            "example": "2026-09-15"
           },
           "requestContext": {
-            "description": "Context related to the request.",
+            "description": "The context in which the request was made.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Schema representing the request body for updating operations in the corporate trust services.",
+        "description": "Schema representing the request body for corporate trust services operations.",
         "example": {
-          "changes": {
-            "customerId": "CUST-983205",
-            "serviceRequestId": "5fe3bdec-e795-5305-814b-61a78049f29c",
-            "productCode": "CHK-PREMIUM-US"
+          "customerId": "CUST-229440",
+          "serviceRequestId": "0327d8db-4dea-52f0-941a-6864c9a5fa8a",
+          "productCode": "CHK-PREMIUM-US",
+          "amount": {
+            "value": 100.0,
+            "currency": "USD"
           },
-          "changeReason": "STANDARD",
-          "effectiveAt": "2026-09-15T14:30:00Z",
-          "requestedBy": "STANDARD",
+          "requestedDate": "2026-09-15",
           "requestContext": {
-            "requestId": "5140389d-e86a-5252-bdee-fd7bed5a3ce4",
-            "correlationId": "2150ac47-aedb-50e9-8bea-950885d920b4",
-            "idempotencyKey": "ed9c62b7-2c31-5976-a0bb-7cf8e6b51087",
+            "requestId": "25ce2bc9-848f-5846-aa16-278cd9e04f00",
+            "correlationId": "3a08ca80-7fc2-5e5b-9f10-5d407fd140cb",
+            "idempotencyKey": "6c82513c-0dd2-5d4f-8526-e103bc43dcb7",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-858803"
+              "deviceId": "DEV-180517"
             }
           }
         }
       },
-      "Changes": {
+      "Amount": {
+        "title": "Amount",
         "type": "object",
         "properties": {
-          "customerId": {
-            "type": "string",
-            "description": "Identifier of the customer whose information is being changed.",
-            "example": "CUST12345"
+          "value": {
+            "type": "number",
+            "description": "The numeric value of the amount.",
+            "example": 0.0
           },
-          "serviceRequestId": {
+          "currency": {
             "type": "string",
-            "description": "Identifier for the service request related to the changes.",
-            "example": "SR-2023-001"
-          },
-          "productCode": {
-            "type": "string",
-            "description": "Code representing the product associated with the changes.",
-            "example": "PRODUCT_XYZ"
+            "description": "The currency in which the amount is denominated.",
+            "example": "USD"
           }
         },
-        "description": "This object includes the specific modifications being requested."
+        "description": "Schema representing an amount with a value and currency."
       },
       "RequestContext": {
+        "title": "Request Context",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "REQ-987654"
+            "description": "The unique identifier for the request.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier for tracking the request across systems.",
-            "example": "CORR-123456"
+            "description": "An identifier used to correlate logs and events related to this request.",
+            "example": "string"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key to ensure that the request is idempotent.",
-            "example": "IDEMP-KEY-789"
+            "description": "A key used to ensure that a request is only processed once.",
+            "example": "string"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp when the request was made.",
-            "example": "2023-10-01T10:00:00Z"
+            "description": "The timestamp at which the request was made.",
+            "example": "2023-01-01T00:00:00Z"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "The system from which the request originates.",
-            "example": "Internal CRM"
+            "description": "The source system from where the request originated.",
+            "example": "string"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application that initiated the request.",
-            "example": "Frontend App"
+            "description": "The application that generated the request.",
+            "example": "string"
           },
           "channel": {
-            "description": "Details about the channel through which the request was made.",
+            "description": "Information about the channel through which the request was made.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Contains metadata regarding the request."
+        "description": "Schema representing the context of a request."
       },
       "Channel": {
+        "title": "Channel",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "CHANNEL-001"
+            "description": "The unique identifier for the channel.",
+            "example": "string"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of the channel (e.g., web, mobile).",
-            "example": "web"
+            "description": "The type of channel through which the request was made (e.g., API, Web).",
+            "example": "API"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier for the device used for the request.",
-            "example": "DEVICE-12345"
+            "description": "The identifier for the device used to make the request.",
+            "example": "string"
           }
         },
-        "description": "Information about the channel used for the request."
+        "description": "Schema representing the channel through which the request was made."
       },
-      "PatchCorporateTrustServiceRes100045Response_200": {
+      "CreateCorporateTrustServiceResponse_201": {
         "title": "Corporate Trust Service Response",
         "type": "object",
         "properties": {
-          "version": {
-            "type": "integer",
-            "description": "The version of the response format.",
-            "format": "int32",
-            "example": 1
+          "customerId": {
+            "type": "string",
+            "description": "The unique identifier for the customer.",
+            "example": "CUST-553680"
+          },
+          "serviceRequestId": {
+            "type": "string",
+            "description": "The unique identifier for the service request.",
+            "example": "4ab19757-3e8c-5612-95e7-4d3b96e048be"
+          },
+          "productCode": {
+            "type": "string",
+            "description": "The code representing the product associated with the request.",
+            "example": "CHK-PREMIUM-US"
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "The unique identifier for the resource involved in the service request.",
+            "example": "RES-416029"
           },
           "status": {
             "type": "string",
-            "description": "The status of the operation.",
+            "description": "The current status of the service request.",
             "example": "ACTIVE"
           },
-          "updatedAt": {
+          "createdAt": {
             "type": "string",
-            "description": "The timestamp of when the resource was last updated.",
+            "description": "The timestamp indicating when the service request was created.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "$ref": "#/components/schemas/ResponseMetadata"
+            "description": "Additional metadata related to the service request.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Schema representing the response from the Corporate Trust Service API after a PATCH operation.",
+        "description": "Response schema for the Corporate Trust Services operation indicating the result of a service request.",
         "example": {
-          "version": 1,
+          "customerId": "CUST-553680",
+          "serviceRequestId": "4ab19757-3e8c-5612-95e7-4d3b96e048be",
+          "productCode": "CHK-PREMIUM-US",
+          "resourceId": "RES-416029",
           "status": "ACTIVE",
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "createdAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "c5e5bfe5-1f5a-5858-bc43-961b7f098003",
-            "correlationId": "2150ac47-aedb-50e9-8bea-950885d920b4",
+            "responseId": "1cd6343b-4e53-5c62-9db7-939824e44039",
+            "correlationId": "3a08ca80-7fc2-5e5b-9f10-5d407fd140cb",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "ResponseMetadata": {
-        "title": "Response Metadata",
+      "Metadata": {
+        "title": "Metadata Information",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "The unique identifier for the response."
+            "description": "The unique identifier for the response.",
+            "example": "resp-54321"
           },
           "correlationId": {
             "type": "string",
-            "description": "A correlation ID for tracking requests."
+            "description": "An identifier used to correlate related requests and responses.",
+            "example": "corr-98765"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp of when the response was generated."
+            "description": "The timestamp indicating when the response was generated.",
+            "example": "2023-10-01T12:05:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing occurred."
+            "description": "The geographical region where the processing occurred.",
+            "example": "US-West"
           }
         },
-        "description": "Schema representing additional metadata about the response."
+        "description": "Contains additional information relevant to the service request's processing."
       }
     },
     "parameters": {
@@ -282,22 +308,24 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_200"
+            "MICROSERVICE_PROD_201"
           ]
         }
       }
     },
     "headers": {
       "x-endpoint-id": {
+        "description": "A unique identifier for the endpoint that processed the request, useful for tracing and monitoring the API usage.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "corporate-trust-services-update-corporate-trust-services"
+          "example": "corporate-trust-services-create-corporate-trust-services"
         },
-        "example": "corporate-trust-services-update-corporate-trust-services"
+        "example": "corporate-trust-services-create-corporate-trust-services"
       },
       "x-runtime-app": {
+        "description": "Indicates the runtime application context under which the request was handled. This can help identify application-specific behaviors and optimizations.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -310,7 +338,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses JSON Web Tokens (JWT) for authentication. Clients must include a JWT in the Authorization header as a bearer token to access secured endpoints.",
+        "description": "Authentication scheme using Bearer Token. This scheme allows clients to authenticate using a JSON Web Token (JWT) in the Authorization header of requests. Ensure the token is valid and not expired.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
