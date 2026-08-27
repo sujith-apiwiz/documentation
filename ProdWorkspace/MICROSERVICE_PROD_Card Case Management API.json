@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Card Case Management API",
-    "description": "The Card Case Management API allows financial institutions to efficiently handle and resolve card-related cases, enhancing customer service and operational workflow. This endpoint specifically facilitates the removal of card cases, ensuring that outdated or resolved issues are promptly addressed. Common users include customer service representatives and operational teams who manage card account inquiries and disputes. By cleaning up unnecessary cases, organizations can maintain a streamlined case management system.",
+    "description": "The Card Case Management API enables financial institutions to efficiently update and manage card case details associated with customer banking services. By utilizing this API, organizations can amend the status, details, or attributes of specific card cases identified by a unique parameter. This service is particularly beneficial for customer service teams and developers building systems for card servicing solutions. Through effective use of this API, businesses can enhance customer experiences and streamline operational processes related to card management.",
     "version": "1.0"
   },
   "servers": [
@@ -19,56 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/servicing/card-case/*": {
-      "delete": {
+    "/v5/banking/servicing/card-case/{param1}": {
+      "put": {
         "tags": [
-          "Card Management"
+          "Card Case Management"
         ],
-        "summary": "Delete a specified card case.",
-        "description": "This operation allows you to delete a card case identified by a specific identifier. Once a card case is deleted, it cannot be recovered. Ensure you have the necessary permissions and are aware of the implications of deletion before proceeding.",
-        "operationId": "deleteCardCase",
+        "summary": "Update the details of a specific card case.",
+        "description": "This operation allows you to update the information related to a specific card case identified by CARD-400045. Ensure that all required fields are populated correctly to avoid errors during the update process.",
+        "operationId": "updateCardCase",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/parentspanid"
-          },
-          {
-            "$ref": "#/components/parameters/x-request-id"
-          },
-          {
-            "$ref": "#/components/parameters/x-envoy-attempt-count"
-          },
-          {
-            "$ref": "#/components/parameters/x-envoy-peer-metadata"
-          },
-          {
-            "$ref": "#/components/parameters/x-gateway-correlationid"
-          },
-          {
-            "$ref": "#/components/parameters/x-envoy-external-address"
-          },
-          {
-            "$ref": "#/components/parameters/x-envoy-peer-metadata-id"
-          },
-          {
-            "$ref": "#/components/parameters/x-envoy-decorator-operation"
-          },
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to define the parameters required for deleting a card case. Make sure to provide all necessary fields as per the schema requirements.",
+          "description": "Request body for updating the servicing information for the specified card case (CARD-400045). This body must include the necessary fields to correctly modify the card case data as per the operations defined in the schema.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DeleteCardCaseRequest"
+                "$ref": "#/components/schemas/UpdateCardCaseRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "The deletion of the resource was successful.",
+          "201": {
+            "description": "Resource created successfully with specific details.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -92,14 +68,59 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DeleteCardCaseResponse_200"
+                  "$ref": "#/components/schemas/UpdateCardCaseResponse_201"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error encountered during processing.",
+            "headers": {
+              "X-Workflow-Id": {
+                "$ref": "#/components/headers/X-Workflow-Id"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateCardCaseResponse_500"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity; validation errors present.",
+            "headers": {
+              "X-Workflow-Id": {
+                "$ref": "#/components/headers/X-Workflow-Id"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateCardCaseResponse_422"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request; invalid parameters provided.",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateCardCaseResponse_400"
                 }
               }
             }
           }
         },
         "callbacks": {},
-        "security": [],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "servers": []
       },
       "servers": [],
@@ -108,174 +129,210 @@
   },
   "components": {
     "schemas": {
-      "DeleteCardCaseRequest": {
-        "type": "string",
-        "description": "This schema represents the request body for the DELETE operation on card cases in the servicing module.",
-        "example": "{}"
-      },
-      "DeleteCardCaseResponse_200": {
-        "title": "Delete Card Case Response",
+      "UpdateCardCaseResponse_201": {
+        "title": "Operation Response",
         "type": "object",
         "properties": {
-          "version": {
-            "type": "integer",
-            "description": "The version of the response schema.",
-            "format": "int32",
-            "example": 1
+          "customerId": {
+            "type": "string",
+            "description": "Unique identifier for the customer.",
+            "example": "CUST-820501"
+          },
+          "caseId": {
+            "type": "string",
+            "description": "Unique identifier for the specific case.",
+            "example": "CASE-524334"
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "Unique identifier for the resource associated with the operation.",
+            "example": "RES-590859"
           },
           "status": {
             "type": "string",
-            "description": "The status of the delete operation.",
+            "description": "Current status of the operation.",
             "example": "ACTIVE"
           },
-          "updatedAt": {
+          "createdAt": {
             "type": "string",
-            "description": "The timestamp indicating when the card case was last updated.",
+            "description": "Timestamp when the operation was created.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Metadata related to the deletion operation.",
-            "$ref": "#/components/schemas/DeleteCardCaseMetadata"
+            "$ref": "#/components/schemas/OperationMetadata"
           }
         },
-        "description": "Schema representing the response for a successful DELETE operation on a card case, including status, version, update timestamp, and metadata.",
+        "description": "Response schema for operations performed on card cases.",
         "example": {
-          "version": 1,
+          "customerId": "CUST-820501",
+          "caseId": "CASE-524334",
+          "resourceId": "RES-590859",
           "status": "ACTIVE",
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "createdAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "58d354b2-3629-5259-a69c-fe8307a511c6",
-            "correlationId": "cb532099-8a8e-5111-8249-4a1dee05a44e",
+            "responseId": "137a93a3-1172-51a4-a6ec-ba9ae8ab7cce",
+            "correlationId": "592238c9-f24b-5e1f-85aa-e5e486398405",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "DeleteCardCaseMetadata": {
-        "title": "Delete Card Case Metadata",
+      "OperationMetadata": {
+        "title": "Operation Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
             "description": "Unique identifier for the response.",
-            "example": "12345"
+            "example": "RESP78910"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier to correlate related requests and responses.",
-            "example": "abcde-12345"
+            "description": "Identifier for tracking the correlation of multiple requests.",
+            "example": "CORR111213"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the metadata was generated.",
-            "example": "2023-10-10T12:00:00Z"
+            "description": "Timestamp when the metadata was generated.",
+            "example": "2023-10-01T12:01:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region in which the processing took place.",
-            "example": "us-west-1"
+            "description": "Region where the processing was carried out.",
+            "example": "US-East"
           }
         },
-        "description": "Contains metadata information related to the delete operation."
+        "description": "Metadata related to the operation."
+      },
+      "UpdateCardCaseResponse_500": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "The error code associated with the response.",
+            "example": "DOWNSTREAM_CORE_UNAVAILABLE"
+          },
+          "message": {
+            "type": "string",
+            "description": "A descriptive message detailing the error.",
+            "example": "A required core banking dependency is unavailable"
+          },
+          "workflow": {
+            "type": "string",
+            "description": "The specific workflow in which the error occurred.",
+            "example": "WF-023"
+          },
+          "failedAfterHop": {
+            "type": "integer",
+            "description": "Indicates the hop in the workflow after which the failure occurred.",
+            "format": "int32",
+            "example": 3
+          }
+        },
+        "description": "Response object for a failed operation in the servicing card case API, containing error details.",
+        "example": {
+          "code": "DOWNSTREAM_CORE_UNAVAILABLE",
+          "message": "A required core banking dependency is unavailable",
+          "workflow": "WF-023",
+          "failedAfterHop": 3
+        }
+      },
+      "UpdateCardCaseResponse_422": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "A string representing the error code associated with the response.",
+            "example": "RISK_REVIEW_REJECTED"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "A unique identifier for tracking the request across systems.",
+            "example": "b502e35c-15a9-43a6-9740-c76683144e37"
+          },
+          "message": {
+            "type": "string",
+            "description": "A descriptive message explaining the error encountered.",
+            "example": "Enhanced fraud/compliance review rejected the request"
+          },
+          "workflow": {
+            "type": "string",
+            "description": "Information about the workflow state at the time of the error.",
+            "example": "WF-023"
+          }
+        },
+        "description": "Response schema for a failed operation in the card servicing API, indicating issues with the request.",
+        "example": {
+          "code": "RISK_REVIEW_REJECTED",
+          "correlationId": "b502e35c-15a9-43a6-9740-c76683144e37",
+          "message": "Enhanced fraud/compliance review rejected the request",
+          "workflow": "WF-023"
+        }
+      },
+      "UpdateCardCaseRequest": {
+        "type": "object",
+        "properties": {
+          "example": {
+            "type": "string",
+            "description": "An example string that demonstrates the structure of the request body."
+          }
+        },
+        "description": "Schema representing the request body for the PUT operation on card case CARD-400045.",
+        "example": {}
+      },
+      "UpdateCardCaseResponse_400": {
+        "title": "Card Operation Error Response",
+        "type": "object",
+        "properties": {
+          "fieldErrors": {
+            "type": "array",
+            "description": "A list of field errors that occurred during the operation. Each entry in the array is a string describing the error related to a specific field.",
+            "example": [
+              "$.customerId is required",
+              "$.caseId is required",
+              "$.requestCategory is required",
+              "$.priority is required",
+              "$.originatingChannel is required",
+              "$.caseReason is required",
+              "$.serviceLevelDueAt is required",
+              "$.customerContactPreference is required",
+              "$.requestContext is required"
+            ],
+            "items": {
+              "type": "string",
+              "example": "Invalid card number"
+            }
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message describing the error that occurred.",
+            "example": "Request payload does not match the API contract"
+          },
+          "code": {
+            "type": "string",
+            "description": "A unique code identifier for the error type.",
+            "example": "INVALID_REQUEST"
+          }
+        },
+        "description": "This schema represents the response structure for error messages returned during card operation requests.",
+        "example": {
+          "fieldErrors": [
+            "$.customerId is required",
+            "$.caseId is required",
+            "$.requestCategory is required",
+            "$.priority is required",
+            "$.originatingChannel is required",
+            "$.caseReason is required",
+            "$.serviceLevelDueAt is required",
+            "$.customerContactPreference is required",
+            "$.requestContext is required"
+          ],
+          "message": "Request payload does not match the API contract",
+          "code": "INVALID_REQUEST"
+        }
       }
     },
     "parameters": {
-      "parentspanid": {
-        "name": "parentspanid",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "be967a301e7fb33c"
-        },
-        "example": "be967a301e7fb33c"
-      },
-      "x-request-id": {
-        "name": "x-request-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "79132bf3-9e23-4c97-a360-d41fd51171af"
-        },
-        "example": "79132bf3-9e23-4c97-a360-d41fd51171af"
-      },
-      "x-envoy-attempt-count": {
-        "name": "x-envoy-attempt-count",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "1"
-        },
-        "example": "1"
-      },
-      "x-envoy-peer-metadata": {
-        "name": "x-envoy-peer-metadata",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "ChoKCkNMVVNURVJfSUQSDBoKS3ViZXJuZXRlcwquAQoGTEFCRUxTEqMBKqABCh0KA2FwcBIWGhRpc3Rpby1pbmdyZXNzZ2F0ZXdheQo5Ch9zZXJ2aWNlLmlzdGlvLmlvL2Nhbm9uaWNhbC1uYW1lEhYaFGlzdGlvLWluZ3Jlc3NnYXRld2F5Ci8KI3NlcnZpY2UuaXN0aW8uaW8vY2Fub25pY2FsLXJldmlzaW9uEggaBjEtMzAtMAoTCgd2ZXJzaW9uEggaBjEuMzAuMAouCgROQU1FEiYaJGlzdGlvLWluZ3Jlc3NnYXRld2F5LTlkZDQ2YjU4Yi10Y3R6cwobCglOQU1FU1BBQ0USDhoMaXN0aW8tc3lzdGVtCl0KBU9XTkVSElQaUmt1YmVybmV0ZXM6Ly9hcGlzL2FwcHMvdjEvbmFtZXNwYWNlcy9pc3Rpby1zeXN0ZW0vZGVwbG95bWVudHMvaXN0aW8taW5ncmVzc2dhdGV3YXkKJwoNV09SS0xPQURfTkFNRRIWGhRpc3Rpby1pbmdyZXNzZ2F0ZXdheQ=="
-        },
-        "example": "ChoKCkNMVVNURVJfSUQSDBoKS3ViZXJuZXRlcwquAQoGTEFCRUxTEqMBKqABCh0KA2FwcBIWGhRpc3Rpby1pbmdyZXNzZ2F0ZXdheQo5Ch9zZXJ2aWNlLmlzdGlvLmlvL2Nhbm9uaWNhbC1uYW1lEhYaFGlzdGlvLWluZ3Jlc3NnYXRld2F5Ci8KI3NlcnZpY2UuaXN0aW8uaW8vY2Fub25pY2FsLXJldmlzaW9uEggaBjEtMzAtMAoTCgd2ZXJzaW9uEggaBjEuMzAuMAouCgROQU1FEiYaJGlzdGlvLWluZ3Jlc3NnYXRld2F5LTlkZDQ2YjU4Yi10Y3R6cwobCglOQU1FU1BBQ0USDhoMaXN0aW8tc3lzdGVtCl0KBU9XTkVSElQaUmt1YmVybmV0ZXM6Ly9hcGlzL2FwcHMvdjEvbmFtZXNwYWNlcy9pc3Rpby1zeXN0ZW0vZGVwbG95bWVudHMvaXN0aW8taW5ncmVzc2dhdGV3YXkKJwoNV09SS0xPQURfTkFNRRIWGhRpc3Rpby1pbmdyZXNzZ2F0ZXdheQ=="
-      },
-      "x-gateway-correlationid": {
-        "name": "x-gateway-correlationid",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "d18f1ab5-8dc0-45d3-baaf-070e59da94be"
-        },
-        "example": "d18f1ab5-8dc0-45d3-baaf-070e59da94be"
-      },
-      "x-envoy-external-address": {
-        "name": "x-envoy-external-address",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "3.96.185.103"
-        },
-        "example": "3.96.185.103"
-      },
-      "x-envoy-peer-metadata-id": {
-        "name": "x-envoy-peer-metadata-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "router~10.10.185.143~istio-ingressgateway-9dd46b58b-tctzs.istio-system~istio-system.svc.cluster.local"
-        },
-        "example": "router~10.10.185.143~istio-ingressgateway-9dd46b58b-tctzs.istio-system~istio-system.svc.cluster.local"
-      },
-      "x-envoy-decorator-operation": {
-        "name": "x-envoy-decorator-operation",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "kong-test1-kong-proxy.kong-test.svc.cluster.local:80/*"
-        },
-        "example": "kong-test1-kong-proxy.kong-test.svc.cluster.local:80/*"
-      },
       "x-mock-response": {
         "name": "x-mock-response",
         "in": "header",
@@ -286,22 +343,27 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_200"
+            "MICROSERVICE_PROD_201",
+            "MICROSERVICE_PROD_500",
+            "MICROSERVICE_PROD_422",
+            "MICROSERVICE_PROD_400"
           ]
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "Unique identifier for the endpoint where the request was sent.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "card-case-update-card-case"
+          "example": "card-case-create-card-case"
         },
-        "example": "card-case-update-card-case"
+        "example": "card-case-create-card-case"
       },
       "X-Runtime-App": {
+        "description": "Identifier for the runtime application that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -311,26 +373,25 @@
         "example": "customer-channel"
       },
       "X-Workflow-Id": {
+        "description": "A unique identifier for the workflow associated with the client error response, aiding in issue resolution by providing context.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "WF-027"
+          "example": "WF-023"
         },
-        "example": "WF-027"
+        "example": "WF-023"
       },
       "X-Workflow-Name": {
-        "description": "The name of the workflow associated with the operation.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Lost or Stolen Card Block and Replacement"
+          "example": "Card PIN Reset and Device Verification"
         },
-        "example": "Lost or Stolen Card Block and Replacement"
+        "example": "Card PIN Reset and Device Verification"
       },
       "X-Workflow-State": {
-        "description": "The current state of the workflow after the operation has been performed.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -340,14 +401,21 @@
         "example": "IN_PROGRESS"
       },
       "X-Workflow-Execution-Id": {
-        "description": "A unique identifier for the execution of the workflow.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "6ef397b2-8d79-47e7-89fc-9790ffefd21d"
+          "example": "d5b2104b-d2b1-40fb-ae5e-fbc5b5801636"
         },
-        "example": "6ef397b2-8d79-47e7-89fc-9790ffefd21d"
+        "example": "d5b2104b-d2b1-40fb-ae5e-fbc5b5801636"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "This security scheme uses the Bearer authentication method along with JSON Web Tokens (JWT). Clients are expected to include a token in the Authorization header when making requests to access protected resources.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }
