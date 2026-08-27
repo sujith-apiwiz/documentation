@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE_PROD_Employee Benefits Management API",
-    "description": "The Employee Benefits Management API enables organizations to effectively update and manage employee benefits information in real-time. This endpoint specifically allows for the modification of existing benefits for an individual employee, streamlining HR processes and ensuring accurate records. Human resource teams and benefits administrators can utilize this API to reflect changes in benefits, such as adjustments due to life events or organizational policy updates. By integrating this API, companies can enhance their employee engagement and ensure compliance with benefits administration.",
+    "title": "MICROSERVICE_PROD_Employee Data Update API",
+    "description": "The Employee Data Update API enables businesses to efficiently modify existing employee records within the human resource management system. This API allows users to update various attributes of an employee's profile, such as personal details, job information, and contact data. Ideal for HR professionals and system integrators, it streamlines the process of maintaining accurate and up-to-date employee information. By utilizing this API, organizations can ensure that their HR data remains reliable and aligned with current employee statuses.",
     "version": "1.0"
   },
   "servers": [
@@ -30,14 +30,14 @@
     }
   ],
   "paths": {
-    "/v5/banking/human-resource-management/employee-benefits/{param1}": {
+    "/v5/banking/human-resource-management/employee-data-management/{param1}": {
       "patch": {
         "tags": [
-          "Employee Benefits"
+          "Employee Management"
         ],
-        "summary": "Update employee benefits information.",
-        "description": "This endpoint allows you to update the benefits information for an employee identified by their unique ID. Modify the details as needed to reflect the current benefits status.",
-        "operationId": "updateEmployeeBenefitsForId",
+        "summary": "Update employee data by ID.",
+        "description": "This operation allows you to update the details of an employee in the Human Resource Management system using their unique employee ID. Make sure to provide the necessary fields to be updated in the request body.",
+        "operationId": "patchEmployeeDataById",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
@@ -47,18 +47,18 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to modify the employee benefits for the specified employee identified by EMP-900045. It allows you to update various fields related to employee benefits, ensuring that the data remains current and accurate.",
+          "description": "This request body is used to update the employee data associated with the specified employee ID (EMP-900045) in the human resource management system. The submitted data should adhere to the defined schema which outlines the necessary fields and their respective types.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateEmployeeBenefitsForIdRequest"
+                "$ref": "#/components/schemas/PatchEmployeeDataByIdRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, and the resource has been updated.",
+            "description": "Request completed successfully and the employee data has been updated.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateEmployeeBenefitsForIdResponse_200"
+                  "$ref": "#/components/schemas/PatchEmployeeDataByIdResponse_200"
                 }
               }
             }
@@ -90,36 +90,38 @@
   },
   "components": {
     "schemas": {
-      "UpdateEmployeeBenefitsForIdRequest": {
-        "title": "Employee Benefits Update Request Schema",
+      "PatchEmployeeDataByIdRequest": {
+        "title": "Employee Data Management Request Body",
         "type": "object",
         "properties": {
           "changes": {
-            "$ref": "#/components/schemas/EmployeeBenefitsChanges"
+            "description": "Contains details about the changes being requested for the employee.",
+            "$ref": "#/components/schemas/EmployeeChanges"
           },
           "changeReason": {
             "type": "string",
-            "description": "The reason for requesting the change to employee benefits.",
+            "description": "The reason for the requested change.",
             "example": "STANDARD"
           },
           "effectiveAt": {
             "type": "string",
-            "description": "The date and time when the changes will be effective.",
+            "description": "Timestamp indicating when the changes should take effect.",
             "example": "2026-09-15T14:30:00Z"
           },
           "requestedBy": {
             "type": "string",
-            "description": "Identifier of the user who is requesting the changes.",
+            "description": "Identifier of the user requesting the changes.",
             "example": "STANDARD"
           },
           "requestContext": {
+            "description": "Contextual information about the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Schema representing the structure of the request body for updating employee benefits in the system.",
+        "description": "Schema representing the request body for updating employee data in the system.",
         "example": {
           "changes": {
-            "employeeId": "EMP-671190",
+            "employeeId": "EMP-438619",
             "assignmentId": "STANDARD",
             "departmentId": "STANDARD"
           },
@@ -127,143 +129,144 @@
           "effectiveAt": "2026-09-15T14:30:00Z",
           "requestedBy": "STANDARD",
           "requestContext": {
-            "requestId": "3484ff48-9806-5f65-9e4a-0f681ff47225",
-            "correlationId": "96433a43-fcbf-565e-96e3-da34f41c4c18",
-            "idempotencyKey": "ddc08f9e-4217-5061-bb11-ec807d8c8f13",
+            "requestId": "7d7c003f-3413-56f4-9935-72b26065a7bc",
+            "correlationId": "223c0fa5-859a-525c-9299-c6b5beb72264",
+            "idempotencyKey": "c65c8fa8-9e56-5bb9-a18c-2c0236a0d1c6",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-767729"
+              "deviceId": "DEV-145778"
             }
           }
         }
       },
-      "EmployeeBenefitsChanges": {
-        "title": "Employee Benefits Changes Schema",
+      "EmployeeChanges": {
+        "title": "Employee Changes",
         "type": "object",
         "properties": {
           "employeeId": {
             "type": "string",
-            "description": "Unique identifier for the employee whose benefits are being updated.",
-            "example": "string"
+            "description": "Unique identifier of the employee whose data is being changed.",
+            "example": "EMP-1234"
           },
           "assignmentId": {
             "type": "string",
-            "description": "Identifier for the assignment associated with the employee.",
-            "example": "string"
+            "description": "Unique identifier for the assignment related to the employee.",
+            "example": "ASSIGN-5678"
           },
           "departmentId": {
             "type": "string",
-            "description": "Identifier for the department associated with the employee.",
-            "example": "string"
+            "description": "Unique identifier for the department to which the employee is being assigned.",
+            "example": "DEP-91011"
           }
         },
-        "description": "Schema representing the changes being requested for employee benefits."
+        "description": "Details of the changes requested for an employee."
       },
       "RequestContext": {
-        "title": "Request Context Schema",
+        "title": "Request Context",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
             "description": "Unique identifier for the request.",
-            "example": "string"
+            "example": "REQ-123456"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier to correlate multiple requests in a workflow.",
-            "example": "string"
+            "description": "Identifier used to correlate the request with other related requests.",
+            "example": "CORR-7890"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key to ensure idempotency of the request.",
-            "example": "string"
+            "description": "Key used to ensure that the request is processed only once.",
+            "example": "IDEMP-KEY-123"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp for when the request was made.",
-            "example": "string"
+            "description": "Timestamp indicating when the request was made.",
+            "example": "2023-10-10T12:00:00Z"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "The source system from which the request originated.",
-            "example": "string"
+            "description": "System from which the request originated.",
+            "example": "HRM System"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application that initiated the request.",
-            "example": "string"
+            "description": "Application from which the request was generated.",
+            "example": "Employee Management Portal"
           },
           "channel": {
-            "$ref": "#/components/schemas/RequestChannel"
+            "description": "Information about the channel through which the request was made.",
+            "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Schema representing the contextual information about the request."
+        "description": "Contextual information regarding the request made to the system."
       },
-      "RequestChannel": {
-        "title": "Request Channel Schema",
+      "Channel": {
+        "title": "Channel Information",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "Unique identifier for the channel used for the request.",
-            "example": "string"
+            "description": "Unique identifier for the channel used to submit the request.",
+            "example": "CHAN-1011"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of the channel used (e.g., web, mobile, API).",
-            "example": "string"
+            "description": "Type of channel through which the request was made.",
+            "example": "Web"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier for the device used to make the request.",
-            "example": "string"
+            "description": "Identifier for the device used in this request.",
+            "example": "DEV-1213"
           }
         },
-        "description": "Schema representing the channel through which the request was made."
+        "description": "Details about the channel used for the request."
       },
-      "UpdateEmployeeBenefitsForIdResponse_200": {
-        "title": "Employee Benefits Update Response",
+      "PatchEmployeeDataByIdResponse_200": {
+        "title": "Employee Data Management Response",
         "type": "object",
         "properties": {
           "version": {
             "type": "integer",
-            "description": "The version number of the response schema.",
+            "description": "Indicates the version of the response.",
             "format": "int32",
             "example": 1
           },
           "status": {
             "type": "string",
-            "description": "The status of the update operation.",
+            "description": "The status of the operation.",
             "example": "ACTIVE"
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the update occurred.",
+            "description": "Timestamp indicating when the data was updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Metadata regarding the response, such as identifiers and timestamps.",
-            "$ref": "#/components/schemas/ResponseMetadata"
+            "description": "Metadata related to the response.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the operation that updates employee benefits. Includes versioning information, current status, timestamps, and metadata related to the response.",
+        "description": "Schema representing the response for updating employee data in the employee data management system.",
         "example": {
           "version": 1,
           "status": "ACTIVE",
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "309715ee-a0d3-5730-9115-13fd039835f7",
-            "correlationId": "96433a43-fcbf-565e-96e3-da34f41c4c18",
+            "responseId": "289d1a95-1035-5906-96ba-af3fa3cf9101",
+            "correlationId": "223c0fa5-859a-525c-9299-c6b5beb72264",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "ResponseMetadata": {
+      "Metadata": {
         "title": "Response Metadata",
         "type": "object",
         "properties": {
@@ -274,21 +277,21 @@
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate logs for a specific request across the system.",
-            "example": "xyz789"
+            "description": "Identifier used to trace the request through the system.",
+            "example": "def456"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the response was generated.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "Timestamp indicating when the metadata was generated.",
+            "example": "2023-10-01T00:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Geographical region where the processing occurred.",
-            "example": "us-east-1"
+            "description": "The region where the processing occurred.",
+            "example": "us-west-1"
           }
         },
-        "description": "Metadata associated with the API response, providing contextual information about the request and processing."
+        "description": "Schema representing metadata information related to the response."
       }
     },
     "parameters": {
@@ -319,17 +322,15 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "The unique identifier for the endpoint that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "employee-benefits-update-employee-benefits"
+          "example": "employee-data-management-update-employee-data-management"
         },
-        "example": "employee-benefits-update-employee-benefits"
+        "example": "employee-data-management-update-employee-data-management"
       },
       "X-Runtime-App": {
-        "description": "The name of the application where the request was handled, indicating the runtime environment.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -342,7 +343,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses bearer authentication, which requires a valid JWT (JSON Web Token) for user authentication. Include the token in the Authorization header as 'Bearer {token}' when making API requests.",
+        "description": "This security scheme uses a Bearer token for authentication. The token must be in the JWT (JSON Web Token) format, which is commonly used for securely transmitting information between parties.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
