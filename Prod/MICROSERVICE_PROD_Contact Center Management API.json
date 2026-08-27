@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Contact Center Management API",
-    "description": "The Contact Center Management API provides essential functionalities for updating and managing contact center configurations within banking services. This endpoint allows authorized users to modify channel-specific settings using the designated identifier. Typical consumers include banking application developers and contact center administrators looking to streamline their operations. Through this API, users can efficiently enhance customer experiences by adapting various contact center parameters, ensuring seamless service delivery.",
+    "description": "The Contact Center Management API facilitates streamlined communication and operational oversight within banking contact centers. It provides essential resources for retrieving data related to customer interactions, performance metrics, and channel-specific operational details. This API is designed for financial institutions and customer service teams looking to enhance their support capabilities and improve response times. Utilize this endpoint for comprehensive insights on managing customer engagement and optimizing service delivery.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/channel-specific/contact-center-management/{param1}": {
-      "patch": {
+    "/v5/banking/channel-specific/contact-center-management": {
+      "get": {
         "tags": [
           "Contact Center Management"
         ],
-        "summary": "Update Contact Center Management Resource",
-        "description": "This endpoint allows you to update the properties of the specific contact center management resource identified by the resource ID. Ensure that only the required fields are sent in the request to successfully execute the operation.",
-        "operationId": "patchContactCenterManagementRes100045",
+        "summary": "Retrieve channel-specific contact center management data.",
+        "description": "This endpoint allows users to fetch detailed management information related to specific contact channels. Utilize this API to gain insights into channel operations and configurations.",
+        "operationId": "getChannelSpecificContactCenterManagement",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
-          },
-          {
-            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "This request body allows you to update specific details for the resource identified by RES-100045 within the contact center management system. Ensure that the provided data adheres to the defined schema to facilitate a successful operation.",
+          "description": "This request body is used to retrieve channel-specific contact center management information. Ensure that the required parameters are included in the request to get the desired data.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PatchContactCenterManagementRes100045Request"
+                "$ref": "#/components/schemas/GetChannelSpecificContactCenterManagementRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The request was completed successfully and changes have been applied.",
+            "description": "Request completed successfully, returning contact center management data.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PatchContactCenterManagementRes100045Response_200"
+                  "$ref": "#/components/schemas/GetChannelSpecificContactCenterManagementResponse_200"
                 }
               }
             }
@@ -90,223 +87,217 @@
   },
   "components": {
     "schemas": {
-      "PatchContactCenterManagementRes100045Request": {
+      "GetChannelSpecificContactCenterManagementRequest": {
+        "type": "string",
+        "description": "Request body for the GET operation in the contact center management API, specific to channel functionality.",
+        "example": "{}"
+      },
+      "GetChannelSpecificContactCenterManagementResponse_200": {
+        "title": "Contact Center Management Operations Response",
         "type": "object",
         "properties": {
-          "changes": {
-            "type": "object",
-            "properties": {
-              "channelId": {
-                "type": "string",
-                "description": "Unique identifier for the channel.",
-                "example": "channel-123"
-              },
-              "regionCode": {
-                "type": "string",
-                "description": "Code representing the region for the channel.",
-                "example": "US-WEST"
-              },
-              "serviceWindow": {
-                "$ref": "#/components/schemas/ServiceWindow"
+          "items": {
+            "type": "array",
+            "description": "A list of contact center channel items.",
+            "example": [
+              {
+                "channelId": "MOBILE-US",
+                "regionCode": "US-EAST-1",
+                "serviceWindow": {
+                  "opensAt": "STANDARD",
+                  "closesAt": "STANDARD"
+                },
+                "dailyCapacity": 1,
+                "queueId": "STANDARD",
+                "skillGroup": "STANDARD",
+                "targetAnswerSeconds": 1,
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
               }
-            },
-            "description": "Contains the details of the changes requested.",
-            "example": {
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ContactCenterChannel"
+            }
+          },
+          "pagination": {
+            "description": "Pagination information for the response data.",
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "sort": {
+            "type": "string",
+            "description": "Sorting criteria applied to the response items.",
+            "example": "STANDARD"
+          },
+          "metadata": {
+            "description": "Metadata related to the response.",
+            "$ref": "#/components/schemas/ResponseMetadata"
+          }
+        },
+        "description": "Schema representing the response from the contact center management operations.",
+        "example": {
+          "items": [
+            {
               "channelId": "MOBILE-US",
               "regionCode": "US-EAST-1",
               "serviceWindow": {
                 "opensAt": "STANDARD",
                 "closesAt": "STANDARD"
-              }
+              },
+              "dailyCapacity": 1,
+              "queueId": "STANDARD",
+              "skillGroup": "STANDARD",
+              "targetAnswerSeconds": 1,
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
             }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
           },
-          "changeReason": {
-            "type": "string",
-            "description": "Reason for the requested change.",
-            "example": "STANDARD"
-          },
-          "effectiveAt": {
-            "type": "string",
-            "description": "The date and time when the changes will take effect.",
-            "example": "2026-09-15T14:30:00Z"
-          },
-          "requestedBy": {
-            "type": "string",
-            "description": "Identifier of the user who requested the changes.",
-            "example": "STANDARD"
-          },
-          "requestContext": {
-            "description": "Contextual information related to the request.",
-            "$ref": "#/components/schemas/RequestContext"
-          }
-        },
-        "description": "Request body schema for updating operations in a contact center management system.",
-        "example": {
-          "changes": {
-            "channelId": "MOBILE-US",
-            "regionCode": "US-EAST-1",
-            "serviceWindow": {
-              "opensAt": "STANDARD",
-              "closesAt": "STANDARD"
-            }
-          },
-          "changeReason": "STANDARD",
-          "effectiveAt": "2026-09-15T14:30:00Z",
-          "requestedBy": "STANDARD",
-          "requestContext": {
-            "requestId": "bbebe4a9-47e6-5575-9bc4-7a8d010ded21",
-            "correlationId": "09364cd5-47ea-5d25-8992-d3fee8e82b16",
-            "idempotencyKey": "af2e80b9-c31d-5a8e-ab1e-9061b78ab876",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-524160"
-            }
-          }
-        }
-      },
-      "ServiceWindow": {
-        "type": "object",
-        "properties": {
-          "opensAt": {
-            "type": "string",
-            "description": "Opening time of the service in HH:mm format.",
-            "example": "09:00"
-          },
-          "closesAt": {
-            "type": "string",
-            "description": "Closing time of the service in HH:mm format.",
-            "example": "17:00"
-          }
-        },
-        "description": "Defines the operational hours of a service."
-      },
-      "RequestContext": {
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req-789"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier to correlate logs and traces.",
-            "example": "corr-1234"
-          },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "Key to ensure that the request is idempotent.",
-            "example": "key-5678"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp when the request was made.",
-            "example": "2023-09-29T12:00:00Z"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "The system from which the request originated.",
-            "example": "CRM"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "The application from which the request originated.",
-            "example": "Admin Portal"
-          },
-          "channel": {
-            "description": "Details about the channel associated with the request.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Contextual information related to the request."
-      },
-      "Channel": {
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "channel-123"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of the communication channel (e.g., Voice, Chat).",
-            "example": "Voice"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier for the device associated with the channel.",
-            "example": "device-987"
-          }
-        },
-        "description": "Details related to a channel."
-      },
-      "PatchContactCenterManagementRes100045Response_200": {
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "integer",
-            "description": "The version of the response schema.",
-            "format": "int32",
-            "example": 1
-          },
-          "status": {
-            "type": "string",
-            "description": "The status of the operation, typically a message indicating success or an error.",
-            "example": "ACTIVE"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "The timestamp when the resource was last updated.",
-            "example": "2026-09-15T14:30:00Z"
-          },
+          "sort": "STANDARD",
           "metadata": {
-            "description": "Metadata related to the response, providing additional context.",
-            "$ref": "#/components/schemas/Metadata"
-          }
-        },
-        "description": "Response schema for the PATCH operation in the Contact Center Management API, specifically for operations returning a successful 200 status.",
-        "example": {
-          "version": 1,
-          "status": "ACTIVE",
-          "updatedAt": "2026-09-15T14:30:00Z",
-          "metadata": {
-            "responseId": "0830a700-6c1c-5ea9-82c9-7916509063f2",
-            "correlationId": "09364cd5-47ea-5d25-8992-d3fee8e82b16",
+            "responseId": "083d1450-141f-5897-9227-6b5a5ed88a7d",
+            "correlationId": "c6655a15-7e6f-57b7-93f4-158a7c33fcd3",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "Metadata": {
+      "ContactCenterChannel": {
+        "title": "Contact Center Channel",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Unique identifier for the contact center channel."
+          },
+          "regionCode": {
+            "type": "string",
+            "description": "Code representing the geographical region of the channel."
+          },
+          "serviceWindow": {
+            "description": "Service window details for the contact center channel.",
+            "$ref": "#/components/schemas/ServiceWindow"
+          },
+          "dailyCapacity": {
+            "type": "integer",
+            "description": "The maximum number of interactions that can be handled daily.",
+            "format": "int32"
+          },
+          "queueId": {
+            "type": "string",
+            "description": "Unique identifier for the queue associated with the channel."
+          },
+          "skillGroup": {
+            "type": "string",
+            "description": "Group of skills required to handle interactions in this channel."
+          },
+          "targetAnswerSeconds": {
+            "type": "integer",
+            "description": "Target time in seconds to answer an interaction.",
+            "format": "int32"
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "Status of the record related to the contact center channel."
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp of the last update made to this channel."
+          }
+        },
+        "description": "Schema representing a contact center channel with its properties.",
+        "example": {
+          "channelId": "channel1",
+          "regionCode": "us-east",
+          "serviceWindow": {
+            "opensAt": "08:00:00",
+            "closesAt": "20:00:00"
+          },
+          "dailyCapacity": 100,
+          "queueId": "queue1",
+          "skillGroup": "sales",
+          "targetAnswerSeconds": 30,
+          "recordStatus": "active",
+          "updatedAt": "2023-10-10T10:00:00Z"
+        }
+      },
+      "ServiceWindow": {
+        "title": "Service Window",
+        "type": "object",
+        "properties": {
+          "opensAt": {
+            "type": "string",
+            "description": "Opening time of the service window in HH:mm:ss format."
+          },
+          "closesAt": {
+            "type": "string",
+            "description": "Closing time of the service window in HH:mm:ss format."
+          }
+        },
+        "description": "Schema representing the service operating hours for a contact center channel.",
+        "example": {
+          "opensAt": "08:00:00",
+          "closesAt": "20:00:00"
+        }
+      },
+      "Pagination": {
+        "title": "Pagination",
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number in the paginated response.",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page in the paginated response.",
+            "format": "int32"
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available across all pages.",
+            "format": "int32"
+          }
+        },
+        "description": "Schema representing pagination details of list responses.",
+        "example": {
+          "page": 1,
+          "pageSize": 10,
+          "totalItems": 100
+        }
+      },
+      "ResponseMetadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "resp-12345"
+            "description": "Unique identifier for the response."
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier to correlate multiple requests for tracking purposes.",
-            "example": "correlation-67890"
+            "description": "Identifier that correlates this response with a request."
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the response was generated.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "Timestamp of when the response was generated."
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing of the request took place.",
-            "example": "us-east-1"
+            "description": "The region where the request was processed."
           }
         },
-        "description": "Metadata object that contains additional identifiers and timestamps related to the response."
+        "description": "Schema containing metadata information about the response.",
+        "example": {
+          "responseId": "12345",
+          "correlationId": "abcd-1234",
+          "generatedAt": "2023-10-10T10:00:00Z",
+          "processingRegion": "us-west-2"
+        }
       }
     },
     "parameters": {
@@ -323,29 +314,21 @@
             "MICROSERVICE_PROD_200"
           ]
         }
-      },
-      "param1": {
-        "name": "param1",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
-        }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "A unique identifier for the endpoint that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "contact-center-management-update-contact-center-management"
+          "example": "contact-center-management-search-contact-center-management"
         },
-        "example": "contact-center-management-update-contact-center-management"
+        "example": "contact-center-management-search-contact-center-management"
       },
       "X-Runtime-App": {
+        "description": "The name and version of the application handling the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -358,7 +341,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses bearer tokens as a means of authentication. A JSON Web Token (JWT) should be provided in the authorization header as a bearer token to access protected resources.",
+        "description": "Authentication scheme using Bearer tokens, specifically in the form of JSON Web Tokens (JWT). This allows for secure access to the API by providing a token that must be included in the Authorization header of requests.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
