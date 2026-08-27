@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Settlement Accounts Retrieval API",
-    "description": "The Settlement Accounts Retrieval API allows users to access detailed information about settlement accounts within the system. This endpoint is essential for businesses engaged in financial transactions, offering insights into account balances and transaction histories. Typical consumers include financial analysts and accounting software, aiming to validate and reconcile financial data efficiently. By querying this API, users can ensure accurate settlement account management and maintain robust financial records.",
+    "description": "The Settlement Accounts Retrieval API enables users to access detailed information about settlement accounts linked to the payment processing system. Designed for finance and accounting professionals, this API allows for efficient retrieval of account data, including balances and transaction histories. Typical use cases involve audit processes, financial reporting, and reconciliation tasks. By integrating this API, businesses can streamline financial operations and maintain accurate records.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/p2m/settlement-accounts/{param1}": {
+    "/v5/p2m/settlement-accounts": {
       "get": {
         "tags": [
-          "Settlement Accounts"
+          "Financial Management"
         ],
-        "summary": "Retrieve Settlement Account Details",
-        "description": "Fetches detailed information about a specific settlement account identified by the given account number. This includes all pertinent data such as account balance, account type, and associated transactions.",
-        "operationId": "getSettlementAccountById",
+        "summary": "Retrieve all settlement accounts",
+        "description": "This endpoint allows you to fetch a list of all settlement accounts available in the system. It provides essential details about each account, which can help in managing financial transactions efficiently.",
+        "operationId": "getSettlementAccounts",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "The request body for retrieving settlement account operations. It contains the necessary parameters to filter and obtain relevant data regarding the specified settlement account.",
+          "description": "This request body is utilized for retrieving settlement account information. It expects a JSON object that conforms to the specified schema, which outlines the required parameters and their expected formats.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetSettlementAccountByIdRequest"
+                "$ref": "#/components/schemas/GetSettlementAccountsRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, returning the settlement account details.",
+            "description": "Successfully retrieved the list of settlement accounts.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetSettlementAccountByIdResponse_200"
+                  "$ref": "#/components/schemas/GetSettlementAccountsResponse_200"
                 }
               }
             }
@@ -76,236 +76,349 @@
   },
   "components": {
     "schemas": {
-      "GetSettlementAccountByIdRequest": {
+      "GetSettlementAccountsRequest": {
         "type": "string",
-        "description": "This schema represents the request body for the GET operation related to settlement account with ID ACC-200045. It is expected to contain a string value.",
+        "description": "A string representation of the request body for the settlement accounts operations GET request.",
         "example": "{}"
       },
-      "GetSettlementAccountByIdResponse_200": {
+      "GetSettlementAccountsResponse_200": {
         "type": "object",
         "properties": {
-          "settlementAccountId": {
-            "type": "string",
-            "description": "Unique identifier for the settlement account.",
-            "example": "ACC-960408"
+          "page": {
+            "type": "integer",
+            "description": "Current page number.",
+            "format": "int32",
+            "example": 1
           },
-          "merchantId": {
-            "type": "string",
-            "description": "Unique identifier for the merchant associated with the settlement account.",
-            "example": "MER-134911"
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32",
+            "example": 1
           },
-          "account": {
-            "description": "Object representing the details of the bank account.",
-            "$ref": "#/components/schemas/Account"
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available.",
+            "format": "int32",
+            "example": 1
           },
-          "schedule": {
-            "description": "Object representing the schedule for the settlement account.",
-            "$ref": "#/components/schemas/Schedule"
+          "totalPages": {
+            "type": "integer",
+            "description": "Total number of pages available.",
+            "format": "int32",
+            "example": 1
           },
-          "isDefault": {
+          "hasNext": {
             "type": "boolean",
-            "description": "Indicates whether this is the default settlement account.",
+            "description": "Indicates if there is a next page available.",
             "example": true
           },
-          "verificationStatus": {
-            "type": "string",
-            "description": "Current verification status of the settlement account.",
-            "example": "VERIFIED"
-          },
-          "status": {
-            "type": "string",
-            "description": "Current status of the settlement account.",
-            "example": "ACTIVE"
-          },
-          "audit": {
-            "description": "Object containing audit information for the settlement account.",
-            "$ref": "#/components/schemas/Audit"
-          },
-          "metadata": {
-            "description": "Object containing metadata related to the response.",
-            "$ref": "#/components/schemas/Metadata"
-          }
-        },
-        "description": "Schema representing the response for settlement account retrieval.",
-        "example": {
-          "settlementAccountId": "ACC-960408",
-          "merchantId": "MER-134911",
-          "account": {
-            "bankCode": "CODE-460",
-            "branchCode": "CODE-504",
-            "numberMasked": "STANDARD",
-            "name": "Northstar Banking Service",
-            "type": "STANDARD",
-            "currency": "USD"
-          },
-          "schedule": {
-            "frequency": "STANDARD",
-            "cutoffTime": "STANDARD",
-            "timezone": "America/New_York",
-            "settlementDelayBusinessDays": 1,
-            "minimumPayoutAmount": {
-              "currency": "USD",
-              "value": "STANDARD"
+          "links": {
+            "type": "array",
+            "description": "List of links related to the response.",
+            "example": [
+              {
+                "rel": "STANDARD",
+                "href": "https://example.com/resource",
+                "method": "STANDARD"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Link"
             }
           },
-          "isDefault": true,
-          "verificationStatus": "VERIFIED",
-          "status": "ACTIVE",
-          "audit": {
-            "createdAt": "2026-09-15T14:30:00Z",
-            "createdBy": "STANDARD",
-            "updatedAt": "2026-09-15T14:30:00Z",
-            "updatedBy": "2026-09-15",
-            "version": 1
+          "items": {
+            "type": "array",
+            "description": "List of settlement account items.",
+            "example": [
+              {
+                "settlementAccountId": "ACC-395841",
+                "merchantId": "MER-295001",
+                "account": {
+                  "bankCode": "CODE-131",
+                  "branchCode": "CODE-643",
+                  "numberMasked": "STANDARD",
+                  "name": "Northstar Banking Service",
+                  "type": "STANDARD",
+                  "currency": "USD"
+                },
+                "schedule": {
+                  "frequency": "STANDARD",
+                  "cutoffTime": "STANDARD",
+                  "timezone": "America/New_York",
+                  "settlementDelayBusinessDays": 1,
+                  "minimumPayoutAmount": {
+                    "currency": "USD",
+                    "value": "STANDARD"
+                  }
+                },
+                "isDefault": true,
+                "verificationStatus": "VERIFIED",
+                "status": "ACTIVE",
+                "audit": {
+                  "createdAt": "2026-09-15T14:30:00Z",
+                  "createdBy": "STANDARD",
+                  "updatedAt": "2026-09-15T14:30:00Z",
+                  "updatedBy": "2026-09-15",
+                  "version": 1
+                }
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/SettlementAccount"
+            }
           },
           "metadata": {
-            "responseId": "a8b11566-783c-5b55-9820-4c05af678231",
-            "correlationId": "fceb8a89-6b69-5fb7-9162-a8f62a3dc04f",
+            "type": "object",
+            "properties": {
+              "responseId": {
+                "type": "string",
+                "description": "Unique identifier for the response.",
+                "example": "resp-12345"
+              },
+              "correlationId": {
+                "type": "string",
+                "description": "Correlation ID for tracking the request.",
+                "example": "corr-67890"
+              },
+              "generatedAt": {
+                "type": "string",
+                "description": "Timestamp when the response was generated.",
+                "example": "2023-01-01T12:00:00Z"
+              },
+              "processingRegion": {
+                "type": "string",
+                "description": "Region where the processing occurred.",
+                "example": "us-west"
+              }
+            },
+            "description": "Metadata information regarding the response.",
+            "example": {
+              "responseId": "3e053e57-f7ff-532e-8ab5-43c43f794c16",
+              "correlationId": "d133bbd7-bc47-5911-bc25-38de14578e3a",
+              "generatedAt": "2026-09-15T14:30:00Z",
+              "processingRegion": "us-east-1"
+            }
+          }
+        },
+        "description": "Response schema for the API that retrieves settlement accounts.",
+        "example": {
+          "page": 1,
+          "pageSize": 1,
+          "totalItems": 1,
+          "totalPages": 1,
+          "hasNext": true,
+          "links": [
+            {
+              "rel": "STANDARD",
+              "href": "https://example.com/resource",
+              "method": "STANDARD"
+            }
+          ],
+          "items": [
+            {
+              "settlementAccountId": "ACC-395841",
+              "merchantId": "MER-295001",
+              "account": {
+                "bankCode": "CODE-131",
+                "branchCode": "CODE-643",
+                "numberMasked": "STANDARD",
+                "name": "Northstar Banking Service",
+                "type": "STANDARD",
+                "currency": "USD"
+              },
+              "schedule": {
+                "frequency": "STANDARD",
+                "cutoffTime": "STANDARD",
+                "timezone": "America/New_York",
+                "settlementDelayBusinessDays": 1,
+                "minimumPayoutAmount": {
+                  "currency": "USD",
+                  "value": "STANDARD"
+                }
+              },
+              "isDefault": true,
+              "verificationStatus": "VERIFIED",
+              "status": "ACTIVE",
+              "audit": {
+                "createdAt": "2026-09-15T14:30:00Z",
+                "createdBy": "STANDARD",
+                "updatedAt": "2026-09-15T14:30:00Z",
+                "updatedBy": "2026-09-15",
+                "version": 1
+              }
+            }
+          ],
+          "metadata": {
+            "responseId": "3e053e57-f7ff-532e-8ab5-43c43f794c16",
+            "correlationId": "d133bbd7-bc47-5911-bc25-38de14578e3a",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "Account": {
+      "Link": {
         "type": "object",
         "properties": {
-          "bankCode": {
+          "rel": {
             "type": "string",
-            "description": "Code representing the bank.",
-            "example": "string"
+            "description": "Relationship type of the link.",
+            "example": "next"
           },
-          "branchCode": {
+          "href": {
             "type": "string",
-            "description": "Code representing the branch of the bank.",
-            "example": "string"
+            "description": "URL for the linked resource.",
+            "example": "https://api.example.com/settlement-accounts?page=1"
           },
-          "numberMasked": {
+          "method": {
             "type": "string",
-            "description": "Masked representation of the bank account number.",
-            "example": "string"
-          },
-          "name": {
-            "type": "string",
-            "description": "Name of the bank account.",
-            "example": "string"
-          },
-          "type": {
-            "type": "string",
-            "description": "Type of bank account (e.g., savings, checking).",
-            "example": "string"
-          },
-          "currency": {
-            "type": "string",
-            "description": "Currency type of the bank account.",
-            "example": "string"
+            "description": "HTTP method to be used for the link.",
+            "example": "GET"
           }
         },
-        "description": "Schema representing the details of a bank account."
+        "description": "Represents a link related to the API response."
       },
-      "Schedule": {
+      "SettlementAccount": {
         "type": "object",
         "properties": {
-          "frequency": {
+          "settlementAccountId": {
             "type": "string",
-            "description": "Frequency of settlements.",
-            "example": "string"
+            "description": "Unique identifier for the settlement account.",
+            "example": "12345"
           },
-          "cutoffTime": {
+          "merchantId": {
             "type": "string",
-            "description": "Cut-off time for processing settlements.",
-            "example": "string"
+            "description": "Identifier of the merchant associated with this settlement account.",
+            "example": "54321"
           },
-          "timezone": {
+          "account": {
+            "type": "object",
+            "properties": {
+              "bankCode": {
+                "type": "string",
+                "description": "The bank code for the financial institution.",
+                "example": "001"
+              },
+              "branchCode": {
+                "type": "string",
+                "description": "The branch code for the bank.",
+                "example": "123"
+              },
+              "numberMasked": {
+                "type": "string",
+                "description": "Masked version of the bank account number.",
+                "example": "****5678"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the bank account.",
+                "example": "Sample Bank Account"
+              },
+              "type": {
+                "type": "string",
+                "description": "Type of the bank account (e.g., checking, savings).",
+                "example": "checking"
+              },
+              "currency": {
+                "type": "string",
+                "description": "Currency used for the account.",
+                "example": "USD"
+              }
+            },
+            "description": "Details of the bank account associated with the settlement."
+          },
+          "schedule": {
+            "type": "object",
+            "properties": {
+              "frequency": {
+                "type": "string",
+                "description": "Frequency of the settlements (e.g., daily, weekly).",
+                "example": "weekly"
+              },
+              "cutoffTime": {
+                "type": "string",
+                "description": "Cutoff time for the settlement.",
+                "example": "17:00"
+              },
+              "timezone": {
+                "type": "string",
+                "description": "Timezone for the cutoff time.",
+                "example": "UTC"
+              },
+              "settlementDelayBusinessDays": {
+                "type": "integer",
+                "description": "Number of business days for settlement delay.",
+                "format": "int32",
+                "example": 2
+              },
+              "minimumPayoutAmount": {
+                "type": "object",
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "description": "Currency of the minimum payout amount.",
+                    "example": "USD"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "Minimum payout amount value.",
+                    "example": "100.00"
+                  }
+                },
+                "description": "Minimum payout amount details."
+              }
+            },
+            "description": "Schedule details for the settlement account."
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Indicates if this is the default settlement account.",
+            "example": true
+          },
+          "verificationStatus": {
             "type": "string",
-            "description": "Timezone in which the settlement operates.",
-            "example": "string"
+            "description": "Verification status of the settlement account.",
+            "example": "verified"
           },
-          "settlementDelayBusinessDays": {
-            "type": "integer",
-            "description": "Number of business days to delay the settlement.",
-            "format": "int32",
-            "example": 0
+          "status": {
+            "type": "string",
+            "description": "Current status of the settlement account.",
+            "example": "active"
           },
-          "minimumPayoutAmount": {
-            "description": "Object representing the minimum payout amount for settlements.",
-            "$ref": "#/components/schemas/MinimumPayoutAmount"
+          "audit": {
+            "type": "object",
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "description": "Timestamp when the account was created.",
+                "example": "2023-01-01T00:00:00Z"
+              },
+              "createdBy": {
+                "type": "string",
+                "description": "User who created the account.",
+                "example": "admin"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Timestamp when the account was last updated.",
+                "example": "2023-01-02T00:00:00Z"
+              },
+              "updatedBy": {
+                "type": "string",
+                "description": "User who last updated the account.",
+                "example": "admin"
+              },
+              "version": {
+                "type": "integer",
+                "description": "Version of the settlement account.",
+                "format": "int32",
+                "example": 1
+              }
+            },
+            "description": "Audit trail for the settlement account."
           }
         },
-        "description": "Schema representing the schedule details of the settlement account."
-      },
-      "MinimumPayoutAmount": {
-        "type": "object",
-        "properties": {
-          "currency": {
-            "type": "string",
-            "description": "Currency type of the payout amount.",
-            "example": "string"
-          },
-          "value": {
-            "type": "string",
-            "description": "Minimum payout value.",
-            "example": "string"
-          }
-        },
-        "description": "Schema representing the minimum payout amount details."
-      },
-      "Audit": {
-        "type": "object",
-        "properties": {
-          "createdAt": {
-            "type": "string",
-            "description": "Timestamp of when the settlement account was created.",
-            "example": "string"
-          },
-          "createdBy": {
-            "type": "string",
-            "description": "Identifier of the user who created the settlement account.",
-            "example": "string"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp of the last update to the settlement account.",
-            "example": "string"
-          },
-          "updatedBy": {
-            "type": "string",
-            "description": "Identifier of the user who last updated the settlement account.",
-            "example": "string"
-          },
-          "version": {
-            "type": "integer",
-            "description": "Version number of the settlement account record.",
-            "format": "int32",
-            "example": 0
-          }
-        },
-        "description": "Schema representing the audit information for the settlement account."
-      },
-      "Metadata": {
-        "type": "object",
-        "properties": {
-          "responseId": {
-            "type": "string",
-            "description": "Identifier of the response.",
-            "example": "string"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier used to trace the request across systems.",
-            "example": "string"
-          },
-          "generatedAt": {
-            "type": "string",
-            "description": "Timestamp of when the response was generated.",
-            "example": "string"
-          },
-          "processingRegion": {
-            "type": "string",
-            "description": "Region in which the processing occurred.",
-            "example": "string"
-          }
-        },
-        "description": "Schema representing metadata related to the response."
+        "description": "Represents a settlement account associated with a merchant."
       }
     },
     "parameters": {
@@ -330,9 +443,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "banking-p2m-openapi-get-settlement-account"
+          "example": "banking-p2m-openapi-list-settlement-accounts"
         },
-        "example": "banking-p2m-openapi-get-settlement-account"
+        "example": "banking-p2m-openapi-list-settlement-accounts"
       },
       "X-Runtime-App": {
         "style": "simple",
@@ -347,7 +460,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication scheme that uses a bearer token. This scheme utilizes JSON Web Tokens (JWT) that should be included in the Authorization header of requests.",
+        "description": "This security scheme uses the Bearer authentication method, allowing clients to authenticate by including a JSON Web Token (JWT) in the `Authorization` header of requests. The token is to be issued by an authentication server.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
