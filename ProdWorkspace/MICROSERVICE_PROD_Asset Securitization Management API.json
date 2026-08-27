@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Asset Securitization Management API",
-    "description": "The Asset Securitization Management API allows users to modify existing asset securitization records within the banking treasury framework. This API is designed for financial institutions and treasury managers seeking to update asset configurations, manage risk profiles, or adjust terms. Typical consumers of this API include treasury operations teams and asset managers who require efficient tools for regulatory compliance and financial analysis. By leveraging this endpoint, users can ensure accurate records and streamlined updates essential for effective asset securitization strategies.",
+    "description": "The Asset Securitization Management API enables financial institutions to manage the process of securitizing assets, enhancing liquidity and risk management. This API allows users to initiate the securitization of various asset classes, ensuring compliance with regulatory requirements while optimizing financial performance. Typical consumers include treasury departments, risk managers, and investment teams looking to efficiently streamline asset transactions. The API facilitates seamless integration into existing financial workflows, supporting robust asset management and strategic investment opportunities.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/treasury/asset-securitization/{param1}": {
-      "patch": {
+    "/v5/banking/treasury/asset-securitization": {
+      "post": {
         "tags": [
-          "Asset Securitization"
+          "Asset Management"
         ],
-        "summary": "Update Asset Securitization Resource",
-        "description": "This endpoint allows the user to update details of a specific asset securitization resource identified by RES-100045, including attributes and associated data. Ensure all required fields are provided in the request.",
-        "operationId": "updateAssetSecuritizationRes100045",
+        "summary": "Create a new asset securitization.",
+        "description": "This endpoint allows you to initiate the creation of a new asset securitization process. Ensure that all required details are provided in the request body to successfully set up the asset for securitization.",
+        "operationId": "createAssetSecuritization",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "Payload for updating the asset securitization details for the specified resource. This includes the operations you want to perform on the existing asset, such as modifying attributes or changing status.",
+          "description": "This request body is used to submit asset securitization operations. It requires a structured payload complying with the specified schema and is primarily intended for creating new asset securitization entries in the system.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateAssetSecuritizationRes100045Request"
+                "$ref": "#/components/schemas/CreateAssetSecuritizationRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Request was successfully processed and the resource has been updated.",
+          "201": {
+            "description": "Successfully created a new asset securitization resource.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateAssetSecuritizationRes100045Response_200"
+                  "$ref": "#/components/schemas/CreateAssetSecuritizationResponse_201"
                 }
               }
             }
@@ -76,206 +76,217 @@
   },
   "components": {
     "schemas": {
-      "UpdateAssetSecuritizationRes100045Request": {
-        "title": "Asset Securitization Operation Request Body",
+      "CreateAssetSecuritizationRequest": {
         "type": "object",
         "properties": {
-          "changes": {
-            "description": "Contains the specific changes to be made as part of the operation.",
-            "$ref": "#/components/schemas/Changes"
-          },
-          "changeReason": {
+          "portfolioId": {
             "type": "string",
-            "description": "The reason for initiating the change.",
+            "description": "The unique identifier for the portfolio.",
+            "example": "PORT-101058"
+          },
+          "instrumentId": {
+            "type": "string",
+            "description": "The unique identifier for the financial instrument.",
             "example": "STANDARD"
           },
-          "effectiveAt": {
+          "counterpartyId": {
             "type": "string",
-            "description": "The date and time at which the changes become effective.",
-            "example": "2026-09-15T14:30:00Z"
+            "description": "The unique identifier for the counterparty involved in the transaction.",
+            "example": "PARTY-257750"
           },
-          "requestedBy": {
+          "notionalAmount": {
+            "$ref": "#/components/schemas/NotionalAmount"
+          },
+          "maturityDate": {
             "type": "string",
-            "description": "Identifier of the user or system that requested the change.",
-            "example": "STANDARD"
+            "description": "The date when the financial instrument matures.",
+            "example": "2026-09-15"
           },
           "requestContext": {
-            "description": "Contextual information surrounding the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Schema representing the request body for processing asset securitization operations.",
         "example": {
-          "changes": {
-            "portfolioId": "PORT-496237",
-            "instrumentId": "STANDARD",
-            "counterpartyId": "PARTY-758910"
+          "portfolioId": "PORT-101058",
+          "instrumentId": "STANDARD",
+          "counterpartyId": "PARTY-257750",
+          "notionalAmount": {
+            "amount": 100.0,
+            "currency": "USD"
           },
-          "changeReason": "STANDARD",
-          "effectiveAt": "2026-09-15T14:30:00Z",
-          "requestedBy": "STANDARD",
+          "maturityDate": "2026-09-15",
           "requestContext": {
-            "requestId": "41e9a2f4-37e7-5514-bee4-7dbbfb59b33c",
-            "correlationId": "c4e3c7f3-6371-51a4-98d0-31d8da185883",
-            "idempotencyKey": "8f208d50-7990-5b5e-9fd0-30a5d5fc3f69",
+            "requestId": "0f22b235-75fd-5940-b859-992973e76841",
+            "correlationId": "544ed403-db8f-5952-8f73-32c8643a43e2",
+            "idempotencyKey": "d7d53c6f-717c-5851-91c4-82ffc9b20433",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-679106"
+              "deviceId": "DEV-872229"
             }
           }
         }
       },
-      "Changes": {
-        "title": "Changes",
+      "NotionalAmount": {
         "type": "object",
         "properties": {
-          "portfolioId": {
-            "type": "string",
-            "description": "Identifier for the portfolio being modified.",
-            "example": "portfolio-12345"
+          "amount": {
+            "type": "number",
+            "description": "The numeric value of the notional amount.",
+            "example": 0.0
           },
-          "instrumentId": {
+          "currency": {
             "type": "string",
-            "description": "Identifier for the financial instrument being modified.",
-            "example": "instrument-56789"
-          },
-          "counterpartyId": {
-            "type": "string",
-            "description": "Identifier for the counterparty involved in the transaction.",
-            "example": "counterparty-abc"
+            "description": "The currency code corresponding to the notional amount.",
+            "example": "string"
           }
         },
-        "description": "Schema representing the details of changes to be made."
+        "description": "Represents the notional amount details."
       },
       "RequestContext": {
-        "title": "Request Context",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req-12345"
+            "description": "A unique identifier for the request.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation identifier for tracking the request across systems.",
-            "example": "corr-67890"
+            "description": "An identifier to correlate related requests.",
+            "example": "string"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key to ensure the request is processed only once.",
-            "example": "idempotency-key-xyz"
+            "description": "A key used to ensure the request is processed only once.",
+            "example": "string"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp for when the request was made.",
-            "example": "2023-10-12T12:00:00Z"
+            "description": "The timestamp when the request was made.",
+            "example": "string"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "Identifier for the system that is sending the request.",
-            "example": "source-system-1"
+            "description": "The system from which the request originated.",
+            "example": "string"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "Identifier for the application that initiated the request.",
-            "example": "source-app-2"
+            "description": "The application from which the request originated.",
+            "example": "string"
           },
           "channel": {
-            "description": "Information about the channel through which the request was made.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Schema containing contextual information about the request."
+        "description": "Contextual information about the request."
       },
       "Channel": {
-        "title": "Channel",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "Identifier for the communication channel.",
-            "example": "channel-1"
+            "description": "A unique identifier for the communication channel.",
+            "example": "string"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of the channel (e.g., web, mobile, API).",
-            "example": "web"
+            "description": "The type of the channel (e.g., API, Web, etc.).",
+            "example": "string"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier for the device used to make the request.",
-            "example": "device-123"
+            "description": "Unique identifier for the device used to make the request.",
+            "example": "string"
           }
         },
-        "description": "Schema representing information about the communication channel for the request."
+        "description": "Information about the channel through which the request was made."
       },
-      "UpdateAssetSecuritizationRes100045Response_200": {
+      "CreateAssetSecuritizationResponse_201": {
         "type": "object",
         "properties": {
-          "version": {
-            "type": "integer",
-            "description": "The version of the response schema.",
-            "format": "int32",
-            "example": 1
+          "portfolioId": {
+            "type": "string",
+            "description": "Unique identifier for the portfolio.",
+            "example": "PORT-430722"
+          },
+          "instrumentId": {
+            "type": "string",
+            "description": "Unique identifier for the financial instrument.",
+            "example": "STANDARD"
+          },
+          "counterpartyId": {
+            "type": "string",
+            "description": "Unique identifier for the counterparty involved in the transaction.",
+            "example": "PARTY-388550"
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "Unique identifier for the resource associated with the operation.",
+            "example": "RES-962635"
           },
           "status": {
             "type": "string",
-            "description": "The status of the operation.",
+            "description": "Current status of the operation.",
             "example": "ACTIVE"
           },
-          "updatedAt": {
+          "createdAt": {
             "type": "string",
-            "description": "The timestamp indicating when the resource was last updated.",
+            "description": "Timestamp indicating when the operation was created.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Contains additional metadata related to the response.",
-            "$ref": "#/components/schemas/Metadata"
+            "type": "object",
+            "properties": {
+              "responseId": {
+                "type": "string",
+                "description": "Unique identifier for the response.",
+                "example": "string"
+              },
+              "correlationId": {
+                "type": "string",
+                "description": "Identifier used to correlate requests and responses.",
+                "example": "string"
+              },
+              "generatedAt": {
+                "type": "string",
+                "description": "Timestamp indicating when the metadata was generated.",
+                "example": "string"
+              },
+              "processingRegion": {
+                "type": "string",
+                "description": "Geographical region where the processing occurred.",
+                "example": "string"
+              }
+            },
+            "description": "Metadata information related to the operation.",
+            "example": {
+              "responseId": "0b565f28-f312-5388-a746-7dee81a29895",
+              "correlationId": "544ed403-db8f-5952-8f73-32c8643a43e2",
+              "generatedAt": "2026-09-15T14:30:00Z",
+              "processingRegion": "us-east-1"
+            }
           }
         },
-        "description": "Response schema for the successful operation of asset securitization.",
+        "description": "Response schema for the asset securitization operation.",
         "example": {
-          "version": 1,
+          "portfolioId": "PORT-430722",
+          "instrumentId": "STANDARD",
+          "counterpartyId": "PARTY-388550",
+          "resourceId": "RES-962635",
           "status": "ACTIVE",
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "createdAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "99062345-1486-528e-8267-5b22a97aa065",
-            "correlationId": "c4e3c7f3-6371-51a4-98d0-31d8da185883",
+            "responseId": "0b565f28-f312-5388-a746-7dee81a29895",
+            "correlationId": "544ed403-db8f-5952-8f73-32c8643a43e2",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
-      },
-      "Metadata": {
-        "type": "object",
-        "properties": {
-          "responseId": {
-            "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "string"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier that correlates related requests and responses.",
-            "example": "string"
-          },
-          "generatedAt": {
-            "type": "string",
-            "description": "Timestamp indicating when the metadata was generated.",
-            "example": "string"
-          },
-          "processingRegion": {
-            "type": "string",
-            "description": "Region where the request was processed.",
-            "example": "string"
-          }
-        },
-        "description": "Metadata that contains identifiers and timestamps related to the response."
       }
     },
     "parameters": {
@@ -289,24 +300,24 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_200"
+            "MICROSERVICE_PROD_201"
           ]
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint that processed the request.",
+        "description": "This header contains the unique identifier for the endpoint that was called, allowing clients to trace requests.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "asset-securitization-update-asset-securitization"
+          "example": "asset-securitization-create-asset-securitization"
         },
-        "example": "asset-securitization-update-asset-securitization"
+        "example": "asset-securitization-create-asset-securitization"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that handled the request during runtime.",
+        "description": "This header provides the name of the application that processed the request, useful for debugging and tracking performance.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -319,7 +330,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme utilizes the Bearer authentication method with JWT (JSON Web Tokens) for secure access to the API. Clients must provide a valid token in the Authorization header to authenticate requests.",
+        "description": "Authentication scheme that uses Bearer tokens in HTTP Authorization headers. Specifically designed for JSON Web Tokens (JWT), allowing secure access to resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
