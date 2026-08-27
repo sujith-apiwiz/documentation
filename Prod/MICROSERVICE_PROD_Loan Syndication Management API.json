@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Loan Syndication Management API",
-    "description": "The Loan Syndication Management API facilitates modifications to loan syndication agreements, allowing institutions to efficiently adjust terms and details as needed. Users can update various parameters associated with existing loan syndication contracts, enhancing operational flexibility and accuracy. This API is particularly useful for financial institutions and lenders managing multiple syndicate loans, enabling them to respond promptly to changing market conditions or client requirements. Typical consumers include loan officers and back-office staff involved in loan servicing and management.",
+    "description": "The Loan Syndication Management API facilitates the orchestration of loan syndication processes, enabling financial institutions to collaborate in the distribution of large loans. This API supports operations involved in initiating and managing syndications, helping users streamline partnerships with multiple lenders. Typical consumers include banks, financial service providers, and loan syndication platforms looking to enhance their operational efficiency. With this API, users can expect a robust solution for managing intricate lending arrangements and improving capital distribution strategies.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/servicing/loan-syndication/{param1}": {
-      "patch": {
+    "/v5/banking/servicing/loan-syndication": {
+      "post": {
         "tags": [
-          "Loan Management"
+          "Loan Syndication"
         ],
-        "summary": "Update Loan Syndication Details",
-        "description": "This operation allows you to update the details of the specified loan syndication. Ensure you provide the necessary fields for a successful update.",
-        "operationId": "updateLoanSyndication",
+        "summary": "Initiate loan syndication process.",
+        "description": "This endpoint initiates the process of loan syndication, allowing multiple lenders to collaborate on a single loan for better risk distribution. It handles all necessary data to structure and submit a loan syndication request.",
+        "operationId": "createLoanSyndication",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
-          },
-          {
-            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to update the details of a specific loan identified by LOAN-500045. Ensure that all required fields for updating the loan information are included. The data should be formatted as per the defined schema for proper validation.",
+          "description": "This request body is used to initiate a loan syndication operation. It should include all necessary data required for processing the loan syndication request, in accordance with the specified schema.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateLoanSyndicationRequest"
+                "$ref": "#/components/schemas/CreateLoanSyndicationRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "The patch request was processed successfully and the resource was updated.",
+          "201": {
+            "description": "The loan syndication request was successfully processed, and a new resource has been created.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateLoanSyndicationResponse_200"
+                  "$ref": "#/components/schemas/CreateLoanSyndicationResponse_201"
                 }
               }
             }
@@ -90,80 +87,61 @@
   },
   "components": {
     "schemas": {
-      "UpdateLoanSyndicationRequest": {
-        "title": "Loan Syndication Patch Request Body",
+      "CreateLoanSyndicationRequest": {
+        "title": "Loan Syndication Request Body",
         "type": "object",
         "properties": {
-          "changes": {
-            "description": "The changes being requested for the loan syndication.",
-            "$ref": "#/components/schemas/LoanChanges"
-          },
-          "changeReason": {
+          "customerId": {
             "type": "string",
-            "description": "The reason for requesting the change.",
+            "description": "The unique identifier for the customer.",
+            "example": "CUST-304715"
+          },
+          "caseId": {
+            "type": "string",
+            "description": "The identifier for the specific case related to the loan syndication.",
+            "example": "CASE-475344"
+          },
+          "requestCategory": {
+            "type": "string",
+            "description": "The category of the request, indicating the type of operation being performed.",
             "example": "STANDARD"
           },
-          "effectiveAt": {
+          "priority": {
             "type": "string",
-            "description": "The date and time at which the changes become effective.",
-            "example": "2026-09-15T14:30:00Z"
+            "description": "The priority level of the request, such as 'high', 'medium', or 'low'.",
+            "example": "NORMAL"
           },
-          "requestedBy": {
+          "originatingChannel": {
             "type": "string",
-            "description": "The identifier of the user who requested the change.",
+            "description": "The channel through which the request originated, such as 'web', 'mobile', etc.",
             "example": "STANDARD"
           },
           "requestContext": {
-            "description": "Context information for the request.",
+            "description": "Metadata related to the request, providing context for its processing.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "This schema defines the request body for patch operations related to loan syndication.",
+        "description": "This schema represents the request body for loan syndication operations. It includes customer details, request metadata, and context for processing the request.",
         "example": {
-          "changes": {
-            "customerId": "CUST-137947",
-            "caseId": "CASE-215827",
-            "requestCategory": "STANDARD"
-          },
-          "changeReason": "STANDARD",
-          "effectiveAt": "2026-09-15T14:30:00Z",
-          "requestedBy": "STANDARD",
+          "customerId": "CUST-304715",
+          "caseId": "CASE-475344",
+          "requestCategory": "STANDARD",
+          "priority": "NORMAL",
+          "originatingChannel": "STANDARD",
           "requestContext": {
-            "requestId": "85895603-fb26-50b5-a680-b0e5d7cd6cae",
-            "correlationId": "bc05a2fa-789f-5efe-bfee-e9b2424a1d0d",
-            "idempotencyKey": "03a2b919-b22b-5ae4-bb3b-d91012bc7e89",
+            "requestId": "cc93d823-57ba-5003-b744-fc06c0f912a9",
+            "correlationId": "fcd754ae-9f59-5921-a9ec-64cf1ae043bb",
+            "idempotencyKey": "4573a31a-1889-59b6-8d39-9e7120bfaa10",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-417769"
+              "deviceId": "DEV-872646"
             }
           }
         }
-      },
-      "LoanChanges": {
-        "title": "Loan Changes",
-        "type": "object",
-        "properties": {
-          "customerId": {
-            "type": "string",
-            "description": "The unique identifier of the customer associated with the loan.",
-            "example": "string"
-          },
-          "caseId": {
-            "type": "string",
-            "description": "The unique identifier of the case associated with the loan.",
-            "example": "string"
-          },
-          "requestCategory": {
-            "type": "string",
-            "description": "The category of the request being made.",
-            "example": "string"
-          }
-        },
-        "description": "Schema representing changes requested for a loan."
       },
       "RequestContext": {
         "title": "Request Context",
@@ -171,40 +149,40 @@
         "properties": {
           "requestId": {
             "type": "string",
-            "description": "The unique identifier for the request.",
-            "example": "string"
+            "description": "A unique identifier for the request.",
+            "example": "req-67890"
           },
           "correlationId": {
             "type": "string",
-            "description": "A unique identifier for correlating requests and responses.",
-            "example": "string"
+            "description": "An identifier used to correlate related requests and responses.",
+            "example": "corr-12345"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "A key used to ensure that requests are idempotent.",
-            "example": "string"
+            "description": "A key used to ensure that repeated requests can be identified and handled appropriately.",
+            "example": "idempotency-key-001"
           },
           "requestedAt": {
             "type": "string",
-            "description": "The timestamp when the request was made.",
-            "example": "string"
+            "description": "Timestamp indicating when the request was made.",
+            "example": "2023-10-01T12:00:00Z"
           },
           "sourceSystem": {
             "type": "string",
             "description": "The system from which the request originated.",
-            "example": "string"
+            "example": "CRMSystem"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application from which the request originated.",
-            "example": "string"
+            "description": "The application through which the request was initiated.",
+            "example": "LoanApp"
           },
           "channel": {
-            "description": "Information about the channel from which the request was made.",
+            "description": "Information about the channel used to make the request.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Schema representing the context of a request."
+        "description": "This schema encapsulates metadata about the request, such as identifiers and timestamps to aid in processing."
       },
       "Channel": {
         "title": "Channel Information",
@@ -212,86 +190,97 @@
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "The unique identifier of the channel.",
-            "example": "string"
+            "description": "The unique identifier for the channel.",
+            "example": "channel-001"
           },
           "channelType": {
             "type": "string",
-            "description": "The type of the channel (e.g., web, mobile).",
-            "example": "string"
+            "description": "The type of the channel, such as 'web', 'mobile', etc.",
+            "example": "mobile"
           },
           "deviceId": {
             "type": "string",
-            "description": "The unique identifier of the device used for the request.",
-            "example": "string"
+            "description": "The identifier for the device used to make the request.",
+            "example": "device-123"
           }
         },
-        "description": "Schema representing information about the channel of the request."
+        "description": "This schema provides information about the channel used for the request, including identifiers and types."
       },
-      "UpdateLoanSyndicationResponse_200": {
-        "title": "Loan Syndication Patch Response",
+      "CreateLoanSyndicationResponse_201": {
+        "title": "Loan Syndication Operation Response",
         "type": "object",
         "properties": {
-          "version": {
-            "type": "integer",
-            "description": "The version of the response.",
-            "format": "int32",
-            "example": 1
+          "customerId": {
+            "type": "string",
+            "description": "Unique identifier for the customer associated with the loan syndication.",
+            "example": "CUST-125284"
+          },
+          "caseId": {
+            "type": "string",
+            "description": "Unique identifier for the case related to the loan syndication.",
+            "example": "CASE-827569"
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "Unique identifier for the resource created or affected by the loan syndication operation.",
+            "example": "RES-335833"
           },
           "status": {
             "type": "string",
-            "description": "The status of the operation.",
+            "description": "Current status of the loan syndication operation.",
             "example": "ACTIVE"
           },
-          "updatedAt": {
+          "createdAt": {
             "type": "string",
-            "description": "Timestamp when the resource was last updated.",
+            "description": "Timestamp indicating when the loan syndication was created.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Metadata related to the operation response.",
-            "$ref": "#/components/schemas/ResponseMetadata"
+            "description": "Additional metadata related to the loan syndication operation.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for PATCH operations on loan syndication.",
+        "description": "The response object indicating the result of a loan syndication operation.",
         "example": {
-          "version": 1,
+          "customerId": "CUST-125284",
+          "caseId": "CASE-827569",
+          "resourceId": "RES-335833",
           "status": "ACTIVE",
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "createdAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "8764ba75-2c26-5a76-a9da-023f7b5037f6",
-            "correlationId": "bc05a2fa-789f-5efe-bfee-e9b2424a1d0d",
+            "responseId": "3defc702-d31d-5e30-8643-e9d1475fd0b3",
+            "correlationId": "fcd754ae-9f59-5921-a9ec-64cf1ae043bb",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "ResponseMetadata": {
-        "title": "Response Metadata",
+      "Metadata": {
+        "title": "Metadata Information",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "string"
+            "description": "Unique identifier for the response of the operation.",
+            "example": "resp-987654"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation ID for tracking the operation.",
-            "example": "string"
+            "description": "Identifier for correlating related requests and responses.",
+            "example": "corr-321"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the response was generated.",
-            "example": "string"
+            "description": "Timestamp indicating when the metadata was generated.",
+            "example": "2023-10-01T12:35:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing took place.",
-            "example": "string"
+            "description": "Region in which the processing of the operation occurred.",
+            "example": "us-east-1"
           }
         },
-        "description": "Metadata details for loan syndication responses."
+        "description": "Metadata related to the loan syndication operation, providing additional context."
       }
     },
     "parameters": {
@@ -305,34 +294,22 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_200"
+            "MICROSERVICE_PROD_201"
           ]
-        }
-      },
-      "param1": {
-        "name": "param1",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint that was accessed during the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "loan-syndication-update-loan-syndication"
+          "example": "loan-syndication-create-loan-syndication"
         },
-        "example": "loan-syndication-update-loan-syndication"
+        "example": "loan-syndication-create-loan-syndication"
       },
       "X-Runtime-App": {
-        "description": "Indicates the name of the application that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -345,7 +322,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses JSON Web Tokens (JWT) with the Bearer authentication method to secure your API. Clients need to include a valid JWT in the Authorization header when making requests.",
+        "description": "Authentication scheme using a bearer token, typically in the form of a JSON Web Token (JWT). Clients must include the token in the Authorization header to access secured endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
