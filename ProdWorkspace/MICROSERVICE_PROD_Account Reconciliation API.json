@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Account Reconciliation API",
-    "description": "The Account Reconciliation API facilitates the comparison and verification of transaction data across different banking accounts. It enables businesses to reconcile their financial records with accuracy and efficiency. Users can submit account data and retrieve detailed reconciliation reports. This API is essential for financial institutions and businesses that require accurate account management and reporting. Typical consumers include accountants, financial analysts, and banking professionals seeking to ensure consistency and correctness in their account records.",
+    "description": "The Account Reconciliation API provides businesses with the ability to automate and manage the reconciliation of their banking accounts. This API streamlines the process by allowing users to retrieve detailed transaction records and discrepancies from their accounts. Typical consumers include financial analysts and accounting software developers who need to ensure accuracy in financial reporting. By integrating this API, organizations can enhance their financial oversight and optimize their accounting workflows.",
     "version": "1.0"
   },
   "servers": [
@@ -20,76 +20,43 @@
   ],
   "paths": {
     "/v5/banking/account-management/account-reconciliation": {
-      "post": {
+      "get": {
         "tags": [
           "Account Management"
         ],
-        "summary": "Reconcile accounts efficiently.",
-        "description": "This endpoint allows users to perform account reconciliation operations. It helps ensure that financial records are accurate and up-to-date by comparing account data and identifying discrepancies.",
-        "operationId": "postAccountReconciliation",
+        "summary": "Retrieve account reconciliation details",
+        "description": "This endpoint allows you to fetch the details of account reconciliation, providing insights into balance discrepancies and reconciliation processes for your accounts.",
+        "operationId": "getAccountReconciliation",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/x-workflow-id"
-          },
-          {
-            "$ref": "#/components/parameters/idempotency-key"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-step"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-branch"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-decision"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-internal"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-execution-id"
-          },
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "The request body for initiating account reconciliation operations. It contains all necessary information to perform the reconciliation process for an account, including relevant identifiers and parameters.",
+          "description": "Request body for retrieving account reconciliation information. This body should contain the necessary parameters for the account reconciliation operations in JSON format.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PostAccountReconciliationRequest"
+                "$ref": "#/components/schemas/GetAccountReconciliationRequest"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Resource successfully created for account reconciliation.",
+          "200": {
+            "description": "Request completed successfully; account reconciliation data retrieved.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
               },
               "X-Runtime-App": {
                 "$ref": "#/components/headers/X-Runtime-App"
-              },
-              "X-Workflow-Id": {
-                "$ref": "#/components/headers/X-Workflow-Id"
-              },
-              "X-Workflow-Name": {
-                "$ref": "#/components/headers/X-Workflow-Name"
-              },
-              "X-Workflow-State": {
-                "$ref": "#/components/headers/X-Workflow-State"
-              },
-              "X-Workflow-Execution-Id": {
-                "$ref": "#/components/headers/X-Workflow-Execution-Id"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostAccountReconciliationResponse_201"
+                  "$ref": "#/components/schemas/GetAccountReconciliationResponse_200"
                 }
               }
             }
@@ -109,280 +76,168 @@
   },
   "components": {
     "schemas": {
-      "PostAccountReconciliationRequest": {
+      "GetAccountReconciliationRequest": {
+        "type": "string",
+        "description": "This schema represents the request body for the GET operation of account reconciliation in the account management service.",
+        "example": "{}"
+      },
+      "GetAccountReconciliationResponse_200": {
+        "title": "Account Reconciliation Response",
         "type": "object",
         "properties": {
-          "accountId": {
-            "type": "string",
-            "description": "The unique identifier for the account.",
-            "example": "ACC-244892"
-          },
-          "customerId": {
-            "type": "string",
-            "description": "The unique identifier for the customer associated with the account.",
-            "example": "CUST-159756"
-          },
-          "ledgerDate": {
-            "type": "string",
-            "description": "The date of the ledger entry in ISO 8601 format.",
-            "example": "2026-09-15"
-          },
-          "currency": {
-            "type": "string",
-            "description": "The currency code in which the ledger balance is denominated (e.g., USD, EUR).",
-            "example": "USD"
-          },
-          "ledgerBalance": {
-            "type": "number",
-            "description": "The current balance of the ledger.",
-            "example": 100.0
-          },
-          "requestContext": {
-            "$ref": "#/components/schemas/RequestContext"
-          }
-        },
-        "description": "Request body for the account reconciliation operation.",
-        "example": {
-          "accountId": "ACC-244892",
-          "customerId": "CUST-159756",
-          "ledgerDate": "2026-09-15",
-          "currency": "USD",
-          "ledgerBalance": 100.0,
-          "requestContext": {
-            "requestId": "32568cd0-6f78-585b-9336-83854be37b3b",
-            "correlationId": "6ad34070-4ad8-5b3c-932a-a1cdf0f72c00",
-            "idempotencyKey": "20047056-68fc-574f-84b2-132ed8a4ba9c",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-414844"
+          "items": {
+            "type": "array",
+            "description": "List of account reconciliation items.",
+            "example": [
+              {
+                "accountId": "ACC-527572",
+                "customerId": "CUST-226350",
+                "ledgerDate": "2026-09-15",
+                "currency": "USD",
+                "ledgerBalance": 100.0,
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/AccountReconciliationItem"
             }
-          }
-        }
-      },
-      "RequestContext": {
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "A unique identifier for the request.",
-            "example": "req-789"
           },
-          "correlationId": {
-            "type": "string",
-            "description": "An identifier used to trace the request across systems.",
-            "example": "corr-101112"
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
           },
-          "idempotencyKey": {
+          "sort": {
             "type": "string",
-            "description": "A unique key to ensure that the operation is idempotent.",
-            "example": "idemp-3131"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "The timestamp when the request was made in ISO 8601 format.",
-            "example": "2023-09-25T12:00:00Z"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "The system from which the request originated.",
-            "example": "banking_system"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "The application that initiated the request.",
-            "example": "reconciliation_app"
-          },
-          "channel": {
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Contextual information about the request."
-      },
-      "Channel": {
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "A unique identifier for the communication channel.",
-            "example": "channel-101"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "The type of channel being used (e.g., web, mobile).",
-            "example": "web"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "A unique identifier for the device used in the transaction.",
-            "example": "device-12345"
-          }
-        },
-        "description": "Information about the channel through which the request is made."
-      },
-      "PostAccountReconciliationResponse_201": {
-        "type": "object",
-        "properties": {
-          "accountId": {
-            "type": "string",
-            "description": "The unique identifier for the account.",
-            "example": "ACC-488874"
-          },
-          "customerId": {
-            "type": "string",
-            "description": "The unique identifier for the customer associated with the account.",
-            "example": "CUST-441928"
-          },
-          "resourceId": {
-            "type": "string",
-            "description": "The unique identifier for the resource associated with the account.",
-            "example": "RES-641516"
-          },
-          "status": {
-            "type": "string",
-            "description": "The current status of the account reconciliation operation.",
-            "example": "ACTIVE"
-          },
-          "createdAt": {
-            "type": "string",
-            "description": "The timestamp when the account reconciliation was created.",
-            "example": "2026-09-15T14:30:00Z"
+            "description": "Sorting order of the items.",
+            "example": "STANDARD"
           },
           "metadata": {
-            "description": "Additional metadata related to the reconciliation response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Schema representing the response for account reconciliation operation.",
+        "description": "Schema representing the response structure for account reconciliation operations.",
         "example": {
-          "accountId": "ACC-488874",
-          "customerId": "CUST-441928",
-          "resourceId": "RES-641516",
-          "status": "ACTIVE",
-          "createdAt": "2026-09-15T14:30:00Z",
+          "items": [
+            {
+              "accountId": "ACC-527572",
+              "customerId": "CUST-226350",
+              "ledgerDate": "2026-09-15",
+              "currency": "USD",
+              "ledgerBalance": 100.0,
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
+          },
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "dcc1e9c7-aa37-5d6d-bb79-0a09ba7c9092",
-            "correlationId": "6ad34070-4ad8-5b3c-932a-a1cdf0f72c00",
+            "responseId": "586264b6-bf4b-5b72-9a26-9bacd7683d87",
+            "correlationId": "1b6343e9-dc7c-54c3-bff0-0f14d71caf6f",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
+      "AccountReconciliationItem": {
+        "title": "Account Reconciliation Item",
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Unique identifier for the account.",
+            "example": "string"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "Unique identifier for the customer associated with the account.",
+            "example": "string"
+          },
+          "ledgerDate": {
+            "type": "string",
+            "description": "Date of the ledger entry.",
+            "example": "2023-10-01"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency used for the ledger balance.",
+            "example": "USD"
+          },
+          "ledgerBalance": {
+            "type": "number",
+            "description": "Balance recorded in the ledger.",
+            "example": 1000.0
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "Current status of the record.",
+            "example": "active"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "The last date and time when the record was updated.",
+            "example": "2023-10-01T12:00:00Z"
+          }
+        },
+        "description": "Schema representing a single account reconciliation item."
+      },
+      "Pagination": {
+        "title": "Pagination Metadata",
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number.",
+            "format": "int32",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32",
+            "example": 10
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available.",
+            "format": "int32",
+            "example": 100
+          }
+        },
+        "description": "Schema representing pagination information."
+      },
       "Metadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "The unique identifier for the response.",
+            "description": "Unique identifier for the response.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "An identifier to correlate related requests and responses.",
+            "description": "Identifier for tracking the request and response correlation.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp when the metadata was generated.",
-            "example": "string"
+            "description": "Timestamp when the response was generated.",
+            "example": "2023-10-01T00:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing of the request occurred.",
-            "example": "string"
+            "description": "Region where the processing occurred.",
+            "example": "US"
           }
         },
-        "description": "Schema containing additional metadata for the response."
+        "description": "Schema representing additional metadata for the response."
       }
     },
     "parameters": {
-      "x-workflow-id": {
-        "name": "x-workflow-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "WF-013"
-        },
-        "example": "WF-013"
-      },
-      "idempotency-key": {
-        "name": "idempotency-key",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "9bd8db3e-6f67-445e-a7b3-ee8623564576"
-        },
-        "example": "9bd8db3e-6f67-445e-a7b3-ee8623564576"
-      },
-      "x-workflow-step": {
-        "name": "x-workflow-step",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "1"
-        },
-        "example": "1"
-      },
-      "x-workflow-branch": {
-        "name": "x-workflow-branch",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "async-finalization"
-        },
-        "example": "async-finalization"
-      },
-      "x-workflow-decision": {
-        "name": "x-workflow-decision",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "NORMAL"
-        },
-        "example": "NORMAL"
-      },
-      "x-workflow-internal": {
-        "name": "x-workflow-internal",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "true"
-        },
-        "example": "true"
-      },
-      "x-workflow-execution-id": {
-        "name": "x-workflow-execution-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "40bc1c33-0e11-4170-9fe2-62bbcdcc0841"
-        },
-        "example": "40bc1c33-0e11-4170-9fe2-62bbcdcc0841"
-      },
       "x-mock-response": {
         "name": "x-mock-response",
         "in": "header",
@@ -393,7 +248,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_201"
+            "MICROSERVICE_PROD_200"
           ]
         }
       }
@@ -404,9 +259,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "account-reconciliation-create-account-reconciliation"
+          "example": "account-reconciliation-search-account-reconciliation"
         },
-        "example": "account-reconciliation-create-account-reconciliation"
+        "example": "account-reconciliation-search-account-reconciliation"
       },
       "X-Runtime-App": {
         "style": "simple",
@@ -416,48 +271,12 @@
           "example": "accounts-deposits"
         },
         "example": "accounts-deposits"
-      },
-      "X-Workflow-Id": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "WF-013"
-        },
-        "example": "WF-013"
-      },
-      "X-Workflow-Name": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "External ACH Credit Transfer"
-        },
-        "example": "External ACH Credit Transfer"
-      },
-      "X-Workflow-State": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "IN_PROGRESS"
-        },
-        "example": "IN_PROGRESS"
-      },
-      "X-Workflow-Execution-Id": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "40bc1c33-0e11-4170-9fe2-62bbcdcc0841"
-        },
-        "example": "40bc1c33-0e11-4170-9fe2-62bbcdcc0841"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication using the Bearer token scheme, where the token is a JSON Web Token (JWT). This token should be provided in the Authorization header of the request.",
+        "description": "This security scheme uses the Bearer authentication method, which requires a JSON Web Token (JWT) to be provided in the Authorization header of requests. The token is used to authenticate the client and authorize access to secured resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
