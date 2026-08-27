@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Trading Book Oversight API",
-    "description": "The Trading Book Oversight API facilitates the management and updates of trading book data for wholesale banking operations. This endpoint enables users to modify existing oversight details, ensuring compliance and effective risk management. Typical consumers include banking risk management teams and compliance officers who require flexible tools to oversee trading activity. Utilize this API to keep trading records current and align with regulatory changes.",
+    "description": "The Trading Book Oversight API facilitates the retrieval of trading book data for wholesale banking operations. This API helps compliance and risk management teams to monitor and assess the activities captured within the trading books. Typically utilized by financial analysts and compliance officers, this resource allows users to ensure adherence to regulatory standards and internal policies. By providing insights into trading activities, the API supports decision-making processes and risk assessments effectively.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/wholesale-trading/trading-book-oversight/{param1}": {
-      "patch": {
+    "/v5/banking/wholesale-trading/trading-book-oversight": {
+      "get": {
         "tags": [
-          "Trading Book Oversight"
+          "Wholesale Trading"
         ],
-        "summary": "Update a trading book oversight resource.",
-        "description": "This operation allows users to update the details of a specific trading book oversight identified by RES-100045. Ensure to provide the relevant fields that need to be modified in the request body.",
-        "operationId": "patchTradingBookOversightRes100045",
+        "summary": "Retrieve trading book oversight information.",
+        "description": "Fetch detailed oversight data for trading books to analyze performance, risk, and compliance in wholesale trading activities.",
+        "operationId": "getTradingBookOversight",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "Update the trading book oversight for the specified resource. This request allows for modifications to various properties of the trading book oversight record identified by RES-100045.",
+          "description": "This request body is used to retrieve data pertaining to the wholesale trading trading book oversight. It includes necessary parameters to specify the request context and desired information.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PatchTradingBookOversightRes100045Request"
+                "$ref": "#/components/schemas/GetTradingBookOversightRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The request was processed successfully, and the trading book oversight details have been updated.",
+            "description": "Successfully retrieved the trading book oversight data.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PatchTradingBookOversightRes100045Response_200"
+                  "$ref": "#/components/schemas/GetTradingBookOversightResponse_200"
                 }
               }
             }
@@ -76,207 +76,182 @@
   },
   "components": {
     "schemas": {
-      "PatchTradingBookOversightRes100045Request": {
-        "title": "Trading Book Oversight PATCH Request Body",
+      "GetTradingBookOversightRequest": {
+        "type": "string",
+        "description": "This schema represents the JSON request body for the 'GET' operation in the wholesale trading trading book oversight API.",
+        "example": "{}"
+      },
+      "GetTradingBookOversightResponse_200": {
         "type": "object",
         "properties": {
-          "changes": {
-            "description": "Contains the details of the changes to be applied to the trading book.",
-            "$ref": "#/components/schemas/Changes"
-          },
-          "changeReason": {
-            "type": "string",
-            "description": "Reason for the change request.",
-            "example": "STANDARD"
-          },
-          "effectiveAt": {
-            "type": "string",
-            "description": "The timestamp when the change becomes effective.",
-            "example": "2026-09-15T14:30:00Z"
-          },
-          "requestedBy": {
-            "type": "string",
-            "description": "Identifier of the person or system that requested the change.",
-            "example": "STANDARD"
-          },
-          "requestContext": {
-            "description": "Contextual information regarding the request.",
-            "$ref": "#/components/schemas/RequestContext"
-          }
-        },
-        "description": "Schema representing the request body for updating trading book oversight operations.",
-        "example": {
-          "changes": {
-            "tradingBookId": "STANDARD",
-            "instrumentId": "STANDARD",
-            "side": "STANDARD"
-          },
-          "changeReason": "STANDARD",
-          "effectiveAt": "2026-09-15T14:30:00Z",
-          "requestedBy": "STANDARD",
-          "requestContext": {
-            "requestId": "31c7edc0-3381-5a2c-99fa-2eb4bd728663",
-            "correlationId": "11729b4b-6b0f-5592-a0c0-724dbb453c66",
-            "idempotencyKey": "58a1d47f-7d51-5b02-b318-f51b1d5b4a1b",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-833997"
+          "items": {
+            "type": "array",
+            "description": "A list of trading book entries.",
+            "example": [
+              {
+                "tradingBookId": "STANDARD",
+                "instrumentId": "STANDARD",
+                "side": "STANDARD",
+                "quantity": 1,
+                "limitPrice": {
+                  "value": 100.0,
+                  "currency": "USD"
+                },
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/TradingBookEntry"
             }
-          }
-        }
-      },
-      "Changes": {
-        "title": "Changes",
-        "type": "object",
-        "properties": {
-          "tradingBookId": {
-            "type": "string",
-            "description": "Unique identifier for the trading book.",
-            "example": "TB12345"
           },
-          "instrumentId": {
-            "type": "string",
-            "description": "Unique identifier for the financial instrument being adjusted.",
-            "example": "INST67890"
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
           },
-          "side": {
+          "sort": {
             "type": "string",
-            "description": "Indicates whether the change is for buying or selling.",
-            "example": "buy"
-          }
-        },
-        "description": "Details about the changes to the trading book."
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "REQ-001"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Correlation ID for tracking related requests.",
-            "example": "CORR-XYZ"
-          },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "Key used to ensure idempotency of requests.",
-            "example": "IDEMPOTENCY-KEY-123"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp when the request was made.",
-            "example": "2021-01-01T00:00:00Z"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "System from which the request originated.",
-            "example": "TradingPlatform"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "Application through which the request was made.",
-            "example": "TradingApp"
-          },
-          "channel": {
-            "description": "Information about the channel through which the request was made.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Information related to the context in which the request was made."
-      },
-      "Channel": {
-        "title": "Channel",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "CH-001"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of the channel (e.g., web, mobile, API).",
-            "example": "API"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier of the device used for the request.",
-            "example": "DEVICE-12345"
-          }
-        },
-        "description": "Details related to the channel used for the request."
-      },
-      "PatchTradingBookOversightRes100045Response_200": {
-        "title": "Patch Response for Trading Book Oversight",
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "integer",
-            "description": "The version of the response.",
-            "format": "int32",
-            "example": 1
-          },
-          "status": {
-            "type": "string",
-            "description": "The status of the operation.",
-            "example": "ACTIVE"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "The timestamp when the response was last updated.",
-            "example": "2026-09-15T14:30:00Z"
+            "description": "The sorting criteria used for the items.",
+            "example": "STANDARD"
           },
           "metadata": {
-            "$ref": "#/components/schemas/ResponseMetadata"
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the PATCH operation on the Trading Book Oversight.",
+        "description": "Response schema for the trading book oversight operation. Contains trading book entries along with pagination, sorting, and metadata information.",
         "example": {
-          "version": 1,
-          "status": "ACTIVE",
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "items": [
+            {
+              "tradingBookId": "STANDARD",
+              "instrumentId": "STANDARD",
+              "side": "STANDARD",
+              "quantity": 1,
+              "limitPrice": {
+                "value": 100.0,
+                "currency": "USD"
+              },
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
+          },
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "a6fa0808-3ecc-50d3-8b5e-8d663d611593",
-            "correlationId": "11729b4b-6b0f-5592-a0c0-724dbb453c66",
+            "responseId": "88ed2d2d-93da-5441-9895-c90101080687",
+            "correlationId": "3c78e972-d135-5a4c-84ba-965df12023f0",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "ResponseMetadata": {
-        "title": "Response Metadata",
+      "TradingBookEntry": {
+        "type": "object",
+        "properties": {
+          "tradingBookId": {
+            "type": "string",
+            "description": "The unique identifier of the trading book.",
+            "example": "TB123"
+          },
+          "instrumentId": {
+            "type": "string",
+            "description": "The unique identifier of the financial instrument.",
+            "example": "INST456"
+          },
+          "side": {
+            "type": "string",
+            "description": "The side of the trade, either 'buy' or 'sell'.",
+            "example": "buy"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The quantity of the instrument traded.",
+            "format": "int32",
+            "example": 100
+          },
+          "limitPrice": {
+            "$ref": "#/components/schemas/LimitPrice"
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "The status of the trading record.",
+            "example": "active"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp of when the entry was last updated.",
+            "example": "2023-01-01T01:00:00Z"
+          }
+        },
+        "description": "Represents an entry in the trading book."
+      },
+      "LimitPrice": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number",
+            "description": "The limit price value.",
+            "example": 150.0
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency in which the limit price is denominated.",
+            "example": "USD"
+          }
+        },
+        "description": "Represents the limit price for a trading entry."
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "The current page number.",
+            "format": "int32",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The size of the page, i.e., number of items per page.",
+            "format": "int32",
+            "example": 10
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available for pagination.",
+            "format": "int32",
+            "example": 100
+          }
+        },
+        "description": "Pagination information for the response."
+      },
+      "Metadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
             "description": "A unique identifier for the response.",
-            "example": "string"
+            "example": "response123"
           },
           "correlationId": {
             "type": "string",
-            "description": "An identifier to correlate requests and responses.",
-            "example": "string"
+            "description": "Correlation ID to trace requests across services.",
+            "example": "correlation123"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp when the response was generated.",
-            "example": "string"
+            "description": "Timestamp when the response was generated.",
+            "example": "2023-01-01T00:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing took place.",
-            "example": "string"
+            "description": "The region where the request was processed.",
+            "example": "us-west"
           }
         },
-        "description": "Metadata information about the response."
+        "description": "Metadata information related to the response."
       }
     },
     "parameters": {
@@ -297,15 +272,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "This header uniquely identifies the endpoint that was executed within the wholesale trading API.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "trading-book-oversight-update-trading-book-oversight"
+          "example": "trading-book-oversight-search-trading-book-oversight"
         },
-        "example": "trading-book-oversight-update-trading-book-oversight"
+        "example": "trading-book-oversight-search-trading-book-oversight"
       },
       "X-Runtime-App": {
+        "description": "This header indicates the specific application runtime environment that was used to process the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -318,7 +295,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a Bearer authentication method that requires a valid JSON Web Token (JWT) to access secured endpoints. The JWT must be included in the Authorization header of the request.",
+        "description": "This security scheme uses bearer authentication with JSON Web Tokens (JWT). Clients are required to include a bearer token in the Authorization header of their requests to access protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
