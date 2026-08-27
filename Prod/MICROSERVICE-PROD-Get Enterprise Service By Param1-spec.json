@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Get Enterprise Service By Param1-spec",
-    "description": "The Enterprise Service Retrieval API provides access to specific enterprise services based on the given parameter. This API allows consumers, such as internal auditors and compliance teams, to fetch detailed information on enterprise services for auditing and reporting purposes. By specifying 'param1', users can query relevant data efficiently. This enables effective monitoring and management of services within the banking system.",
+    "description": "The Enterprise Service Retrieval API enables users to access detailed information about specific enterprise services using a unique identifier. This API is designed for applications requiring data related to fixed asset registration and management. Typical consumers include financial analysts and enterprise resource planning systems, which leverage the endpoint to gather real-time service data. By employing a flexible parameter system, the API enhances usability and allows for targeted queries to streamline asset management processes.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/enterprise-services/internal-audit/{param1}": {
+    "/v5/banking/enterprise-services/fixed-asset-register/{param1}": {
       "get": {
         "tags": [
-          "Internal Audit"
+          "Fixed Asset Management"
         ],
-        "summary": "Retrieve audit details for a specified resource.",
-        "description": "This endpoint allows users to fetch the internal audit information related to a specific resource identified by its ID. The response includes detailed audit logs and findings, enabling users to assess compliance and operational effectiveness.",
+        "summary": "Retrieve the fixed asset register entry by ID.",
+        "description": "This endpoint allows users to fetch the details of a specific fixed asset register entry using its unique identifier. The API returns comprehensive information related to the asset, including its status, value, and associated transactions.",
         "operationId": "getEnterpriseServiceByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body represents the required structure for querying the internal audit data for the specified resource. Client applications need to provide all necessary parameters within this JSON object to retrieve accurate audit information.",
+          "description": "Request body for retrieving details related to a specific fixed asset register entry identified by RES-100045. This payload should include necessary parameters as defined in the schema.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, returning the requested resource.",
+            "description": "Successfully retrieved the fixed asset register.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -92,107 +92,126 @@
     "schemas": {
       "GetEnterpriseServiceByParam1Request": {
         "type": "string",
-        "description": "This schema represents the request body for the GET operation in the internal audit service.",
+        "description": "This schema represents the request body expected for the GET operation on the Fixed Asset Register API.",
         "example": "{}"
       },
       "GetEnterpriseServiceByParam1Response_200": {
         "type": "object",
         "properties": {
-          "engagementId": {
+          "assetId": {
             "type": "string",
-            "description": "Unique identifier for the engagement.",
+            "description": "Unique identifier for the asset.",
             "example": "STANDARD"
           },
-          "scope": {
+          "assetClass": {
             "type": "string",
-            "description": "The scope of the audit engagement.",
+            "description": "Classification of the asset.",
             "example": "STANDARD"
           },
-          "framework": {
+          "acquisitionDate": {
             "type": "string",
-            "description": "The framework under which the audit is conducted.",
-            "example": "STANDARD"
-          },
-          "engagementOwnerId": {
-            "type": "string",
-            "description": "Identifier for the owner of the engagement.",
-            "example": "STANDARD"
-          },
-          "plannedStartDate": {
-            "type": "string",
-            "description": "Planned start date of the engagement in ISO 8601 format.",
+            "description": "Date when the asset was acquired.",
             "example": "2026-09-15"
           },
-          "targetCompletionDate": {
+          "acquisitionCost": {
+            "description": "Cost associated with the acquisition of the asset.",
+            "$ref": "#/components/schemas/AcquisitionCost"
+          },
+          "usefulLifeMonths": {
+            "type": "integer",
+            "description": "Estimated useful life of the asset in months.",
+            "format": "int32",
+            "example": 1
+          },
+          "costCenter": {
             "type": "string",
-            "description": "Target completion date of the engagement in ISO 8601 format.",
-            "example": "2026-09-15"
+            "description": "Cost center to which the asset is allocated.",
+            "example": "STANDARD"
           },
           "recordStatus": {
             "type": "string",
-            "description": "Current status of the engagement record.",
+            "description": "Current status of the asset record.",
             "example": "ACTIVE"
           },
           "version": {
             "type": "integer",
-            "description": "Version number of the engagement record.",
+            "description": "Version number of the asset record.",
             "format": "int32",
             "example": 1
           },
           "updatedAt": {
             "type": "string",
-            "description": "The timestamp of when the engagement record was last updated in ISO 8601 format.",
+            "description": "Timestamp of the last update to the asset record.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Metadata related to the engagement response.",
-            "$ref": "#/components/schemas/AuditMetadata"
+            "description": "Metadata associated with the response.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Schema representing the response for the GET request to retrieve audit engagement details.",
+        "description": "Response schema for the GET operation on the fixed asset register.",
         "example": {
-          "engagementId": "STANDARD",
-          "scope": "STANDARD",
-          "framework": "STANDARD",
-          "engagementOwnerId": "STANDARD",
-          "plannedStartDate": "2026-09-15",
-          "targetCompletionDate": "2026-09-15",
+          "assetId": "STANDARD",
+          "assetClass": "STANDARD",
+          "acquisitionDate": "2026-09-15",
+          "acquisitionCost": {
+            "amount": 100.0,
+            "currency": "USD"
+          },
+          "usefulLifeMonths": 1,
+          "costCenter": "STANDARD",
           "recordStatus": "ACTIVE",
           "version": 1,
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "df091f9e-bc46-5e03-9d4f-aa37e7243384",
-            "correlationId": "3eb8a94d-2a18-5dde-acab-f80c922bc5ae",
+            "responseId": "ad7a1947-29b0-52ca-99af-6774dc8d6141",
+            "correlationId": "7c5c1490-2cfd-5c7b-aca4-da6bf1008fab",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "AuditMetadata": {
+      "AcquisitionCost": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Monetary amount representing the acquisition cost.",
+            "example": 0.0
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency in which the acquisition cost is denominated.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing the acquisition cost of an asset."
+      },
+      "Metadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "response-123"
+            "description": "Identifier for the response.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate this response with other related actions.",
-            "example": "correlation-123"
+            "description": "Identifier used for correlating requests and responses.",
+            "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the response was generated in ISO 8601 format.",
-            "example": "2023-01-01T00:00:00Z"
+            "description": "Timestamp indicating when the metadata was generated.",
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the response was processed.",
-            "example": "us-east-1"
+            "description": "Region in which the processing occurred.",
+            "example": "string"
           }
         },
-        "description": "Metadata associated with the audit engagement response."
+        "description": "Schema containing metadata information."
       }
     },
     "parameters": {
@@ -223,17 +242,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint being accessed. This helps in tracing requests during internal audits.",
+        "description": "A unique identifier for the endpoint that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "internal-audit-get-internal-audit"
+          "example": "fixed-asset-register-get-fixed-asset-register"
         },
-        "example": "internal-audit-get-internal-audit"
+        "example": "fixed-asset-register-get-fixed-asset-register"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that is processing the request. This is useful for identifying which service is executed during the audit.",
+        "description": "The name and version of the application runtime that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -246,7 +265,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme utilizes Bearer tokens, specifically in the JWT (JSON Web Token) format, for authorization. Clients must include a valid token in the 'Authorization' header when making requests to secure endpoints.",
+        "description": "This authentication scheme uses a bearer token, typically a JSON Web Token (JWT), to authenticate API requests. Clients must include this token in the Authorization header when making requests.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
