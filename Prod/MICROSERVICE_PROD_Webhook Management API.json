@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Webhook Management API",
-    "description": "The Webhook Management API facilitates the dynamic creation and configuration of webhook endpoints essential for real-time event notifications and integrations. By utilizing this API, businesses can streamline communication between their applications and external services, ensuring timely data exchange and triggering actions based on specific events. Typical consumers include developers and system integrators who require automated workflows and enhanced interoperability between platforms. This API empowers users to efficiently manage webhook subscriptions and configurations to align with evolving business needs.",
+    "description": "The Webhook Management API enables users to retrieve and manage webhook endpoints efficiently. This API allows businesses to access details of existing webhook configurations, facilitating integrations with various services. Typical consumers include developers and system integrators who require real-time notifications or data updates based on specific events. By offering comprehensive access to webhook settings, this API enhances automation and responsiveness in application workflows.",
     "version": "1.0"
   },
   "servers": [
@@ -31,31 +31,31 @@
   ],
   "paths": {
     "/v5/p2m/webhook-endpoints": {
-      "post": {
+      "get": {
         "tags": [
           "Webhook Management"
         ],
-        "summary": "Create a new webhook endpoint.",
-        "description": "This endpoint allows you to create a new webhook. You can set a callback URL that will be invoked when specific events occur. Make sure to configure the necessary event types when creating the webhook.",
-        "operationId": "createWebhookEndpoint",
+        "summary": "Retrieve all webhook endpoints",
+        "description": "This endpoint allows you to retrieve a list of all configured webhook endpoints in the system. It provides essential information regarding each endpoint, enabling you to manage and utilize them effectively.",
+        "operationId": "getWebhookEndpoints",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body should contain the necessary information for creating or updating a webhook endpoint. It must adhere to the specified JSON schema to ensure proper processing.",
+          "description": "This request body is used to retrieve the configuration details for webhook endpoints. It should include any necessary filters or parameters relevant to the operation.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateWebhookEndpointRequest"
+                "$ref": "#/components/schemas/GetWebhookEndpointsRequest"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Resource created successfully and ready for use.",
+          "200": {
+            "description": "Successfully retrieved the webhook endpoints.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -67,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateWebhookEndpointResponse_201"
+                  "$ref": "#/components/schemas/GetWebhookEndpointsResponse_200"
                 }
               }
             }
@@ -87,281 +87,271 @@
   },
   "components": {
     "schemas": {
-      "CreateWebhookEndpointRequest": {
+      "GetWebhookEndpointsRequest": {
+        "type": "string",
+        "description": "The request body for the GET webhook endpoint, represented as a JSON string.",
+        "example": "{}"
+      },
+      "GetWebhookEndpointsResponse_200": {
         "type": "object",
         "properties": {
-          "merchantId": {
-            "type": "string",
-            "description": "The unique identifier for the merchant.",
-            "example": "MER-768450"
-          },
-          "url": {
-            "type": "string",
-            "description": "The URL to which the webhook will send its POST requests.",
-            "example": "https://example.com/resource"
-          },
-          "description": {
-            "type": "string",
-            "description": "A brief description of the webhook's purpose.",
-            "example": "Customer banking request processed successfully"
-          },
-          "events": {
-            "type": "array",
-            "description": "A list of events that will trigger the webhook.",
-            "example": [
-              "STANDARD"
-            ],
-            "items": {
-              "type": "string",
-              "description": "The name of the event to subscribe to.",
-              "example": "string"
-            }
-          },
-          "secretRotationPolicyDays": {
+          "page": {
             "type": "integer",
-            "description": "The number of days to rotate the webhook secret.",
+            "description": "The current page number of the results.",
             "format": "int32",
             "example": 1
           },
-          "requestContext": {
-            "description": "Contextual information about the request.",
-            "$ref": "#/components/schemas/RequestContext"
-          }
-        },
-        "example": {
-          "merchantId": "MER-768450",
-          "url": "https://example.com/resource",
-          "description": "Customer banking request processed successfully",
-          "events": [
-            "STANDARD"
-          ],
-          "secretRotationPolicyDays": 1,
-          "requestContext": {
-            "requestId": "ac1aa62a-7c39-58c2-b958-9b0d99131898",
-            "correlationId": "29e068af-7169-5987-9e2d-d1431d5d2431",
-            "idempotencyKey": "1f01cf3b-fc80-55e1-bdef-f0590197c495",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-687936"
-            }
-          }
-        }
-      },
-      "RequestContext": {
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "A unique identifier for the request.",
-            "example": "string"
+          "pageSize": {
+            "type": "integer",
+            "description": "The number of items per page.",
+            "format": "int32",
+            "example": 1
           },
-          "correlationId": {
-            "type": "string",
-            "description": "An identifier used to trace the correlation of related requests.",
-            "example": "string"
+          "totalItems": {
+            "type": "integer",
+            "description": "The total number of items available.",
+            "format": "int32",
+            "example": 1
           },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "A key used to ensure that requests are processed only once.",
-            "example": "string"
+          "totalPages": {
+            "type": "integer",
+            "description": "The total number of pages available.",
+            "format": "int32",
+            "example": 1
           },
-          "requestedAt": {
-            "type": "string",
-            "description": "The timestamp indicating when the request was made.",
-            "example": "string"
+          "hasNext": {
+            "type": "boolean",
+            "description": "Indicates whether there is a next page of results.",
+            "example": true
           },
-          "sourceSystem": {
-            "type": "string",
-            "description": "The system from which the request originated.",
-            "example": "string"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "The application that initiated the request.",
-            "example": "string"
-          },
-          "channel": {
-            "description": "Information about the channel through which the request was made.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        }
-      },
-      "Channel": {
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "The unique identifier for the channel.",
-            "example": "string"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "The type of the channel (e.g., API, UI).",
-            "example": "string"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "The identifier of the device used, if applicable.",
-            "example": "string"
-          }
-        }
-      },
-      "CreateWebhookEndpointResponse_201": {
-        "title": "Webhook Endpoint Creation Response",
-        "type": "object",
-        "properties": {
-          "webhookEndpointId": {
-            "type": "string",
-            "description": "The unique identifier for the webhook endpoint.",
-            "example": "STANDARD"
-          },
-          "merchantId": {
-            "type": "string",
-            "description": "The unique identifier of the merchant associated with the webhook endpoint.",
-            "example": "MER-698491"
-          },
-          "url": {
-            "type": "string",
-            "description": "The URL to which webhook events will be sent.",
-            "example": "https://example.com/resource"
-          },
-          "description": {
-            "type": "string",
-            "description": "A brief description of the webhook endpoint.",
-            "example": "Customer banking request processed successfully"
-          },
-          "events": {
+          "links": {
             "type": "array",
-            "description": "A list of events that the webhook will subscribe to.",
+            "description": "List of links related to the current response.",
             "example": [
-              "STANDARD"
+              {
+                "rel": "STANDARD",
+                "href": "https://example.com/resource",
+                "method": "STANDARD"
+              }
             ],
             "items": {
-              "type": "string",
-              "description": "The name of an event to be sent via the webhook.",
-              "example": "order.created"
+              "$ref": "#/components/schemas/Link"
             }
           },
-          "status": {
-            "type": "string",
-            "description": "Current status of the webhook endpoint.",
-            "example": "ACTIVE"
-          },
-          "secretLastRotatedAt": {
-            "type": "string",
-            "description": "Timestamp indicating when the secret for this webhook was last rotated.",
-            "example": "2026-08-11T12:00:00Z"
-          },
-          "lastDeliveryAt": {
-            "type": "string",
-            "description": "Timestamp of the last successful delivery of an event to the webhook.",
-            "example": "2026-08-11T12:00:00Z"
-          },
-          "lastDeliveryStatus": {
-            "type": "string",
-            "description": "Status of the last delivery attempt to the webhook.",
-            "example": "ACTIVE"
-          },
-          "audit": {
-            "description": "Audit information related to the creation and updates of the webhook endpoint.",
-            "$ref": "#/components/schemas/Audit"
+          "items": {
+            "type": "array",
+            "description": "List of webhook endpoint items.",
+            "example": [
+              {
+                "webhookEndpointId": "STANDARD",
+                "merchantId": "MER-472116",
+                "url": "https://example.com/resource",
+                "description": "Customer banking request processed successfully",
+                "events": [
+                  "STANDARD"
+                ],
+                "status": "ACTIVE",
+                "secretLastRotatedAt": "2026-08-11T12:00:00Z",
+                "lastDeliveryAt": "2026-08-11T12:00:00Z",
+                "lastDeliveryStatus": "ACTIVE",
+                "audit": {
+                  "createdAt": "2026-09-15T14:30:00Z",
+                  "createdBy": "STANDARD",
+                  "updatedAt": "2026-09-15T14:30:00Z",
+                  "updatedBy": "2026-09-15",
+                  "version": 1
+                }
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/WebhookEndpoint"
+            }
           },
           "metadata": {
-            "description": "Additional metadata associated with the webhook endpoint.",
-            "$ref": "#/components/schemas/Metadata"
+            "type": "object",
+            "description": "Metadata related to the response.",
+            "$ref": "#/components/schemas/ResponseMetadata"
           }
         },
-        "description": "This schema represents the response returned when a webhook endpoint is successfully created.",
         "example": {
-          "webhookEndpointId": "STANDARD",
-          "merchantId": "MER-698491",
-          "url": "https://example.com/resource",
-          "description": "Customer banking request processed successfully",
-          "events": [
-            "STANDARD"
+          "page": 1,
+          "pageSize": 1,
+          "totalItems": 1,
+          "totalPages": 1,
+          "hasNext": true,
+          "links": [
+            {
+              "rel": "STANDARD",
+              "href": "https://example.com/resource",
+              "method": "STANDARD"
+            }
           ],
-          "status": "ACTIVE",
-          "secretLastRotatedAt": "2026-08-11T12:00:00Z",
-          "lastDeliveryAt": "2026-08-11T12:00:00Z",
-          "lastDeliveryStatus": "ACTIVE",
-          "audit": {
-            "createdAt": "2026-09-15T14:30:00Z",
-            "createdBy": "STANDARD",
-            "updatedAt": "2026-09-15T14:30:00Z",
-            "updatedBy": "2026-09-15",
-            "version": 1
-          },
+          "items": [
+            {
+              "webhookEndpointId": "STANDARD",
+              "merchantId": "MER-472116",
+              "url": "https://example.com/resource",
+              "description": "Customer banking request processed successfully",
+              "events": [
+                "STANDARD"
+              ],
+              "status": "ACTIVE",
+              "secretLastRotatedAt": "2026-08-11T12:00:00Z",
+              "lastDeliveryAt": "2026-08-11T12:00:00Z",
+              "lastDeliveryStatus": "ACTIVE",
+              "audit": {
+                "createdAt": "2026-09-15T14:30:00Z",
+                "createdBy": "STANDARD",
+                "updatedAt": "2026-09-15T14:30:00Z",
+                "updatedBy": "2026-09-15",
+                "version": 1
+              }
+            }
+          ],
           "metadata": {
-            "responseId": "261ea9bc-f9d3-5c0a-b617-05cd55300746",
-            "correlationId": "29e068af-7169-5987-9e2d-d1431d5d2431",
+            "responseId": "5d1762e0-bc75-5a70-bfd4-209454157953",
+            "correlationId": "8c39d77d-cee2-5dc6-bdaa-cfff7a290838",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "Audit": {
-        "title": "Audit Information",
+      "Link": {
         "type": "object",
         "properties": {
-          "createdAt": {
+          "rel": {
             "type": "string",
-            "description": "Timestamp of when the webhook endpoint was created.",
-            "example": "2023-01-01T12:00:00Z"
+            "description": "The relationship type of the link.",
+            "example": "next"
           },
-          "createdBy": {
+          "href": {
             "type": "string",
-            "description": "The identifier of the user who created the webhook endpoint.",
-            "example": "user123"
+            "description": "The URL of the link.",
+            "example": "https://example.com/next"
           },
-          "updatedAt": {
+          "method": {
             "type": "string",
-            "description": "Timestamp of when the webhook endpoint was last updated.",
-            "example": "2023-01-02T12:00:00Z"
-          },
-          "updatedBy": {
-            "type": "string",
-            "description": "The identifier of the user who last updated the webhook endpoint.",
-            "example": "user456"
-          },
-          "version": {
-            "type": "integer",
-            "description": "The version number of the webhook endpoint.",
-            "format": "int32",
-            "example": 1
+            "description": "HTTP method to use with the link.",
+            "example": "GET"
           }
         },
-        "description": "This schema contains audit-related information for a webhook endpoint."
+        "description": "A link related to the response."
       },
-      "Metadata": {
-        "title": "Metadata Information",
+      "WebhookEndpoint": {
+        "type": "object",
+        "properties": {
+          "webhookEndpointId": {
+            "type": "string",
+            "description": "The unique identifier for the webhook endpoint.",
+            "example": "webhook_123"
+          },
+          "merchantId": {
+            "type": "string",
+            "description": "The identifier for the merchant associated with the webhook.",
+            "example": "merchant_456"
+          },
+          "url": {
+            "type": "string",
+            "description": "The URL where the webhook will send requests.",
+            "example": "https://example.com/webhook"
+          },
+          "description": {
+            "type": "string",
+            "description": "A brief description of the webhook endpoint.",
+            "example": "This webhook endpoint handles order events."
+          },
+          "events": {
+            "type": "array",
+            "description": "List of events that the webhook is subscribed to.",
+            "example": [
+              "order.created",
+              "order.updated"
+            ],
+            "items": {
+              "type": "string",
+              "example": "order.created"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the webhook endpoint.",
+            "example": "active"
+          },
+          "secretLastRotatedAt": {
+            "type": "string",
+            "description": "Timestamp of when the secret was last rotated.",
+            "example": "2023-01-01T12:00:00Z"
+          },
+          "lastDeliveryAt": {
+            "type": "string",
+            "description": "Timestamp of the last delivery to the webhook endpoint.",
+            "example": "2023-01-01T12:00:00Z"
+          },
+          "lastDeliveryStatus": {
+            "type": "string",
+            "description": "The status of the last delivery attempt.",
+            "example": "success"
+          },
+          "audit": {
+            "type": "object",
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "description": "Timestamp of when the webhook endpoint was created.",
+                "example": "2023-01-01T12:00:00Z"
+              },
+              "createdBy": {
+                "type": "string",
+                "description": "Identifier of the user who created the webhook endpoint.",
+                "example": "user_789"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Timestamp of the last update to the webhook endpoint.",
+                "example": "2023-01-02T12:00:00Z"
+              },
+              "updatedBy": {
+                "type": "string",
+                "description": "Identifier of the user who last updated the webhook endpoint.",
+                "example": "user_789"
+              },
+              "version": {
+                "type": "integer",
+                "description": "The current version of the webhook endpoint.",
+                "format": "int32",
+                "example": 1
+              }
+            },
+            "description": "Audit information for the webhook endpoint."
+          }
+        },
+        "description": "Details of a webhook endpoint."
+      },
+      "ResponseMetadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response associated with the webhook endpoint.",
-            "example": "response_789"
+            "description": "Unique identifier for the response.",
+            "example": "response_123"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used for tracking the processing of requests across systems.",
+            "description": "Correlation identifier for tracking requests.",
             "example": "correlation_456"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the metadata was generated.",
-            "example": "2023-01-02T12:00:00Z"
+            "description": "Timestamp indicating when the response was generated.",
+            "example": "2023-01-01T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing of the webhook endpoint occurred.",
-            "example": "us-east-1"
+            "description": "Region where the processing took place.",
+            "example": "us-west-1"
           }
         },
-        "description": "This schema contains additional metadata for the webhook endpoint."
+        "description": "Metadata for the response including various identifiers."
       }
     },
     "parameters": {
@@ -375,24 +365,22 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_201"
+            "MICROSERVICE_PROD_200"
           ]
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "The unique identifier for the webhook endpoint that was triggered by this operation.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "banking-p2m-openapi-create-webhook-endpoint"
+          "example": "banking-p2m-openapi-list-webhook-endpoints"
         },
-        "example": "banking-p2m-openapi-create-webhook-endpoint"
+        "example": "banking-p2m-openapi-list-webhook-endpoints"
       },
       "X-Runtime-App": {
-        "description": "The name of the application runtime environment that processed this request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -405,7 +393,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme utilizes a Bearer authentication method, allowing the client to provide a JSON Web Token (JWT) to access protected resources. The token is included in the Authorization header as 'Bearer <token>'.",
+        "description": "An HTTP bearer authentication scheme, which utilizes JSON Web Tokens (JWT) to securely transmit information between parties. Use this scheme to authorize access to secured endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
