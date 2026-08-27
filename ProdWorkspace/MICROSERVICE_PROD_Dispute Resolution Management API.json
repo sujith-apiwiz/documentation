@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Dispute Resolution Management API",
-    "description": "The Dispute Resolution Management API enables businesses to update and manage disputes effectively within their systems. This endpoint allows authorized users to modify the details of a specific dispute identified by its unique ID. Typical consumers include dispute resolution teams and customer service representatives who require real-time access to dispute status and information. The API facilitates efficient handling of customer concerns related to transactions, ensuring timely resolutions and improved customer satisfaction.",
+    "description": "The Dispute Resolution Management API facilitates the retrieval of dispute information related to transactions, enabling businesses to resolve issues efficiently. This endpoint allows users to access details about existing disputes, including their status and associated transactions. Typical consumers of this API include customer support teams, dispute resolution specialists, and financial analysts who need to monitor and manage transaction disputes. By offering transparent access to dispute data, businesses can improve customer experience and streamline their resolution processes.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/p2m/disputes/{disputeId}": {
-      "put": {
+    "/v5/p2m/disputes": {
+      "get": {
         "tags": [
           "Dispute Management"
         ],
-        "summary": "Update a specific dispute.",
-        "description": "This operation allows you to update the details of an existing dispute identified by the unique resource identifier RES-100045. Ensure that the request body contains the necessary information to reflect the changes to the dispute effectively.",
-        "operationId": "updateDisputeRes100045",
+        "summary": "Retrieve a list of disputes.",
+        "description": "This endpoint allows you to fetch all disputes available in the system. Use this to monitor and manage disputes effectively.",
+        "operationId": "getDisputes",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "The request body for updating the details of a specific dispute identified by RES-100045. Ensure that all mandatory fields are included and properly formatted as per the API specifications.",
+          "description": "This request body retrieves the details of disputes based on the specified criteria. Ensure that all required fields in the schema are populated to obtain accurate results.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateDisputeRes100045Request"
+                "$ref": "#/components/schemas/GetDisputesRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully and the dispute is updated.",
+            "description": "Returns a list of disputes successfully retrieved.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateDisputeRes100045Response_200"
+                  "$ref": "#/components/schemas/GetDisputesResponse_200"
                 }
               }
             }
@@ -76,122 +76,400 @@
   },
   "components": {
     "schemas": {
-      "UpdateDisputeRes100045Request": {
-        "title": "Dispute Request Body",
+      "GetDisputesRequest": {
+        "type": "string",
+        "description": "This schema represents the request body for the GET operation on disputes, specified as a string.",
+        "example": "{}"
+      },
+      "GetDisputesResponse_200": {
+        "title": "Dispute Retrieval Response",
         "type": "object",
         "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number of the results.",
+            "format": "int32",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32",
+            "example": 1
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available across all pages.",
+            "format": "int32",
+            "example": 1
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "Total number of pages available.",
+            "format": "int32",
+            "example": 1
+          },
+          "hasNext": {
+            "type": "boolean",
+            "description": "Indicates whether there is a next page of results.",
+            "example": true
+          },
+          "links": {
+            "type": "array",
+            "description": "Collection of navigation links related to the resource.",
+            "example": [
+              {
+                "rel": "STANDARD",
+                "href": "https://example.com/resource",
+                "method": "STANDARD"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          },
+          "items": {
+            "type": "array",
+            "description": "List of dispute items retrieved from the database.",
+            "example": [
+              {
+                "disputeId": "STANDARD",
+                "paymentId": "PAY-430055",
+                "merchantId": "MER-423289",
+                "reason": "STANDARD",
+                "disputedAmount": {
+                  "currency": "USD",
+                  "value": "STANDARD"
+                },
+                "customerStatement": "STANDARD",
+                "status": "ACTIVE",
+                "responseDueAt": "2026-08-11T12:00:00Z",
+                "evidence": [
+                  {
+                    "id": "STANDARD",
+                    "fileName": "Northstar Banking Service",
+                    "contentType": "STANDARD",
+                    "fileSizeBytes": 1,
+                    "fileUrl": "https://example.com/resource",
+                    "sha256": "STANDARD",
+                    "uploadedAt": "2026-08-11T12:00:00Z"
+                  }
+                ],
+                "financialImpact": {
+                  "amountDebitedFromMerchant": {
+                    "currency": "USD",
+                    "value": "STANDARD"
+                  },
+                  "fees": [
+                    {
+                      "feeType": "STANDARD",
+                      "amount": {
+                        "currency": "USD",
+                        "value": "STANDARD"
+                      },
+                      "bearer": "CUSTOMER"
+                    }
+                  ],
+                  "reserveHeld": {
+                    "currency": "USD",
+                    "value": "STANDARD"
+                  }
+                },
+                "resolution": {
+                  "outcome": "STANDARD",
+                  "resolvedAmount": {
+                    "currency": "USD",
+                    "value": "STANDARD"
+                  }
+                }
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/DisputeItem"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "responseId": {
+                "type": "string",
+                "description": "Unique identifier for the response.",
+                "example": "string"
+              },
+              "correlationId": {
+                "type": "string",
+                "description": "Identifier used for tracing requests across services.",
+                "example": "string"
+              },
+              "generatedAt": {
+                "type": "string",
+                "description": "Timestamp indicating when the response was generated.",
+                "example": "string"
+              },
+              "processingRegion": {
+                "type": "string",
+                "description": "The region where the request was processed.",
+                "example": "string"
+              }
+            },
+            "description": "Additional metadata related to the response.",
+            "example": {
+              "responseId": "8224c579-c055-561d-b7e8-a1cbc057b5fa",
+              "correlationId": "9b142409-0cbc-50da-986d-9599c683f847",
+              "generatedAt": "2026-09-15T14:30:00Z",
+              "processingRegion": "us-east-1"
+            }
+          }
+        },
+        "description": "Schema representing the response structure for retrieving disputes through the GET operation.",
+        "example": {
+          "page": 1,
+          "pageSize": 1,
+          "totalItems": 1,
+          "totalPages": 1,
+          "hasNext": true,
+          "links": [
+            {
+              "rel": "STANDARD",
+              "href": "https://example.com/resource",
+              "method": "STANDARD"
+            }
+          ],
+          "items": [
+            {
+              "disputeId": "STANDARD",
+              "paymentId": "PAY-430055",
+              "merchantId": "MER-423289",
+              "reason": "STANDARD",
+              "disputedAmount": {
+                "currency": "USD",
+                "value": "STANDARD"
+              },
+              "customerStatement": "STANDARD",
+              "status": "ACTIVE",
+              "responseDueAt": "2026-08-11T12:00:00Z",
+              "evidence": [
+                {
+                  "id": "STANDARD",
+                  "fileName": "Northstar Banking Service",
+                  "contentType": "STANDARD",
+                  "fileSizeBytes": 1,
+                  "fileUrl": "https://example.com/resource",
+                  "sha256": "STANDARD",
+                  "uploadedAt": "2026-08-11T12:00:00Z"
+                }
+              ],
+              "financialImpact": {
+                "amountDebitedFromMerchant": {
+                  "currency": "USD",
+                  "value": "STANDARD"
+                },
+                "fees": [
+                  {
+                    "feeType": "STANDARD",
+                    "amount": {
+                      "currency": "USD",
+                      "value": "STANDARD"
+                    },
+                    "bearer": "CUSTOMER"
+                  }
+                ],
+                "reserveHeld": {
+                  "currency": "USD",
+                  "value": "STANDARD"
+                }
+              },
+              "resolution": {
+                "outcome": "STANDARD",
+                "resolvedAmount": {
+                  "currency": "USD",
+                  "value": "STANDARD"
+                }
+              }
+            }
+          ],
+          "metadata": {
+            "responseId": "8224c579-c055-561d-b7e8-a1cbc057b5fa",
+            "correlationId": "9b142409-0cbc-50da-986d-9599c683f847",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
+      },
+      "Link": {
+        "title": "Link",
+        "type": "object",
+        "properties": {
+          "rel": {
+            "type": "string",
+            "description": "The relation type of the link.",
+            "example": "string"
+          },
+          "href": {
+            "type": "string",
+            "description": "The URI of the linked resource.",
+            "example": "string"
+          },
+          "method": {
+            "type": "string",
+            "description": "The HTTP method to use with the link.",
+            "example": "string"
+          }
+        },
+        "description": "Represents a hyperlink related to the dispute resource."
+      },
+      "DisputeItem": {
+        "title": "Dispute Item",
+        "type": "object",
+        "properties": {
+          "disputeId": {
+            "type": "string",
+            "description": "Unique identifier for the dispute.",
+            "example": "string"
+          },
           "paymentId": {
             "type": "string",
-            "description": "Unique identifier for the payment.",
-            "example": "PAY-268860"
+            "description": "Identifier for the associated payment.",
+            "example": "string"
+          },
+          "merchantId": {
+            "type": "string",
+            "description": "Identifier for the merchant involved in the dispute.",
+            "example": "string"
           },
           "reason": {
             "type": "string",
-            "description": "The reason for disputing the payment.",
-            "example": "STANDARD"
+            "description": "Reason for the dispute.",
+            "example": "string"
           },
           "disputedAmount": {
-            "description": "The amount that is being disputed.",
-            "$ref": "#/components/schemas/DisputedAmount"
+            "type": "object",
+            "properties": {
+              "currency": {
+                "type": "string",
+                "description": "Currency code for the disputed amount.",
+                "example": "USD"
+              },
+              "value": {
+                "type": "string",
+                "description": "The disputed amount value.",
+                "example": "100.00"
+              }
+            },
+            "description": "Amount that is being disputed."
           },
           "customerStatement": {
             "type": "string",
-            "description": "Customer's statement regarding the disputed payment.",
-            "example": "STANDARD"
+            "description": "The customer's statement regarding the dispute.",
+            "example": "string"
           },
-          "customerId": {
+          "status": {
             "type": "string",
-            "description": "Unique identifier for the customer.",
-            "example": "CUST-329174"
+            "description": "Current status of the dispute.",
+            "example": "string"
+          },
+          "responseDueAt": {
+            "type": "string",
+            "description": "Timestamp indicating when a response is due.",
+            "example": "string"
           },
           "evidence": {
             "type": "array",
-            "description": "List of evidence supporting the dispute.",
-            "example": [
-              {
-                "id": "STANDARD",
-                "fileName": "Northstar Banking Service",
-                "contentType": "STANDARD",
-                "fileSizeBytes": 1,
-                "fileUrl": "https://example.com/resource",
-                "sha256": "STANDARD",
-                "uploadedAt": "2026-08-11T12:00:00Z"
-              }
-            ],
+            "description": "Collection of evidence related to the dispute.",
+            "example": [],
             "items": {
               "$ref": "#/components/schemas/EvidenceItem"
             }
           },
-          "requestContext": {
-            "description": "Context information for the request.",
-            "$ref": "#/components/schemas/RequestContext"
+          "financialImpact": {
+            "type": "object",
+            "properties": {
+              "amountDebitedFromMerchant": {
+                "type": "object",
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "description": "Currency code for the debited amount.",
+                    "example": "USD"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "The debited amount value.",
+                    "example": "100.00"
+                  }
+                },
+                "description": "Amount debited from the merchant due to the dispute."
+              },
+              "fees": {
+                "type": "array",
+                "description": "List of fees associated with the dispute.",
+                "example": [],
+                "items": {
+                  "$ref": "#/components/schemas/DisputeFee"
+                }
+              },
+              "reserveHeld": {
+                "type": "object",
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "description": "Currency code for the reserved amount.",
+                    "example": "USD"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "The value of the amount held in reserve.",
+                    "example": "50.00"
+                  }
+                },
+                "description": "Amount held in reserve related to the dispute."
+              }
+            },
+            "description": "Financial implications of the dispute."
+          },
+          "resolution": {
+            "type": "object",
+            "properties": {
+              "outcome": {
+                "type": "string",
+                "description": "Outcome of the dispute resolution process.",
+                "example": "string"
+              },
+              "resolvedAmount": {
+                "type": "object",
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "description": "Currency code for the resolved amount.",
+                    "example": "USD"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "The value of the resolved amount.",
+                    "example": "80.00"
+                  }
+                },
+                "description": "Amount resolved in the dispute."
+              }
+            },
+            "description": "Details regarding the resolution of the dispute."
           }
         },
-        "description": "Schema representing the request body for disputing a payment.",
-        "example": {
-          "paymentId": "PAY-268860",
-          "reason": "STANDARD",
-          "disputedAmount": {
-            "currency": "USD",
-            "value": "STANDARD"
-          },
-          "customerStatement": "STANDARD",
-          "customerId": "CUST-329174",
-          "evidence": [
-            {
-              "id": "STANDARD",
-              "fileName": "Northstar Banking Service",
-              "contentType": "STANDARD",
-              "fileSizeBytes": 1,
-              "fileUrl": "https://example.com/resource",
-              "sha256": "STANDARD",
-              "uploadedAt": "2026-08-11T12:00:00Z"
-            }
-          ],
-          "requestContext": {
-            "requestId": "c1e13e15-170c-5281-a9cf-5d04f64a3cc6",
-            "correlationId": "a4485910-f23a-5458-845c-6dd487dba19f",
-            "idempotencyKey": "15d07070-e713-54a8-89cb-af74a808e98c",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-530522"
-            }
-          }
-        }
-      },
-      "DisputedAmount": {
-        "title": "Disputed Amount",
-        "type": "object",
-        "properties": {
-          "currency": {
-            "type": "string",
-            "description": "The currency of the disputed amount.",
-            "example": "string"
-          },
-          "value": {
-            "type": "string",
-            "description": "The numerical value of the disputed amount.",
-            "example": "string"
-          }
-        },
-        "description": "Schema representing the amount that is being disputed."
+        "description": "Represents an individual dispute within the response."
       },
       "EvidenceItem": {
+        "title": "Evidence Item",
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "description": "Unique identifier for the evidence item.",
-            "example": "evidence-id"
+            "example": "string"
           },
           "fileName": {
             "type": "string",
-            "description": "Name of the evidence file.",
-            "example": "receipt.pdf"
+            "description": "Name of the file representing the evidence.",
+            "example": "document.pdf"
           },
           "contentType": {
             "type": "string",
@@ -202,374 +480,58 @@
             "type": "integer",
             "description": "Size of the evidence file in bytes.",
             "format": "int32",
-            "example": 2048
+            "example": 1024
           },
           "fileUrl": {
             "type": "string",
             "description": "URL to access the evidence file.",
-            "example": "http://example.com/evidence/receipt.pdf"
+            "example": "http://example.com/evidence/document.pdf"
           },
           "sha256": {
             "type": "string",
-            "description": "SHA-256 hash of the evidence file.",
-            "example": "abcdef1234567890"
+            "description": "SHA-256 hash of the evidence file for integrity checking.",
+            "example": "string"
           },
           "uploadedAt": {
             "type": "string",
-            "description": "Timestamp when the evidence was uploaded.",
-            "example": "2023-01-01T00:00:00Z"
-          }
-        },
-        "description": "An evidence item related to a dispute."
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "string"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Correlation identifier for tracking the request across systems.",
-            "example": "string"
-          },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "Identifier for ensuring idempotency of the request.",
-            "example": "string"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp when the request was made.",
-            "example": "string"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "The system from which the request originated.",
-            "example": "string"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "The application from which the request originated.",
-            "example": "string"
-          },
-          "channel": {
-            "description": "Information about the communication channel used.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Schema representing the context of the request."
-      },
-      "Channel": {
-        "title": "Channel",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier for the communication channel.",
-            "example": "string"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of the communication channel (e.g., web, mobile).",
-            "example": "string"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier for the device used in the channel.",
+            "description": "Timestamp indicating when the evidence was uploaded.",
             "example": "string"
           }
         },
-        "description": "Schema representing the communication channel for the request."
+        "description": "Represents an individual piece of evidence related to a dispute."
       },
-      "UpdateDisputeRes100045Response_200": {
-        "type": "object",
-        "properties": {
-          "disputeId": {
-            "type": "string",
-            "description": "Unique identifier for the dispute.",
-            "example": "STANDARD"
-          },
-          "paymentId": {
-            "type": "string",
-            "description": "Identifier for the associated payment.",
-            "example": "PAY-564302"
-          },
-          "merchantId": {
-            "type": "string",
-            "description": "Identifier for the merchant involved in the dispute.",
-            "example": "MER-758863"
-          },
-          "reason": {
-            "type": "string",
-            "description": "The reason for the dispute.",
-            "example": "STANDARD"
-          },
-          "disputedAmount": {
-            "description": "The amount that is disputed.",
-            "$ref": "#/components/schemas/MonetaryAmount"
-          },
-          "customerStatement": {
-            "type": "string",
-            "description": "Customer's statement regarding the dispute.",
-            "example": "STANDARD"
-          },
-          "status": {
-            "type": "string",
-            "description": "Current status of the dispute.",
-            "example": "ACTIVE"
-          },
-          "responseDueAt": {
-            "type": "string",
-            "description": "Timestamp indicating when a response is due.",
-            "example": "2026-08-11T12:00:00Z"
-          },
-          "evidence": {
-            "type": "array",
-            "description": "List of evidence documents related to the dispute.",
-            "example": [
-              {
-                "id": "STANDARD",
-                "fileName": "Northstar Banking Service",
-                "contentType": "STANDARD",
-                "fileSizeBytes": 1,
-                "fileUrl": "https://example.com/resource",
-                "sha256": "STANDARD",
-                "uploadedAt": "2026-08-11T12:00:00Z"
-              }
-            ],
-            "items": {
-              "$ref": "#/components/schemas/EvidenceItem"
-            }
-          },
-          "financialImpact": {
-            "description": "Details of the financial impact of the dispute.",
-            "$ref": "#/components/schemas/FinancialImpact"
-          },
-          "resolution": {
-            "description": "Details of how the dispute was resolved.",
-            "$ref": "#/components/schemas/Resolution"
-          },
-          "audit": {
-            "description": "Audit information related to the dispute.",
-            "$ref": "#/components/schemas/AuditInfo"
-          },
-          "metadata": {
-            "description": "Metadata related to the dispute.",
-            "$ref": "#/components/schemas/Metadata"
-          }
-        },
-        "description": "Schema representing a dispute response.",
-        "example": {
-          "disputeId": "STANDARD",
-          "paymentId": "PAY-564302",
-          "merchantId": "MER-758863",
-          "reason": "STANDARD",
-          "disputedAmount": {
-            "currency": "USD",
-            "value": "STANDARD"
-          },
-          "customerStatement": "STANDARD",
-          "status": "ACTIVE",
-          "responseDueAt": "2026-08-11T12:00:00Z",
-          "evidence": [
-            {
-              "id": "STANDARD",
-              "fileName": "Northstar Banking Service",
-              "contentType": "STANDARD",
-              "fileSizeBytes": 1,
-              "fileUrl": "https://example.com/resource",
-              "sha256": "STANDARD",
-              "uploadedAt": "2026-08-11T12:00:00Z"
-            }
-          ],
-          "financialImpact": {
-            "amountDebitedFromMerchant": {
-              "currency": "USD",
-              "value": "STANDARD"
-            },
-            "fees": [
-              {
-                "feeType": "STANDARD",
-                "amount": {
-                  "currency": "USD",
-                  "value": "STANDARD"
-                },
-                "bearer": "CUSTOMER"
-              }
-            ],
-            "reserveHeld": {
-              "currency": "USD",
-              "value": "STANDARD"
-            }
-          },
-          "resolution": {
-            "outcome": "STANDARD",
-            "resolvedAmount": {
-              "currency": "USD",
-              "value": "STANDARD"
-            },
-            "reason": "STANDARD",
-            "resolvedAt": "2026-08-11T12:00:00Z"
-          },
-          "audit": {
-            "createdAt": "2026-09-15T14:30:00Z",
-            "createdBy": "STANDARD",
-            "updatedAt": "2026-09-15T14:30:00Z",
-            "updatedBy": "2026-09-15",
-            "version": 1
-          },
-          "metadata": {
-            "responseId": "04f43abf-a4b7-56b7-9ab0-bd03a18aad39",
-            "correlationId": "a4485910-f23a-5458-845c-6dd487dba19f",
-            "generatedAt": "2026-09-15T14:30:00Z",
-            "processingRegion": "us-east-1"
-          }
-        }
-      },
-      "MonetaryAmount": {
-        "type": "object",
-        "properties": {
-          "currency": {
-            "type": "string",
-            "description": "Currency code for the amount.",
-            "example": "USD"
-          },
-          "value": {
-            "type": "string",
-            "description": "The amount in the specified currency.",
-            "example": "100.00"
-          }
-        },
-        "description": "Represents a monetary amount with currency."
-      },
-      "FinancialImpact": {
-        "type": "object",
-        "properties": {
-          "amountDebitedFromMerchant": {
-            "description": "Amount debited from the merchant due to the dispute.",
-            "$ref": "#/components/schemas/MonetaryAmount"
-          },
-          "fees": {
-            "type": "array",
-            "description": "List of fees associated with the dispute.",
-            "example": "string",
-            "items": {
-              "$ref": "#/components/schemas/Fee"
-            }
-          },
-          "reserveHeld": {
-            "description": "Amount held in reserve related to the dispute.",
-            "$ref": "#/components/schemas/MonetaryAmount"
-          }
-        },
-        "description": "Financial details related to the dispute."
-      },
-      "Fee": {
+      "DisputeFee": {
+        "title": "Dispute Fee",
         "type": "object",
         "properties": {
           "feeType": {
             "type": "string",
-            "description": "Type of the fee associated with the dispute.",
-            "example": "Processing Fee"
+            "description": "Type of the fee.",
+            "example": "service fee"
           },
           "amount": {
-            "description": "Amount of the fee.",
-            "$ref": "#/components/schemas/MonetaryAmount"
+            "type": "object",
+            "properties": {
+              "currency": {
+                "type": "string",
+                "description": "Currency code for the fee.",
+                "example": "USD"
+              },
+              "value": {
+                "type": "string",
+                "description": "The value of the fee.",
+                "example": "10.00"
+              }
+            },
+            "description": "Amount of the fee."
           },
           "bearer": {
             "type": "string",
-            "description": "Indicates who bears the fee.",
-            "example": "Merchant"
+            "description": "Indicates who is responsible for the fee.",
+            "example": "merchant"
           }
         },
         "description": "Represents a fee associated with a dispute."
-      },
-      "Resolution": {
-        "type": "object",
-        "properties": {
-          "outcome": {
-            "type": "string",
-            "description": "Outcome of the dispute resolution.",
-            "example": "Refunded"
-          },
-          "resolvedAmount": {
-            "description": "Amount resolved in the dispute.",
-            "$ref": "#/components/schemas/MonetaryAmount"
-          },
-          "reason": {
-            "type": "string",
-            "description": "Reason for the resolution outcome.",
-            "example": "Fraud"
-          },
-          "resolvedAt": {
-            "type": "string",
-            "description": "Timestamp when the dispute was resolved.",
-            "example": "2023-01-02T00:00:00Z"
-          }
-        },
-        "description": "Details of the resolution of a dispute."
-      },
-      "AuditInfo": {
-        "type": "object",
-        "properties": {
-          "createdAt": {
-            "type": "string",
-            "description": "Timestamp when the dispute was created.",
-            "example": "2023-01-01T00:00:00Z"
-          },
-          "createdBy": {
-            "type": "string",
-            "description": "Identifier of the user who created the dispute.",
-            "example": "user123"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp when the dispute was last updated.",
-            "example": "2023-01-02T00:00:00Z"
-          },
-          "updatedBy": {
-            "type": "string",
-            "description": "Identifier of the user who last updated the dispute.",
-            "example": "user456"
-          },
-          "version": {
-            "type": "integer",
-            "description": "Version number of the dispute.",
-            "format": "int32",
-            "example": 1
-          }
-        },
-        "description": "Audit information related to the dispute."
-      },
-      "Metadata": {
-        "type": "object",
-        "properties": {
-          "responseId": {
-            "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "response-id"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier to correlate related requests.",
-            "example": "correlation-id"
-          },
-          "generatedAt": {
-            "type": "string",
-            "description": "Timestamp when the metadata was generated.",
-            "example": "2023-01-01T00:00:00Z"
-          },
-          "processingRegion": {
-            "type": "string",
-            "description": "Region where the processing occurred.",
-            "example": "US"
-          }
-        },
-        "description": "Metadata providing additional information about the dispute."
       }
     },
     "parameters": {
@@ -590,17 +552,15 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint being used, which allows tracking of requests and responses.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "banking-p2m-openapi-replace-dispute"
+          "example": "banking-p2m-openapi-list-disputes"
         },
-        "example": "banking-p2m-openapi-replace-dispute"
+        "example": "banking-p2m-openapi-list-disputes"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that is processing the request, useful for debugging and analytics.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -613,7 +573,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a Bearer token authentication method. The client must include a valid JSON Web Token (JWT) in the Authorization header of requests to access secured endpoints.",
+        "description": "This security scheme uses the Bearer authentication scheme, where the user must provide a valid JSON Web Token (JWT) in the Authorization header of the request. Ensure that the token is obtained through a secure login process.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
