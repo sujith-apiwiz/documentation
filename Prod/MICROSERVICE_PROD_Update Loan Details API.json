@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Update Loan Details API",
-    "description": "The Update Loan Details API allows financial institutions to modify existing loan information based on the provided loan ID. This endpoint facilitates the adjustment of key loan attributes, ensuring that customer records are always up to date. Typical consumers of this API are loan management systems and customer relationship management platforms looking to streamline their operations. By providing an intuitive interface for loan updates, organizations can enhance customer service and improve operational efficiency.",
+    "description": "The Update Loan Details API allows financial institutions to modify existing loan information for customers, ensuring that all data is up-to-date and accurate. This endpoint supports operations such as adjusting loan terms, interest rates, or payment schedules based on customer requests or policy updates. Typical consumers include loan officers, customer service representatives, or any financial applications needing to maintain current loan records. By utilizing this API, businesses can enhance customer experience through timely updates and adjustments to loan agreements.",
     "version": "1.0"
   },
   "servers": [
@@ -18,7 +18,7 @@
       "x-basePath": "/"
     },
     {
-      "url": "https://35.162.152.203:9004",
+      "url": "https://35.162.152.203:9001",
       "description": "PROD",
       "variables": {},
       "x-schema": "https://",
@@ -30,14 +30,14 @@
     }
   ],
   "paths": {
-    "/v5/loans/loans/{loanId}": {
-      "put": {
+    "/v5/banking/deposit-lending/loan/{loanId}": {
+      "patch": {
         "tags": [
           "Loan Management"
         ],
-        "summary": "Update Loan Details",
-        "description": "This endpoint allows the user to update the details of a specified loan by its ID. It accepts various fields that may need to be modified and ensures the changes are persisted in the system.",
-        "operationId": "updateLoanById",
+        "summary": "Update loan details for a specific loan.",
+        "description": "This endpoint allows you to update the relevant details of a specific loan identified by its ID. Use this operation to adjust parameters like repayments, interest rates, or other attributes associated with the loan.",
+        "operationId": "updateLoanDetails",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
@@ -47,18 +47,18 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to update the details of the loan identified by LOAN-500045. It should contain the necessary fields to perform the update operation.",
+          "description": "This request body is used to update the details of loan LOAN-500045 through a PATCH request. It allows for partial updates to the loan's data.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateLoanByIdRequest"
+                "$ref": "#/components/schemas/UpdateLoanDetailsRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, and the resource has been updated.",
+            "description": "The loan details were updated successfully.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateLoanByIdResponse_200"
+                  "$ref": "#/components/schemas/UpdateLoanDetailsResponse_200"
                 }
               }
             }
@@ -90,68 +90,80 @@
   },
   "components": {
     "schemas": {
-      "UpdateLoanByIdRequest": {
-        "title": "Loan Update Request Body",
+      "UpdateLoanDetailsRequest": {
+        "title": "Loan Operations Patch Request Body",
         "type": "object",
         "properties": {
-          "repaymentAccountNumber": {
+          "changes": {
+            "description": "Contains the details of the changes to be made to the loan.",
+            "$ref": "#/components/schemas/LoanChanges"
+          },
+          "changeReason": {
             "type": "string",
-            "description": "The account number to which loan repayments should be made.",
+            "description": "Reason for the change.",
             "example": "STANDARD"
           },
-          "servicingBranchCode": {
+          "effectiveAt": {
             "type": "string",
-            "description": "The code of the branch servicing the loan.",
-            "example": "CODE-618"
+            "description": "Date and time when the change becomes effective.",
+            "example": "2026-09-15T14:30:00Z"
           },
-          "relationshipManagerId": {
+          "requestedBy": {
             "type": "string",
-            "description": "Identifier for the relationship manager handling this loan.",
-            "example": "STANDARD"
-          },
-          "preferredRepaymentDay": {
-            "type": "integer",
-            "description": "The preferred day of the month for loan repayments.",
-            "format": "int32",
-            "example": 1
-          },
-          "collectionStrategy": {
-            "type": "string",
-            "description": "The strategy used for collecting the loan repayments.",
-            "example": "STANDARD"
-          },
-          "servicingNotes": {
-            "type": "string",
-            "description": "Any additional notes related to servicing the loan.",
+            "description": "Identifier of the user who requested the change.",
             "example": "STANDARD"
           },
           "requestContext": {
-            "description": "Contextual information about the request.",
+            "description": "Contextual information regarding the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Schema for updating loan details through PUT request.",
+        "description": "Schema representing the request body for patching loan operations.",
         "example": {
-          "repaymentAccountNumber": "STANDARD",
-          "servicingBranchCode": "CODE-618",
-          "relationshipManagerId": "STANDARD",
-          "preferredRepaymentDay": 1,
-          "collectionStrategy": "STANDARD",
-          "servicingNotes": "STANDARD",
+          "changes": {
+            "customerId": "CUST-774994",
+            "accountId": "ACC-948757",
+            "productCode": "CHK-PREMIUM-US"
+          },
+          "changeReason": "STANDARD",
+          "effectiveAt": "2026-09-15T14:30:00Z",
+          "requestedBy": "STANDARD",
           "requestContext": {
-            "requestId": "ad1d1ecd-10d6-5b15-b96d-6423435b1388",
-            "correlationId": "60bdc1e9-04a7-5797-bd39-7334f02ed3a3",
-            "idempotencyKey": "704333b5-cd40-5559-9e0e-46ab8c860ef4",
+            "requestId": "4699e28d-1fa8-5dce-aa1b-de03e61f1d16",
+            "correlationId": "b1d4dae8-da71-5e55-91ff-99e0bf7d9db3",
+            "idempotencyKey": "7857949f-5e36-5eed-82be-d9e911d592db",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-479867"
+              "deviceId": "DEV-369240"
             }
           }
         }
+      },
+      "LoanChanges": {
+        "title": "Loan Changes",
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "description": "Identifier for the customer.",
+            "example": "customer123"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Identifier for the account associated with the loan.",
+            "example": "account456"
+          },
+          "productCode": {
+            "type": "string",
+            "description": "Code representing the product related to the loan.",
+            "example": "LOAN_PROD"
+          }
+        },
+        "description": "Schema representing the changes to a loan."
       },
       "RequestContext": {
         "title": "Request Context",
@@ -159,40 +171,40 @@
         "properties": {
           "requestId": {
             "type": "string",
-            "description": "A unique identifier for the request.",
-            "example": "req-001"
+            "description": "Unique identifier for the request.",
+            "example": "req789"
           },
           "correlationId": {
             "type": "string",
-            "description": "An identifier used to track related requests.",
-            "example": "corr-001"
+            "description": "Identifier used to correlate related requests.",
+            "example": "corr123"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key ensuring that the request can be safely retried.",
-            "example": "idempotent-key-001"
+            "description": "Key used to ensure the request is processed only once.",
+            "example": "idempotent-key-xyz"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the request was made.",
-            "example": "2023-01-01T12:00:00Z"
+            "description": "Timestamp when the request was made.",
+            "example": "2023-10-01T00:00:00Z"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "The system from which the request originates.",
-            "example": "CoreBanking"
+            "description": "Name of the system from which the request originates.",
+            "example": "LoanManagementSystem"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application that initiated the request.",
-            "example": "LoanManagementApp"
+            "description": "Name of the application from which the request originates.",
+            "example": "LoanApp"
           },
           "channel": {
-            "description": "Information about the channel through which the request was made.",
+            "description": "Information related to the channel from which the request was initiated.",
             "$ref": "#/components/schemas/RequestChannel"
           }
         },
-        "description": "Schema representing the context of the request."
+        "description": "Schema containing contextual information for the request."
       },
       "RequestChannel": {
         "title": "Request Channel",
@@ -200,303 +212,86 @@
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "Identifier for the channel used.",
-            "example": "channel-001"
+            "description": "Unique identifier for the channel.",
+            "example": "channel789"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of the channel (e.g., Mobile, Web).",
-            "example": "Mobile"
+            "description": "Type of channel through which the request is made (e.g., online, mobile).",
+            "example": "web"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier for the device used for the request.",
-            "example": "device-001"
+            "description": "Identifier for the device used to make the request.",
+            "example": "device123"
           }
         },
-        "description": "Schema representing the channel through which the request is made."
+        "description": "Schema representing channel information for the request."
       },
-      "UpdateLoanByIdResponse_200": {
-        "title": "Loan Operations Response",
+      "UpdateLoanDetailsResponse_200": {
+        "title": "Loan Update Response",
         "type": "object",
         "properties": {
-          "sourceApplicationId": {
-            "type": "string",
-            "description": "Identifier of the source application that initiated the loan request.",
-            "example": "APP-919458"
-          },
-          "productId": {
-            "type": "string",
-            "description": "Identifier of the loan product.",
-            "example": "PROD-128109"
-          },
-          "primaryCustomerId": {
-            "type": "string",
-            "description": "Identifier of the primary customer associated with the loan.",
-            "example": "CUST-400388"
-          },
-          "borrowerCustomerIds": {
-            "type": "array",
-            "description": "List of identifiers for borrower customers associated with the loan.",
-            "example": [
-              "CUST-374120"
-            ],
-            "items": {
-              "type": "string",
-              "description": "Identifier for an individual borrower customer.",
-              "example": "string"
-            }
-          },
-          "principal": {
-            "description": "The principal amount of the loan including currency details.",
-            "$ref": "#/components/schemas/LoanPrincipal"
-          },
-          "termMonths": {
+          "version": {
             "type": "integer",
-            "description": "The term of the loan in months.",
+            "description": "The version of the loan update.",
             "format": "int32",
             "example": 1
           },
-          "annualInterestRatePercent": {
-            "type": "string",
-            "description": "The annual interest rate applied to the loan expressed as a percentage.",
-            "example": "STANDARD"
-          },
-          "interestRateType": {
-            "type": "string",
-            "description": "Type of interest rate applicable to the loan.",
-            "example": "STANDARD"
-          },
-          "repaymentFrequency": {
-            "type": "string",
-            "description": "Frequency of loan repayments.",
-            "example": "STANDARD"
-          },
-          "bookingDate": {
-            "type": "string",
-            "description": "The date when the loan was booked.",
-            "example": "2026-09-15"
-          },
-          "firstPaymentDate": {
-            "type": "string",
-            "description": "The date of the first payment due for the loan.",
-            "example": "2026-09-15"
-          },
-          "maturityDate": {
-            "type": "string",
-            "description": "The date when the loan matures.",
-            "example": "2026-09-15"
-          },
-          "repaymentAccountNumber": {
-            "type": "string",
-            "description": "Account number from which loan repayments will be made.",
-            "example": "STANDARD"
-          },
-          "servicingBranchCode": {
-            "type": "string",
-            "description": "Code of the branch servicing the loan.",
-            "example": "CODE-514"
-          },
-          "relationshipManagerId": {
-            "type": "string",
-            "description": "Identifier for the relationship manager handling the loan.",
-            "example": "STANDARD"
-          },
-          "purpose": {
-            "type": "string",
-            "description": "Purpose for which the loan was taken.",
-            "example": "STANDARD"
-          },
-          "id": {
-            "type": "string",
-            "description": "Unique identifier for the loan.",
-            "example": "3e5ffc7e-1948-032f-2e71-0b29ddf8eefd"
-          },
-          "accountNumber": {
-            "type": "string",
-            "description": "Account number associated with the loan.",
-            "example": "STANDARD"
-          },
           "status": {
             "type": "string",
-            "description": "Current status of the loan.",
+            "description": "The status of the loan update operation.",
             "example": "ACTIVE"
           },
-          "balance": {
-            "description": "Details of the loan balance including various outstanding amounts.",
-            "$ref": "#/components/schemas/LoanBalance"
-          },
-          "totalDisbursed": {
-            "description": "Total amount that has been disbursed under the loan.",
-            "$ref": "#/components/schemas/LoanFinancials"
-          },
-          "totalRepaid": {
-            "description": "Total amount that has been repaid under the loan.",
-            "$ref": "#/components/schemas/LoanFinancials"
+          "updatedAt": {
+            "type": "string",
+            "description": "The timestamp when the loan was last updated.",
+            "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Metadata related to the loan operation response.",
-            "$ref": "#/components/schemas/LoanMetadata"
+            "description": "Metadata associated with the loan update operation.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for loan operations including various loan details and metadata.",
+        "description": "Response schema for the loan update operation. Contains details about the version, status, update timestamp, and metadata related to the operation.",
         "example": {
-          "sourceApplicationId": "APP-919458",
-          "productId": "PROD-128109",
-          "primaryCustomerId": "CUST-400388",
-          "borrowerCustomerIds": [
-            "CUST-374120"
-          ],
-          "principal": {
-            "currency": "USD",
-            "amount": "1250.75"
-          },
-          "termMonths": 1,
-          "annualInterestRatePercent": "STANDARD",
-          "interestRateType": "STANDARD",
-          "repaymentFrequency": "STANDARD",
-          "bookingDate": "2026-09-15",
-          "firstPaymentDate": "2026-09-15",
-          "maturityDate": "2026-09-15",
-          "repaymentAccountNumber": "STANDARD",
-          "servicingBranchCode": "CODE-514",
-          "relationshipManagerId": "STANDARD",
-          "purpose": "STANDARD",
-          "id": "3e5ffc7e-1948-032f-2e71-0b29ddf8eefd",
-          "accountNumber": "STANDARD",
+          "version": 1,
           "status": "ACTIVE",
-          "balance": {
-            "principalOutstanding": {
-              "currency": "USD",
-              "amount": "1250.75"
-            },
-            "accruedInterest": {
-              "currency": "USD",
-              "amount": "1250.75"
-            },
-            "feesOutstanding": {
-              "currency": "USD",
-              "amount": "1250.75"
-            },
-            "penaltiesOutstanding": {
-              "currency": "USD",
-              "amount": "1250.75"
-            },
-            "totalOutstanding": {
-              "currency": "USD",
-              "amount": "1250.75"
-            },
-            "availableToDraw": {
-              "currency": "USD",
-              "amount": "1250.75"
-            }
-          },
-          "totalDisbursed": {
-            "currency": "USD",
-            "amount": "1250.75"
-          },
-          "totalRepaid": {
-            "currency": "USD"
-          },
+          "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "3ea904ad-20a3-595d-a4a4-fa8da5fb56f6",
-            "correlationId": "60bdc1e9-04a7-5797-bd39-7334f02ed3a3",
+            "responseId": "9a94f4c1-325e-5d14-8af4-6952d27ed849",
+            "correlationId": "b1d4dae8-da71-5e55-91ff-99e0bf7d9db3",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "LoanPrincipal": {
-        "title": "Loan Principal",
-        "type": "object",
-        "properties": {
-          "currency": {
-            "type": "string",
-            "description": "Currency code of the principal amount.",
-            "example": "USD"
-          },
-          "amount": {
-            "type": "string",
-            "description": "The principal amount of the loan.",
-            "example": "10000"
-          }
-        },
-        "description": "Details regarding the principal amount of the loan."
-      },
-      "LoanBalance": {
-        "title": "Loan Balance",
-        "type": "object",
-        "properties": {
-          "principalOutstanding": {
-            "description": "Outstanding principal amount of the loan.",
-            "$ref": "#/components/schemas/LoanFinancials"
-          },
-          "accruedInterest": {
-            "description": "Accrued interest amount for the loan.",
-            "$ref": "#/components/schemas/LoanFinancials"
-          },
-          "feesOutstanding": {
-            "description": "Outstanding fees associated with the loan.",
-            "$ref": "#/components/schemas/LoanFinancials"
-          },
-          "penaltiesOutstanding": {
-            "description": "Outstanding penalties related to the loan.",
-            "$ref": "#/components/schemas/LoanFinancials"
-          },
-          "totalOutstanding": {
-            "description": "Total outstanding amount on the loan.",
-            "$ref": "#/components/schemas/LoanFinancials"
-          },
-          "availableToDraw": {
-            "description": "Amount available to draw against the loan.",
-            "$ref": "#/components/schemas/LoanFinancials"
-          }
-        },
-        "description": "Details regarding the loan balance including outstanding amounts."
-      },
-      "LoanFinancials": {
-        "title": "Loan Financials",
-        "type": "object",
-        "properties": {
-          "currency": {
-            "type": "string",
-            "description": "Currency code for the financial amount.",
-            "example": "USD"
-          },
-          "amount": {
-            "type": "string",
-            "description": "The monetary amount.",
-            "example": "10000"
-          }
-        },
-        "description": "Financial details related to amounts in the loan such as currency and amount."
-      },
-      "LoanMetadata": {
-        "title": "Loan Metadata",
+      "Metadata": {
+        "title": "Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Identifier for the response of the operation.",
-            "example": "response-12345"
+            "description": "Unique identifier for the response.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation identifier for tracing the request.",
-            "example": "correlation-54321"
+            "description": "Identifier for correlating requests and responses.",
+            "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the response was generated.",
-            "example": "2023-01-01T12:00:00Z"
+            "description": "Timestamp when the metadata was generated.",
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing of the loan took place.",
-            "example": "us-east-1"
+            "description": "The region where the processing took place.",
+            "example": "string"
           }
         },
-        "description": "Metadata associated with the loan operation response."
+        "description": "Metadata schema containing identifiers and timestamps related to the processing of the loan update."
       }
     },
     "parameters": {
@@ -527,30 +322,30 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint being called. This value helps in tracking and logging requests to specific API endpoints.",
+        "description": "A unique identifier for the endpoint that processed the request, allowing tracking and debugging.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "banking-loans-openapi-replace-loan"
+          "example": "loan-update-loan"
         },
-        "example": "banking-loans-openapi-replace-loan"
+        "example": "loan-update-loan"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that processed the request. This header can be useful for distinguishing requests from different applications.",
+        "description": "Identifies the application instance responsible for handling the request, useful for performance monitoring.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "lending-credit"
+          "example": "accounts-deposits"
         },
-        "example": "lending-credit"
+        "example": "accounts-deposits"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses Bearer authentication to authorize access to the API. A valid JWT (JSON Web Token) must be included in the Authorization header of the request.",
+        "description": "Authentication scheme that utilizes a JSON Web Token (JWT) as the bearer token. Clients should include the token in the Authorization header when making requests to secure endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
