@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Routing Decisions API",
-    "description": "The Routing Decisions API enables financial institutions to efficiently manage and direct card transaction requests based on operational criteria. This endpoint is designed for the submission of transaction data to determine the appropriate routing path, enhancing processing efficiency and ensuring compliance with regulatory requirements. Typical consumers include payment processors and banking platforms that need to optimize card transaction flows. By utilizing this API, developers can implement intelligent decision-making capabilities that improve transaction handling within their operations.",
+    "description": "The Routing Decisions API facilitates the determination and management of routing decisions in market data operations. This endpoint allows users to submit and update routing configurations based on market conditions and business logic. Typical consumers include financial institutions and trading platforms that require dynamic routing capabilities to optimize market data handling. Leveraging this API can enhance decision-making and improve data processing efficiency across various banking applications.",
     "version": "1.0"
   },
   "servers": [
@@ -19,25 +19,25 @@
     }
   ],
   "paths": {
-    "/v5/banking/operational-services/card-transaction-switch/routing-decisions": {
+    "/v5/banking/market-data/market-data-switch-operation/routing-decisions": {
       "post": {
         "tags": [
-          "Card Transaction Services"
+          "Market Data Operations"
         ],
-        "summary": "Create a routing decision for card transactions.",
-        "description": "This endpoint allows users to create routing decisions based on card transaction criteria. The decision generated will determine the processing path for the specified card transaction, optimizing for efficiency and accuracy.",
-        "operationId": "postCardTransactionSwitchRoutingDecision",
+        "summary": "Create a new routing decision for market data switch operations.",
+        "description": "This endpoint allows you to create a new routing decision specifically for market data switch operations. By providing the necessary data in the request body, users can effectively manage how market data is routed based on predefined rules and criteria.",
+        "operationId": "postMarketDataRoutingDecisions",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to submit routing decisions for card transaction switches. The payload must conform to the specified schema, which includes all necessary parameters required for processing the routing decision.",
+          "description": "This request body is used to submit routing decisions for market data switch operations. It contains the necessary parameters for defining the routing logic to be applied. Ensure the data is structured according to the schema specified.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PostCardTransactionSwitchRoutingDecisionRequest"
+                "$ref": "#/components/schemas/PostMarketDataRoutingDecisionsRequest"
               }
             }
           }
@@ -46,17 +46,17 @@
           "202": {
             "description": "The request has been accepted and is being processed.",
             "headers": {
-              "x-endpoint-id": {
-                "$ref": "#/components/headers/x-endpoint-id"
+              "X-Endpoint-Id": {
+                "$ref": "#/components/headers/X-Endpoint-Id"
               },
-              "x-runtime-app": {
-                "$ref": "#/components/headers/x-runtime-app"
+              "X-Runtime-App": {
+                "$ref": "#/components/headers/X-Runtime-App"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostCardTransactionSwitchRoutingDecisionResponse_202"
+                  "$ref": "#/components/schemas/PostMarketDataRoutingDecisionsResponse_202"
                 }
               }
             }
@@ -76,58 +76,76 @@
   },
   "components": {
     "schemas": {
-      "PostCardTransactionSwitchRoutingDecisionRequest": {
-        "title": "Card Transaction Switch Routing Decisions Request",
+      "PostMarketDataRoutingDecisionsRequest": {
+        "title": "Market Data Switch Operation Request",
         "type": "object",
         "properties": {
-          "operationId": {
+          "instrumentId": {
             "type": "string",
-            "description": "Unique identifier for the operation being performed.",
+            "description": "The unique identifier for the instrument.",
             "example": "STANDARD"
           },
-          "customerId": {
+          "isin": {
             "type": "string",
-            "description": "Identifier of the customer associated with the transaction.",
-            "example": "CUST-320690"
+            "description": "The International Securities Identification Number for the instrument.",
+            "example": "STANDARD"
           },
-          "accountId": {
+          "marketIdentifierCode": {
             "type": "string",
-            "description": "Identifier of the account involved in the transaction.",
-            "example": "ACC-932815"
+            "description": "The identifier for the market where the instrument is traded.",
+            "example": "CODE-547"
           },
-          "requestedAt": {
+          "asOf": {
             "type": "string",
-            "description": "Timestamp indicating when the request was made.",
+            "description": "The date and time for which the data is relevant.",
             "example": "2026-08-11T12:00:00Z"
           },
-          "priority": {
+          "dataSource": {
             "type": "string",
-            "description": "Priority level for processing the transaction request.",
-            "example": "NORMAL"
+            "description": "The source from which the market data is obtained.",
+            "example": "STANDARD"
+          },
+          "feedId": {
+            "type": "string",
+            "description": "The identifier for the specific data feed.",
+            "example": "STANDARD"
+          },
+          "protocol": {
+            "type": "string",
+            "description": "The protocol to be used for data transmission.",
+            "example": "STANDARD"
+          },
+          "messagesPerSecond": {
+            "type": "integer",
+            "description": "The number of messages to be processed per second.",
+            "format": "int32",
+            "example": 1
           },
           "requestContext": {
-            "description": "Context information about the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "This schema represents the request body for routing decisions in card transaction processing operations.",
+        "description": "This schema represents the request body for the market data switch operation. It contains information about the instrument, market data sources, and request context.",
         "example": {
-          "operationId": "STANDARD",
-          "customerId": "CUST-320690",
-          "accountId": "ACC-932815",
-          "requestedAt": "2026-08-11T12:00:00Z",
-          "priority": "NORMAL",
+          "instrumentId": "STANDARD",
+          "isin": "STANDARD",
+          "marketIdentifierCode": "CODE-547",
+          "asOf": "2026-08-11T12:00:00Z",
+          "dataSource": "STANDARD",
+          "feedId": "STANDARD",
+          "protocol": "STANDARD",
+          "messagesPerSecond": 1,
           "requestContext": {
-            "requestId": "9a69655c-ad97-540d-8276-b37495df6489",
-            "correlationId": "a03dcb4d-7c6f-5942-99b3-d4d15b98b15e",
-            "idempotencyKey": "8e0a7216-174d-51ad-b282-e8440bf7529b",
+            "requestId": "3005abe8-a56f-5a9c-ade8-2a0cc23084e3",
+            "correlationId": "a7b7433b-96b5-5402-9673-2526f410592e",
+            "idempotencyKey": "8986949f-807b-55c3-a6a3-3697a5f5a1e2",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-687368"
+              "deviceId": "DEV-127001"
             }
           }
         }
@@ -138,40 +156,39 @@
         "properties": {
           "requestId": {
             "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req-001"
+            "description": "The unique identifier for the request.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate related requests and responses.",
-            "example": "corr-001"
+            "description": "The identifier used to correlate related requests and responses.",
+            "example": "string"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key used to ensure idempotency in the request.",
-            "example": "idemp-001"
+            "description": "The key used to ensure that repeated requests have the same effect.",
+            "example": "string"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the request was made.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "The timestamp when the request was made.",
+            "example": "string"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "Identifier for the system that initiated the request.",
-            "example": "systemA"
+            "description": "The system from which the request originates.",
+            "example": "string"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "Identifier for the application that initiated the request.",
-            "example": "appA"
+            "description": "The application initiating the request.",
+            "example": "string"
           },
           "channel": {
-            "description": "Information about the channel through which the request was made.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Contains context information related to the request."
+        "description": "This schema contains the context for the request, providing details such as request and correlation identifiers."
       },
       "Channel": {
         "title": "Channel Information",
@@ -179,103 +196,102 @@
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "Identifier for the channel.",
-            "example": "channel-001"
+            "description": "The unique identifier for the channel.",
+            "example": "string"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of the channel (e.g., web, mobile, etc.).",
-            "example": "mobile"
+            "description": "The type of channel used for the request (e.g., web, mobile).",
+            "example": "string"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier for the device used in the transaction.",
-            "example": "device-001"
+            "description": "The identifier for the device used to make the request.",
+            "example": "string"
           }
         },
-        "description": "Details about the channel used in the request."
+        "description": "This schema provides details about the channel through which the request was made."
       },
-      "PostCardTransactionSwitchRoutingDecisionResponse_202": {
+      "PostMarketDataRoutingDecisionsResponse_202": {
+        "title": "Routing Decisions Response",
         "type": "object",
         "properties": {
-          "operationId": {
+          "instrumentId": {
             "type": "string",
-            "description": "The ID of the operation.",
+            "description": "Unique identifier for the financial instrument.",
             "example": "STANDARD"
           },
-          "customerId": {
+          "marketIdentifierCode": {
             "type": "string",
-            "description": "The ID of the customer associated with the transaction.",
-            "example": "CUST-941124"
+            "description": "Code representing the market where the transaction is taking place.",
+            "example": "CODE-877"
           },
-          "accountId": {
+          "feedId": {
             "type": "string",
-            "description": "The ID of the account used for the transaction.",
-            "example": "ACC-731473"
+            "description": "Identifier for the data feed being used.",
+            "example": "STANDARD"
           },
           "processingReference": {
             "type": "string",
-            "description": "A reference number for processing the transaction.",
+            "description": "Reference for tracking the processing status.",
             "example": "STANDARD"
           },
           "status": {
             "type": "string",
-            "description": "The status of the transaction operation.",
+            "description": "Status of the routing decision.",
             "example": "ACTIVE"
           },
           "acceptedAt": {
             "type": "string",
-            "description": "The timestamp when the transaction was accepted.",
+            "description": "Timestamp indicating when the routing decision was accepted.",
             "example": "2026-08-11T12:00:00Z"
           },
           "metadata": {
-            "type": "object",
-            "properties": {
-              "responseId": {
-                "type": "string",
-                "description": "Unique identifier for the response.",
-                "example": "resp_001"
-              },
-              "correlationId": {
-                "type": "string",
-                "description": "Correlation ID for tracing the request across systems.",
-                "example": "corr_001"
-              },
-              "generatedAt": {
-                "type": "string",
-                "description": "The timestamp when the metadata was generated.",
-                "example": "2023-10-01T10:00:00Z"
-              },
-              "processingRegion": {
-                "type": "string",
-                "description": "Region where the transaction was processed.",
-                "example": "US"
-              }
-            },
-            "description": "Additional metadata related to the transaction.",
-            "example": {
-              "responseId": "ec939e2e-56b9-5724-a78f-120d56cf0305",
-              "correlationId": "a03dcb4d-7c6f-5942-99b3-d4d15b98b15e",
-              "generatedAt": "2026-09-15T14:30:00Z",
-              "processingRegion": "us-east-1"
-            }
+            "$ref": "#/components/schemas/RoutingDecisionMetadata"
           }
         },
-        "description": "Response schema for the card transaction switch routing decisions operation.",
+        "description": "This schema represents the response structure for routing decisions in a market data switch operation.",
         "example": {
-          "operationId": "STANDARD",
-          "customerId": "CUST-941124",
-          "accountId": "ACC-731473",
+          "instrumentId": "STANDARD",
+          "marketIdentifierCode": "CODE-877",
+          "feedId": "STANDARD",
           "processingReference": "STANDARD",
           "status": "ACTIVE",
           "acceptedAt": "2026-08-11T12:00:00Z",
           "metadata": {
-            "responseId": "ec939e2e-56b9-5724-a78f-120d56cf0305",
-            "correlationId": "a03dcb4d-7c6f-5942-99b3-d4d15b98b15e",
+            "responseId": "c0a97388-2067-5d92-aa39-cebe0f5ebdeb",
+            "correlationId": "a7b7433b-96b5-5402-9673-2526f410592e",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
+      },
+      "RoutingDecisionMetadata": {
+        "title": "Routing Decision Metadata",
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "Unique identifier for the response.",
+            "example": "string"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier used for correlating requests and responses.",
+            "example": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the metadata was generated.",
+            "example": "string"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "Region where the processing occurred.",
+            "example": "string"
+          }
+        },
+        "description": "This schema contains metadata related to routing decisions."
       }
     },
     "parameters": {
@@ -295,29 +311,29 @@
       }
     },
     "headers": {
-      "x-endpoint-id": {
+      "X-Endpoint-Id": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "card-transaction-switch-route-card-transaction-switch"
+          "example": "market-data-switch-operation-route-market-data-switch-operation"
         },
-        "example": "card-transaction-switch-route-card-transaction-switch"
+        "example": "market-data-switch-operation-route-market-data-switch-operation"
       },
-      "x-runtime-app": {
+      "X-Runtime-App": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "operations-openfinance"
+          "example": "treasury-markets"
         },
-        "example": "operations-openfinance"
+        "example": "treasury-markets"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the Bearer authentication method, which requires a valid JWT (JSON Web Token) for access. The client must include the token in the Authorization header of their requests.",
+        "description": "Authentication scheme that uses JSON Web Tokens (JWT) as a bearer token. This method is commonly used for securing APIs by ensuring that requests are made with a valid token.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
