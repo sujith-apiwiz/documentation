@@ -1,0 +1,528 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MICROSERVICE_PROD_Transaction Authorization API",
+    "description": "The Transaction Authorization API facilitates secure processing of financial transactions across multiple banking channels. This endpoint allows clients to authorize transactions, ensuring compliance with regulatory standards and minimizing risks associated with fraudulent activities. It is primarily utilized by financial institutions and payment processors to manage transaction validations in real-time. Typical use cases include mobile banking applications, online payment systems, and point-of-sale integrations, enabling seamless user experiences while maintaining robust security measures.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://prod-workspace-pwmw.apiwiz.io",
+      "description": "Sandbox server",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "Sandbox server",
+      "x-environmentName": "Sandbox",
+      "x-hide": false,
+      "x-environmentId": "6a7f52236ae9a15654cd5721",
+      "x-basePath": "/"
+    },
+    {
+      "url": "https://customer-channel-app:9000",
+      "description": "PROD",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "PROD",
+      "x-environmentName": "PROD",
+      "x-hide": false,
+      "x-environmentId": "6a784eac1d7e36108cc3cb0c",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/v5/banking/cross-channel/transaction-authorization": {
+      "post": {
+        "tags": [
+          "Transaction Management"
+        ],
+        "summary": "Authorize a cross-channel transaction.",
+        "description": "This endpoint processes a request to authorize a transaction that spans multiple channels, ensuring the transaction adheres to business rules and compliance standards.",
+        "operationId": "authorizeCrossChannelTransaction",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/x-workflow-id"
+          },
+          {
+            "$ref": "#/components/parameters/idempotency-key"
+          },
+          {
+            "$ref": "#/components/parameters/x-workflow-step"
+          },
+          {
+            "$ref": "#/components/parameters/x-workflow-branch"
+          },
+          {
+            "$ref": "#/components/parameters/x-workflow-decision"
+          },
+          {
+            "$ref": "#/components/parameters/x-workflow-internal"
+          },
+          {
+            "$ref": "#/components/parameters/x-workflow-execution-id"
+          },
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          }
+        ],
+        "requestBody": {
+          "description": "This request body should be structured according to the specified JSON schema. It is used to initiate a transaction authorization process across multiple channels, ensuring that all necessary data for the transaction is included.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthorizeCrossChannelTransactionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Resource successfully created and transaction authorized.",
+            "headers": {
+              "X-Endpoint-Id": {
+                "$ref": "#/components/headers/X-Endpoint-Id"
+              },
+              "X-Runtime-App": {
+                "$ref": "#/components/headers/X-Runtime-App"
+              },
+              "X-Workflow-Id": {
+                "$ref": "#/components/headers/X-Workflow-Id"
+              },
+              "X-Workflow-Name": {
+                "$ref": "#/components/headers/X-Workflow-Name"
+              },
+              "X-Workflow-State": {
+                "$ref": "#/components/headers/X-Workflow-State"
+              },
+              "X-Workflow-Execution-Id": {
+                "$ref": "#/components/headers/X-Workflow-Execution-Id"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorizeCrossChannelTransactionResponse_201"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity; validation errors occurred.",
+            "headers": {
+              "X-Workflow-Id": {
+                "$ref": "#/components/headers/X-Workflow-Id"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorizeCrossChannelTransactionResponse_422"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthorizeCrossChannelTransactionResponse_201": {
+        "title": "Transaction Authorization Response",
+        "type": "object",
+        "properties": {
+          "partyId": {
+            "type": "string",
+            "description": "The unique identifier for the party involved in the transaction.",
+            "example": "PARTY-754293"
+          },
+          "interactionId": {
+            "type": "string",
+            "description": "The identifier for the specific interaction related to this transaction.",
+            "example": "INT-247324"
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "The unique identifier for the resource associated with the transaction.",
+            "example": "RES-872942"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the transaction authorization.",
+            "example": "ACTIVE"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "The timestamp when the transaction was created.",
+            "example": "2026-09-15T14:30:00Z"
+          },
+          "metadata": {
+            "description": "Metadata related to the transaction authorization.",
+            "$ref": "#/components/schemas/TransactionAuthorizationMetadata"
+          }
+        },
+        "description": "The response object returned from a transaction authorization operation, containing the details of the transaction status and related metadata.",
+        "example": {
+          "partyId": "PARTY-754293",
+          "interactionId": "INT-247324",
+          "resourceId": "RES-872942",
+          "status": "ACTIVE",
+          "createdAt": "2026-09-15T14:30:00Z",
+          "metadata": {
+            "responseId": "e5d64c21-1103-59d9-a73a-1793d2895cb5",
+            "correlationId": "9cdf8336-474f-5853-8b0b-285b6c5f2c1c",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
+      },
+      "TransactionAuthorizationMetadata": {
+        "title": "Transaction Authorization Metadata",
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "The unique identifier for the response of the transaction authorization.",
+            "example": "string"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "The correlation identifier for tracking the transaction across systems.",
+            "example": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "The timestamp when the metadata was generated.",
+            "example": "string"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "The region where the transaction processing took place.",
+            "example": "string"
+          }
+        },
+        "description": "Metadata related to the transaction authorization response, including identifiers and timestamps."
+      },
+      "AuthorizeCrossChannelTransactionRequest": {
+        "title": "Cross-Channel Transaction Authorization Request",
+        "type": "object",
+        "properties": {
+          "partyId": {
+            "type": "string",
+            "description": "The unique identifier of the party involved in the transaction.",
+            "example": "PARTY-588389"
+          },
+          "interactionId": {
+            "type": "string",
+            "description": "The unique identifier for the interaction context of the transaction.",
+            "example": "INT-456144"
+          },
+          "channel": {
+            "type": "string",
+            "description": "The communication channel through which the transaction is initiated.",
+            "example": "STANDARD"
+          },
+          "authenticationLevel": {
+            "type": "string",
+            "description": "The level of authentication required for processing the transaction.",
+            "example": "STANDARD"
+          },
+          "requestContext": {
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "This schema represents the structure of a request body for cross-channel transaction authorization operations.",
+        "example": {
+          "partyId": "PARTY-588389",
+          "interactionId": "INT-456144",
+          "channel": "STANDARD",
+          "authenticationLevel": "STANDARD",
+          "requestContext": {
+            "requestId": "3d1e1c22-e9a5-5af1-87cf-fd037daf1ad5",
+            "correlationId": "9cdf8336-474f-5853-8b0b-285b6c5f2c1c",
+            "idempotencyKey": "22cd00f2-84de-5604-83fe-a984294842c8",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-123760"
+            }
+          }
+        }
+      },
+      "RequestContext": {
+        "title": "Request Context",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "The unique identifier for the request.",
+            "example": "string"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "An identifier used to track the request across systems.",
+            "example": "string"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "A key to identify requests and ensure idempotency.",
+            "example": "string"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the request was made.",
+            "example": "string"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The system that generated the request.",
+            "example": "string"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application that generated the request.",
+            "example": "string"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "This schema defines the context in which the request is made, including metadata about the request."
+      },
+      "Channel": {
+        "title": "Channel Information",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "The unique identifier of the channel.",
+            "example": "string"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "The type of channel (e.g., online, mobile, etc.).",
+            "example": "string"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "The identifier of the device used to initiate the transaction.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing the details of the channel through which the transaction is processed."
+      },
+      "AuthorizeCrossChannelTransactionResponse_422": {
+        "title": "Transaction Authorization Error Response",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "The error code associated with the transaction authorization failure.",
+            "example": "RISK_REVIEW_REJECTED"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "A unique identifier for tracking the transaction authorization request.",
+            "example": "7e11ad23-05ad-4417-994d-a206802834fc"
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message describing the error that occurred during the transaction authorization.",
+            "example": "Enhanced fraud/compliance review rejected the request"
+          },
+          "workflow": {
+            "type": "string",
+            "description": "The workflow state or action that was being executed at the time of the error.",
+            "example": "WF-043"
+          }
+        },
+        "description": "This schema represents the error response returned when a transaction authorization request fails with a 422 status code.",
+        "example": {
+          "code": "RISK_REVIEW_REJECTED",
+          "correlationId": "7e11ad23-05ad-4417-994d-a206802834fc",
+          "message": "Enhanced fraud/compliance review rejected the request",
+          "workflow": "WF-043"
+        }
+      }
+    },
+    "parameters": {
+      "x-workflow-id": {
+        "name": "x-workflow-id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "WF-043"
+        },
+        "example": "WF-043"
+      },
+      "idempotency-key": {
+        "name": "idempotency-key",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "6e2aa832-8d70-4e9f-a32a-a4b05ff98634"
+        },
+        "example": "6e2aa832-8d70-4e9f-a32a-a4b05ff98634"
+      },
+      "x-workflow-step": {
+        "name": "x-workflow-step",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "1"
+        },
+        "example": "1"
+      },
+      "x-workflow-branch": {
+        "name": "x-workflow-branch",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "main"
+        },
+        "example": "main"
+      },
+      "x-workflow-decision": {
+        "name": "x-workflow-decision",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "RISK_REJECT"
+        },
+        "example": "RISK_REJECT"
+      },
+      "x-workflow-internal": {
+        "name": "x-workflow-internal",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "true"
+        },
+        "example": "true"
+      },
+      "x-workflow-execution-id": {
+        "name": "x-workflow-execution-id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "707dfd62-69f6-4722-bbcd-959e5111c781"
+        },
+        "example": "707dfd62-69f6-4722-bbcd-959e5111c781"
+      },
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "MICROSERVICE_PROD_201",
+            "MICROSERVICE_PROD_422"
+          ]
+        }
+      }
+    },
+    "headers": {
+      "X-Endpoint-Id": {
+        "description": "Unique identifier for the endpoint handling the transaction. This is useful for tracing the specific service involved in the request.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "transaction-authorization-create-transaction-authorization"
+        },
+        "example": "transaction-authorization-create-transaction-authorization"
+      },
+      "X-Runtime-App": {
+        "description": "Name of the application that is processing the transaction. This helps in identifying the source of the request in multi-application environments.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "customer-channel"
+        },
+        "example": "customer-channel"
+      },
+      "X-Workflow-Id": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "description": "A unique identifier for the workflow associated with the transaction authorization process.",
+          "example": "WF-043"
+        },
+        "example": "WF-043"
+      },
+      "X-Workflow-Name": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "Product Launch Pricing and Channel Deployment"
+        },
+        "example": "Product Launch Pricing and Channel Deployment"
+      },
+      "X-Workflow-State": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "ASYNC_PROCESSING"
+        },
+        "example": "ASYNC_PROCESSING"
+      },
+      "X-Workflow-Execution-Id": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "56a6e058-b4a4-4e87-b71a-86058ee101b6"
+        },
+        "example": "56a6e058-b4a4-4e87-b71a-86058ee101b6"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "This security scheme uses bearer authentication format via JSON Web Tokens (JWT). Clients must include a valid JWT in the Authorization header of their requests to gain access to protected resources.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
