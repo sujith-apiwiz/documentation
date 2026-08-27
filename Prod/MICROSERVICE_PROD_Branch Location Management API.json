@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Branch Location Management API",
-    "description": "The Branch Location Management API enables financial institutions to efficiently manage and update information regarding their branch locations. Using this API, developers can create or modify branch data to ensure accurate representation of services in various channels. Typical users include banking operations teams and developers building financial services applications. The API supports seamless integration for managing branch location details, streamlining operations, and enhancing customer access to banking services.",
+    "description": "The Branch Location Management API facilitates the update of branch location details within the banking channel. This endpoint allows users to modify existing branch information, ensuring accurate and current data management. It is primarily utilized by bank administrators and system integrators to keep branch records aligned with operational changes or compliance requirements. Typical use cases include updating branch addresses, operating hours, and contact information.",
     "version": "1.0"
   },
   "servers": [
@@ -30,32 +30,35 @@
     }
   ],
   "paths": {
-    "/v5/banking/channel-specific/branch-location-management": {
-      "post": {
+    "/v5/banking/channel-specific/branch-location-management/{param1}": {
+      "patch": {
         "tags": [
           "Branch Location Management"
         ],
-        "summary": "Create a new branch location.",
-        "description": "This endpoint allows you to create a new branch location within the specific channel. You can specify the details necessary for adding the location, ensuring it is correctly associated with the desired channel.",
-        "operationId": "createBranchLocation",
+        "summary": "Update a specific branch location management resource.",
+        "description": "This endpoint allows you to update information related to a specific branch location management resource identified by RES-100045. Utilize this operation to modify the attributes of the branch location as necessary to ensure the most accurate and up-to-date data.",
+        "operationId": "updateBranchLocationManagementRes100045",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "This request body is utilized to manage branch locations specific to a channel. It should contain all necessary details required for the operation, such as identifying information and configuration settings.",
+          "description": "Updates the information related to a specific branch location within the channel. This includes modifications to location details, operational hours, and any relevant attributes governing the branch's functionality.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateBranchLocationRequest"
+                "$ref": "#/components/schemas/UpdateBranchLocationManagementRes100045Request"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Resource created successfully, reflecting the new branch location.",
+          "200": {
+            "description": "Successfully updated the resource.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -67,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateBranchLocationResponse_201"
+                  "$ref": "#/components/schemas/UpdateBranchLocationManagementRes100045Response_200"
                 }
               }
             }
@@ -87,233 +90,227 @@
   },
   "components": {
     "schemas": {
-      "CreateBranchLocationRequest": {
+      "UpdateBranchLocationManagementRes100045Request": {
+        "title": "PatchRequestBody",
         "type": "object",
         "properties": {
-          "channelId": {
+          "changes": {
+            "description": "Changes to be applied in the patch operation.",
+            "$ref": "#/components/schemas/Changes"
+          },
+          "changeReason": {
             "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "MOBILE-US"
-          },
-          "regionCode": {
-            "type": "string",
-            "description": "Code representing the region of the branch.",
-            "example": "US-EAST-1"
-          },
-          "serviceWindow": {
-            "description": "The time range during which the branch is operational.",
-            "$ref": "#/components/schemas/ServiceWindow"
-          },
-          "dailyCapacity": {
-            "type": "integer",
-            "description": "The total capacity of the branch for daily operations.",
-            "format": "int32",
-            "example": 1
-          },
-          "branchId": {
-            "type": "string",
-            "description": "Unique identifier for the branch.",
+            "description": "The reason for the change being requested.",
             "example": "STANDARD"
           },
-          "branchType": {
+          "effectiveAt": {
             "type": "string",
-            "description": "Type of the branch (e.g., retail, online).",
-            "example": "FULL_SERVICE"
+            "description": "The date and time when the changes should take effect.",
+            "example": "2026-09-15T14:30:00Z"
           },
-          "timeZone": {
+          "requestedBy": {
             "type": "string",
-            "description": "Time zone in which the branch operates.",
-            "example": "America/New_York"
+            "description": "The identifier of the user or system that requested the change.",
+            "example": "STANDARD"
           },
           "requestContext": {
-            "description": "Contextual information related to the request.",
+            "description": "Contextual information about the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Request body for creating or updating branch location management operations specific to a channel.",
+        "description": "This schema represents the request body for patch operations on branch location management.",
         "example": {
-          "channelId": "MOBILE-US",
-          "regionCode": "US-EAST-1",
-          "serviceWindow": {
-            "opensAt": "STANDARD",
-            "closesAt": "STANDARD"
+          "changes": {
+            "channelId": "MOBILE-US",
+            "regionCode": "US-EAST-1",
+            "serviceWindow": {
+              "opensAt": "STANDARD",
+              "closesAt": "STANDARD"
+            }
           },
-          "dailyCapacity": 1,
-          "branchId": "STANDARD",
-          "branchType": "FULL_SERVICE",
-          "timeZone": "America/New_York",
+          "changeReason": "STANDARD",
+          "effectiveAt": "2026-09-15T14:30:00Z",
+          "requestedBy": "STANDARD",
           "requestContext": {
-            "requestId": "0352d467-c30b-5287-9fc0-c15c09cab332",
-            "correlationId": "c68e4878-5915-52b9-8e86-76a0a0e210da",
-            "idempotencyKey": "92bc2b8c-779e-57b4-bc12-98e2080d161a",
+            "requestId": "fcc17f89-938f-546c-a14c-b59f73285f64",
+            "correlationId": "e6af5087-e09c-54f9-8f0a-432878c6f7f1",
+            "idempotencyKey": "e6f02ca4-7a57-510a-aec9-670269940107",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-339955"
+              "deviceId": "DEV-156767"
             }
           }
         }
       },
+      "Changes": {
+        "title": "Changes",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "The unique identifier of the channel.",
+            "example": "string"
+          },
+          "regionCode": {
+            "type": "string",
+            "description": "The code representing the region associated with the branch.",
+            "example": "string"
+          },
+          "serviceWindow": {
+            "description": "The operational service window for the branch.",
+            "$ref": "#/components/schemas/ServiceWindow"
+          }
+        },
+        "description": "This schema details the specific changes related to the patch request."
+      },
       "ServiceWindow": {
+        "title": "ServiceWindow",
         "type": "object",
         "properties": {
           "opensAt": {
             "type": "string",
-            "description": "The opening time of the service window, formatted as an ISO 8601 string.",
-            "example": "09:00"
+            "description": "The time at which the service window opens.",
+            "example": "string"
           },
           "closesAt": {
             "type": "string",
-            "description": "The closing time of the service window, formatted as an ISO 8601 string.",
-            "example": "17:00"
+            "description": "The time at which the service window closes.",
+            "example": "string"
           }
         },
         "description": "Defines the opening and closing times of a service window."
       },
       "RequestContext": {
+        "title": "RequestContext",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
-            "description": "Unique identifier for the request.",
+            "description": "A unique identifier for the request.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier for correlating requests in the system.",
+            "description": "An identifier used to track correlated requests.",
             "example": "string"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key to ensure the request is idempotent.",
+            "description": "A key to ensure that identical requests have the same effect.",
             "example": "string"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp when the request was made, formatted as an ISO 8601 string.",
-            "example": "2023-10-01T10:00:00Z"
+            "description": "The timestamp when the request was made.",
+            "example": "string"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "The system from which the request originated.",
+            "description": "The system that initiated the request.",
             "example": "string"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application from which the request was made.",
+            "description": "The application that initiated the request.",
             "example": "string"
           },
           "channel": {
-            "description": "Information about the channel involved in the request.",
+            "description": "Details related to the specific channel.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Contextual information pertaining to the request made."
+        "description": "This schema contains details about the request context."
       },
       "Channel": {
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier of the channel.",
-            "example": "string"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type designation of the channel (e.g., web, mobile).",
-            "example": "string"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier for the device associated with the channel.",
-            "example": "string"
-          }
-        },
-        "description": "Details about a specific channel."
-      },
-      "CreateBranchLocationResponse_201": {
-        "title": "Branch Location Management Response",
+        "title": "Channel",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
             "description": "The unique identifier for the channel.",
-            "example": "MOBILE-US"
+            "example": "string"
           },
-          "regionCode": {
+          "channelType": {
             "type": "string",
-            "description": "The code representing the region of the branch.",
-            "example": "US-EAST-1"
+            "description": "The type of the channel (e.g., online, offline).",
+            "example": "string"
           },
-          "branchId": {
+          "deviceId": {
             "type": "string",
-            "description": "The unique identifier for the branch.",
-            "example": "STANDARD"
-          },
-          "resourceId": {
-            "type": "string",
-            "description": "The unique identifier for the resource associated with the branch.",
-            "example": "RES-463702"
+            "description": "The identifier of the device used for the request.",
+            "example": "string"
+          }
+        },
+        "description": "Defines the channel details that are relevant to the request."
+      },
+      "UpdateBranchLocationManagementRes100045Response_200": {
+        "title": "Branch Location Management Operation Response",
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "description": "The version of the API response.",
+            "format": "int32",
+            "example": 1
           },
           "status": {
             "type": "string",
-            "description": "The current status of the branch location operation.",
+            "description": "The status of the operation.",
             "example": "ACTIVE"
           },
-          "createdAt": {
+          "updatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the branch location was created.",
+            "description": "The timestamp when the branch location was last updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Metadata related to the branch location operation response.",
-            "$ref": "#/components/schemas/Metadata"
+            "description": "Metadata related to the response.",
+            "$ref": "#/components/schemas/ResponseMetadata"
           }
         },
-        "description": "Response schema for branch location management operations, specifically for POST requests.",
+        "description": "Represents the response received from the PATCH operation for branch location management.",
         "example": {
-          "channelId": "MOBILE-US",
-          "regionCode": "US-EAST-1",
-          "branchId": "STANDARD",
-          "resourceId": "RES-463702",
+          "version": 1,
           "status": "ACTIVE",
-          "createdAt": "2026-09-15T14:30:00Z",
+          "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "6ac23dc7-b627-5081-9f68-99545a9f1f36",
-            "correlationId": "c68e4878-5915-52b9-8e86-76a0a0e210da",
+            "responseId": "e84246e8-fe15-5640-aef8-5891c584e90e",
+            "correlationId": "e6af5087-e09c-54f9-8f0a-432878c6f7f1",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "Metadata": {
+      "ResponseMetadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "The unique identifier for the response.",
-            "example": "response-2023"
+            "description": "A unique identifier for the response.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "An identifier to correlate related requests and responses.",
-            "example": "correlation-987"
+            "description": "A unique identifier used to trace the request through various services.",
+            "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the response was generated.",
-            "example": "2023-10-01T12:05:00Z"
+            "description": "The timestamp when the response was generated.",
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing of the request took place.",
-            "example": "US-West"
+            "description": "The region where the request was processed.",
+            "example": "string"
           }
         },
-        "description": "Metadata information regarding the operation response."
+        "description": "Contains metadata information associated with the API response."
       }
     },
     "parameters": {
@@ -327,24 +324,34 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_201"
+            "MICROSERVICE_PROD_200"
           ]
+        }
+      },
+      "param1": {
+        "name": "param1",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "Identifier for the endpoint associated with this request, used for tracking and analytics.",
+        "description": "A unique identifier for the endpoint that is being invoked. This ID helps track requests and responses across the service.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "branch-location-management-create-branch-location-management"
+          "example": "branch-location-management-update-branch-location-management"
         },
-        "example": "branch-location-management-create-branch-location-management"
+        "example": "branch-location-management-update-branch-location-management"
       },
       "X-Runtime-App": {
-        "description": "Specifies the version of the application that is processing the request, useful for debugging and support.",
+        "description": "The name of the runtime application that is processing the request. This header can be useful for debugging and monitoring purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -357,7 +364,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the Bearer authentication style, specifically utilizing JSON Web Tokens (JWT) for authorizing requests. When included in an API request, the client must present a valid JWT in the Authorization header, allowing secure access to protected resources.",
+        "description": "Authentication scheme using Bearer tokens. Clients must include a valid JSON Web Token (JWT) in the Authorization header when making requests to access protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Party Lifecycle Management API",
-    "description": "The Party Lifecycle Management API enables businesses to efficiently manage and track the lifecycle of parties involved in banking transactions. This API provides crucial resources related to party profiles, status updates, and event triggers throughout the lifecycle. Typical consumers include banking institutions, financial service providers, and system integrators looking to enhance their customer relationship management platforms. With this API, users can seamlessly retrieve information concerning various party entities, ensuring comprehensive oversight and streamlined operations.",
+    "description": "The Party Lifecycle Management API facilitates the retrieval of detailed information regarding parties involved in banking sales activities. This endpoint allows users to access and manage lifecycle data for various entities, such as customers and vendors, which is essential for effective relationship management. Typical consumers of this API include sales teams, customer support representatives, and CRM systems that require up-to-date information on party statuses and interactions. By leveraging this API, organizations can streamline their operations and enhance customer engagement through better insights.",
     "version": "1.0"
   },
   "servers": [
@@ -30,32 +30,35 @@
     }
   ],
   "paths": {
-    "/v5/banking/sales/party-lifecycle-management": {
+    "/v5/banking/sales/party-lifecycle-management/{param1}": {
       "get": {
         "tags": [
-          "Sales Management"
+          "Party Management"
         ],
-        "summary": "Retrieve party lifecycle management information.",
-        "description": "This endpoint allows users to access detailed information about the lifecycle management of parties within the sales domain. It provides insights into party status, transitions, and related events, enabling better management and tracking of party data.",
-        "operationId": "getSalesPartyLifecycleManagement",
+        "summary": "Retrieve party lifecycle details by ID",
+        "description": "This endpoint allows you to fetch the complete lifecycle details of a specific party identified by its unique ID. It's essential for understanding the status and changes in a party's lifecycle over time.",
+        "operationId": "getPartyLifecycleById",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "Request body for retrieving the lifecycle management details of a sales party. This request structure is designed to support various querying options, allowing the user to get specific information based on the defined schema.",
+          "description": "This request body is used to retrieve details related to a specific party lifecycle management operation identified by PARTY-600045. Ensure to provide the necessary parameters in the JSON schema to get the correct data.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetSalesPartyLifecycleManagementRequest"
+                "$ref": "#/components/schemas/GetPartyLifecycleByIdRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved the requested data.",
+            "description": "Request completed successfully and the resource is returned.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -67,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetSalesPartyLifecycleManagementResponse_200"
+                  "$ref": "#/components/schemas/GetPartyLifecycleByIdResponse_200"
                 }
               }
             }
@@ -87,159 +90,100 @@
   },
   "components": {
     "schemas": {
-      "GetSalesPartyLifecycleManagementRequest": {
+      "GetPartyLifecycleByIdRequest": {
         "type": "string",
-        "description": "Represents the request body for the GET operations related to party lifecycle management.",
+        "description": "This schema represents the request body for the operations related to party lifecycle management.",
         "example": "{}"
       },
-      "GetSalesPartyLifecycleManagementResponse_200": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "description": "List of sales items.",
-            "example": [
-              {
-                "prospectId": "STANDARD",
-                "productCode": "CHK-PREMIUM-US",
-                "salesChannel": "STANDARD",
-                "relationshipManagerId": "STANDARD",
-                "expectedValue": {
-                  "amount": 100.0,
-                  "currency": "USD"
-                },
-                "recordStatus": "ACTIVE",
-                "updatedAt": "2026-09-15T14:30:00Z"
-              }
-            ],
-            "items": {
-              "$ref": "#/components/schemas/SalesItem"
-            }
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/Pagination"
-          },
-          "sort": {
-            "type": "string",
-            "description": "Sort order of the results.",
-            "example": "STANDARD"
-          },
-          "metadata": {
-            "$ref": "#/components/schemas/Metadata"
-          }
-        },
-        "description": "Response schema for the sales party lifecycle management GET operation.",
-        "example": {
-          "items": [
-            {
-              "prospectId": "STANDARD",
-              "productCode": "CHK-PREMIUM-US",
-              "salesChannel": "STANDARD",
-              "relationshipManagerId": "STANDARD",
-              "expectedValue": {
-                "amount": 100.0,
-                "currency": "USD"
-              },
-              "recordStatus": "ACTIVE",
-              "updatedAt": "2026-09-15T14:30:00Z"
-            }
-          ],
-          "pagination": {
-            "page": 1,
-            "pageSize": 1,
-            "totalItems": 1
-          },
-          "sort": "STANDARD",
-          "metadata": {
-            "responseId": "c2b9b21e-9ca7-522a-b3e4-771cfa4c9b39",
-            "correlationId": "3685aee6-8e76-5c3d-9a3e-a764e030bddd",
-            "generatedAt": "2026-09-15T14:30:00Z",
-            "processingRegion": "us-east-1"
-          }
-        }
-      },
-      "SalesItem": {
+      "GetPartyLifecycleByIdResponse_200": {
+        "title": "Party Lifecycle Management Response",
         "type": "object",
         "properties": {
           "prospectId": {
             "type": "string",
             "description": "Unique identifier for the prospect.",
-            "example": "string"
+            "example": "STANDARD"
           },
           "productCode": {
             "type": "string",
-            "description": "Code of the product being sold.",
-            "example": "string"
+            "description": "Code representing the product associated with the prospect.",
+            "example": "CHK-PREMIUM-US"
           },
           "salesChannel": {
             "type": "string",
-            "description": "The channel through which the sale was made.",
-            "example": "string"
+            "description": "The sales channel through which the product was sold.",
+            "example": "STANDARD"
           },
           "relationshipManagerId": {
             "type": "string",
-            "description": "Identifier for the relationship manager handling the sale.",
-            "example": "string"
+            "description": "Identifier for the relationship manager handling the prospect.",
+            "example": "STANDARD"
           },
           "expectedValue": {
+            "description": "The expected monetary value associated with the prospect.",
             "$ref": "#/components/schemas/ExpectedValue"
           },
           "recordStatus": {
             "type": "string",
-            "description": "Current status of the sales record.",
-            "example": "string"
+            "description": "Current status of the record.",
+            "example": "ACTIVE"
+          },
+          "version": {
+            "type": "integer",
+            "description": "Version number of the record.",
+            "format": "int32",
+            "example": 1
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp of the last update to the sales record.",
-            "example": "string"
+            "description": "Timestamp of the last record update.",
+            "example": "2026-09-15T14:30:00Z"
+          },
+          "metadata": {
+            "description": "Metadata details related to the response.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Details of a sales item.",
-        "example": "string"
+        "description": "Response schema for retrieving party lifecycle management details.",
+        "example": {
+          "prospectId": "STANDARD",
+          "productCode": "CHK-PREMIUM-US",
+          "salesChannel": "STANDARD",
+          "relationshipManagerId": "STANDARD",
+          "expectedValue": {
+            "amount": 100.0,
+            "currency": "USD"
+          },
+          "recordStatus": "ACTIVE",
+          "version": 1,
+          "updatedAt": "2026-09-15T14:30:00Z",
+          "metadata": {
+            "responseId": "08af8517-1905-5dc0-8494-db91d0de160c",
+            "correlationId": "7bc860c0-d257-5f8f-9359-b3f357d1f930",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
       },
       "ExpectedValue": {
+        "title": "Expected Value",
         "type": "object",
         "properties": {
           "amount": {
             "type": "number",
-            "description": "The expected amount for the sale.",
+            "description": "Monetary amount expected.",
             "example": 0.0
           },
           "currency": {
             "type": "string",
-            "description": "The currency for the expected amount.",
+            "description": "Currency of the expected amount.",
             "example": "string"
           }
         },
-        "description": "Expected financial value of the sale."
-      },
-      "Pagination": {
-        "type": "object",
-        "properties": {
-          "page": {
-            "type": "integer",
-            "description": "The current page number.",
-            "format": "int32",
-            "example": 0
-          },
-          "pageSize": {
-            "type": "integer",
-            "description": "The number of items per page.",
-            "format": "int32",
-            "example": 0
-          },
-          "totalItems": {
-            "type": "integer",
-            "description": "Total number of items available for pagination.",
-            "format": "int32",
-            "example": 0
-          }
-        },
-        "description": "Pagination information for the response.",
-        "example": "string"
+        "description": "Details about the expected monetary value."
       },
       "Metadata": {
+        "title": "Metadata",
         "type": "object",
         "properties": {
           "responseId": {
@@ -249,22 +193,21 @@
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier for tracking the correlation of requests.",
+            "description": "Correlation identifier for tracking requests.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the response was generated.",
+            "description": "Timestamp when the response was generated.",
             "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the request was processed.",
+            "description": "The region where the processing took place.",
             "example": "string"
           }
         },
-        "description": "Additional metadata for the response.",
-        "example": "string"
+        "description": "Metadata associated with the response."
       }
     },
     "parameters": {
@@ -281,6 +224,16 @@
             "MICROSERVICE_PROD_200"
           ]
         }
+      },
+      "param1": {
+        "name": "param1",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
       }
     },
     "headers": {
@@ -289,9 +242,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "party-lifecycle-management-search-party-lifecycle-management"
+          "example": "party-lifecycle-management-get-party-lifecycle-management"
         },
-        "example": "party-lifecycle-management-search-party-lifecycle-management"
+        "example": "party-lifecycle-management-get-party-lifecycle-management"
       },
       "X-Runtime-App": {
         "style": "simple",
@@ -306,7 +259,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme utilizes a JSON Web Token (JWT) as a means of authentication. Clients must send a valid bearer token in the authorization header to access secured endpoints.",
+        "description": "This security scheme uses a bearer token in the HTTP Authorization header. The token should be a JSON Web Token (JWT) that contains the necessary claims for authentication and authorization. Ensure that the JWT is kept secure and is passed with every request that requires authentication.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
