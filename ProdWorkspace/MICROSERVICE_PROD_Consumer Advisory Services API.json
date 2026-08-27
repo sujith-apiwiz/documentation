@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Consumer Advisory Services API",
-    "description": "The Consumer Advisory Services API provides essential financial guidance and information tailored to consumers seeking to enhance their banking experience. This endpoint enables users to access specialized advisory resources based on specific parameters, offering insights into banking products and services. Typical consumers include individuals looking for personalized financial advice or assistance in managing their accounts. By leveraging this API, organizations can help their clients make informed decisions regarding their financial services.",
+    "description": "The Consumer Advisory Services API provides insights and recommendations to consumers regarding financial products and services. This endpoint enables users to access a range of advisory materials, tailored guidance, and expert insights that help them make informed decisions. It is particularly useful for financial institutions, advisors, and consumer service platforms looking to enhance their offerings and improve client engagement. By leveraging this API, users can effectively support their customers in navigating complex financial landscapes.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/consumer-services/consumer-advisory-services/{param1}": {
+    "/v5/banking/consumer-services/consumer-advisory-services": {
       "get": {
         "tags": [
-          "Consumer Advisory Services"
+          "Consumer Advisory"
         ],
-        "summary": "Retrieve Consumer Advisory Service by ID",
-        "description": "Fetch detailed information about a specific Consumer Advisory Service using its unique identifier. This endpoint allows clients to access service details for further consultation and decision-making.",
-        "operationId": "getConsumerAdvisoryServiceById",
+        "summary": "Retrieve consumer advisory services.",
+        "description": "This endpoint allows consumers to retrieve information about available advisory services that assist them in making informed decisions about products and services.",
+        "operationId": "getConsumerAdvisoryServices",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "Request body for obtaining consumer advisory services related to the specific resource identified by RES-100045. This request allows clients to fetch relevant information and guidance pertaining to consumer needs.",
+          "description": "This request body allows the client to specify parameters required for the retrieval of consumer advisory services. Ensure that the request contains all necessary details to process the advisory request effectively.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetConsumerAdvisoryServiceByIdRequest"
+                "$ref": "#/components/schemas/GetConsumerAdvisoryServicesRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, returning the requested consumer advisory service data.",
+            "description": "Successfully retrieved the consumer advisory services.",
             "headers": {
               "x-endpoint-id": {
                 "$ref": "#/components/headers/x-endpoint-id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetConsumerAdvisoryServiceByIdResponse_200"
+                  "$ref": "#/components/schemas/GetConsumerAdvisoryServicesResponse_200"
                 }
               }
             }
@@ -76,125 +76,187 @@
   },
   "components": {
     "schemas": {
-      "GetConsumerAdvisoryServiceByIdRequest": {
-        "title": "Consumer Advisory Services Request Body",
+      "GetConsumerAdvisoryServicesRequest": {
         "type": "string",
-        "description": "Schema representing the request body for the Consumer Advisory Services operation.",
+        "description": "This schema represents the JSON payload expected in the request body for the consumer advisory services operation.",
         "example": "{}"
       },
-      "GetConsumerAdvisoryServiceByIdResponse_200": {
+      "GetConsumerAdvisoryServicesResponse_200": {
+        "title": "Consumer Advisory Services Response",
         "type": "object",
         "properties": {
-          "customerId": {
+          "items": {
+            "type": "array",
+            "description": "A list of consumer advisory service items.",
+            "example": [
+              {
+                "customerId": "CUST-470801",
+                "serviceRequestId": "618a115e-6329-50b9-b892-531531a7db9b",
+                "productCode": "CHK-PREMIUM-US",
+                "amount": {
+                  "value": 100,
+                  "currency": "USD"
+                },
+                "requestedDate": "2026-09-15",
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ConsumerAdvisoryServiceItem"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "sort": {
             "type": "string",
-            "description": "Unique identifier for the customer.",
-            "example": "CUST-780379"
-          },
-          "serviceRequestId": {
-            "type": "string",
-            "description": "Identifier for the service request.",
-            "example": "31236ff9-4098-549a-a4ce-117885420cd3"
-          },
-          "productCode": {
-            "type": "string",
-            "description": "Code representing the product related to the service request.",
-            "example": "CHK-PREMIUM-US"
-          },
-          "amount": {
-            "description": "Details of the monetary amount related to the service request.",
-            "$ref": "#/components/schemas/Amount"
-          },
-          "requestedDate": {
-            "type": "string",
-            "description": "Date the service request was made.",
-            "format": "date-time"
-          },
-          "recordStatus": {
-            "type": "string",
-            "description": "Current status of the record.",
-            "example": "ACTIVE"
-          },
-          "version": {
-            "type": "integer",
-            "description": "Version of the service request record.",
-            "format": "int32",
-            "example": 1
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp of the last update to the service request.",
-            "format": "date-time",
-            "example": 1789482600.0
+            "description": "The sorting criteria applied to the items.",
+            "example": "STANDARD"
           },
           "metadata": {
-            "description": "Metadata containing additional information regarding the service request.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for consumer advisory services operations, detailing customer service requests and related metadata.",
+        "description": "Schema representing the response format for the Consumer Advisory Services operation, including pagination, sorting, and metadata.",
         "example": {
-          "customerId": "CUST-780379",
-          "serviceRequestId": "31236ff9-4098-549a-a4ce-117885420cd3",
-          "productCode": "CHK-PREMIUM-US",
-          "amount": {
-            "value": 100,
-            "currency": "USD"
+          "items": [
+            {
+              "customerId": "CUST-470801",
+              "serviceRequestId": "618a115e-6329-50b9-b892-531531a7db9b",
+              "productCode": "CHK-PREMIUM-US",
+              "amount": {
+                "value": 100,
+                "currency": "USD"
+              },
+              "requestedDate": "2026-09-15",
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
           },
-          "requestedDate": "2026-09-15",
-          "recordStatus": "ACTIVE",
-          "version": 1,
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "1f36f9bd-f49f-5661-ac73-97f32bced370",
-            "correlationId": "efda21cb-7d1d-5139-ac2c-009e4b3858a2",
+            "responseId": "4b71d451-31e0-5620-9e99-4cc659726791",
+            "correlationId": "00a4b413-7423-5378-9145-b412be36e706",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
+      "ConsumerAdvisoryServiceItem": {
+        "title": "Consumer Advisory Service Item",
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "description": "The unique identifier for the customer.",
+            "example": "CUST12345"
+          },
+          "serviceRequestId": {
+            "type": "string",
+            "description": "The unique identifier for the service request.",
+            "example": "REQ67890"
+          },
+          "productCode": {
+            "type": "string",
+            "description": "The product code associated with the service request.",
+            "example": "PROD001"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/Amount"
+          },
+          "requestedDate": {
+            "type": "string",
+            "description": "The date when the service was requested.",
+            "example": "2023-01-01"
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "The status of the record.",
+            "example": "ACTIVE"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "The date when the record was last updated.",
+            "example": "2023-01-02"
+          }
+        },
+        "description": "Schema representing a single consumer advisory service item."
+      },
       "Amount": {
+        "title": "Amount",
         "type": "object",
         "properties": {
           "value": {
             "type": "integer",
-            "description": "Monetary value of the service request.",
+            "description": "The numeric value of the amount.",
             "format": "int32",
-            "example": 150
+            "example": 100
           },
           "currency": {
             "type": "string",
-            "description": "Currency code for the monetary amount.",
+            "description": "The currency code for the amount.",
             "example": "USD"
           }
         },
-        "description": "Object representing the amount and currency involved in the service request."
+        "description": "Schema representing a monetary amount, including value and currency."
+      },
+      "Pagination": {
+        "title": "Pagination",
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "The current page number.",
+            "format": "int32",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The number of items per page.",
+            "format": "int32",
+            "example": 10
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "The total number of items available.",
+            "format": "int32",
+            "example": 100
+          }
+        },
+        "description": "Schema representing pagination details for the response."
       },
       "Metadata": {
+        "title": "Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "RESP-001"
+            "description": "The unique identifier for the response.",
+            "example": "RESP123456"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used for tracing the request through systems.",
-            "example": "CORR-123456"
+            "description": "The unique identifier for correlating requests and responses.",
+            "example": "CORR987654"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the response was generated.",
-            "format": "date-time",
-            "example": 1696161601.0
+            "description": "The timestamp indicating when the response was generated.",
+            "example": "2023-01-01T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing took place.",
-            "example": "US-East"
+            "description": "The region where the processing took place.",
+            "example": "US-West"
           }
         },
-        "description": "Object containing metadata of the service request, providing additional context."
+        "description": "Schema representing additional metadata for the response."
       }
     },
     "parameters": {
@@ -215,17 +277,15 @@
     },
     "headers": {
       "x-endpoint-id": {
-        "description": "Unique identifier for the endpoint that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "consumer-advisory-services-get-consumer-advisory-services"
+          "example": "consumer-advisory-services-search-consumer-advisory-services"
         },
-        "example": "consumer-advisory-services-get-consumer-advisory-services"
+        "example": "consumer-advisory-services-search-consumer-advisory-services"
       },
       "x-runtime-app": {
-        "description": "The name of the application that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -238,7 +298,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication scheme that uses Bearer tokens as defined in RFC 6750. The Bearer token is typically a JSON Web Token (JWT) that provides a means of conveying claims about an entity (typically the user) and provides the necessary information to authenticate the entity.",
+        "description": "Authentication scheme that uses a bearer token (JWT) for authorization. The token must be included in the 'Authorization' header of the request.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
