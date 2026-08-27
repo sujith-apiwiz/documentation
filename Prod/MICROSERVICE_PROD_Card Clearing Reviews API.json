@@ -1,0 +1,343 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MICROSERVICE_PROD_Card Clearing Reviews API",
+    "description": "The Card Clearing Reviews API enables users to submit feedback regarding card clearing transactions within the banking payment system. This API is designed for financial institutions and payment processors seeking to gather insights on customer experiences related to card clearing services. By submitting reviews, users can contribute to enhancing service quality and operational efficiency. Typical consumers include customer service teams and analytics departments aiming to improve card payment processes.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://prod-workspace-pwmw.apiwiz.io",
+      "description": "Sandbox server",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "Sandbox server",
+      "x-environmentName": "Sandbox",
+      "x-hide": false,
+      "x-environmentId": "6a7f52236ae9a15654cd5721",
+      "x-basePath": "/"
+    },
+    {
+      "url": "https://35.162.152.203:9002",
+      "description": "PROD",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "PROD",
+      "x-environmentName": "PROD",
+      "x-hide": false,
+      "x-environmentId": "6a784eac1d7e36108cc3cb0c",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/v5/banking/payments/card-clearing/{param1}/reviews": {
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "Submit a review for a card clearing process.",
+        "description": "This endpoint allows you to submit a review regarding the card clearing with the specified ID. Use this to provide feedback or to report any issues encountered during the card clearing process.",
+        "operationId": "createCardClearingReview",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/param1"
+          }
+        ],
+        "requestBody": {
+          "description": "This request body allows you to submit a review for the specified card clearing operation (CARD-400045). Ensure to provide the necessary details formatted as per the schema specifications.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCardClearingReviewRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Request accepted and will be processed asynchronously.",
+            "headers": {
+              "X-Endpoint-Id": {
+                "$ref": "#/components/headers/X-Endpoint-Id"
+              },
+              "X-Runtime-App": {
+                "$ref": "#/components/headers/X-Runtime-App"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCardClearingReviewResponse_202"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateCardClearingReviewRequest": {
+        "title": "Card Review Request",
+        "type": "object",
+        "properties": {
+          "reviewReason": {
+            "type": "string",
+            "description": "The reason for the review of the card.",
+            "example": "STANDARD"
+          },
+          "reviewScope": {
+            "type": "array",
+            "description": "The scope of the review, specifying the aspects under review.",
+            "example": [
+              "STANDARD"
+            ],
+            "items": {
+              "type": "string",
+              "description": "A specific aspect of the review scope.",
+              "example": "Transaction patterns"
+            }
+          },
+          "assignedReviewerId": {
+            "type": "string",
+            "description": "The ID of the reviewer assigned to this review.",
+            "example": "STANDARD"
+          },
+          "dueAt": {
+            "type": "string",
+            "description": "The deadline for completing the review.",
+            "example": "2026-08-11T12:00:00Z"
+          },
+          "requestContext": {
+            "description": "Contextual information regarding the review request.",
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "Schema representing the request body for card review operations.",
+        "example": {
+          "reviewReason": "STANDARD",
+          "reviewScope": [
+            "STANDARD"
+          ],
+          "assignedReviewerId": "STANDARD",
+          "dueAt": "2026-08-11T12:00:00Z",
+          "requestContext": {
+            "requestId": "e890138f-cfef-5bb0-8d7c-317d82a6abe0",
+            "correlationId": "cf918199-b445-5792-a18f-d7a5ff5f44bf",
+            "idempotencyKey": "7a2d4e47-6d95-5f43-bdd2-c65531005e25",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-130746"
+            }
+          }
+        }
+      },
+      "RequestContext": {
+        "title": "Request Context",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique identifier for the request.",
+            "example": "req_67890"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier for correlating logs of related requests.",
+            "example": "corr_54321"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Key to ensure that the request is idempotent.",
+            "example": "idemp_abcde"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the review was requested.",
+            "example": "2023-10-01T12:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The system from which the review request originated.",
+            "example": "Payment Gateway"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application from which the review request originated.",
+            "example": "Mobile App"
+          },
+          "channel": {
+            "description": "Information about the channel through which the request was made.",
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Schema representing the context of the request."
+      },
+      "Channel": {
+        "title": "Channel Information",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Unique identifier for the channel.",
+            "example": "channel_98765"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "Type of the channel (e.g., web, mobile, API).",
+            "example": "mobile"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Unique identifier for the device used to make the request.",
+            "example": "device_123456"
+          }
+        },
+        "description": "Schema representing details about the channel used for the request."
+      },
+      "CreateCardClearingReviewResponse_202": {
+        "title": "Card Clearing Review Response",
+        "type": "object",
+        "properties": {
+          "actionReference": {
+            "type": "string",
+            "description": "Reference identifier for the action taken.",
+            "example": "STANDARD"
+          },
+          "actionType": {
+            "type": "string",
+            "description": "Type of action performed.",
+            "example": "STANDARD"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the processing action.",
+            "example": "ACTIVE"
+          },
+          "processedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the processing was completed.",
+            "example": "2026-08-11T12:00:00Z"
+          },
+          "metadata": {
+            "description": "Additional metadata related to the processing response.",
+            "$ref": "#/components/schemas/ResponseMetadata"
+          }
+        },
+        "description": "Response object returned upon successfully reviewing card clearing operations.",
+        "example": {
+          "actionReference": "STANDARD",
+          "actionType": "STANDARD",
+          "status": "ACTIVE",
+          "processedAt": "2026-08-11T12:00:00Z",
+          "metadata": {
+            "responseId": "cd8cec00-6f71-5b2a-b67b-a1ebbc3dff08",
+            "correlationId": "cf918199-b445-5792-a18f-d7a5ff5f44bf",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
+      },
+      "ResponseMetadata": {
+        "title": "Response Metadata",
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "Unique identifier for the response.",
+            "example": "string"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier for correlating related requests and responses.",
+            "example": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the metadata was generated.",
+            "example": "string"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "Region where the processing took place.",
+            "example": "string"
+          }
+        },
+        "description": "Metadata information associated with a processing response."
+      }
+    },
+    "parameters": {
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "MICROSERVICE_PROD_202"
+          ]
+        }
+      },
+      "param1": {
+        "name": "param1",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "headers": {
+      "X-Endpoint-Id": {
+        "description": "This header indicates the identifier for the endpoint being accessed, essential for tracking requests and responses.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "card-clearing-review-card-clearing-processing"
+        },
+        "example": "card-clearing-review-card-clearing-processing"
+      },
+      "X-Runtime-App": {
+        "description": "This header specifies the application name that is processing the request, useful for debugging and monitoring purposes.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "payments"
+        },
+        "example": "payments"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "Authentication scheme that uses a bearer token. Clients must provide a valid JSON Web Token (JWT) in the Authorization header to access secured resources.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
