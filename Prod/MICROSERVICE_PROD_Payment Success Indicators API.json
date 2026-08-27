@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Payment Success Indicators API",
-    "description": "The Payment Success Indicators API provides insights into the effectiveness of payment transactions for specific customer accounts. By querying this API, users can obtain various metrics that indicate the success rates of payments processed for a given customer and account combination. This resource is particularly useful for financial analysts, account managers, and developers looking to improve payment strategies and customer experience. Typical use cases include monitoring transaction trends and evaluating the performance of payment methods.",
+    "description": "The Payment Success Indicators API allows businesses to submit and track payment success metrics for specific customer accounts. Through this endpoint, users can provide valuable insights on payment performance, enabling informed decisions on payment strategies. It is particularly useful for financial analysts and account managers who need to monitor payment effectiveness. This API enhances operational efficiency by allowing users to proactively manage and improve payment outcomes.",
     "version": "1.0"
   },
   "servers": [
@@ -30,14 +30,14 @@
     }
   ],
   "paths": {
-    "/v5/payments/customers/{customerId}/accounts/{accountId}/payment-success-indicators/{param3}": {
-      "get": {
+    "/v5/payments/customers/{customerId}/accounts/{accountId}/payment-success-indicators": {
+      "post": {
         "tags": [
-          "Customer Management"
+          "Accounts Management"
         ],
-        "summary": "Retrieve Payment Success Indicators for a Specific Account",
-        "description": "This endpoint fetches the payment success indicators for a specific account designated by the provided account ID. Use this information to assess the success rate of payments associated with the account and make informed decisions based on the retrieved data.",
-        "operationId": "getPaymentSuccessIndicatorForAccount",
+        "summary": "Create Payment Success Indicators for an Account",
+        "description": "This endpoint allows developers to create and update payment success indicators related to a specific account, helping to track and analyze payment performance effectively.",
+        "operationId": "postPaymentSuccessIndicatorsForAccount",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
@@ -47,24 +47,21 @@
           },
           {
             "$ref": "#/components/parameters/accountId"
-          },
-          {
-            "$ref": "#/components/parameters/param3"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to retrieve the payment success indicators for a specific account (ACC-200045) under a customer (CUST-100045) and a particular resource (RES-100045). It requires a valid JSON format that adheres to the defined schema.",
+          "description": "This request body is used to submit payment success indicators for a specific account of a customer. The information contained within helps analyze the payment statuses and outcomes for the indicated account.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetPaymentSuccessIndicatorForAccountRequest"
+                "$ref": "#/components/schemas/PostPaymentSuccessIndicatorsForAccountRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Successful retrieval of payment success indicators.",
+          "202": {
+            "description": "The request has been accepted for processing, but the processing is not complete.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -76,7 +73,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetPaymentSuccessIndicatorForAccountResponse_200"
+                  "$ref": "#/components/schemas/PostPaymentSuccessIndicatorsForAccountResponse_202"
                 }
               }
             }
@@ -96,62 +93,267 @@
   },
   "components": {
     "schemas": {
-      "GetPaymentSuccessIndicatorForAccountRequest": {
-        "type": "string",
-        "description": "A string representation of the payment success indicators for the specified customer account.",
-        "example": "{}"
+      "PostPaymentSuccessIndicatorsForAccountRequest": {
+        "title": "Payment Success Indicator Request Body",
+        "type": "object",
+        "properties": {
+          "transaction": {
+            "description": "Details of the transaction being processed.",
+            "$ref": "#/components/schemas/Transaction"
+          },
+          "user": {
+            "description": "Information about the user associated with the transaction.",
+            "$ref": "#/components/schemas/User"
+          },
+          "requestContext": {
+            "description": "Contextual information regarding the request.",
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "Schema for the request body when posting payment success indicators.",
+        "example": {
+          "transaction": {
+            "settleByDate": "2026-09-15",
+            "amount": 100.0
+          },
+          "user": {
+            "name": "Northstar Banking Service",
+            "email": "olivia.bennett@northstar.example",
+            "address": {
+              "streetLine1": "STANDARD",
+              "streetLine2": "STANDARD",
+              "city": "New York",
+              "state": "STANDARD",
+              "postalCode": "10001",
+              "country": "STANDARD"
+            },
+            "phone": {
+              "countryHint": "STANDARD",
+              "number": "STANDARD"
+            }
+          },
+          "requestContext": {
+            "requestId": "20d7af14-c38c-5235-a75b-987ea32ad95e",
+            "correlationId": "4602ce7c-39b3-5f56-981f-93b8ffaa809c",
+            "idempotencyKey": "58a3b882-2e8a-563f-8c0d-bca0506c8e76",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-644172"
+            }
+          }
+        }
       },
-      "GetPaymentSuccessIndicatorForAccountResponse_200": {
+      "Transaction": {
+        "type": "object",
+        "properties": {
+          "settleByDate": {
+            "type": "string",
+            "description": "Date by which the transaction is expected to settle.",
+            "example": "string"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount of the transaction.",
+            "example": 0.0
+          }
+        }
+      },
+      "User": {
+        "title": "User Information",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the user.",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the user.",
+            "example": "john.doe@example.com"
+          },
+          "address": {
+            "description": "The user's address.",
+            "$ref": "#/components/schemas/Address"
+          },
+          "phone": {
+            "description": "The user's phone number.",
+            "$ref": "#/components/schemas/Phone"
+          }
+        },
+        "description": "Schema for user details."
+      },
+      "Address": {
+        "title": "User Address",
+        "type": "object",
+        "properties": {
+          "streetLine1": {
+            "type": "string",
+            "description": "First line of the street address.",
+            "example": "123 Main St"
+          },
+          "streetLine2": {
+            "type": "string",
+            "description": "Second line of the street address.",
+            "example": "Apt 4B"
+          },
+          "city": {
+            "type": "string",
+            "description": "City name.",
+            "example": "Los Angeles"
+          },
+          "state": {
+            "type": "string",
+            "description": "State or province name.",
+            "example": "CA"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Postal or ZIP code.",
+            "example": "90001"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country name.",
+            "example": "USA"
+          }
+        },
+        "description": "Schema representing a user's address."
+      },
+      "Phone": {
+        "title": "User Phone Number",
+        "type": "object",
+        "properties": {
+          "countryHint": {
+            "type": "string",
+            "description": "Country code or hint for the phone number.",
+            "example": "US"
+          },
+          "number": {
+            "type": "string",
+            "description": "The phone number.",
+            "example": "+1234567890"
+          }
+        },
+        "description": "Schema representing a user's phone number."
+      },
+      "RequestContext": {
+        "title": "Request Context",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique identifier for the request.",
+            "example": "req-123456"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Correlation ID for tracking related requests.",
+            "example": "corr-abc123"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Key used to ensure idempotency of the request.",
+            "example": "idemp-xyz789"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp of when the request was made.",
+            "example": "2023-10-01T12:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The system that initiated the request.",
+            "example": "PaymentGateway"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application that initiated the request.",
+            "example": "MobileApp"
+          },
+          "channel": {
+            "description": "Information about the channel through which the request was made.",
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Schema for contextual data related to the request."
+      },
+      "Channel": {
+        "title": "Request Channel Information",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Unique identifier for the channel.",
+            "example": "channel-1"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "Type of the channel used.",
+            "example": "mobile"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Identifier for the device making the request.",
+            "example": "device-12345"
+          }
+        },
+        "description": "Schema representing the channel used to make the request."
+      },
+      "PostPaymentSuccessIndicatorsForAccountResponse_202": {
         "type": "object",
         "properties": {
           "payRequestId": {
             "type": "string",
-            "description": "The unique identifier for the payment request.",
-            "example": "48068230-053b-5cd0-861e-da74f4604932"
+            "description": "Unique identifier for the payment request.",
+            "example": "80f934fe-8e9e-51a0-b428-7b2562a1f1ea"
           },
           "status": {
             "type": "string",
-            "description": "The status of the payment request.",
+            "description": "Current status of the payment request.",
             "example": "ACTIVE"
           },
           "customerId": {
             "type": "string",
-            "description": "The unique identifier for the customer.",
-            "example": "CUST-366475"
+            "description": "Unique identifier for the customer.",
+            "example": "CUST-862177"
           },
           "accountId": {
             "type": "string",
-            "description": "The unique identifier for the account.",
-            "example": "ACC-661929"
+            "description": "Unique identifier for the account associated with the payment.",
+            "example": "ACC-113763"
           },
           "requestDate": {
             "type": "string",
-            "description": "The date when the payment request was made.",
+            "description": "Date and time when the payment request was made.",
             "example": "2026-09-15"
           },
           "transaction": {
-            "description": "Details of the transaction associated with the payment request.",
+            "description": "Details of the transaction associated with the payment.",
             "$ref": "#/components/schemas/Transaction"
           },
           "nsfReturnRisk": {
-            "description": "Indicators related to non-sufficient funds (NSF) return risk.",
+            "description": "Risk assessment related to non-sufficient funds (NSF).",
             "$ref": "#/components/schemas/NsfReturnRisk"
           },
           "unauthorizedReturnRisk": {
-            "description": "Indicators related to unauthorized return risk.",
+            "description": "Risk assessment related to unauthorized returns.",
             "$ref": "#/components/schemas/UnauthorizedReturnRisk"
           },
           "metadata": {
-            "description": "Metadata associated with the response.",
+            "description": "Additional metadata related to the payment response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for payment success indicators related to a specific account and customer.",
         "example": {
-          "payRequestId": "48068230-053b-5cd0-861e-da74f4604932",
+          "payRequestId": "80f934fe-8e9e-51a0-b428-7b2562a1f1ea",
           "status": "ACTIVE",
-          "customerId": "CUST-366475",
-          "accountId": "ACC-661929",
+          "customerId": "CUST-862177",
+          "accountId": "ACC-113763",
           "requestDate": "2026-09-15",
           "transaction": {
             "settleByDate": "2026-09-15",
@@ -185,8 +387,8 @@
               "message": "STANDARD",
               "user_message": "STANDARD",
               "assetId": "STANDARD",
-              "accountId": "ACC-856097",
-              "externalTransactionId": "TXN-400022",
+              "accountId": "ACC-276497",
+              "externalTransactionId": "TXN-178448",
               "tags": "STANDARD"
             }
           },
@@ -204,28 +406,12 @@
             }
           },
           "metadata": {
-            "responseId": "f563e7af-3a6d-5821-a61f-00425117cd93",
-            "correlationId": "605cce0f-2ed5-5d79-9bcd-5914c61487ff",
+            "responseId": "35c5d88d-eb83-5876-9158-d0ae9c6762ca",
+            "correlationId": "4602ce7c-39b3-5f56-981f-93b8ffaa809c",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
-      },
-      "Transaction": {
-        "type": "object",
-        "properties": {
-          "settleByDate": {
-            "type": "string",
-            "description": "The date by which the transaction is to be settled.",
-            "example": "2023-10-02"
-          },
-          "amount": {
-            "type": "number",
-            "description": "The amount of the transaction.",
-            "example": 100.0
-          }
-        },
-        "description": "Details of the transaction."
       },
       "NsfReturnRisk": {
         "type": "object",
@@ -235,75 +421,73 @@
             "properties": {
               "availableBalance": {
                 "type": "number",
-                "description": "The available balance for the account.",
-                "example": 50.0
+                "description": "Available balance in the account.",
+                "example": 0.0
               },
               "dailyResults": {
                 "type": "array",
-                "description": "Daily results of the risk assessment.",
+                "description": "Array of daily risk assessment results.",
                 "items": {
-                  "$ref": "#/components/schemas/DailyResult"
+                  "$ref": "#/components/schemas/DailyRiskAssessment"
                 }
               }
             }
           },
           "error": {
             "description": "Error details related to the NSF return risk.",
-            "$ref": "#/components/schemas/Error"
+            "$ref": "#/components/schemas/ErrorDetails"
           }
-        },
-        "description": "Indicators and results related to non-sufficient funds return risk."
+        }
       },
-      "DailyResult": {
+      "DailyRiskAssessment": {
         "type": "object",
         "properties": {
           "potentialSettlementDate": {
             "type": "string",
-            "description": "The potential date when the settlement might occur.",
-            "example": "2023-10-02"
+            "description": "Potential date for settlement.",
+            "example": "string"
           },
           "score": {
             "type": "integer",
-            "description": "A risk score associated with the assessment.",
+            "description": "Risk score associated with the assessment.",
             "format": "int32",
-            "example": 2
+            "example": 0
           },
           "indicator": {
             "type": "string",
-            "description": "An indicator representing the risk level.",
-            "example": "LOW"
+            "description": "Indicator of risk assessment.",
+            "example": "string"
           },
           "reasons": {
-            "description": "Reasons contributing to the risk assessment.",
+            "description": "Reasons for the risk assessment result.",
             "$ref": "#/components/schemas/RiskReasons"
           }
-        },
-        "description": "Individual daily risk assessment result."
+        }
       },
       "RiskReasons": {
         "type": "object",
         "properties": {
           "recentBalance": {
             "type": "integer",
-            "description": "Recent balance in the account.",
+            "description": "Recent balance that may affect risk.",
             "format": "int32",
-            "example": 1000
+            "example": 0
           },
           "balanceHistory": {
             "type": "integer",
-            "description": "History of balance over a defined period.",
+            "description": "History of account balance.",
             "format": "int32",
-            "example": 1200
+            "example": 0
           },
           "nsfHistory": {
             "type": "integer",
-            "description": "History of non-sufficient fund occurrences.",
+            "description": "History of non-sufficient funds occurrences.",
             "format": "int32",
-            "example": 1
+            "example": 0
           },
           "recentNsfHistory": {
             "type": "integer",
-            "description": "Recent occurrences of non-sufficient funds.",
+            "description": "Recent history of NSF occurrences.",
             "format": "int32",
             "example": 0
           },
@@ -317,73 +501,21 @@
             "type": "integer",
             "description": "History of spending behavior.",
             "format": "int32",
-            "example": 800
+            "example": 0
           },
           "depositHistory": {
             "type": "integer",
-            "description": "History of deposits made.",
+            "description": "History of deposits into the account.",
             "format": "int32",
-            "example": 1500
+            "example": 0
           },
           "transactionAmount": {
             "type": "integer",
-            "description": "Amount of the last transaction.",
+            "description": "Amount of the most recent transaction.",
             "format": "int32",
-            "example": 200
+            "example": 0
           }
-        },
-        "description": "Reasons for the risk assessment."
-      },
-      "Error": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "The error status code.",
-            "example": "error"
-          },
-          "title": {
-            "type": "string",
-            "description": "A short title for the error.",
-            "example": "Invalid Request"
-          },
-          "level": {
-            "type": "string",
-            "description": "Severity level of the error.",
-            "example": "high"
-          },
-          "message": {
-            "type": "string",
-            "description": "Detailed message about the error.",
-            "example": "The request is not valid."
-          },
-          "user_message": {
-            "type": "string",
-            "description": "User-friendly message explaining the error.",
-            "example": "Please check your input."
-          },
-          "assetId": {
-            "type": "string",
-            "description": "The identifier of the asset related to the error.",
-            "example": "ASSET-123"
-          },
-          "accountId": {
-            "type": "string",
-            "description": "The unique identifier for the account related to the error.",
-            "example": "ACC-200045"
-          },
-          "externalTransactionId": {
-            "type": "string",
-            "description": "Identifier for the external transaction if applicable.",
-            "example": "EXT-456789"
-          },
-          "tags": {
-            "type": "string",
-            "description": "Tags associated with the error for categorization.",
-            "example": "validation,error"
-          }
-        },
-        "description": "Describes an error encountered in processing."
+        }
       },
       "UnauthorizedReturnRisk": {
         "type": "object",
@@ -393,49 +525,97 @@
             "properties": {
               "score": {
                 "type": "integer",
-                "description": "A risk score related to unauthorized returns.",
+                "description": "Risk score for unauthorized return.",
                 "format": "int32",
-                "example": 1
+                "example": 0
               },
               "indicator": {
                 "type": "string",
-                "description": "An indicator representing unauthorized return risk.",
-                "example": "NONE"
+                "description": "Indicator of unauthorized return risk.",
+                "example": "string"
               }
             }
           },
           "error": {
             "description": "Error details related to unauthorized return risk.",
-            "$ref": "#/components/schemas/Error"
+            "$ref": "#/components/schemas/ErrorDetails"
           }
-        },
-        "description": "Indicators and results related to unauthorized return risk."
+        }
+      },
+      "ErrorDetails": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Status of the error.",
+            "example": "string"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the error.",
+            "example": "string"
+          },
+          "level": {
+            "type": "string",
+            "description": "Severity level of the error.",
+            "example": "string"
+          },
+          "message": {
+            "type": "string",
+            "description": "Detailed error message.",
+            "example": "string"
+          },
+          "user_message": {
+            "type": "string",
+            "description": "Message intended for the user.",
+            "example": "string"
+          },
+          "assetId": {
+            "type": "string",
+            "description": "Identifier for the related asset.",
+            "example": "string"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Identifier for the related account.",
+            "example": "string"
+          },
+          "externalTransactionId": {
+            "type": "string",
+            "description": "External transaction identifier.",
+            "example": "string"
+          },
+          "tags": {
+            "type": "string",
+            "description": "Tags associated with the error.",
+            "example": "string"
+          }
+        }
       },
       "Metadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "The unique identifier for the response.",
-            "example": "RES-100045"
+            "description": "Unique identifier for the response.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation ID for tracking the request.",
-            "example": "CORR-123456"
+            "description": "ID used for correlating related requests.",
+            "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the response was generated.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "Timestamp when the response was generated.",
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the request was processed.",
-            "example": "us-west-1"
+            "description": "Region where the request was processed.",
+            "example": "string"
           }
-        },
-        "description": "Metadata associated with the response."
+        }
       }
     },
     "parameters": {
@@ -449,7 +629,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_200"
+            "MICROSERVICE_PROD_202"
           ]
         }
       },
@@ -472,31 +652,21 @@
         "schema": {
           "type": "string"
         }
-      },
-      "param3": {
-        "name": "param3",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
-        }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint that processed the request. This helps in tracking and monitoring API calls.",
+        "description": "The unique identifier for the endpoint that processed the payment. This value helps in tracking the specific API endpoint that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "open-finance-api-get-payment-success-indicators"
+          "example": "open-finance-api-generate-payment-success-indicators"
         },
-        "example": "open-finance-api-get-payment-success-indicators"
+        "example": "open-finance-api-generate-payment-success-indicators"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that handled the request. This assists in identifying which application instance executed the operation.",
+        "description": "The name or identifier of the application that executed the service operation. This information is useful for identifying which application was responsible for the processing.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -509,7 +679,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication scheme using a Bearer token. This scheme expects the token in the 'Authorization' header of the request in the format 'Bearer {token}'. The token should be a JSON Web Token (JWT).",
+        "description": "This security scheme utilizes JSON Web Tokens (JWT) to authenticate users. To access the secured endpoints, clients must include a valid token in the authorization header of the request, following the Bearer authentication scheme.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
