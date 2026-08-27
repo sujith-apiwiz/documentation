@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE_PROD_Loan Application Submission API",
-    "description": "The Loan Application Submission API allows organizations to efficiently submit applicant details for loan applications. This endpoint supports the integration of applicant data into loan processing systems, streamlining the onboarding process for users looking to secure loans. Typical consumers of this API include financial institutions, lending platforms, and mortgage brokers. By utilizing this API, businesses can enhance customer experiences and improve operational efficiency during loan application processing.",
+    "title": "MICROSERVICE_PROD_Manage Loan Application Applicants API",
+    "description": "The Manage Loan Application Applicants API allows authorized users to update the details of applicants associated with specific loan applications. This operation primarily targets financial institutions and lending services that need to manage applicant information efficiently. Users can modify applicant data, reflecting changes in personal circumstances or financial status. It serves as a critical component for maintaining accurate records and compliance throughout the loan application lifecycle.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/loans/loan-applications/{param1}/applicants": {
-      "post": {
+    "/v5/loans/loan-applications/{param1}/applicants/{applicantId}": {
+      "put": {
         "tags": [
           "Loan Applications"
         ],
-        "summary": "Create a new applicant for a loan application.",
-        "description": "This endpoint allows you to add a new applicant to an existing loan application. Make sure to provide all necessary applicant details in the request body to successfully create the applicant entry.",
-        "operationId": "createLoanApplicationApplicant",
+        "summary": "Update applicant information for a specific loan application.",
+        "description": "This endpoint allows you to update the information of an applicant associated with a specific loan application. Ensure that all required fields are correctly provided to update the applicant details successfully.",
+        "operationId": "updateLoanApplicationApplicantRes100045",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body contains the details required to add a new applicant to the loan application with the ID RES-100045. The information provided will be used to assess the applicant's eligibility and process the loan application accordingly.",
+          "description": "Updates the applicant details associated with a specific loan application. This request should contain the necessary fields to modify the existing applicant information within the loan application identified by RES-100045.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateLoanApplicationApplicantRequest"
+                "$ref": "#/components/schemas/UpdateLoanApplicationApplicantRes100045Request"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Indicates that a new applicant has been successfully created.",
+          "200": {
+            "description": "Request completed successfully and applicant details updated.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateLoanApplicationApplicantResponse_201"
+                  "$ref": "#/components/schemas/UpdateLoanApplicationApplicantRes100045Response_200"
                 }
               }
             }
@@ -76,22 +76,22 @@
   },
   "components": {
     "schemas": {
-      "CreateLoanApplicationApplicantRequest": {
+      "UpdateLoanApplicationApplicantRes100045Request": {
         "type": "object",
         "properties": {
           "role": {
             "type": "string",
-            "description": "The role of the applicant in the loan process.",
+            "description": "The role of the applicant in the loan application.",
             "example": "PRIMARY_HOLDER"
           },
           "customerId": {
             "type": "string",
             "description": "Unique identifier for the customer.",
-            "example": "CUST-808605"
+            "example": "CUST-340306"
           },
           "relationshipToPrimary": {
             "type": "string",
-            "description": "Describes the relationship of the applicant to the primary borrower.",
+            "description": "The relationship of the applicant to the primary borrower.",
             "example": "STANDARD"
           },
           "income": {
@@ -100,7 +100,7 @@
           },
           "monthlyObligations": {
             "description": "The monthly obligations of the applicant.",
-            "$ref": "#/components/schemas/FinancialDetail"
+            "$ref": "#/components/schemas/Money"
           },
           "declaredAssets": {
             "type": "array",
@@ -120,14 +120,14 @@
             }
           },
           "requestContext": {
-            "description": "The context of the request, including identifiers and metadata.",
+            "description": "Context information about the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Represents the request body schema for loan applications applicants.",
+        "description": "Schema representing the loan application applicant details.",
         "example": {
           "role": "PRIMARY_HOLDER",
-          "customerId": "CUST-808605",
+          "customerId": "CUST-340306",
           "relationshipToPrimary": "STANDARD",
           "income": {
             "employmentType": "STANDARD",
@@ -163,105 +163,98 @@
             }
           ],
           "requestContext": {
-            "requestId": "cb6fbdc0-23db-522b-844b-b9bbd5216a0a",
-            "correlationId": "41cb7605-aa8b-55bc-812c-5fae19e78fbd",
-            "idempotencyKey": "35fca5a1-b60c-58a6-bc82-b9521133a813",
+            "requestId": "a8ddc24a-9dc0-58d5-9132-cfa5dfc9726d",
+            "correlationId": "c9677ae7-b8cb-5182-b22e-cc3429a0aaef",
+            "idempotencyKey": "2739c77a-92f4-5b33-b7d1-cef7a5bb45ad",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-870058"
+              "deviceId": "DEV-133190"
             }
           }
         }
       },
       "Income": {
-        "title": "Income Details",
         "type": "object",
         "properties": {
           "employmentType": {
             "type": "string",
-            "description": "The type of employment of the applicant.",
-            "example": "string"
+            "description": "Type of employment of the applicant.",
+            "example": "Full-time"
           },
           "employerName": {
             "type": "string",
-            "description": "The name of the applicant's employer.",
-            "example": "string"
+            "description": "Name of the employer.",
+            "example": "Company ABC"
           },
           "occupation": {
             "type": "string",
-            "description": "The occupation of the applicant.",
-            "example": "string"
+            "description": "Occupation of the applicant.",
+            "example": "Software Engineer"
           },
           "employmentStartDate": {
             "type": "string",
-            "description": "The start date of the applicant's employment.",
-            "example": "string"
+            "description": "The date when the applicant started employment.",
+            "example": "2021-01-15"
           },
           "businessRegistrationNumber": {
             "type": "string",
-            "description": "The business registration number of the applicant (if self-employed).",
-            "example": "string"
+            "description": "Business registration number if applicable.",
+            "example": "BRN12345"
           },
           "grossMonthlyIncome": {
-            "description": "The gross monthly income of the applicant.",
-            "$ref": "#/components/schemas/CurrencyAmount"
+            "description": "Gross monthly income of the applicant.",
+            "$ref": "#/components/schemas/Money"
           },
           "netMonthlyIncome": {
-            "description": "The net monthly income of the applicant.",
-            "$ref": "#/components/schemas/CurrencyAmount"
+            "description": "Net monthly income of the applicant.",
+            "$ref": "#/components/schemas/Money"
           },
           "otherMonthlyIncome": {
-            "description": "Other sources of monthly income for the applicant.",
-            "$ref": "#/components/schemas/CurrencyAmount"
-          },
-          "verificationStatus": {
-            "type": "string",
-            "description": "The verification status of the applicant's income.",
-            "example": "string"
+            "description": "Any other sources of monthly income.",
+            "$ref": "#/components/schemas/Money"
           }
         },
         "description": "Schema representing the income details of an applicant."
       },
-      "FinancialDetail": {
+      "Money": {
         "type": "object",
         "properties": {
           "currency": {
             "type": "string",
-            "description": "The currency code (ISO 4217).",
+            "description": "The currency of the monetary amount.",
             "example": "USD"
           },
           "amount": {
             "type": "string",
-            "description": "The monetary amount.",
+            "description": "The amount of money in the specified currency.",
             "example": "5000"
           }
         },
-        "description": "Represents a financial detail amount along with its currency."
+        "description": "Schema representing a monetary value with currency."
       },
       "Asset": {
-        "title": "Declared Asset",
         "type": "object",
         "properties": {
           "assetType": {
             "type": "string",
-            "description": "The type of the asset declared.",
-            "example": "string"
+            "description": "Type of the asset.",
+            "example": "Car"
           },
           "description": {
             "type": "string",
-            "description": "A description of the declared asset.",
-            "example": "string"
+            "description": "Description of the asset.",
+            "example": "2019 Toyota Camry"
           },
           "estimatedValue": {
-            "description": "The estimated value of the declared asset.",
-            "$ref": "#/components/schemas/CurrencyAmount"
+            "description": "Estimated value of the asset.",
+            "$ref": "#/components/schemas/MonetaryValue"
           }
         },
-        "description": "Schema representing a declared asset of the applicant."
+        "description": "Details about an asset declared by the applicant."
       },
       "RequestContext": {
         "type": "object",
@@ -269,39 +262,39 @@
           "requestId": {
             "type": "string",
             "description": "Unique identifier for the request.",
-            "example": "REQ-987654"
+            "example": "REQ123456"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier to correlate with other related requests.",
-            "example": "CORR-54321"
+            "description": "Identifier for tracing the request through the system.",
+            "example": "CORR123456"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key to ensure idempotent requests.",
-            "example": "IDMPT-KEY-123456"
+            "description": "Key used to prevent duplicate processing of the request.",
+            "example": "IDEMP123456"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp when the request was made.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "Timestamp when the request was initiated.",
+            "example": "2023-10-01T12:34:56Z"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "The originating system for the request.",
-            "example": "Web Portal"
+            "description": "The system from which the request originated.",
+            "example": "Mobile App"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application that made the request.",
+            "description": "Name of the application from which the request was sent.",
             "example": "Loan Application App"
           },
           "channel": {
-            "description": "Information about the channel through which the request was made.",
+            "description": "Information about the channel used for the request.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Contains additional context for the request."
+        "description": "Schema representing context information for the request."
       },
       "Channel": {
         "type": "object",
@@ -309,51 +302,50 @@
           "channelId": {
             "type": "string",
             "description": "Unique identifier for the channel.",
-            "example": "CH-001"
+            "example": "CH123"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of the channel (e.g., web, mobile).",
+            "description": "Type of channel, e.g., Mobile, Web.",
             "example": "Mobile"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier for the device that made the request.",
-            "example": "DEV-123456"
+            "description": "Identifier for the device used.",
+            "example": "DEVICE123"
           }
         },
-        "description": "Represents the channel through which the request is made."
+        "description": "Schema representing the channel through which the request was made."
       },
-      "CreateLoanApplicationApplicantResponse_201": {
-        "title": "Loan Application Applicant Response",
+      "UpdateLoanApplicationApplicantRes100045Response_200": {
         "type": "object",
         "properties": {
           "role": {
             "type": "string",
-            "description": "The role of the applicant in the loan application process.",
+            "description": "The role of the applicant in the loan application.",
             "example": "PRIMARY_HOLDER"
           },
           "customerId": {
             "type": "string",
-            "description": "The unique identifier for the customer associated with the application.",
-            "example": "CUST-803828"
+            "description": "Unique identifier for the customer.",
+            "example": "CUST-807996"
           },
           "relationshipToPrimary": {
             "type": "string",
-            "description": "The relationship of the applicant to the primary applicant.",
+            "description": "The relationship of the applicant to the primary borrower.",
             "example": "STANDARD"
           },
           "income": {
-            "description": "The income details of the applicant.",
-            "$ref": "#/components/schemas/Income"
+            "description": "Details of the applicant's income.",
+            "$ref": "#/components/schemas/IncomeDetails"
           },
           "monthlyObligations": {
-            "description": "The monthly obligations of the applicant.",
-            "$ref": "#/components/schemas/CurrencyAmount"
+            "description": "Monthly financial obligations of the applicant.",
+            "$ref": "#/components/schemas/FinancialObligation"
           },
           "declaredAssets": {
             "type": "array",
-            "description": "A list of assets declared by the applicant.",
+            "description": "List of assets declared by the applicant.",
             "example": [
               {
                 "assetType": "STANDARD",
@@ -370,7 +362,7 @@
           },
           "declaredLiabilities": {
             "type": "array",
-            "description": "A list of liabilities declared by the applicant.",
+            "description": "List of liabilities declared by the applicant.",
             "example": [
               {
                 "liabilityType": "STANDARD",
@@ -391,27 +383,27 @@
           },
           "id": {
             "type": "string",
-            "description": "The unique identifier for the applicant.",
-            "example": "19a7cd96-3d26-51cd-2465-ebb96e6913de"
+            "description": "Unique identifier for the applicant.",
+            "example": "08cd5bdd-cd8d-05f9-8fe2-03734c4b26d9"
           },
           "creditBureauStatus": {
             "type": "string",
-            "description": "The status of the applicant with credit bureaus.",
+            "description": "Credit bureau status of the applicant.",
             "example": "ACTIVE"
           },
           "audit": {
-            "description": "Audit details related to the applicant's information.",
-            "$ref": "#/components/schemas/Audit"
+            "description": "Audit details related to the applicant's data.",
+            "$ref": "#/components/schemas/AuditDetails"
           },
           "metadata": {
-            "description": "Metadata associated with the applicant's application response.",
+            "description": "Metadata associated with the applicant.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Schema representing the response of an applicant in a loan application.",
+        "description": "Represents the details of a loan application applicant.",
         "example": {
           "role": "PRIMARY_HOLDER",
-          "customerId": "CUST-803828",
+          "customerId": "CUST-807996",
           "relationshipToPrimary": "STANDARD",
           "income": {
             "employmentType": "STANDARD",
@@ -461,7 +453,7 @@
               }
             }
           ],
-          "id": "19a7cd96-3d26-51cd-2465-ebb96e6913de",
+          "id": "08cd5bdd-cd8d-05f9-8fe2-03734c4b26d9",
           "creditBureauStatus": "ACTIVE",
           "audit": {
             "createdAt": "2026-09-15T14:30:00Z",
@@ -471,114 +463,174 @@
             "version": 1
           },
           "metadata": {
-            "responseId": "fbf4edde-7cc5-56ed-b552-bce2ace861ec",
-            "correlationId": "41cb7605-aa8b-55bc-812c-5fae19e78fbd",
+            "responseId": "9334bd1f-db6a-5d64-bd9f-adfb27680e09",
+            "correlationId": "c9677ae7-b8cb-5182-b22e-cc3429a0aaef",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "CurrencyAmount": {
-        "title": "Currency and Amount",
+      "IncomeDetails": {
+        "type": "object",
+        "properties": {
+          "employmentType": {
+            "type": "string",
+            "description": "Type of employment (e.g., Full-time, Part-time).",
+            "example": "Full-time"
+          },
+          "employerName": {
+            "type": "string",
+            "description": "Name of the employer.",
+            "example": "ABC Corp"
+          },
+          "occupation": {
+            "type": "string",
+            "description": "Occupation of the applicant.",
+            "example": "Software Engineer"
+          },
+          "employmentStartDate": {
+            "type": "string",
+            "description": "Date when the applicant started their current employment.",
+            "example": "2022-01-15"
+          },
+          "businessRegistrationNumber": {
+            "type": "string",
+            "description": "Business registration number if self-employed.",
+            "example": "BRN123456"
+          },
+          "grossMonthlyIncome": {
+            "description": "Gross monthly income of the applicant.",
+            "$ref": "#/components/schemas/MonetaryValue"
+          },
+          "netMonthlyIncome": {
+            "description": "Net monthly income of the applicant.",
+            "$ref": "#/components/schemas/MonetaryValue"
+          },
+          "otherMonthlyIncome": {
+            "description": "Other sources of monthly income.",
+            "$ref": "#/components/schemas/MonetaryValue"
+          },
+          "verificationStatus": {
+            "type": "string",
+            "description": "Verification status of the income.",
+            "example": "Verified"
+          }
+        },
+        "description": "Details regarding the income of the applicant."
+      },
+      "MonetaryValue": {
         "type": "object",
         "properties": {
           "currency": {
             "type": "string",
-            "description": "The currency code (e.g., USD, EUR).",
-            "example": "string"
+            "description": "Currency code (e.g., USD, EUR).",
+            "example": "USD"
           },
           "amount": {
             "type": "string",
-            "description": "The amount in the specified currency.",
-            "example": "string"
+            "description": "The monetary amount.",
+            "example": "1000"
           }
         },
-        "description": "Schema representing a currency and its corresponding amount."
+        "description": "Represents a monetary value with currency."
+      },
+      "FinancialObligation": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "Currency of the obligation.",
+            "example": "USD"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Amount of the financial obligation.",
+            "example": "200"
+          }
+        },
+        "description": "Represents a financial obligation."
       },
       "Liability": {
-        "title": "Declared Liability",
         "type": "object",
         "properties": {
           "liabilityType": {
             "type": "string",
-            "description": "The type of the liability declared.",
-            "example": "string"
+            "description": "Type of liability.",
+            "example": "Mortgage"
           },
           "lenderName": {
             "type": "string",
-            "description": "The name of the lender for the declared liability.",
-            "example": "string"
+            "description": "Name of the lender for the liability.",
+            "example": "XYZ Bank"
           },
           "outstandingBalance": {
-            "description": "The outstanding balance of the declared liability.",
-            "$ref": "#/components/schemas/CurrencyAmount"
+            "description": "Outstanding balance of the liability.",
+            "$ref": "#/components/schemas/MonetaryValue"
           },
           "monthlyPayment": {
-            "description": "The monthly payment amount for the declared liability.",
-            "$ref": "#/components/schemas/CurrencyAmount"
+            "description": "Monthly payment amount for the liability.",
+            "$ref": "#/components/schemas/MonetaryValue"
           }
         },
-        "description": "Schema representing a declared liability of the applicant."
+        "description": "Details about a liability declared by the applicant."
       },
-      "Audit": {
-        "title": "Audit Information",
+      "AuditDetails": {
         "type": "object",
         "properties": {
           "createdAt": {
             "type": "string",
-            "description": "Timestamp when the record was created.",
-            "example": "string"
+            "description": "Timestamp of when the data was created.",
+            "example": "2022-01-01T12:00:00Z"
           },
           "createdBy": {
             "type": "string",
-            "description": "Identifier for the user who created the record.",
-            "example": "string"
+            "description": "Identifier of the user who created the data.",
+            "example": "admin"
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp when the record was last updated.",
-            "example": "string"
+            "description": "Timestamp of when the data was last updated.",
+            "example": "2022-01-15T12:00:00Z"
           },
           "updatedBy": {
             "type": "string",
-            "description": "Identifier for the user who last updated the record.",
-            "example": "string"
+            "description": "Identifier of the user who last updated the data.",
+            "example": "admin"
           },
           "version": {
             "type": "integer",
-            "description": "The version of the record.",
+            "description": "Version of the applicant's data.",
             "format": "int32",
-            "example": 0
+            "example": 1
           }
         },
-        "description": "Schema representing audit details related to the applicant's information."
+        "description": "Audit information related to the applicant's data."
       },
       "Metadata": {
-        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "The unique identifier for the response.",
-            "example": "string"
+            "description": "Unique identifier for the response.",
+            "example": "RESP12345"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation ID for tracking the request.",
-            "example": "string"
+            "description": "Identifier used for correlating related requests.",
+            "example": "CORR12345"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the response was generated.",
-            "example": "string"
+            "description": "Timestamp when the data was generated.",
+            "example": "2022-01-01T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing occurred.",
-            "example": "string"
+            "description": "Region where the processing occurred.",
+            "example": "US-East"
           }
         },
-        "description": "Schema representing metadata associated with the applicant's application response."
+        "description": "Metadata information associated with the applicant."
       }
     },
     "parameters": {
@@ -592,24 +644,22 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_201"
+            "MICROSERVICE_PROD_200"
           ]
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "This header uniquely identifies the endpoint that was called during the request. It is useful for tracking and debugging API calls.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "banking-loans-openapi-create-applicant"
+          "example": "banking-loans-openapi-replace-applicant"
         },
-        "example": "banking-loans-openapi-create-applicant"
+        "example": "banking-loans-openapi-replace-applicant"
       },
       "X-Runtime-App": {
-        "description": "This header indicates the name of the application that processed the request. It helps identify which application instance handled the API call.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -622,7 +672,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication scheme that uses JSON Web Tokens (JWT) for secure access to resources. Clients must include a valid JWT in the Authorization header to gain access to the protected endpoints.",
+        "description": "This security scheme utilizes the Bearer authentication method with JSON Web Tokens (JWT). Users must provide a valid JWT token in the 'Authorization' header to access secured endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
