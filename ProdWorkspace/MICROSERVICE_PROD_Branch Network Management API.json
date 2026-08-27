@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Branch Network Management API",
-    "description": "The Branch Network Management API enables users to access and manage branch network information crucial for banking operations. This endpoint provides insights into the geographic distribution and status of bank branches, helping financial institutions optimize service delivery and resource allocation. Typical consumers include bank administrators and analysts looking to enhance branch performance and client accessibility. By leveraging this API, businesses can make informed decisions to improve operational efficiency and customer satisfaction.",
+    "description": "The Branch Network Management API offers businesses a streamlined way to access and manage network information related to banking branches. This API allows users to retrieve specific details about branch network configurations and operations, enabling enhanced decision-making and operational efficiency. Typical consumers include banking institutions and network administrators looking to optimize their branch services or troubleshoot network-related issues. By leveraging this API, developers can integrate branch network data into their applications, ensuring better service delivery and customer satisfaction.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/channel-specific/branch-network-management": {
+    "/v5/banking/channel-specific/branch-network-management/{param1}": {
       "get": {
         "tags": [
-          "Network Management"
+          "Branch Network Management"
         ],
         "summary": "Retrieve Branch Network Management Details",
-        "description": "This endpoint allows you to retrieve detailed information about the branch network management specific to a particular channel. You can use this information to monitor and manage the network effectively.",
-        "operationId": "getBranchNetworkManagement",
+        "description": "This endpoint allows users to fetch detailed information about a specific branch network management resource identified by its unique resource ID (RES-100045). Use this to get insights into the branch's network configuration and status.",
+        "operationId": "getBranchNetworkManagementByResourceId",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body retrieves branch network management data specific to a channel. It is essential to provide the necessary parameters to ensure accurate data retrieval.",
+          "description": "This request body is used to retrieve information related to the branch network management operations for a specific channel. Ensure that the request body adheres to the schema specified to properly format the data being requested.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetBranchNetworkManagementRequest"
+                "$ref": "#/components/schemas/GetBranchNetworkManagementByResourceIdRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved branch network management data.",
+            "description": "Request completed successfully, returning the requested data.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetBranchNetworkManagementResponse_200"
+                  "$ref": "#/components/schemas/GetBranchNetworkManagementByResourceIdResponse_200"
                 }
               }
             }
@@ -76,189 +76,110 @@
   },
   "components": {
     "schemas": {
-      "GetBranchNetworkManagementRequest": {
+      "GetBranchNetworkManagementByResourceIdRequest": {
         "type": "string",
-        "description": "This schema represents the JSON request body for operations related to branch network management in a specific channel.",
+        "description": "This schema represents the request body for the Operations GET request in the branch network management context.",
         "example": "{}"
       },
-      "GetBranchNetworkManagementResponse_200": {
+      "GetBranchNetworkManagementByResourceIdResponse_200": {
         "title": "Branch Network Management Response",
         "type": "object",
         "properties": {
-          "items": {
-            "type": "array",
-            "description": "A list of branch management items.",
-            "example": [
-              {
-                "channelId": "MOBILE-US",
-                "regionCode": "US-EAST-1",
-                "serviceWindow": {
-                  "opensAt": "STANDARD",
-                  "closesAt": "STANDARD"
-                },
-                "dailyCapacity": 1,
-                "branchId": "STANDARD",
-                "branchType": "FULL_SERVICE",
-                "timeZone": "America/New_York",
-                "recordStatus": "ACTIVE",
-                "updatedAt": "2026-09-15T14:30:00Z"
-              }
-            ],
-            "items": {
-              "$ref": "#/components/schemas/BranchManagementItem"
-            }
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/Pagination"
-          },
-          "sort": {
+          "channelId": {
             "type": "string",
-            "description": "The sorting criteria used for the response.",
+            "description": "The unique identifier for the channel.",
+            "example": "MOBILE-US"
+          },
+          "regionCode": {
+            "type": "string",
+            "description": "The code representing the region of the branch.",
+            "example": "US-EAST-1"
+          },
+          "serviceWindow": {
+            "description": "The operational hours for the branch service.",
+            "$ref": "#/components/schemas/ServiceWindow"
+          },
+          "dailyCapacity": {
+            "type": "integer",
+            "description": "The maximum number of services that can be handled daily by the branch.",
+            "format": "int32",
+            "example": 1
+          },
+          "branchId": {
+            "type": "string",
+            "description": "The unique identifier for the branch.",
             "example": "STANDARD"
           },
+          "branchType": {
+            "type": "string",
+            "description": "The type of the branch (e.g., retail, service, etc.).",
+            "example": "FULL_SERVICE"
+          },
+          "timeZone": {
+            "type": "string",
+            "description": "The time zone in which the branch operates.",
+            "example": "America/New_York"
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "The status of the branch record (e.g., active, inactive).",
+            "example": "ACTIVE"
+          },
+          "version": {
+            "type": "integer",
+            "description": "The version number of the branch record.",
+            "format": "int32",
+            "example": 1
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "The timestamp of the last update to the branch record.",
+            "example": "2026-09-15T14:30:00Z"
+          },
           "metadata": {
+            "description": "Additional metadata related to the response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "This schema represents the response structure for retrieving branch network management details including items, pagination, sorting, and metadata.",
+        "description": "This schema represents the response structure for the GET operation related to branch network management.",
         "example": {
-          "items": [
-            {
-              "channelId": "MOBILE-US",
-              "regionCode": "US-EAST-1",
-              "serviceWindow": {
-                "opensAt": "STANDARD",
-                "closesAt": "STANDARD"
-              },
-              "dailyCapacity": 1,
-              "branchId": "STANDARD",
-              "branchType": "FULL_SERVICE",
-              "timeZone": "America/New_York",
-              "recordStatus": "ACTIVE",
-              "updatedAt": "2026-09-15T14:30:00Z"
-            }
-          ],
-          "pagination": {
-            "page": 1,
-            "pageSize": 1,
-            "totalItems": 1
+          "channelId": "MOBILE-US",
+          "regionCode": "US-EAST-1",
+          "serviceWindow": {
+            "opensAt": "STANDARD",
+            "closesAt": "STANDARD"
           },
-          "sort": "STANDARD",
+          "dailyCapacity": 1,
+          "branchId": "STANDARD",
+          "branchType": "FULL_SERVICE",
+          "timeZone": "America/New_York",
+          "recordStatus": "ACTIVE",
+          "version": 1,
+          "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "26bdeaf7-72ac-5440-b149-48a65a3c8a5a",
-            "correlationId": "875ba7d4-3eb5-5579-afd9-ac76844f8a73",
+            "responseId": "687de958-922d-5a62-a2f5-1f67d6339c2e",
+            "correlationId": "87b4837f-5aab-5aec-b48d-d09d95ca6916",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "BranchManagementItem": {
-        "title": "Branch Management Item",
+      "ServiceWindow": {
+        "title": "Service Window",
         "type": "object",
         "properties": {
-          "channelId": {
+          "opensAt": {
             "type": "string",
-            "description": "Identifier for the channel.",
-            "example": "string"
+            "description": "The time at which the branch opens.",
+            "example": "09:00"
           },
-          "regionCode": {
+          "closesAt": {
             "type": "string",
-            "description": "Code representing the region.",
-            "example": "string"
-          },
-          "serviceWindow": {
-            "type": "object",
-            "properties": {
-              "opensAt": {
-                "type": "string",
-                "description": "Time at which the branch opens.",
-                "example": "string"
-              },
-              "closesAt": {
-                "type": "string",
-                "description": "Time at which the branch closes.",
-                "example": "string"
-              }
-            },
-            "description": "Operational hours for the branch."
-          },
-          "dailyCapacity": {
-            "type": "integer",
-            "description": "The daily capacity of the branch.",
-            "format": "int32",
-            "example": 0
-          },
-          "branchId": {
-            "type": "string",
-            "description": "Unique identifier for the branch.",
-            "example": "string"
-          },
-          "branchType": {
-            "type": "string",
-            "description": "Type of the branch.",
-            "example": "string"
-          },
-          "timeZone": {
-            "type": "string",
-            "description": "Time zone in which the branch operates.",
-            "example": "string"
-          },
-          "recordStatus": {
-            "type": "string",
-            "description": "Current status of the branch record.",
-            "example": "string"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp for the last update of the branch information.",
-            "example": "string"
+            "description": "The time at which the branch closes.",
+            "example": "17:00"
           }
         },
-        "description": "Details about a specific branch management item.",
-        "example": {
-          "channelId": "string",
-          "regionCode": "string",
-          "serviceWindow": {
-            "opensAt": "09:00",
-            "closesAt": "17:00"
-          },
-          "dailyCapacity": 100,
-          "branchId": "string",
-          "branchType": "Retail",
-          "timeZone": "UTC",
-          "recordStatus": "Active",
-          "updatedAt": "2023-10-01T10:00:00Z"
-        }
-      },
-      "Pagination": {
-        "title": "Pagination",
-        "type": "object",
-        "properties": {
-          "page": {
-            "type": "integer",
-            "description": "Current page number in the paginated response.",
-            "format": "int32",
-            "example": 0
-          },
-          "pageSize": {
-            "type": "integer",
-            "description": "Number of items per page.",
-            "format": "int32",
-            "example": 10
-          },
-          "totalItems": {
-            "type": "integer",
-            "description": "Total number of items available.",
-            "format": "int32",
-            "example": 100
-          }
-        },
-        "description": "Pagination details for the response.",
-        "example": {
-          "page": 1,
-          "pageSize": 10,
-          "totalItems": 100
-        }
+        "description": "Represents the service hours of the branch."
       },
       "Metadata": {
         "title": "Response Metadata",
@@ -266,32 +187,26 @@
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
+            "description": "The unique identifier for the response.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier to track the correlation of requests.",
+            "description": "The correlation identifier for tracking the request.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the response was generated.",
-            "example": "2023-10-01T10:00:00Z"
+            "description": "The timestamp when the response was generated.",
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the request was processed.",
+            "description": "The region where the response was processed.",
             "example": "string"
           }
         },
-        "description": "Metadata related to the response.",
-        "example": {
-          "responseId": "resp-123456",
-          "correlationId": "corr-123456",
-          "generatedAt": "2023-10-01T10:00:00Z",
-          "processingRegion": "us-east"
-        }
+        "description": "Contains metadata associated with the response."
       }
     },
     "parameters": {
@@ -312,15 +227,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "A unique identifier for the endpoint that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "branch-network-management-search-branch-network-management"
+          "example": "branch-network-management-get-branch-network-management"
         },
-        "example": "branch-network-management-search-branch-network-management"
+        "example": "branch-network-management-get-branch-network-management"
       },
       "X-Runtime-App": {
+        "description": "The name and version of the application that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -333,7 +250,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the Bearer authentication method. It requires a valid JSON Web Token (JWT) to be included in the request headers for authorized access.",
+        "description": "This security scheme uses a Bearer Authentication mechanism, enabling clients to authenticate via a JSON Web Token (JWT). Please include the 'Authorization' header with the 'Bearer' prefix followed by the token when making requests.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

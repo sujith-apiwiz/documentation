@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Funds Confirmation API",
-    "description": "The Funds Confirmation API enables financial service providers to verify the availability of funds in a customer's account before initiating an international payment. This API plays a critical role in ensuring that transactions are processed smoothly and efficiently while reducing the risk of failed payments. Typical consumers include banks, payment processors, and fintech applications that facilitate international transfers. By leveraging this API, businesses can enhance customer trust and transaction reliability.",
+    "description": "The Funds Confirmation API enables financial institutions to verify the availability of funds in a customer's account before processing a domestic payment. This service plays a crucial role in facilitating secure and efficient transactions by ensuring that the necessary funds are available. It is primarily used by payment initiation service providers (PISPs) to confirm account balance status during payment initiation. By leveraging this API, developers can enhance user experiences and reduce transaction failures due to insufficient funds.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/open-banking/pisp/international-payment-consents/{param1}/funds-confirmation": {
+    "/v5/open-banking/pisp/domestic-payment-consents/{param1}/funds-confirmation": {
       "get": {
         "tags": [
-          "International Payments"
+          "Domestic Payment"
         ],
-        "summary": "Retrieve funds confirmation for an international payment consent.",
-        "description": "This endpoint allows developers to check the availability of funds for a specified international payment consent identified by its unique reference. It provides essential validation to ensure that the transaction can proceed smoothly.",
-        "operationId": "getFundsConfirmationForInternationalPaymentConsent",
+        "summary": "Retrieve funds confirmation for a domestic payment consent",
+        "description": "This endpoint allows you to check if there are sufficient funds available for a domestic payment based on the specified payment consent. It ensures that the transaction can be executed successfully without any issues related to insufficient funds.",
+        "operationId": "getFundsConfirmationForDomesticPaymentConsent",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to initiate a funds confirmation for an international payment consent identified by the specified resource ID. It is essential to ensure that the request is structured correctly to verify the availability of funds prior to processing the transaction.",
+          "description": "Request body for confirming funds related to the domestic payment consent identified by RES-100045. This body should contain all necessary details required for the funds confirmation process.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetFundsConfirmationForInternationalPaymentConsentRequest"
+                "$ref": "#/components/schemas/GetFundsConfirmationForDomesticPaymentConsentRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Funds confirmed successfully.",
+            "description": "Successfully retrieved funds confirmation status.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetFundsConfirmationForInternationalPaymentConsentResponse_200"
+                  "$ref": "#/components/schemas/GetFundsConfirmationForDomesticPaymentConsentResponse_200"
                 }
               }
             }
@@ -76,128 +76,28 @@
   },
   "components": {
     "schemas": {
-      "GetFundsConfirmationForInternationalPaymentConsentRequest": {
+      "GetFundsConfirmationForDomesticPaymentConsentRequest": {
         "type": "string",
-        "description": "This schema represents the request body for the Funds Confirmation operation in the International Payment Consents API.",
+        "description": "This schema represents a request body for a funds confirmation operation related to domestic payment consents.",
         "example": "{}"
       },
-      "GetFundsConfirmationForInternationalPaymentConsentResponse_200": {
+      "GetFundsConfirmationForDomesticPaymentConsentResponse_200": {
         "type": "object",
         "properties": {
           "Data": {
-            "type": "object",
-            "properties": {
-              "FundsAvailableResult": {
-                "$ref": "#/components/schemas/FundsAvailableResult"
-              }
-            },
-            "description": "Container for the data relating to funds availability.",
-            "example": {
-              "FundsAvailableResult": {
-                "FundsAvailableDateTime": "2026-09-15T14:30:00Z",
-                "FundsAvailable": true
-              }
-            }
+            "$ref": "#/components/schemas/FundsConfirmationData"
           },
           "Links": {
-            "type": "object",
-            "properties": {
-              "Self": {
-                "type": "string",
-                "description": "Link to the current resource.",
-                "example": "http://example.com/current"
-              },
-              "First": {
-                "type": "string",
-                "description": "Link to the first page of results.",
-                "example": "http://example.com/first"
-              },
-              "Prev": {
-                "type": "string",
-                "description": "Link to the previous page of results.",
-                "example": "http://example.com/prev"
-              },
-              "Next": {
-                "type": "string",
-                "description": "Link to the next page of results.",
-                "example": "http://example.com/next"
-              },
-              "Last": {
-                "type": "string",
-                "description": "Link to the last page of results.",
-                "example": "http://example.com/last"
-              }
-            },
-            "description": "Hyperlinks related to the funds confirmation response.",
-            "example": {
-              "Self": "https://example.com/resource",
-              "First": "https://example.com/resource",
-              "Prev": "https://example.com/resource",
-              "Next": "https://example.com/resource",
-              "Last": "https://example.com/resource"
-            }
+            "$ref": "#/components/schemas/PaginationLinks"
           },
           "Meta": {
-            "type": "object",
-            "properties": {
-              "TotalPages": {
-                "type": "integer",
-                "description": "Total number of pages available in the response.",
-                "format": "int32",
-                "example": 1
-              },
-              "FirstAvailableDateTime": {
-                "type": "string",
-                "description": "Date and time when the first fund availability was recorded.",
-                "example": "2023-01-01T00:00:00Z"
-              },
-              "LastAvailableDateTime": {
-                "type": "string",
-                "description": "Date and time when the last fund availability was recorded.",
-                "example": "2023-01-01T23:59:59Z"
-              }
-            },
-            "description": "Meta information about the funds confirmation response.",
-            "example": {
-              "TotalPages": 1,
-              "FirstAvailableDateTime": "2026-09-15T14:30:00Z",
-              "LastAvailableDateTime": "2026-09-15T14:30:00Z"
-            }
+            "$ref": "#/components/schemas/PaginationMeta"
           },
           "metadata": {
-            "type": "object",
-            "properties": {
-              "responseId": {
-                "type": "string",
-                "description": "Unique identifier for the response.",
-                "example": "response-12345"
-              },
-              "correlationId": {
-                "type": "string",
-                "description": "Identifier used to correlate response with requests.",
-                "example": "correlation-abcde"
-              },
-              "generatedAt": {
-                "type": "string",
-                "description": "Timestamp for when the response was generated.",
-                "example": "2023-01-01T00:00:00Z"
-              },
-              "processingRegion": {
-                "type": "string",
-                "description": "Region where the request was processed.",
-                "example": "us-east-1"
-              }
-            },
-            "description": "Additional metadata regarding the response.",
-            "example": {
-              "responseId": "fc58b79c-9a7b-5490-97ff-a59c41859adf",
-              "correlationId": "592cb2fb-5c3b-5765-bdea-51a8432ee93a",
-              "generatedAt": "2026-09-15T14:30:00Z",
-              "processingRegion": "us-east-1"
-            }
+            "$ref": "#/components/schemas/ResponseMetadata"
           }
         },
-        "description": "Response schema for funds confirmation in international payment consents.",
+        "description": "Response schema for retrieving funds confirmation details.",
         "example": {
           "Data": {
             "FundsAvailableResult": {
@@ -218,12 +118,21 @@
             "LastAvailableDateTime": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "responseId": "fc58b79c-9a7b-5490-97ff-a59c41859adf",
-            "correlationId": "592cb2fb-5c3b-5765-bdea-51a8432ee93a",
+            "responseId": "dd4ba341-3879-51ee-8b0e-175a1bd58e00",
+            "correlationId": "40b2bbb3-38b7-542a-a604-4e3f55fca713",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
+      },
+      "FundsConfirmationData": {
+        "type": "object",
+        "properties": {
+          "FundsAvailableResult": {
+            "$ref": "#/components/schemas/FundsAvailableResult"
+          }
+        },
+        "description": "Contains details about the funds availability confirmation."
       },
       "FundsAvailableResult": {
         "type": "object",
@@ -231,15 +140,94 @@
           "FundsAvailableDateTime": {
             "type": "string",
             "description": "The date and time when the funds availability was confirmed.",
-            "example": "2023-01-01T00:00:00Z"
+            "example": "2023-10-01T10:00:00Z"
           },
           "FundsAvailable": {
             "type": "boolean",
-            "description": "Indicates whether funds are available.",
-            "example": false
+            "description": "Indicates whether the funds are available.",
+            "example": true
           }
         },
-        "description": "Schema for the result of available funds."
+        "description": "The result of the funds availability check."
+      },
+      "PaginationLinks": {
+        "type": "object",
+        "properties": {
+          "Self": {
+            "type": "string",
+            "description": "Link to the current resource.",
+            "example": "https://api.example.com/resources/self"
+          },
+          "First": {
+            "type": "string",
+            "description": "Link to the first page of resources.",
+            "example": "https://api.example.com/resources?page=1"
+          },
+          "Prev": {
+            "type": "string",
+            "description": "Link to the previous page of resources.",
+            "example": "https://api.example.com/resources?page=2"
+          },
+          "Next": {
+            "type": "string",
+            "description": "Link to the next page of resources.",
+            "example": "https://api.example.com/resources?page=4"
+          },
+          "Last": {
+            "type": "string",
+            "description": "Link to the last page of resources.",
+            "example": "https://api.example.com/resources?page=5"
+          }
+        },
+        "description": "Links for pagination of the response."
+      },
+      "PaginationMeta": {
+        "type": "object",
+        "properties": {
+          "TotalPages": {
+            "type": "integer",
+            "description": "Total number of pages available.",
+            "format": "int32",
+            "example": 5
+          },
+          "FirstAvailableDateTime": {
+            "type": "string",
+            "description": "The date and time of the first available resource.",
+            "example": "2023-10-01T00:00:00Z"
+          },
+          "LastAvailableDateTime": {
+            "type": "string",
+            "description": "The date and time of the last available resource.",
+            "example": "2023-10-31T23:59:59Z"
+          }
+        },
+        "description": "Metadata information for pagination."
+      },
+      "ResponseMetadata": {
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "Unique identifier for the response.",
+            "example": "abc123"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Correlation identifier for tracking the request.",
+            "example": "corr456"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "Timestamp when the response was generated.",
+            "example": "2023-10-01T10:00:00Z"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "Region where the processing occurred.",
+            "example": "useast1"
+          }
+        },
+        "description": "Metadata about the response."
       }
     },
     "parameters": {
@@ -260,17 +248,15 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "Unique identifier for the endpoint that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "payment-initiation-openapi-confirm-international-payment-funds"
+          "example": "payment-initiation-openapi-confirm-domestic-payment-funds"
         },
-        "example": "payment-initiation-openapi-confirm-international-payment-funds"
+        "example": "payment-initiation-openapi-confirm-domestic-payment-funds"
       },
       "X-Runtime-App": {
-        "description": "The name of the application runtime that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -283,7 +269,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication scheme using a Bearer token. The token must be a valid JSON Web Token (JWT).",
+        "description": "Authentication method using a JSON Web Token (JWT) as a bearer token. This scheme is commonly used for securing APIs by validating user identity and authorizing access.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

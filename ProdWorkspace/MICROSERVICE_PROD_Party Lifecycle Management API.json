@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Party Lifecycle Management API",
-    "description": "The Party Lifecycle Management API enables businesses to efficiently manage and update the lifecycle of party entities within the banking system. Through this API, users can modify various attributes related to parties, such as their status or details, reflecting changes in business circumstances. Typical consumers include banking operation teams and systems that require real-time lifecycle information for accurate customer service and reporting. This API is crucial for maintaining up-to-date data on parties, ensuring compliance, and enhancing the overall customer experience.",
+    "description": "The Party Lifecycle Management API provides a comprehensive solution for managing the lifecycle of parties involved in banking transactions. This API allows users to retrieve information about various entities, such as customers, partners, and other stakeholders, essential for sales and banking operations. Typical consumers include banking institutions and sales teams looking to enhance their understanding of party relationships and histories. The endpoint facilitates seamless integration with existing systems, enabling efficient data retrieval to improve decision-making processes.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/sales/party-lifecycle-management/{param1}": {
-      "patch": {
+    "/v5/banking/sales/party-lifecycle-management": {
+      "get": {
         "tags": [
-          "Party Management"
+          "Sales Management"
         ],
-        "summary": "Update the lifecycle status of a specific party.",
-        "description": "This operation allows for updating the lifecycle management information of a party identified by PARTY-600045. It enables the modification of various attributes related to the party's lifecycle, ensuring accurate and up-to-date information is maintained.",
-        "operationId": "updatePartyLifecycleManagement",
+        "summary": "Retrieve the lifecycle management details of sales parties.",
+        "description": "This endpoint allows developers to access comprehensive information regarding the lifecycle of parties involved in sales, including their status, history, and any relevant data associated with them. Ideal for monitoring and management processes.",
+        "operationId": "getSalesPartyLifecycleManagement",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body allows you to update the lifecycle management details for a specific party identified by PARTY-600045. Please provide the necessary fields to reflect the changes required.",
+          "description": "This request body is used to retrieve lifecycle management information for sales parties. The provided parameters will define the criteria for filtering and retrieving the relevant data. Ensure that the request adheres to the specified schema.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdatePartyLifecycleManagementRequest"
+                "$ref": "#/components/schemas/GetSalesPartyLifecycleManagementRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully and the resource has been updated.",
+            "description": "Successful retrieval of party lifecycle management data.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdatePartyLifecycleManagementResponse_200"
+                  "$ref": "#/components/schemas/GetSalesPartyLifecycleManagementResponse_200"
                 }
               }
             }
@@ -76,61 +76,80 @@
   },
   "components": {
     "schemas": {
-      "UpdatePartyLifecycleManagementRequest": {
-        "title": "Party Lifecycle Management Patch Request Body",
+      "GetSalesPartyLifecycleManagementRequest": {
+        "type": "string",
+        "description": "A JSON string representing the request body for the Operations in Party Lifecycle Management. This may include relevant parameters for querying parties.",
+        "example": "{}"
+      },
+      "GetSalesPartyLifecycleManagementResponse_200": {
+        "title": "Party Lifecycle Management Response",
         "type": "object",
         "properties": {
-          "changes": {
-            "description": "List of changes to be applied to the party.",
-            "$ref": "#/components/schemas/Changes"
+          "items": {
+            "type": "array",
+            "description": "A list of items representing the party lifecycle management details.",
+            "example": [
+              {
+                "prospectId": "STANDARD",
+                "productCode": "CHK-PREMIUM-US",
+                "salesChannel": "STANDARD",
+                "relationshipManagerId": "STANDARD",
+                "expectedValue": {
+                  "amount": 100.0,
+                  "currency": "USD"
+                },
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/PartyLifecycleItem"
+            }
           },
-          "changeReason": {
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationDetails"
+          },
+          "sort": {
             "type": "string",
-            "description": "The reason for applying the changes.",
+            "description": "The sorting criteria applied to the response.",
             "example": "STANDARD"
           },
-          "effectiveAt": {
-            "type": "string",
-            "description": "Date and time when the changes should take effect.",
-            "example": "2026-09-15T14:30:00Z"
-          },
-          "requestedBy": {
-            "type": "string",
-            "description": "Identifier of the user requesting the change.",
-            "example": "STANDARD"
-          },
-          "requestContext": {
-            "description": "Context information for the request.",
-            "$ref": "#/components/schemas/RequestContext"
+          "metadata": {
+            "$ref": "#/components/schemas/ResponseMetadata"
           }
         },
-        "description": "Schema for the request body used to patch party lifecycle management operations.",
+        "description": "This schema represents the response structure for the GET operation related to the party lifecycle management, including pagination, sorting, and item details.",
         "example": {
-          "changes": {
-            "prospectId": "STANDARD",
-            "productCode": "CHK-PREMIUM-US",
-            "salesChannel": "STANDARD"
-          },
-          "changeReason": "STANDARD",
-          "effectiveAt": "2026-09-15T14:30:00Z",
-          "requestedBy": "STANDARD",
-          "requestContext": {
-            "requestId": "372b9ce5-5562-5910-9b9c-c43d66c39d12",
-            "correlationId": "90c44851-aa67-5e90-a11c-9a5f205b070c",
-            "idempotencyKey": "9513e097-fdb4-5d73-bd87-113a51945e33",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-660692"
+          "items": [
+            {
+              "prospectId": "STANDARD",
+              "productCode": "CHK-PREMIUM-US",
+              "salesChannel": "STANDARD",
+              "relationshipManagerId": "STANDARD",
+              "expectedValue": {
+                "amount": 100.0,
+                "currency": "USD"
+              },
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
             }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
+          },
+          "sort": "STANDARD",
+          "metadata": {
+            "responseId": "c2b9b21e-9ca7-522a-b3e4-771cfa4c9b39",
+            "correlationId": "3685aee6-8e76-5c3d-9a3e-a764e030bddd",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
           }
         }
       },
-      "Changes": {
-        "title": "Changes",
+      "PartyLifecycleItem": {
+        "title": "Party Lifecycle Item",
         "type": "object",
         "properties": {
           "prospectId": {
@@ -140,142 +159,99 @@
           },
           "productCode": {
             "type": "string",
-            "description": "Code representing the product related to the changes.",
+            "description": "The code of the product associated with the prospect.",
             "example": "string"
           },
           "salesChannel": {
             "type": "string",
-            "description": "The sales channel associated with the changes.",
-            "example": "string"
-          }
-        },
-        "description": "Schema representing the changes to be made to a party."
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
+            "description": "The channel through which the sale is made.",
             "example": "string"
           },
-          "correlationId": {
+          "relationshipManagerId": {
             "type": "string",
-            "description": "Identifier used to correlate related requests.",
+            "description": "Identifier for the relationship manager handling the prospect.",
             "example": "string"
           },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "Key used to ensure that repeated requests are processed only once.",
-            "example": "string"
+          "expectedValue": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "description": "The amount expected from the sale.",
+                "example": 0.0
+              },
+              "currency": {
+                "type": "string",
+                "description": "The currency of the expected amount.",
+                "example": "string"
+              }
+            },
+            "description": "The expected value of the sale, including amount and currency."
           },
-          "requestedAt": {
+          "recordStatus": {
             "type": "string",
-            "description": "Timestamp when the request was made.",
+            "description": "The status of the record.",
             "example": "string"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "Identifier of the source system for the request.",
-            "example": "string"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "Identifier of the source application making the request.",
-            "example": "string"
-          },
-          "channel": {
-            "description": "Information about the channel through which the request was made.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Schema representing the context of the request."
-      },
-      "Channel": {
-        "title": "Channel",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "string"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of the channel used for the request.",
-            "example": "string"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier of the device used for the request.",
-            "example": "string"
-          }
-        },
-        "description": "Schema representing the channel information of the request."
-      },
-      "UpdatePartyLifecycleManagementResponse_200": {
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "integer",
-            "description": "The version of the response.",
-            "format": "int32",
-            "example": 1
-          },
-          "status": {
-            "type": "string",
-            "description": "The status of the operation.",
-            "example": "ACTIVE"
           },
           "updatedAt": {
             "type": "string",
-            "description": "The date and time when the resource was last updated.",
-            "example": "2026-09-15T14:30:00Z"
-          },
-          "metadata": {
-            "description": "Metadata related to the response.",
-            "$ref": "#/components/schemas/Metadata"
+            "description": "The timestamp when the record was last updated.",
+            "example": "string"
           }
         },
-        "description": "Response schema for the PATCH operation related to PARTY-600045 in the lifecycle management system.",
-        "example": {
-          "version": 1,
-          "status": "ACTIVE",
-          "updatedAt": "2026-09-15T14:30:00Z",
-          "metadata": {
-            "responseId": "7f02c701-b645-54da-965f-d6937afada0c",
-            "correlationId": "90c44851-aa67-5e90-a11c-9a5f205b070c",
-            "generatedAt": "2026-09-15T14:30:00Z",
-            "processingRegion": "us-east-1"
-          }
-        }
+        "description": "Represents an individual item in the party lifecycle management."
       },
-      "Metadata": {
+      "PaginationDetails": {
+        "title": "Pagination Details",
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "The current page number.",
+            "format": "int32",
+            "example": 0
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The number of items per page.",
+            "format": "int32",
+            "example": 0
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available.",
+            "format": "int32",
+            "example": 0
+          }
+        },
+        "description": "Contains pagination information about the response data."
+      },
+      "ResponseMetadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "A unique identifier for the response.",
+            "description": "Unique identifier for the response.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "An identifier used to correlate this response with other requests.",
+            "description": "Correlation identifier to track the request.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp when this metadata was generated.",
+            "description": "Timestamp when the response was generated.",
             "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing took place.",
+            "description": "The region where the processing of the request took place.",
             "example": "string"
           }
         },
-        "description": "Metadata containing additional information about the response."
+        "description": "Contains metadata related to the response."
       }
     },
     "parameters": {
@@ -296,17 +272,15 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "Unique identifier for the endpoint associated with this response.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "party-lifecycle-management-update-party-lifecycle-management"
+          "example": "party-lifecycle-management-search-party-lifecycle-management"
         },
-        "example": "party-lifecycle-management-update-party-lifecycle-management"
+        "example": "party-lifecycle-management-search-party-lifecycle-management"
       },
       "X-Runtime-App": {
-        "description": "Name of the application that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -319,7 +293,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses Bearer authentication, where a JSON Web Token (JWT) is provided for authentication. It is crucial for securing endpoints and ensuring that only authorized users can access the protected resources. The client must include the token in the `Authorization` header when making requests.",
+        "description": "This security scheme utilizes bearer authentication, specifically designed for JSON Web Tokens (JWT). When using this scheme, clients must include a valid JWT in the authorization header of their requests in order to authenticate.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
