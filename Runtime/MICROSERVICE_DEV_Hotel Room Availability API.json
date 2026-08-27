@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_DEV_Hotel Room Availability API",
-    "description": "The Hotel Room Availability API allows users to check the availability of hotel rooms for specific dates. This API serves hotel booking platforms, travel agencies, and other applications seeking to display real-time room availability. It provides critical information about which rooms are available for booking, enabling seamless travel planning. Users can easily integrate this API to enhance their services and improve customer experience by offering up-to-date availability details.",
+    "description": "The Hotel Room Availability API allows businesses to inquire about the availability of rooms within a hotel. By submitting a request, users can determine if specific dates are open for bookings, facilitating effective planning for guests and enabling hotels to manage their inventory. This API is ideal for travel agents, booking platforms, and hotel management systems looking to integrate real-time room availability into their services. It supports operations to support enhanced guest experiences and streamline the reservation process.",
     "version": "1.0"
   },
   "servers": [
@@ -19,15 +19,39 @@
     }
   ],
   "paths": {
-    "/hotel/v1/rooms/availability": {
-      "get": {
+    "/hotel/v21/rooms/availability": {
+      "post": {
         "tags": [
           "Room Management"
         ],
-        "summary": "Retrieve Room Availability",
-        "description": "This endpoint returns the availability status of rooms, allowing users to check which rooms are currently available for booking and any specific timeframes.",
-        "operationId": "getRoomAvailability",
+        "summary": "Check Room Availability",
+        "description": "This endpoint allows clients to check the availability of rooms by submitting a request with specific criteria. It returns the availability status of the requested rooms, helping users make informed booking decisions.",
+        "operationId": "postRoomAvailability",
         "parameters": [
+          {
+            "$ref": "#/components/parameters/attempt"
+          },
+          {
+            "$ref": "#/components/parameters/retryAttempt"
+          },
+          {
+            "$ref": "#/components/parameters/validateOnly"
+          },
+          {
+            "$ref": "#/components/parameters/priorityLevel"
+          },
+          {
+            "$ref": "#/components/parameters/forceProvision"
+          },
+          {
+            "$ref": "#/components/parameters/includeHistory"
+          },
+          {
+            "$ref": "#/components/parameters/skipVerification"
+          },
+          {
+            "$ref": "#/components/parameters/includeBETAiceInfo"
+          },
           {
             "$ref": "#/components/parameters/host"
           },
@@ -35,115 +59,109 @@
             "$ref": "#/components/parameters/accept"
           },
           {
-            "$ref": "#/components/parameters/jsession"
-          },
-          {
-            "$ref": "#/components/parameters/connection"
-          },
-          {
-            "$ref": "#/components/parameters/user-agent"
-          },
-          {
-            "$ref": "#/components/parameters/consumer-key"
-          },
-          {
             "$ref": "#/components/parameters/content-type"
+          },
+          {
+            "$ref": "#/components/parameters/x-retry-count"
           },
           {
             "$ref": "#/components/parameters/consumer-email"
           },
           {
-            "$ref": "#/components/parameters/x-forwarded-host"
+            "$ref": "#/components/parameters/x-debug-enabled"
           },
           {
-            "$ref": "#/components/parameters/transfer-encoding"
+            "$ref": "#/components/parameters/x-client-version"
+          },
+          {
+            "$ref": "#/components/parameters/x-validation-mode"
+          },
+          {
+            "$ref": "#/components/parameters/x-request-priority"
+          },
+          {
+            "$ref": "#/components/parameters/x-provisioning-mode"
           },
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "Request payload for checking room availability. This should include the necessary parameters for querying the availability of rooms, such as the date range and room type.",
+          "description": "This request body requires the availability details for rooms. Please ensure that the information provided complies with the required format and schema. The contents will be used to check the availability of the specified rooms based on the provided parameters.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityRequest"
+                "$ref": "#/components/schemas/PostRoomAvailabilityRequest"
               }
             }
           }
         },
         "responses": {
+          "201": {
+            "description": "Resource successfully created, indicates the new availability information.",
+            "headers": {
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              },
+              "cache-control": {
+                "$ref": "#/components/headers/cache-control"
+              },
+              "x-processing-time": {
+                "$ref": "#/components/headers/x-processing-time"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostRoomAvailabilityResponse_201"
+                }
+              }
+            }
+          },
           "400": {
-            "description": "The request contains invalid parameters. Please review your request and try again.",
+            "description": "Request parameters are invalid; check the provided data for errors.",
             "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
+              "retry-after": {
+                "$ref": "#/components/headers/retry-after"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              },
+              "x-error-category": {
+                "$ref": "#/components/headers/x-error-category"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_400"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "The request was successful, and the availability data is returned.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_200"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The requested resource related to room availability was not found.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_404"
+                  "$ref": "#/components/schemas/PostRoomAvailabilityResponse_400"
                 }
               }
             }
           },
           "500": {
-            "description": "An unexpected server error occurred. Please try again later.",
+            "description": "An unexpected error occurred on the server; indicates a failure in processing the request.",
             "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
+              "retry-after": {
+                "$ref": "#/components/headers/retry-after"
+              },
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              },
+              "x-error-type": {
+                "$ref": "#/components/headers/x-error-type"
+              },
+              "x-incident-active": {
+                "$ref": "#/components/headers/x-incident-active"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_500"
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "A new resource related to room availability was created successfully.",
-            "headers": {
-              "Vary": {
-                "$ref": "#/components/headers/Vary"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_201"
+                  "$ref": "#/components/schemas/PostRoomAvailabilityResponse_500"
                 }
               }
             }
@@ -159,122 +177,970 @@
   },
   "components": {
     "schemas": {
-      "MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_400": {
-        "title": "ErrorResponse",
-        "required": [
-          "code",
-          "message"
-        ],
+      "PostRoomAvailabilityResponse_201": {
         "type": "object",
         "properties": {
-          "code": {
+          "swapId": {
+            "type": "string",
+            "description": "The unique identifier for the swap operation.",
+            "example": "SWAP-10001"
+          },
+          "subscriberId": {
+            "type": "boolean",
+            "description": "Indicates if the subscriber is active.",
+            "example": true
+          },
+          "mobileNumber": {
+            "type": "string",
+            "description": "The mobile number associated with the subscriber.",
+            "example": "+15551234567"
+          },
+          "status": {
+            "type": "boolean",
+            "description": "The current status of the operation.",
+            "example": true
+          },
+          "oldSimStatus": {
+            "type": "string",
+            "description": "The status of the old SIM card before the operation.",
+            "example": "DEACTIVATED"
+          },
+          "newSimStatus": {
+            "type": "string",
+            "description": "The status of the new SIM card after the operation.",
+            "example": "ACTIVE"
+          },
+          "activationTime": {
+            "type": "string",
+            "description": "The time at which the new SIM was activated.",
+            "example": "2026-07-23T09:02:30Z"
+          },
+          "replacementFee": {
             "type": "integer",
-            "description": "The HTTP status code representing the error."
+            "description": "The fee charged for replacing the SIM card.",
+            "format": "int32",
+            "example": 15
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency used for the transaction.",
+            "example": "USD"
+          },
+          "serviceRequestId": {
+            "type": "string",
+            "description": "The unique identifier for the service request.",
+            "example": "SR-900001"
+          },
+          "verification": {
+            "description": "Details about the verification process.",
+            "$ref": "#/components/schemas/Verification"
+          },
+          "BETAice": {
+            "description": "Details regarding the BETAice device involved in the operation.",
+            "$ref": "#/components/schemas/BETAiceDevice"
+          },
+          "store": {
+            "description": "Details about the store where the operation was initiated.",
+            "$ref": "#/components/schemas/Store"
+          },
+          "agent": {
+            "description": "Information about the agent handling the operation.",
+            "$ref": "#/components/schemas/Agent"
+          },
+          "audit": {
+            "description": "Audit information for tracking the operation history.",
+            "$ref": "#/components/schemas/Audit"
           },
           "message": {
             "type": "string",
-            "description": "Detailed error message providing information about what went wrong."
+            "description": "A message related to the operation outcome.",
+            "example": "SIM replacement completed successfully."
           },
-          "details": {
-            "type": "array",
-            "description": "A list of details about the error, which can provide additional context.",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "description": "Schema representing the error response for a failed room availability query.",
-        "example": {}
-      },
-      "MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_200": {
-        "title": "Room Availability Response",
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "The status of the room availability request.",
-            "example": "ok"
+          "notificationSent": {
+            "type": "boolean",
+            "description": "Indicates if a notification about the operation has been sent.",
+            "example": true
           },
-          "example": {
-            "type": "string",
-            "description": "An example field for demonstration purposes.",
-            "example": "Room is available for booking."
-          }
-        },
-        "description": "Schema representing the response for the room availability check operation.",
-        "example": {
-          "status": "ok"
-        }
-      },
-      "MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_404": {
-        "title": "Rooms Availability Error Response",
-        "type": "object",
-        "properties": {},
-        "description": "This schema represents the error response for a failed request when checking availability of rooms. The request returns a 404 status indicating that the requested resource could not be found.",
-        "example": {}
-      },
-      "MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_500": {
-        "title": "Rooms Availability Error Response",
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "The status message indicating the nature of the error.",
-            "example": "ok"
+          "customerNotified": {
+            "type": "boolean",
+            "description": "Indicates if the customer has been notified about the operation.",
+            "example": true
           },
-          "example": {
-            "type": "string",
-            "description": "An example message or further information about the error.",
-            "example": "An unexpected error occurred while trying to fetch room availability."
-          }
-        },
-        "description": "Response schema for the error that occurs when there's a server issue related to room availability.",
-        "example": {
-          "status": "ok"
-        }
-      },
-      "MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityRequest": {
-        "title": "Room Availability Request",
-        "type": "object",
-        "properties": {
-          "hotelId": {
-            "type": "string",
-            "description": "The unique identifier for the hotel.",
-            "example": "HTL-8843"
-          },
-          "roomType": {
-            "type": "string",
-            "description": "The type of room being queried for availability.",
-            "example": "SINGLE"
-          },
-          "availableRooms": {
+          "processingTimeMs": {
             "type": "integer",
-            "description": "The number of rooms available for the specified room type.",
+            "description": "The time taken to process the operation in milliseconds.",
             "format": "int32",
-            "example": 29
-          },
-          "pricePerNight": {
-            "type": "number",
-            "description": "The price per night for the available rooms.",
-            "example": 156.65
+            "example": 245
           }
         },
-        "description": "Schema representing the request body for fetching room availability information.",
+        "description": "Response schema for the availability operation in the room service.",
         "example": {
-          "hotelId": "HTL-8843",
-          "roomType": "SINGLE",
-          "availableRooms": 29,
-          "pricePerNight": 156.65
+          "swapId": "SWAP-10001",
+          "subscriberId": true,
+          "mobileNumber": "+15551234567",
+          "status": true,
+          "oldSimStatus": "DEACTIVATED",
+          "newSimStatus": "ACTIVE",
+          "activationTime": "2026-07-23T09:02:30Z",
+          "replacementFee": 15,
+          "currency": "USD",
+          "serviceRequestId": "SR-900001",
+          "verification": {
+            "otpVerified": true,
+            "biometricVerified": false,
+            "verificationScore": 92.5
+          },
+          "BETAice": {
+            "manufacturer": "Samsung",
+            "model": "Galaxy S25",
+            "imei": 356789123456789,
+            "supportsEsim": true
+          },
+          "store": {
+            "storeId": "STORE-101",
+            "storeName": "Seattle Central Store",
+            "isAuthorized": true
+          },
+          "agent": {
+            "agentId": "EMP-1001",
+            "agentName": "David Miller",
+            "employeeNumber": 1001
+          },
+          "audit": {
+            "createdBy": "SYSTEM",
+            "createdAt": "2026-07-22T10:30:00Z",
+            "automated": true
+          },
+          "message": "SIM replacement completed successfully.",
+          "notificationSent": true,
+          "customerNotified": true,
+          "processingTimeMs": 245
         }
       },
-      "MICROSERVICE_DEV_getRoomAvailability-GetRoomAvailabilityResponse_201": {
+      "Verification": {
         "type": "object",
-        "properties": {},
-        "description": "Schema representing the response for the availability of rooms after a GET operation.",
-        "example": {}
+        "properties": {
+          "otpVerified": {
+            "type": "boolean",
+            "description": "Indicates if OTP verification was successful.",
+            "example": false
+          },
+          "biometricVerified": {
+            "type": "boolean",
+            "description": "Indicates if biometric verification was successful.",
+            "example": false
+          },
+          "verificationScore": {
+            "type": "number",
+            "description": "The score obtained from the verification process.",
+            "example": 0.0
+          }
+        },
+        "description": "Details regarding the verification status of the user."
+      },
+      "BETAiceDevice": {
+        "type": "object",
+        "properties": {
+          "manufacturer": {
+            "type": "string",
+            "description": "The manufacturer of the device.",
+            "example": "string"
+          },
+          "model": {
+            "type": "string",
+            "description": "The model of the device.",
+            "example": "string"
+          },
+          "imei": {
+            "type": "number",
+            "description": "The IMEI number of the device.",
+            "example": 0.0
+          },
+          "supportsEsim": {
+            "type": "boolean",
+            "description": "Indicates if the device supports eSIM technology.",
+            "example": false
+          }
+        },
+        "description": "Schema representing details of a BETAice device."
+      },
+      "Store": {
+        "type": "object",
+        "properties": {
+          "storeId": {
+            "type": "string",
+            "description": "The unique identifier for the store.",
+            "example": "string"
+          },
+          "storeName": {
+            "type": "string",
+            "description": "The name of the store.",
+            "example": "string"
+          },
+          "isAuthorized": {
+            "type": "boolean",
+            "description": "Indicates if the store is authorized to conduct operations.",
+            "example": false
+          }
+        },
+        "description": "Schema representing a store involved in an operation."
+      },
+      "Agent": {
+        "type": "object",
+        "properties": {
+          "agentId": {
+            "type": "string",
+            "description": "The unique identifier of the agent.",
+            "example": "string"
+          },
+          "agentName": {
+            "type": "string",
+            "description": "The name of the agent.",
+            "example": "string"
+          },
+          "employeeNumber": {
+            "type": "integer",
+            "description": "The employee number of the agent.",
+            "format": "int32",
+            "example": 0
+          }
+        },
+        "description": "Schema representing an agent that handles operations."
+      },
+      "Audit": {
+        "type": "object",
+        "properties": {
+          "createdBy": {
+            "type": "string",
+            "description": "The user who created the operation.",
+            "example": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "The timestamp when the operation was created.",
+            "example": "string"
+          },
+          "automated": {
+            "type": "boolean",
+            "description": "Indicates if the operation was automated.",
+            "example": false
+          }
+        },
+        "description": "Schema representing audit information for operations."
+      },
+      "PostRoomAvailabilityResponse_400": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "description": "A code representing the type of error.",
+            "example": "VALIDATION_ERROR"
+          },
+          "message": {
+            "type": "boolean",
+            "description": "A boolean representing whether a message is available.",
+            "example": false
+          },
+          "status": {
+            "type": "integer",
+            "description": "The HTTP status code of the response.",
+            "format": "int32",
+            "example": 400
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Timestamp when the error occurred.",
+            "example": "2026-07-22T10:30:00Z"
+          },
+          "path": {
+            "type": "string",
+            "description": "The path in the API that was accessed.",
+            "example": "/hotel/v21/rooms/availability"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "Unique identifier for tracing the request.",
+            "example": "1fda72a9-970b-4561-ae1e-c3c9d3e8a454"
+          },
+          "requestId": {
+            "type": "integer",
+            "description": "Unique identifier for the specific request made.",
+            "format": "int32",
+            "example": 10001
+          },
+          "errors": {
+            "type": "array",
+            "description": "Array of detailed error objects related to the validation.",
+            "example": [
+              {
+                "field": "subscriberId",
+                "reason": true,
+                "severity": "HIGH",
+                "retryAllowed": false
+              },
+              {
+                "field": "mobileNumber",
+                "reason": "invalid mobile number",
+                "severity": 3,
+                "retryAllowed": false
+              },
+              {
+                "field": "newSimSerial",
+                "reason": "SIM serial number is required",
+                "severity": true,
+                "retryAllowed": false
+              },
+              {
+                "field": "identity.documentNumber",
+                "reason": "identity verification failed",
+                "severity": "HIGH",
+                "retryAllowed": false
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetail"
+            }
+          },
+          "validationId": {
+            "type": "string",
+            "description": "Identifier for the validation process, if applicable.",
+            "example": "VAL-SIM-1001"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "ID to correlate related requests and responses.",
+            "example": "CORR-SIM-2001"
+          },
+          "severity": {
+            "type": "boolean",
+            "description": "Indicates the severity level of the error.",
+            "example": true
+          },
+          "retryAllowed": {
+            "type": "boolean",
+            "description": "Indicates if the request can be retried.",
+            "example": false
+          },
+          "documentation": {
+            "type": "string",
+            "description": "Link to the documentation for this error.",
+            "example": "/docs/errors/sim-swap-validation"
+          },
+          "validationPassed": {
+            "type": "boolean",
+            "description": "Indicates if the validation was successful.",
+            "example": false
+          },
+          "errorCount": {
+            "type": "integer",
+            "description": "Total count of errors detected.",
+            "format": "int32",
+            "example": 4
+          },
+          "requiresCustomerAction": {
+            "type": "boolean",
+            "description": "Indicates if user action is required to resolve the error.",
+            "example": true
+          }
+        },
+        "description": "Schema representing the error response for failed room availability operations.",
+        "example": {
+          "errorCode": "VALIDATION_ERROR",
+          "message": false,
+          "status": 400,
+          "timestamp": "2026-07-22T10:30:00Z",
+          "path": "/hotel/v21/rooms/availability",
+          "traceId": "1fda72a9-970b-4561-ae1e-c3c9d3e8a454",
+          "requestId": 10001,
+          "errors": [
+            {
+              "field": "subscriberId",
+              "reason": true,
+              "severity": "HIGH",
+              "retryAllowed": false
+            },
+            {
+              "field": "mobileNumber",
+              "reason": "invalid mobile number",
+              "severity": 3,
+              "retryAllowed": false
+            },
+            {
+              "field": "newSimSerial",
+              "reason": "SIM serial number is required",
+              "severity": true,
+              "retryAllowed": false
+            },
+            {
+              "field": "identity.documentNumber",
+              "reason": "identity verification failed",
+              "severity": "HIGH",
+              "retryAllowed": false
+            }
+          ],
+          "validationId": "VAL-SIM-1001",
+          "correlationId": "CORR-SIM-2001",
+          "severity": true,
+          "retryAllowed": false,
+          "documentation": "/docs/errors/sim-swap-validation",
+          "validationPassed": false,
+          "errorCount": 4,
+          "requiresCustomerAction": true
+        }
+      },
+      "ErrorDetail": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "The name of the field that caused the error.",
+            "example": "string"
+          },
+          "reason": {
+            "type": "boolean",
+            "description": "Indicates the reason for the error.",
+            "example": false
+          },
+          "severity": {
+            "type": "string",
+            "description": "Severity level of the error.",
+            "example": "string"
+          },
+          "retryAllowed": {
+            "type": "boolean",
+            "description": "Indicates if the request related to this error can be retried.",
+            "example": false
+          }
+        },
+        "description": "Schema representing details of an individual validation error."
+      },
+      "PostRoomAvailabilityRequest": {
+        "type": "object",
+        "properties": {
+          "subscriberId": {
+            "type": "boolean",
+            "description": "Indicates if the user is a subscriber.",
+            "example": true
+          },
+          "mobileNumber": {
+            "type": "string",
+            "description": "The mobile number of the user.",
+            "example": "+15551234567"
+          },
+          "oldSimSerial": {
+            "type": "boolean",
+            "description": "Indicates if an old SIM serial number is provided.",
+            "example": true
+          },
+          "newSimSerial": {
+            "type": "string",
+            "description": "The new SIM serial number provided by the user.",
+            "example": "89014103211118510999"
+          },
+          "swapReason": {
+            "type": "boolean",
+            "description": "Indicates if the SIM swap reason is specified.",
+            "example": true
+          },
+          "requestedBy": {
+            "type": "string",
+            "description": "The identity of the person requesting the operation.",
+            "example": "CUSTOMER"
+          },
+          "customer": {
+            "description": "Details about the customer making the request.",
+            "$ref": "#/components/schemas/Customer"
+          },
+          "identity": {
+            "description": "Identity verification details of the customer.",
+            "$ref": "#/components/schemas/Identity"
+          },
+          "BETAice": {
+            "description": "Details about the user's device configurations.",
+            "$ref": "#/components/schemas/BetaIce"
+          },
+          "verification": {
+            "description": "Verification status of the user's identity.",
+            "$ref": "#/components/schemas/Verification"
+          },
+          "preferredActivationTime": {
+            "type": "string",
+            "description": "The preferred time for activation.",
+            "example": "2026-07-23T09:00:00Z"
+          },
+          "salesChannel": {
+            "type": "string",
+            "description": "The channel through which the sale was made.",
+            "example": "RETAIL_STORE"
+          },
+          "storeId": {
+            "type": "string",
+            "description": "The identifier of the store from which the request originates.",
+            "example": "STORE-101"
+          },
+          "agentId": {
+            "type": "string",
+            "description": "The ID of the agent handling the request.",
+            "example": "EMP-1001"
+          },
+          "priority": {
+            "type": "integer",
+            "description": "Priority level of the request.",
+            "format": "int32",
+            "example": 3
+          },
+          "notificationRequired": {
+            "type": "boolean",
+            "description": "Indicates whether a notification is required.",
+            "example": true
+          },
+          "replacementFee": {
+            "type": "integer",
+            "description": "The fee associated with replacing the SIM.",
+            "format": "int32",
+            "example": 15
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code for the transaction.",
+            "example": "USD"
+          },
+          "esim": {
+            "type": "boolean",
+            "description": "Indicates if the request is for an eSIM.",
+            "example": false
+          },
+          "autoActivate": {
+            "type": "boolean",
+            "description": "Indicates if auto activation is requested.",
+            "example": true
+          },
+          "requestSequence": {
+            "type": "integer",
+            "description": "Sequence number of the request.",
+            "format": "int32",
+            "example": 10001
+          }
+        },
+        "description": "Request body for POST operation to check room availability.",
+        "example": {
+          "subscriberId": true,
+          "mobileNumber": "+15551234567",
+          "oldSimSerial": true,
+          "newSimSerial": "89014103211118510999",
+          "swapReason": true,
+          "requestedBy": "CUSTOMER",
+          "customer": {
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "john.doe@example.com",
+            "vipCustomer": false,
+            "customerAge": 34
+          },
+          "identity": {
+            "documentType": "PASSPORT",
+            "documentNumber": "P123456789",
+            "verified": true
+          },
+          "BETAice": {
+            "imei": 356789123456789,
+            "manufacturer": "Samsung",
+            "model": "Galaxy S25",
+            "supportsEsim": true
+          },
+          "verification": {
+            "otpVerified": true,
+            "biometricVerified": false,
+            "verificationScore": 92.5
+          },
+          "preferredActivationTime": "2026-07-23T09:00:00Z",
+          "salesChannel": "RETAIL_STORE",
+          "storeId": "STORE-101",
+          "agentId": "EMP-1001",
+          "priority": 3,
+          "notificationRequired": true,
+          "replacementFee": 15,
+          "currency": "USD",
+          "esim": false,
+          "autoActivate": true,
+          "requestSequence": 10001
+        }
+      },
+      "Customer": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "The first name of the customer.",
+            "example": "string"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The last name of the customer.",
+            "example": "string"
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address of the customer.",
+            "example": "string"
+          },
+          "vipCustomer": {
+            "type": "boolean",
+            "description": "Indicates if the customer is a VIP.",
+            "example": false
+          },
+          "customerAge": {
+            "type": "integer",
+            "description": "The age of the customer.",
+            "format": "int32",
+            "example": 0
+          }
+        },
+        "description": "Details about the customer, including personal and contact information."
+      },
+      "Identity": {
+        "type": "object",
+        "properties": {
+          "documentType": {
+            "type": "string",
+            "description": "Type of document used for identity verification.",
+            "example": "string"
+          },
+          "documentNumber": {
+            "type": "string",
+            "description": "Document number for the identity verification.",
+            "example": "string"
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "Indicates whether the identity has been verified.",
+            "example": false
+          }
+        },
+        "description": "Identity verification details of a customer."
+      },
+      "BetaIce": {
+        "type": "object",
+        "properties": {
+          "imei": {
+            "type": "number",
+            "description": "IMEI number of the device.",
+            "example": 0.0
+          },
+          "manufacturer": {
+            "type": "string",
+            "description": "The manufacturer of the device.",
+            "example": "string"
+          },
+          "model": {
+            "type": "string",
+            "description": "The model of the device.",
+            "example": "string"
+          },
+          "supportsEsim": {
+            "type": "boolean",
+            "description": "Indicates whether the device supports eSIM.",
+            "example": false
+          }
+        },
+        "description": "Configuration details of the user's device."
+      },
+      "PostRoomAvailabilityResponse_500": {
+        "title": "Error Response for Room Availability Operations",
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "integer",
+            "description": "A specific code representing the error.",
+            "format": "int32",
+            "example": 500001
+          },
+          "message": {
+            "type": "string",
+            "description": "A descriptive message explaining the error.",
+            "example": "Unable to process SIM replacement."
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code representing the error.",
+            "format": "int32",
+            "example": 500
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "The time when the error occurred, formatted as a string.",
+            "example": "2026-07-22T10:30:00Z"
+          },
+          "path": {
+            "type": "string",
+            "description": "The path of the request that caused the error.",
+            "example": "/hotel/v21/rooms/availability"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "Unique identifier for tracing requests across systems.",
+            "example": "1fda72a9-970b-4561-ae1e-c3c9d3e8a454"
+          },
+          "requestId": {
+            "type": "integer",
+            "description": "Unique identifier for the specific request.",
+            "format": "int32",
+            "example": 10002
+          },
+          "referenceId": {
+            "type": "boolean",
+            "description": "Indicates if there is a reference ID available.",
+            "example": true
+          },
+          "supportContact": {
+            "type": "string",
+            "description": "Contact information for support.",
+            "example": "support@telkom.com"
+          },
+          "retryable": {
+            "type": "boolean",
+            "description": "Indicates if the error can be retried.",
+            "example": true
+          },
+          "incidentId": {
+            "type": "string",
+            "description": "Identifier for the incident related to the error.",
+            "example": "INC-SIM-9001"
+          },
+          "serviceRegion": {
+            "type": "string",
+            "description": "Region where the service is affected.",
+            "example": "US-WEST"
+          },
+          "failureCategory": {
+            "type": "string",
+            "description": "Category of the failure.",
+            "example": "SIM_PROVISIONING"
+          },
+          "estimatedResolution": {
+            "type": "string",
+            "description": "Estimated time to resolve the issue.",
+            "example": "2026-07-22T12:00:00Z"
+          },
+          "provisioningCompleted": {
+            "type": "boolean",
+            "description": "Indicates if provisioning was completed successfully.",
+            "example": false
+          },
+          "rollbackInitiated": {
+            "type": "boolean",
+            "description": "Indicates if a rollback has been initiated.",
+            "example": true
+          },
+          "retryCount": {
+            "type": "integer",
+            "description": "Number of times the operation has been retried.",
+            "format": "int32",
+            "example": 2
+          },
+          "affectedSubscribers": {
+            "type": "integer",
+            "description": "Number of subscribers affected by the incident.",
+            "format": "int32",
+            "example": 1
+          },
+          "dependencyFailure": {
+            "description": "Details about the failure of specific dependencies.",
+            "$ref": "#/components/schemas/DependencyFailure"
+          },
+          "customerImpact": {
+            "description": "Information about the impact on customers.",
+            "$ref": "#/components/schemas/CustomerImpact"
+          },
+          "incidentSeverity": {
+            "type": "integer",
+            "description": "Severity level of the incident.",
+            "format": "int32",
+            "example": 1
+          }
+        },
+        "description": "This schema represents the error response returned when the room availability operation fails due to the server encountering an unexpected condition.",
+        "example": {
+          "errorCode": 500001,
+          "message": "Unable to process SIM replacement.",
+          "status": 500,
+          "timestamp": "2026-07-22T10:30:00Z",
+          "path": "/hotel/v21/rooms/availability",
+          "traceId": "1fda72a9-970b-4561-ae1e-c3c9d3e8a454",
+          "requestId": 10002,
+          "referenceId": true,
+          "supportContact": "support@telkom.com",
+          "retryable": true,
+          "incidentId": "INC-SIM-9001",
+          "serviceRegion": "US-WEST",
+          "failureCategory": "SIM_PROVISIONING",
+          "estimatedResolution": "2026-07-22T12:00:00Z",
+          "provisioningCompleted": false,
+          "rollbackInitiated": true,
+          "retryCount": 2,
+          "affectedSubscribers": 1,
+          "dependencyFailure": {
+            "service": "SIM_PROVISIONING_ENGINE",
+            "available": false,
+            "timeout": true,
+            "responseTimeMs": 30000
+          },
+          "customerImpact": {
+            "serviceInterrupted": true,
+            "notificationRequired": true,
+            "compensationEligible": false
+          },
+          "incidentSeverity": 1
+        }
+      },
+      "DependencyFailure": {
+        "title": "Dependency Failure Information",
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string",
+            "description": "Name of the service that has failed.",
+            "example": "Payment Service"
+          },
+          "available": {
+            "type": "boolean",
+            "description": "Indicates if the service is available.",
+            "example": false
+          },
+          "timeout": {
+            "type": "boolean",
+            "description": "Indicates if the service request timed out.",
+            "example": true
+          },
+          "responseTimeMs": {
+            "type": "integer",
+            "description": "Response time of the service in milliseconds.",
+            "format": "int32",
+            "example": 500
+          }
+        },
+        "description": "This schema contains details regarding the failures of dependencies that impacted the request."
+      },
+      "CustomerImpact": {
+        "title": "Customer Impact Information",
+        "type": "object",
+        "properties": {
+          "serviceInterrupted": {
+            "type": "boolean",
+            "description": "Indicates if the service is interrupted for customers.",
+            "example": true
+          },
+          "notificationRequired": {
+            "type": "boolean",
+            "description": "Indicates if customers need to be notified.",
+            "example": false
+          },
+          "compensationEligible": {
+            "type": "boolean",
+            "description": "Indicates if customers are eligible for compensation.",
+            "example": true
+          }
+        },
+        "description": "This schema details the impact of the incident on customers."
       }
     },
     "parameters": {
+      "attempt": {
+        "name": "attempt",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "integer",
+          "example": 0
+        },
+        "example": 0
+      },
+      "retryAttempt": {
+        "name": "retryAttempt",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "integer",
+          "example": 0
+        },
+        "example": 0
+      },
+      "validateOnly": {
+        "name": "validateOnly",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "boolean",
+          "example": false
+        },
+        "example": false
+      },
+      "priorityLevel": {
+        "name": "priorityLevel",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "integer",
+          "example": 0
+        },
+        "example": 0
+      },
+      "forceProvision": {
+        "name": "forceProvision",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "boolean",
+          "example": false
+        },
+        "example": false
+      },
+      "includeHistory": {
+        "name": "includeHistory",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "boolean",
+          "example": false
+        },
+        "example": false
+      },
+      "skipVerification": {
+        "name": "skipVerification",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "boolean",
+          "example": false
+        },
+        "example": false
+      },
+      "includeBETAiceInfo": {
+        "name": "includeBETAiceInfo",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "boolean",
+          "example": false
+        },
+        "example": false
+      },
       "host": {
         "name": "host",
         "in": "header",
@@ -283,9 +1149,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "public-api.apiwiz.io"
+          "example": "stage-data-gujl.apiwiz.io"
         },
-        "example": "public-api.apiwiz.io"
+        "example": "stage-data-gujl.apiwiz.io"
       },
       "accept": {
         "name": "accept",
@@ -295,57 +1161,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "application/json, application/*+json"
+          "example": "application/json"
         },
-        "example": "application/json, application/*+json"
-      },
-      "jsession": {
-        "name": "jsession",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "akash"
-        },
-        "example": "akash"
-      },
-      "connection": {
-        "name": "connection",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "keep-alive"
-        },
-        "example": "keep-alive"
-      },
-      "user-agent": {
-        "name": "user-agent",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "Java/21.0.10"
-        },
-        "example": "Java/21.0.10"
-      },
-      "consumer-key": {
-        "name": "consumer-key",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "apiwiz"
-        },
-        "example": "apiwiz"
+        "example": "application/json"
       },
       "content-type": {
         "name": "content-type",
@@ -359,6 +1177,18 @@
         },
         "example": "application/json"
       },
+      "x-retry-count": {
+        "name": "x-retry-count",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "integer",
+          "example": 0
+        },
+        "example": 0
+      },
       "consumer-email": {
         "name": "consumer-email",
         "in": "header",
@@ -367,33 +1197,69 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "test-apiwiz"
+          "example": "divakar.v@test.com"
         },
-        "example": "test-apiwiz"
+        "example": "divakar.v@test.com"
       },
-      "x-forwarded-host": {
-        "name": "x-forwarded-host",
+      "x-debug-enabled": {
+        "name": "x-debug-enabled",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "boolean",
+          "example": true
+        },
+        "example": true
+      },
+      "x-client-version": {
+        "name": "x-client-version",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "integer",
+          "example": 3
+        },
+        "example": 3
+      },
+      "x-validation-mode": {
+        "name": "x-validation-mode",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "test.com"
+          "example": "strict"
         },
-        "example": "test.com"
+        "example": "strict"
       },
-      "transfer-encoding": {
-        "name": "transfer-encoding",
+      "x-request-priority": {
+        "name": "x-request-priority",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
-          "type": "string",
-          "example": "chunked"
+          "type": "integer",
+          "example": 5
         },
-        "example": "chunked"
+        "example": 5
+      },
+      "x-provisioning-mode": {
+        "name": "x-provisioning-mode",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "boolean",
+          "example": true
+        },
+        "example": true
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -405,25 +1271,89 @@
         "schema": {
           "type": "string",
           "enum": [
+            "MICROSERVICE_DEV_201",
             "MICROSERVICE_DEV_400",
-            "MICROSERVICE_DEV_200",
-            "MICROSERVICE_DEV_404",
-            "MICROSERVICE_DEV_500",
-            "MICROSERVICE_DEV_201"
+            "MICROSERVICE_DEV_500"
           ]
         }
       }
     },
     "headers": {
-      "Vary": {
-        "description": "Specifies the request headers that trigger a cache variation for the response content.",
+      "Location": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Origin"
+          "example": "/hotel/v21/rooms/availability/SWAP-10001"
         },
-        "example": "Origin"
+        "example": "/hotel/v21/rooms/availability/SWAP-10001"
+      },
+      "content-type": {
+        "description": "Specifies the media type of the response content.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      },
+      "cache-control": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "no-cache"
+        },
+        "example": "no-cache"
+      },
+      "x-processing-time": {
+        "description": "The time taken by the server to process the request, in milliseconds.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "integer",
+          "example": 245
+        },
+        "example": 245
+      },
+      "retry-after": {
+        "description": "Indicates the number of seconds to wait before retrying the request after receiving a 500 error.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "integer",
+          "example": 60
+        },
+        "example": 60
+      },
+      "x-error-category": {
+        "description": "A categorization of the error that occurred during the request.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "VALIDATION"
+        },
+        "example": "VALIDATION"
+      },
+      "x-error-type": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "PROVISIONING_FAILURE"
+        },
+        "example": "PROVISIONING_FAILURE"
+      },
+      "x-incident-active": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "boolean",
+          "example": true
+        },
+        "example": true
       }
     }
   }
