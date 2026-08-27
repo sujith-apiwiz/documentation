@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_International Standing Order Consents API",
-    "description": "The International Standing Order Consents API enables financial institutions to manage and retrieve consent information for international standing orders. This API allows users to access specific consent details, facilitating compliance and transparency in cross-border transactions. Typical consumers include banking applications and financial service providers that need to interact with consent data for payments. By leveraging this API, developers can ensure the secure handling of customer consents necessary for executing standing orders internationally.",
+    "description": "The International Standing Order Consents API facilitates the creation and management of consents for international standing orders within a financial ecosystem. This service enables users to grant permission for their accounts to be debited for recurring payments internationally. Typical consumers include banks, payment service providers, and financial institutions looking to streamline cross-border payment processes. By leveraging this API, developers can integrate consent management for international transactions efficiently, ensuring compliance and enhancing user experience.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/open-banking/pisp/international-standing-order-consents/{param1}": {
-      "get": {
+    "/v5/open-banking/pisp/international-standing-order-consents": {
+      "post": {
         "tags": [
-          "International Standing Orders"
+          "International Payments"
         ],
-        "summary": "Retrieve International Standing Order Consent by ID",
-        "description": "This endpoint allows you to retrieve the details of a specific International Standing Order Consent using its unique identifier. It provides comprehensive information regarding the consent including associated metadata, allowing developers to integrate this functionality seamlessly.",
-        "operationId": "getInternationalStandingOrderConsentById",
+        "summary": "Create an International Standing Order Consent",
+        "description": "This endpoint allows the creation of an International Standing Order Consent, enabling users to set up recurring payments to international recipients under specified conditions.",
+        "operationId": "createInternationalStandingOrderConsent",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
-          },
-          {
-            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "The request body must contain a JSON object that specifies the parameters for retrieving the international standing order consent with the specified ID. Ensure that all required parameters are included for successful processing.",
+          "description": "This request body contains the necessary details to create an international standing order consent. Ensure that all required fields are populated correctly to avoid any errors during submission.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetInternationalStandingOrderConsentByIdRequest"
+                "$ref": "#/components/schemas/CreateInternationalStandingOrderConsentRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Successfully retrieved the international standing order consent details.",
+          "201": {
+            "description": "Standing order consent created successfully.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetInternationalStandingOrderConsentByIdResponse_200"
+                  "$ref": "#/components/schemas/CreateInternationalStandingOrderConsentResponse_201"
                 }
               }
             }
@@ -90,13 +87,366 @@
   },
   "components": {
     "schemas": {
-      "GetInternationalStandingOrderConsentByIdRequest": {
-        "type": "string",
-        "description": "This schema represents the request body for the GET operation regarding international standing order consents. It is expected to be a string value.",
-        "example": "{}"
+      "CreateInternationalStandingOrderConsentRequest": {
+        "title": "International Standing Order Consent Request",
+        "type": "object",
+        "properties": {
+          "Data": {
+            "description": "The consent data associated with the standing order.",
+            "$ref": "#/components/schemas/StandingOrderConsentData"
+          },
+          "requestContext": {
+            "description": "Contextual information regarding the request.",
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "Schema representing the request body for the International Standing Order Consent operation.",
+        "example": {
+          "Data": {
+            "Permission": "STANDARD",
+            "ReadRefundAccount": "STANDARD",
+            "Initiation": {
+              "RemittanceInformation": {
+                "Structured": [
+                  {
+                    "ReferredDocumentInformation": [
+                      {
+                        "Code": "SUCCESS",
+                        "Issuer": "STANDARD",
+                        "Number": "STANDARD",
+                        "RelatedDate": "2026-09-15",
+                        "LineDetails": [
+                          "STANDARD"
+                        ]
+                      }
+                    ],
+                    "ReferredDocumentAmount": "1250.75",
+                    "CreditorReferenceInformation": {
+                      "Code": "SUCCESS",
+                      "Issuer": "STANDARD",
+                      "Reference": "STANDARD"
+                    },
+                    "Invoicer": "STANDARD",
+                    "Invoicee": "STANDARD",
+                    "TaxRemittance": "STANDARD",
+                    "AdditionalRemittanceInformation": [
+                      "STANDARD"
+                    ]
+                  }
+                ],
+                "Unstructured": [
+                  "STANDARD"
+                ]
+              },
+              "NumberOfPayments": "STANDARD",
+              "ExtendedPurpose": "STANDARD",
+              "ChargeBearer": "STANDARD",
+              "CurrencyOfTransfer": "STANDARD"
+            }
+          },
+          "requestContext": {
+            "requestId": "ad3fd3f0-512a-5d39-983e-5bf1a3f892b5",
+            "correlationId": "722c68c3-6634-5659-ac2f-239ee715a8d2",
+            "idempotencyKey": "d192e6c1-91ec-5752-8826-2b4596e6f425",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-672037"
+            }
+          }
+        }
       },
-      "GetInternationalStandingOrderConsentByIdResponse_200": {
-        "title": "International Standing Order Consent Response",
+      "StandingOrderConsentData": {
+        "title": "Standing Order Consent Data",
+        "type": "object",
+        "properties": {
+          "Permission": {
+            "type": "string",
+            "description": "Permission granted for the standing order.",
+            "example": "string"
+          },
+          "ReadRefundAccount": {
+            "type": "string",
+            "description": "Account identifier that allows refunds to be read.",
+            "example": "string"
+          },
+          "Initiation": {
+            "description": "Details pertaining to the initiation of the standing order.",
+            "$ref": "#/components/schemas/Initiation"
+          },
+          "NumberOfPayments": {
+            "type": "string",
+            "description": "The number of payments to be made.",
+            "example": "string"
+          },
+          "ExtendedPurpose": {
+            "type": "string",
+            "description": "Extended purpose of the standing order.",
+            "example": "string"
+          },
+          "ChargeBearer": {
+            "type": "string",
+            "description": "Entity responsible for payment charges.",
+            "example": "string"
+          },
+          "CurrencyOfTransfer": {
+            "type": "string",
+            "description": "Currency in which the transfer is made.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing the data for standing order consent."
+      },
+      "Initiation": {
+        "title": "Initiation Data",
+        "type": "object",
+        "properties": {
+          "RemittanceInformation": {
+            "description": "Information related to the remittance process.",
+            "$ref": "#/components/schemas/RemittanceInformation"
+          }
+        },
+        "description": "Schema representing initiation details for the standing order."
+      },
+      "RemittanceInformation": {
+        "title": "Remittance Information",
+        "type": "object",
+        "properties": {
+          "Structured": {
+            "type": "array",
+            "description": "Structured remittance information.",
+            "items": {
+              "$ref": "#/components/schemas/StructuredRemittance"
+            }
+          },
+          "Unstructured": {
+            "type": "array",
+            "description": "Unstructured remittance information.",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Schema representing details of remittance information."
+      },
+      "StructuredRemittance": {
+        "type": "object",
+        "properties": {
+          "ReferredDocumentInformation": {
+            "type": "array",
+            "description": "List of referred documents relevant to the remittance.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Code": {
+                  "type": "string",
+                  "description": "Code representing the document type.",
+                  "example": "INV"
+                },
+                "Issuer": {
+                  "type": "string",
+                  "description": "Issuer of the document.",
+                  "example": "Company A"
+                },
+                "Number": {
+                  "type": "string",
+                  "description": "Number of the document.",
+                  "example": "78910"
+                },
+                "RelatedDate": {
+                  "type": "string",
+                  "description": "Date related to the document.",
+                  "example": "2023-10-01"
+                },
+                "LineDetails": {
+                  "type": "array",
+                  "description": "Specific details about line items in the document.",
+                  "items": {
+                    "type": "string",
+                    "description": "Detail of a line item.",
+                    "example": "Item1"
+                  }
+                }
+              }
+            }
+          },
+          "ReferredDocumentAmount": {
+            "type": "string",
+            "description": "Total amount referred in the required documents.",
+            "example": "100.00"
+          },
+          "CreditorReferenceInformation": {
+            "type": "object",
+            "properties": {
+              "Code": {
+                "type": "string",
+                "description": "Reference code for the creditor.",
+                "example": "CRN123"
+              },
+              "Issuer": {
+                "type": "string",
+                "description": "Issuer of the creditor reference.",
+                "example": "Bank B"
+              },
+              "Reference": {
+                "type": "string",
+                "description": "The creditor reference string.",
+                "example": "Ref001"
+              }
+            },
+            "description": "Information providing references for creditors."
+          },
+          "Invoicer": {
+            "type": "string",
+            "description": "Invoicer's name or identifier.",
+            "example": "Company A"
+          },
+          "Invoicee": {
+            "type": "string",
+            "description": "Invoicee's name or identifier.",
+            "example": "Client C"
+          },
+          "TaxRemittance": {
+            "type": "string",
+            "description": "Amount of tax to be remitted.",
+            "example": "10.00"
+          },
+          "AdditionalRemittanceInformation": {
+            "type": "array",
+            "description": "Additional information related to remittance.",
+            "items": {
+              "type": "string",
+              "description": "Detail of additional information.",
+              "example": "Info1"
+            }
+          }
+        },
+        "description": "Structured remittance information related to the consent."
+      },
+      "ReferredDocument": {
+        "title": "Referred Document",
+        "type": "object",
+        "properties": {
+          "Code": {
+            "type": "string",
+            "description": "Unique code for the referred document.",
+            "example": "string"
+          },
+          "Issuer": {
+            "type": "string",
+            "description": "The entity that issued the referred document.",
+            "example": "string"
+          },
+          "Number": {
+            "type": "string",
+            "description": "Reference number of the referred document.",
+            "example": "string"
+          },
+          "RelatedDate": {
+            "type": "string",
+            "description": "Date related to the referred document.",
+            "example": "string"
+          },
+          "LineDetails": {
+            "type": "array",
+            "description": "Detailed breakdown of the referred document lines.",
+            "items": {
+              "type": "string",
+              "example": "string"
+            }
+          }
+        },
+        "description": "Schema representing a referred document."
+      },
+      "CreditorReferenceInformation": {
+        "title": "Creditor Reference Information",
+        "type": "object",
+        "properties": {
+          "Code": {
+            "type": "string",
+            "description": "Unique code for the creditor reference.",
+            "example": "string"
+          },
+          "Issuer": {
+            "type": "string",
+            "description": "The entity that issued the creditor reference.",
+            "example": "string"
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Specific reference number pertaining to the creditor.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing creditor reference details."
+      },
+      "RequestContext": {
+        "title": "Request Context",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique identifier for the request.",
+            "example": "string"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier for tracking related processes.",
+            "example": "string"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Key used to ensure idempotent operations.",
+            "example": "string"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp when the request was made.",
+            "example": "string"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The system from which the request originated.",
+            "example": "string"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application that initiated the request.",
+            "example": "string"
+          },
+          "channel": {
+            "description": "Information about the channel through which the request was made.",
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Schema representing the context of the request."
+      },
+      "Channel": {
+        "title": "Channel Information",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Identifier for the channel used.",
+            "example": "string"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "Type of channel used for the transaction.",
+            "example": "string"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Identifier for the device through which the request was made.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing channel-related information."
+      },
+      "CreateInternationalStandingOrderConsentResponse_201": {
         "type": "object",
         "properties": {
           "Data": {
@@ -104,60 +454,60 @@
             "properties": {
               "ConsentId": {
                 "type": "string",
-                "description": "Unique identifier of the consent.",
-                "example": "CONSENT-12345"
+                "description": "Unique identifier for the consent.",
+                "example": "123456"
               },
               "CreationDateTime": {
                 "type": "string",
-                "description": "Timestamp of when the consent was created.",
-                "example": "2023-01-01T12:00:00Z"
+                "description": "The timestamp when the consent was created.",
+                "example": "2023-10-01T12:00:00Z"
               },
               "Status": {
                 "type": "string",
                 "description": "Current status of the consent.",
-                "example": "ACTIVE"
+                "example": "Active"
               },
               "StatusReason": {
                 "type": "array",
-                "description": "Reasons related to the current status of the consent.",
+                "description": "Reasons for the current status of the consent.",
                 "example": [
                   {
-                    "code": "REASON_CODE",
-                    "description": "Reason description.",
-                    "Path": "path/to/reason"
+                    "code": "001",
+                    "description": "Consent is active.",
+                    "Path": "/status/reason"
                   }
                 ],
                 "items": {
-                  "$ref": "#/components/schemas/StatusReasonDetails"
+                  "$ref": "#/components/schemas/StatusReasonItem"
                 }
               },
               "StatusUpdateDateTime": {
                 "type": "string",
-                "description": "Timestamp of the last status update.",
-                "example": "2023-01-02T12:00:00Z"
+                "description": "The timestamp when the consent status was last updated.",
+                "example": "2023-10-02T12:00:00Z"
               },
               "Permission": {
                 "type": "string",
-                "description": "Permission granted for the standing order.",
-                "example": "GRANTED"
+                "description": "Permission level granted for the consent.",
+                "example": "All"
               },
               "ReadRefundAccount": {
                 "type": "string",
-                "description": "Indicates whether the refund account can be read.",
-                "example": "YES"
+                "description": "Indicates if the refund account can be read.",
+                "example": "Yes"
               },
               "CutOffDateTime": {
                 "type": "string",
-                "description": "Cut-off date and time for the standing order.",
-                "example": "2023-01-03T12:00:00Z"
+                "description": "Cut-off date and time for processing the consent.",
+                "example": "2023-10-31T12:00:00Z"
               },
               "Charges": {
                 "type": "array",
                 "description": "List of charges associated with the consent.",
                 "example": [
                   {
-                    "ChargeBearer": "RECEIVER",
-                    "Type": "SERVICE_FEE",
+                    "ChargeBearer": "Payee",
+                    "Type": "Fixed",
                     "Amount": {
                       "Amount": "10.00",
                       "Currency": "USD"
@@ -165,7 +515,7 @@
                   }
                 ],
                 "items": {
-                  "$ref": "#/components/schemas/ChargeDetails"
+                  "$ref": "#/components/schemas/ChargeItem"
                 }
               },
               "Initiation": {
@@ -181,80 +531,79 @@
                           {
                             "ReferredDocumentInformation": [
                               {
-                                "Code": "DOC123",
-                                "Issuer": "Issuer Name",
-                                "Number": "123456",
-                                "RelatedDate": "2023-01-01",
+                                "Code": "INV",
+                                "Issuer": "Company A",
+                                "Number": "78910",
+                                "RelatedDate": "2023-10-01",
                                 "LineDetails": [
-                                  "Line 1",
-                                  "Line 2"
+                                  "Item1",
+                                  "Item2"
                                 ]
                               }
                             ],
                             "ReferredDocumentAmount": "100.00",
                             "CreditorReferenceInformation": {
-                              "Code": "CR123",
-                              "Issuer": "Issuer Name",
-                              "Reference": "REF-123456"
+                              "Code": "CRN123",
+                              "Issuer": "Bank B",
+                              "Reference": "Ref001"
                             },
-                            "Invoicer": "Invoicer Name",
-                            "Invoicee": "Invoicee Name",
-                            "TaxRemittance": "Tax Info",
+                            "Invoicer": "Company A",
+                            "Invoicee": "Client C",
+                            "TaxRemittance": "10.00",
                             "AdditionalRemittanceInformation": [
-                              "Add Info 1",
-                              "Add Info 2"
+                              "Info1",
+                              "Info2"
                             ]
                           }
                         ],
                         "items": {
-                          "$ref": "#/components/schemas/StructuredInformation"
+                          "$ref": "#/components/schemas/StructuredRemittance"
                         }
                       },
                       "Unstructured": {
                         "type": "array",
                         "description": "Unstructured remittance information.",
                         "example": [
-                          "Unstructured Information 1",
-                          "Unstructured Information 2"
+                          "Payment for services rendered"
                         ],
                         "items": {
                           "type": "string"
                         }
                       }
                     },
-                    "description": "Remittance information for the transaction."
+                    "description": "Information related to the remittance."
                   },
                   "NumberOfPayments": {
                     "type": "string",
-                    "description": "Total number of payments in the standing order.",
+                    "description": "Total number of payments associated with the consent.",
                     "example": "5"
                   },
                   "ExtendedPurpose": {
                     "type": "string",
-                    "description": "Extended purpose of the standing order.",
-                    "example": "Monthly Subscription"
+                    "description": "Extended purpose for which the consent was created.",
+                    "example": "Monthly subscription"
                   },
                   "ChargeBearer": {
                     "type": "string",
-                    "description": "Indicates who bears the charge.",
-                    "example": "PAYER"
+                    "description": "Party responsible for the charges.",
+                    "example": "Payer"
                   },
                   "CurrencyOfTransfer": {
                     "type": "string",
                     "description": "Currency used for the transfer.",
-                    "example": "EUR"
+                    "example": "USD"
                   },
                   "DestinationCountryCode": {
                     "type": "string",
-                    "description": "Country code of the destination.",
-                    "example": "DE"
+                    "description": "Country code for the destination of the transfer.",
+                    "example": "US"
                   },
                   "InstructedAmount": {
                     "type": "object",
                     "properties": {
                       "Amount": {
                         "type": "string",
-                        "description": "The amount of money for the order.",
+                        "description": "The amount of money to be transferred.",
                         "example": "1000.00"
                       },
                       "Currency": {
@@ -263,13 +612,13 @@
                         "example": "USD"
                       }
                     },
-                    "description": "Amount instructed for the standing order."
+                    "description": "Amount instructed for the consent."
                   }
                 },
-                "description": "Details of the initiation of the standing order."
+                "description": "Details about the initiation of the consent."
               }
             },
-            "description": "Details of the consent.",
+            "description": "Contains details about the created consent.",
             "example": {
               "ConsentId": "STANDARD",
               "CreationDateTime": "2026-09-15T14:30:00Z",
@@ -346,34 +695,34 @@
               "responseId": {
                 "type": "string",
                 "description": "Unique identifier for the response.",
-                "example": "RESPONSE-12345"
+                "example": "abcdef123456"
               },
               "correlationId": {
                 "type": "string",
-                "description": "Identifier for correlating requests and responses.",
-                "example": "CORRELATION-12345"
+                "description": "ID used to track the request across systems.",
+                "example": "xyz789"
               },
               "generatedAt": {
                 "type": "string",
                 "description": "Timestamp when the response was generated.",
-                "example": "2023-01-01T12:00:00Z"
+                "example": "2023-10-03T12:00:00Z"
               },
               "processingRegion": {
                 "type": "string",
-                "description": "Region where the request was processed.",
-                "example": "EU"
+                "description": "Region where the processing occurred.",
+                "example": "NA"
               }
             },
-            "description": "Metadata regarding the response.",
+            "description": "Metadata associated with the response.",
             "example": {
-              "responseId": "3de043ca-a6ae-5b79-855a-fb9770b891f9",
-              "correlationId": "d600e7c9-16d7-5fc7-afae-89fbb76de353",
+              "responseId": "7ff37080-738b-55ca-89fc-b85c970e97c4",
+              "correlationId": "722c68c3-6634-5659-ac2f-239ee715a8d2",
               "generatedAt": "2026-09-15T14:30:00Z",
               "processingRegion": "us-east-1"
             }
           }
         },
-        "description": "Schema for the response of the International Standing Order Consent operation.",
+        "description": "Response schema for the successful creation of international standing order consents.",
         "example": {
           "Data": {
             "ConsentId": "STANDARD",
@@ -445,157 +794,65 @@
             }
           },
           "metadata": {
-            "responseId": "3de043ca-a6ae-5b79-855a-fb9770b891f9",
-            "correlationId": "d600e7c9-16d7-5fc7-afae-89fbb76de353",
+            "responseId": "7ff37080-738b-55ca-89fc-b85c970e97c4",
+            "correlationId": "722c68c3-6634-5659-ac2f-239ee715a8d2",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "StatusReasonDetails": {
+      "StatusReasonItem": {
         "type": "object",
         "properties": {
           "code": {
             "type": "string",
-            "description": "Code representing the reason.",
-            "example": "STATUS_CODE"
+            "description": "Code representing the reason status.",
+            "example": "001"
           },
           "description": {
             "type": "string",
-            "description": "Description of the reason.",
-            "example": "Reason description."
+            "description": "Description of the reason status.",
+            "example": "Consent is active."
           },
           "Path": {
             "type": "string",
-            "description": "Path for additional details about the reason.",
-            "example": "path/to/reason"
+            "description": "Path related to the reason for further details.",
+            "example": "/status/reason"
           }
         },
-        "description": "Details about the status reason."
+        "description": "Item containing status reason details."
       },
-      "ChargeDetails": {
+      "ChargeItem": {
         "type": "object",
         "properties": {
           "ChargeBearer": {
             "type": "string",
-            "description": "Indicates who bears the charge.",
-            "example": "PAYER"
+            "description": "The party responsible for the charge.",
+            "example": "Payee"
           },
           "Type": {
             "type": "string",
             "description": "Type of the charge.",
-            "example": "SERVICE_FEE"
+            "example": "Fixed"
           },
           "Amount": {
             "type": "object",
             "properties": {
               "Amount": {
                 "type": "string",
-                "description": "Amount of the charge.",
+                "description": "Monetary amount to be charged.",
                 "example": "10.00"
               },
               "Currency": {
                 "type": "string",
-                "description": "Currency of the charge.",
+                "description": "Currency of the charge amount.",
                 "example": "USD"
               }
             },
-            "description": "Amount and currency of the charge."
+            "description": "Amount of the charge."
           }
         },
-        "description": "Details about the charge."
-      },
-      "StructuredInformation": {
-        "type": "object",
-        "properties": {
-          "ReferredDocumentInformation": {
-            "type": "array",
-            "description": "Information about referred documents.",
-            "items": {
-              "type": "object",
-              "properties": {
-                "Code": {
-                  "type": "string",
-                  "description": "Document code.",
-                  "example": "DOC123"
-                },
-                "Issuer": {
-                  "type": "string",
-                  "description": "Issuer of the document.",
-                  "example": "Issuer Name"
-                },
-                "Number": {
-                  "type": "string",
-                  "description": "Document number.",
-                  "example": "123456"
-                },
-                "RelatedDate": {
-                  "type": "string",
-                  "description": "Date related to the document.",
-                  "example": "2023-01-01"
-                },
-                "LineDetails": {
-                  "type": "array",
-                  "description": "Line detail information.",
-                  "items": {
-                    "type": "string",
-                    "example": "Line information."
-                  }
-                }
-              }
-            }
-          },
-          "ReferredDocumentAmount": {
-            "type": "string",
-            "description": "Amount related to the referred document.",
-            "example": "100.00"
-          },
-          "CreditorReferenceInformation": {
-            "type": "object",
-            "properties": {
-              "Code": {
-                "type": "string",
-                "description": "Creditor reference code.",
-                "example": "CR123"
-              },
-              "Issuer": {
-                "type": "string",
-                "description": "Issuer of the creditor reference.",
-                "example": "Issuer Name"
-              },
-              "Reference": {
-                "type": "string",
-                "description": "Actual creditor reference.",
-                "example": "REF-123456"
-              }
-            },
-            "description": "Information about the creditor reference."
-          },
-          "Invoicer": {
-            "type": "string",
-            "description": "Name of the invoicer.",
-            "example": "Invoicer Name"
-          },
-          "Invoicee": {
-            "type": "string",
-            "description": "Name of the invoicee.",
-            "example": "Invoicee Name"
-          },
-          "TaxRemittance": {
-            "type": "string",
-            "description": "Tax remittance information.",
-            "example": "Tax Info"
-          },
-          "AdditionalRemittanceInformation": {
-            "type": "array",
-            "description": "Additional remittance information.",
-            "items": {
-              "type": "string",
-              "example": "Additional info."
-            }
-          }
-        },
-        "description": "Structured remittance information."
+        "description": "Charge details associated with the consent."
       }
     },
     "parameters": {
@@ -609,18 +866,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_200"
+            "MICROSERVICE_PROD_201"
           ]
-        }
-      },
-      "param1": {
-        "name": "param1",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
         }
       }
     },
@@ -630,9 +877,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "payment-initiation-openapi-get-international-standing-order-consent"
+          "example": "payment-initiation-openapi-create-international-standing-order-consent"
         },
-        "example": "payment-initiation-openapi-get-international-standing-order-consent"
+        "example": "payment-initiation-openapi-create-international-standing-order-consent"
       },
       "X-Runtime-App": {
         "style": "simple",
@@ -647,7 +894,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication scheme using Bearer tokens. The token must be a valid JSON Web Token (JWT) that grants access to the secured endpoints.",
+        "description": "Authentication method using a Bearer token, typically implemented with JSON Web Tokens (JWT). This scheme allows clients to authenticate by including a token in the header of requests.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
