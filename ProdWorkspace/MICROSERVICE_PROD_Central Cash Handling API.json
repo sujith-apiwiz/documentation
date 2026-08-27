@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Central Cash Handling API",
-    "description": "The Central Cash Handling API facilitates the management and processing of cash transactions within financial operations. This endpoint enables businesses to efficiently handle cash payments, ensuring accurate records and streamlined transaction processes. Typically utilized by finance teams, payment processors, and banking applications, it supports diverse cash handling scenarios to enhance operational efficiency. The API provides necessary functionalities for creating and managing central cash transactions, making finance operations smoother and more reliable.",
+    "description": "The Central Cash Handling API facilitates the retrieval of critical cash handling data within banking operations. It allows users to query for detailed information regarding cash transactions, reconciliation processes, and cash flow metrics. This API is essential for financial analysts and operational staff who need to monitor and manage cash handling activities effectively. By providing comprehensive access to cash data, it supports informed decision-making and enhances operational efficiency.",
     "version": "1.0"
   },
   "servers": [
@@ -20,76 +20,43 @@
   ],
   "paths": {
     "/v5/banking/payments/central-cash-handling": {
-      "post": {
+      "get": {
         "tags": [
-          "Payments"
+          "Payments Management"
         ],
-        "summary": "Process a central cash handling payment.",
-        "description": "This endpoint allows users to process payments specifically related to central cash handling transactions. It ensures that the payment is executed correctly and returns the relevant response with the status of the transaction.",
-        "operationId": "createCentralCashHandlingPayment",
+        "summary": "Retrieve Central Cash Handling Payments",
+        "description": "This endpoint allows you to retrieve all the payments associated with central cash handling. You can use this to view, monitor, and manage payment transactions effectively.",
+        "operationId": "fetchCentralCashHandlingPayments",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/x-workflow-id"
-          },
-          {
-            "$ref": "#/components/parameters/idempotency-key"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-step"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-branch"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-decision"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-internal"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-execution-id"
-          },
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "The request body for initiating a central cash handling payment operation. It requires specific data to process the payment successfully.",
+          "description": "This request body is used to retrieve information related to central cash handling operations. It specifies the parameters needed to process the request effectively.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateCentralCashHandlingPaymentRequest"
+                "$ref": "#/components/schemas/FetchCentralCashHandlingPaymentsRequest"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Resource created successfully with payment details.",
+          "200": {
+            "description": "Request completed successfully, returning the requested payment data.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
               },
               "X-Runtime-App": {
                 "$ref": "#/components/headers/X-Runtime-App"
-              },
-              "X-Workflow-Id": {
-                "$ref": "#/components/headers/X-Workflow-Id"
-              },
-              "X-Workflow-Name": {
-                "$ref": "#/components/headers/X-Workflow-Name"
-              },
-              "X-Workflow-State": {
-                "$ref": "#/components/headers/X-Workflow-State"
-              },
-              "X-Workflow-Execution-Id": {
-                "$ref": "#/components/headers/X-Workflow-Execution-Id"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateCentralCashHandlingPaymentResponse_201"
+                  "$ref": "#/components/schemas/FetchCentralCashHandlingPaymentsResponse_200"
                 }
               }
             }
@@ -109,69 +76,117 @@
   },
   "components": {
     "schemas": {
-      "CreateCentralCashHandlingPaymentRequest": {
-        "title": "Central Cash Handling Payment Request",
+      "FetchCentralCashHandlingPaymentsRequest": {
+        "type": "string",
+        "description": "A string representation of the request body used for centralized cash handling operations in the payments service.",
+        "example": "{}"
+      },
+      "FetchCentralCashHandlingPaymentsResponse_200": {
+        "title": "Central Cash Handling Response",
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "List of payment items.",
+            "example": [
+              {
+                "paymentId": "PAY-945732",
+                "debtorAccountId": "ACC-721651",
+                "creditorAccountId": "ACC-452452",
+                "instructedAmount": {
+                  "amount": 100.0,
+                  "currency": "USD"
+                },
+                "requestedExecutionDate": "2026-09-15",
+                "remittanceInformation": "STANDARD",
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/PaymentItem"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "sort": {
+            "type": "string",
+            "description": "Sorting criteria applied to the result set.",
+            "example": "STANDARD"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/Metadata"
+          }
+        },
+        "description": "Response schema for the operations related to central cash handling payments.",
+        "example": {
+          "items": [
+            {
+              "paymentId": "PAY-945732",
+              "debtorAccountId": "ACC-721651",
+              "creditorAccountId": "ACC-452452",
+              "instructedAmount": {
+                "amount": 100.0,
+                "currency": "USD"
+              },
+              "requestedExecutionDate": "2026-09-15",
+              "remittanceInformation": "STANDARD",
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
+          },
+          "sort": "STANDARD",
+          "metadata": {
+            "responseId": "0a5871dd-ae48-50f2-aaf0-cda18b7d409d",
+            "correlationId": "29cd4fb4-ddfe-59a4-9746-c306aa4b0a63",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
+      },
+      "PaymentItem": {
+        "title": "Payment Item",
         "type": "object",
         "properties": {
           "paymentId": {
             "type": "string",
-            "description": "Unique identifier for the payment.",
-            "example": "PAY-366085"
+            "description": "Unique identifier for the payment."
           },
           "debtorAccountId": {
             "type": "string",
-            "description": "Account ID of the debtor making the payment.",
-            "example": "ACC-965145"
+            "description": "Identifier for the debtor's account."
           },
           "creditorAccountId": {
             "type": "string",
-            "description": "Account ID of the creditor receiving the payment.",
-            "example": "ACC-976911"
+            "description": "Identifier for the creditor's account."
           },
           "instructedAmount": {
-            "description": "The amount and currency details for the instructed payment.",
             "$ref": "#/components/schemas/InstructedAmount"
           },
           "requestedExecutionDate": {
             "type": "string",
-            "description": "The date on which the payment is requested to be executed.",
-            "example": "2026-09-15"
+            "description": "The date when the payment is requested to be executed."
           },
           "remittanceInformation": {
             "type": "string",
-            "description": "Additional information regarding the remittance.",
-            "example": "STANDARD"
+            "description": "Information regarding the remittance."
           },
-          "requestContext": {
-            "description": "Contextual information related to the request.",
-            "$ref": "#/components/schemas/RequestContext"
+          "recordStatus": {
+            "type": "string",
+            "description": "Current status of the payment record."
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp of the last update to the payment."
           }
         },
-        "description": "Schema representing a payment request in the central cash handling operations.",
-        "example": {
-          "paymentId": "PAY-366085",
-          "debtorAccountId": "ACC-965145",
-          "creditorAccountId": "ACC-976911",
-          "instructedAmount": {
-            "amount": 100.0,
-            "currency": "USD"
-          },
-          "requestedExecutionDate": "2026-09-15",
-          "remittanceInformation": "STANDARD",
-          "requestContext": {
-            "requestId": "e0143681-97c2-5b28-bf02-53200c70195a",
-            "correlationId": "4c7f8843-b604-5e0b-9c4f-236d63da905d",
-            "idempotencyKey": "502bf3c8-d095-5da2-8644-b54c1b22ae89",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-273441"
-            }
-          }
-        }
+        "description": "Represents an individual payment entry."
       },
       "InstructedAmount": {
         "title": "Instructed Amount",
@@ -179,248 +194,62 @@
         "properties": {
           "amount": {
             "type": "number",
-            "description": "The monetary amount being instructed for payment.",
-            "example": 0.0
+            "description": "The numeric value of the amount."
           },
           "currency": {
             "type": "string",
-            "description": "The currency code of the instructed amount.",
-            "example": "USD"
+            "description": "The currency in which the amount is denominated."
           }
         },
-        "description": "Schema representing the amount and currency for a payment."
+        "description": "The amount to be paid, including its currency."
       },
-      "RequestContext": {
-        "title": "Request Context",
+      "Pagination": {
+        "title": "Pagination Information",
         "type": "object",
         "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "string"
+          "page": {
+            "type": "integer",
+            "description": "Current page number.",
+            "format": "int32"
           },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier for correlating multiple related requests.",
-            "example": "string"
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32"
           },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "Key to ensure the request is executed only once.",
-            "example": "string"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp of when the request was made.",
-            "example": "string"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "System from which the request originated.",
-            "example": "string"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "Application from which the request was initiated.",
-            "example": "string"
-          },
-          "channel": {
-            "description": "Details about the channel through which the request was made.",
-            "$ref": "#/components/schemas/Channel"
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available.",
+            "format": "int32"
           }
         },
-        "description": "Schema representing the contextual information about the payment request."
+        "description": "Information related to the pagination of the results."
       },
-      "Channel": {
-        "title": "Channel",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Identifier of the channel used for the request.",
-            "example": "string"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of the channel (e.g., web, mobile).",
-            "example": "string"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier of the device used for the transaction.",
-            "example": "string"
-          }
-        },
-        "description": "Schema representing the details of the channel used for the request."
-      },
-      "CreateCentralCashHandlingPaymentResponse_201": {
-        "title": "Central Cash Handling Payment Response",
-        "type": "object",
-        "properties": {
-          "paymentId": {
-            "type": "string",
-            "description": "The unique identifier for the payment.",
-            "example": "PAY-563119"
-          },
-          "debtorAccountId": {
-            "type": "string",
-            "description": "The unique identifier for the debtor's account.",
-            "example": "ACC-785720"
-          },
-          "creditorAccountId": {
-            "type": "string",
-            "description": "The unique identifier for the creditor's account.",
-            "example": "ACC-258383"
-          },
-          "resourceId": {
-            "type": "string",
-            "description": "The unique identifier for the resource related to the payment.",
-            "example": "RES-909911"
-          },
-          "status": {
-            "type": "string",
-            "description": "The current status of the payment.",
-            "example": "ACTIVE"
-          },
-          "createdAt": {
-            "type": "string",
-            "description": "The timestamp indicating when the payment was created.",
-            "example": "2026-09-15T14:30:00Z"
-          },
-          "metadata": {
-            "description": "Additional metadata related to the payment response.",
-            "$ref": "#/components/schemas/PaymentMetadata"
-          }
-        },
-        "description": "This schema represents the response for a payment processing operation in the central cash handling system.",
-        "example": {
-          "paymentId": "PAY-563119",
-          "debtorAccountId": "ACC-785720",
-          "creditorAccountId": "ACC-258383",
-          "resourceId": "RES-909911",
-          "status": "ACTIVE",
-          "createdAt": "2026-09-15T14:30:00Z",
-          "metadata": {
-            "responseId": "cdb7cade-d7fa-533c-8719-f4e9d1b5a265",
-            "correlationId": "4c7f8843-b604-5e0b-9c4f-236d63da905d",
-            "generatedAt": "2026-09-15T14:30:00Z",
-            "processingRegion": "us-east-1"
-          }
-        }
-      },
-      "PaymentMetadata": {
-        "title": "Payment Metadata",
+      "Metadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "The unique identifier for the response.",
-            "example": "string"
+            "description": "Unique identifier for the response."
           },
           "correlationId": {
             "type": "string",
-            "description": "The correlation identifier used to trace the request.",
-            "example": "string"
+            "description": "Identifier used to correlate requests and responses."
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp indicating when the metadata was generated.",
-            "example": "string"
+            "description": "Timestamp when the response was generated."
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the payment was processed.",
-            "example": "string"
+            "description": "Region where the processing took place."
           }
         },
-        "description": "This schema contains additional metadata related to a payment response."
+        "description": "Metadata about the response containing additional context and identifiers."
       }
     },
     "parameters": {
-      "x-workflow-id": {
-        "name": "x-workflow-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "WF-019"
-        },
-        "example": "WF-019"
-      },
-      "idempotency-key": {
-        "name": "idempotency-key",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "8c81d699-75fb-4a1b-89d5-2c41546149f0"
-        },
-        "example": "8c81d699-75fb-4a1b-89d5-2c41546149f0"
-      },
-      "x-workflow-step": {
-        "name": "x-workflow-step",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "1"
-        },
-        "example": "1"
-      },
-      "x-workflow-branch": {
-        "name": "x-workflow-branch",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "main"
-        },
-        "example": "main"
-      },
-      "x-workflow-decision": {
-        "name": "x-workflow-decision",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "NORMAL"
-        },
-        "example": "NORMAL"
-      },
-      "x-workflow-internal": {
-        "name": "x-workflow-internal",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "true"
-        },
-        "example": "true"
-      },
-      "x-workflow-execution-id": {
-        "name": "x-workflow-execution-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "a8393ef9-0b3d-461c-a360-4f223bc4305e"
-        },
-        "example": "a8393ef9-0b3d-461c-a360-4f223bc4305e"
-      },
       "x-mock-response": {
         "name": "x-mock-response",
         "in": "header",
@@ -431,24 +260,24 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_201"
+            "MICROSERVICE_PROD_200"
           ]
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint that processed this request.",
+        "description": "The unique identifier for the API endpoint being called, used for tracing and diagnostics.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "central-cash-handling-create-central-cash-handling"
+          "example": "central-cash-handling-search-central-cash-handling"
         },
-        "example": "central-cash-handling-create-central-cash-handling"
+        "example": "central-cash-handling-search-central-cash-handling"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that handled the request.",
+        "description": "The name of the application that executed the request, useful for monitoring and logging.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -456,49 +285,12 @@
           "example": "payments"
         },
         "example": "payments"
-      },
-      "X-Workflow-Id": {
-        "description": "An identifier that represents the workflow process associated with the request.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "WF-019"
-        },
-        "example": "WF-019"
-      },
-      "X-Workflow-Name": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "Corporate Bulk Payment and Approval"
-        },
-        "example": "Corporate Bulk Payment and Approval"
-      },
-      "X-Workflow-State": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "IN_PROGRESS"
-        },
-        "example": "IN_PROGRESS"
-      },
-      "X-Workflow-Execution-Id": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "a8393ef9-0b3d-461c-a360-4f223bc4305e"
-        },
-        "example": "a8393ef9-0b3d-461c-a360-4f223bc4305e"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses Bearer Authentication, where a valid JWT (JSON Web Token) is required to access secure endpoints. Clients must include a token in the Authorization header as 'Bearer <token>'.",
+        "description": "This security scheme uses Bearer authentication and requires a valid JSON Web Token (JWT) for access. Clients must include the token in the Authorization header when making requests to secure endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
