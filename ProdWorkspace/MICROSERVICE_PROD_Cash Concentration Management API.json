@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Cash Concentration Management API",
-    "description": "The Cash Concentration Management API allows businesses to efficiently manage and optimize their cash flow across multiple accounts. By retrieving cash concentration data, users can gain insights into their cash positions and make informed financial decisions. This API is essential for treasury teams and finance professionals looking to monitor cash balances and streamline operations. Typical use cases include regular cash analysis and integration with financial reporting systems.",
+    "description": "The Cash Concentration Management API enables organizations to efficiently manage and optimize their cash flow through consolidated banking activities. This API provides access to vital information regarding cash movements and balances across various accounts, facilitating better decision-making. Common use cases include financial institutions and corporate finance teams seeking to streamline cash positions and enhance liquidity management. Developers can integrate this API to retrieve real-time data necessary for effective cash concentration strategies.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/trade-banking/cash-concentration/{param1}": {
+    "/v5/banking/trade-banking/cash-concentration": {
       "get": {
         "tags": [
           "Cash Management"
         ],
-        "summary": "Retrieve cash concentration details",
-        "description": "Fetches the details of a specific cash concentration resource identified by its unique ID. This endpoint enables users to access key information necessary for managing cash concentrations effectively.",
-        "operationId": "getCashConcentrationById",
+        "summary": "Retrieve cash concentration details.",
+        "description": "This endpoint allows users to fetch detailed information regarding cash concentration strategies in trade banking, providing insights into fund movement and liquidity management.",
+        "operationId": "getCashConcentration",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to fetch details related to cash concentration operations, specifically tailored for the unique identifier RES-100045. Please ensure that the required parameters are provided to receive the appropriate data.",
+          "description": "Request body for retrieving cash concentration operations in trade banking. This request includes the necessary parameters and filters to specify the cash concentration details required by the client.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetCashConcentrationByIdRequest"
+                "$ref": "#/components/schemas/GetCashConcentrationRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved the cash concentration data.",
+            "description": "Successfully retrieved cash concentration data.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetCashConcentrationByIdResponse_200"
+                  "$ref": "#/components/schemas/GetCashConcentrationResponse_200"
                 }
               }
             }
@@ -76,118 +76,175 @@
   },
   "components": {
     "schemas": {
-      "GetCashConcentrationByIdRequest": {
+      "GetCashConcentrationRequest": {
         "type": "string",
-        "description": "This schema represents the request body for the GET operation related to cash concentration in the trade banking context.",
+        "description": "This schema represents the request body for the GET operation in the Cash Concentration API within Trade Banking. It accepts a string value.",
         "example": "{}"
       },
-      "GetCashConcentrationByIdResponse_200": {
+      "GetCashConcentrationResponse_200": {
         "type": "object",
         "properties": {
-          "poolId": {
-            "type": "string",
-            "description": "The unique identifier for the cash concentration pool.",
-            "example": "STANDARD"
-          },
-          "headerAccountId": {
-            "type": "string",
-            "description": "The identifier for the header account associated with the cash concentration.",
-            "example": "ACC-406836"
-          },
-          "participantAccountIds": {
+          "items": {
             "type": "array",
-            "description": "A list of identifiers for participant accounts included in the cash concentration.",
+            "description": "A list of cash concentration pool details.",
             "example": [
-              "ACC-547510"
+              {
+                "poolId": "STANDARD",
+                "headerAccountId": "ACC-830539",
+                "participantAccountIds": [
+                  "ACC-127188"
+                ],
+                "currency": "USD",
+                "sweepFrequency": "STANDARD",
+                "targetBalance": 100.0,
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
             ],
             "items": {
-              "type": "string",
-              "description": "The identifier for a participant account.",
-              "example": "participant-abc"
+              "$ref": "#/components/schemas/CashConcentrationPool"
             }
           },
-          "currency": {
-            "type": "string",
-            "description": "The currency used in the cash concentration operations.",
-            "example": "USD"
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
           },
-          "sweepFrequency": {
+          "sort": {
             "type": "string",
-            "description": "The frequency at which sweeps occur for this cash concentration pool.",
+            "description": "Sorting criteria for the items.",
             "example": "STANDARD"
           },
-          "targetBalance": {
-            "type": "number",
-            "description": "The target balance that must be maintained in the cash concentration pool.",
-            "example": 100.0
-          },
-          "recordStatus": {
-            "type": "string",
-            "description": "The status of the cash concentration record (e.g., active, inactive).",
-            "example": "ACTIVE"
-          },
-          "version": {
-            "type": "integer",
-            "description": "The version number of the cash concentration configuration.",
-            "format": "int32",
-            "example": 1
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "The date and time when this record was last updated.",
-            "example": "2026-09-15T14:30:00Z"
-          },
           "metadata": {
-            "description": "Metadata related to the response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Represents the response structure for a cash concentration operation.",
+        "description": "Response schema for the Cash Concentration operation in Trade Banking, containing a list of cash concentration pools and pagination metadata.",
         "example": {
-          "poolId": "STANDARD",
-          "headerAccountId": "ACC-406836",
-          "participantAccountIds": [
-            "ACC-547510"
+          "items": [
+            {
+              "poolId": "STANDARD",
+              "headerAccountId": "ACC-830539",
+              "participantAccountIds": [
+                "ACC-127188"
+              ],
+              "currency": "USD",
+              "sweepFrequency": "STANDARD",
+              "targetBalance": 100.0,
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
           ],
-          "currency": "USD",
-          "sweepFrequency": "STANDARD",
-          "targetBalance": 100.0,
-          "recordStatus": "ACTIVE",
-          "version": 1,
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
+          },
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "ab8c52b1-7731-5db1-95da-153ba4ce1756",
-            "correlationId": "ae735b63-1ec3-58e5-b76d-70ac86da305f",
+            "responseId": "61952eb2-80cb-50cf-9582-b61cae10ad30",
+            "correlationId": "c4884c20-0a3e-52df-bc09-17a800dc3333",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
+      },
+      "CashConcentrationPool": {
+        "type": "object",
+        "properties": {
+          "poolId": {
+            "type": "string",
+            "description": "Unique identifier for the cash concentration pool.",
+            "example": "string"
+          },
+          "headerAccountId": {
+            "type": "string",
+            "description": "Identifier for the header account associated with the pool.",
+            "example": "string"
+          },
+          "participantAccountIds": {
+            "type": "array",
+            "description": "List of participant account identifiers included in the pool.",
+            "items": {
+              "type": "string",
+              "example": "string"
+            }
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency used in the cash concentration pool.",
+            "example": "string"
+          },
+          "sweepFrequency": {
+            "type": "string",
+            "description": "Frequency of cash sweeps for the pool.",
+            "example": "string"
+          },
+          "targetBalance": {
+            "type": "number",
+            "description": "Target balance to maintain in the cash concentration pool.",
+            "example": 0.0
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "Current status of the cash concentration pool record.",
+            "example": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp of the last update made to the pool.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing a cash concentration pool."
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number of the response.",
+            "format": "int32",
+            "example": 0
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32",
+            "example": 0
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available.",
+            "format": "int32",
+            "example": 0
+          }
+        },
+        "description": "Schema defining pagination information for the response."
       },
       "Metadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "The unique identifier for the response.",
-            "example": "response-98765"
+            "description": "Unique identifier for the response.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "The correlation identifier for tracking requests across services.",
-            "example": "correlation-54321"
+            "description": "Identifier to correlate requests and responses across services.",
+            "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The date and time when the response was generated.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "Timestamp indicating when the response was generated.",
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the response was processed.",
-            "example": "us-east-1"
+            "description": "Region where the response was processed.",
+            "example": "string"
           }
         },
-        "description": "Metadata information associated with the response."
+        "description": "Schema containing metadata information regarding the response."
       }
     },
     "parameters": {
@@ -208,15 +265,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "A unique identifier for the endpoint associated with the request. This ID can be used for tracking and monitoring purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "cash-concentration-get-cash-concentration"
+          "example": "cash-concentration-search-cash-concentration"
         },
-        "example": "cash-concentration-get-cash-concentration"
+        "example": "cash-concentration-search-cash-concentration"
       },
       "X-Runtime-App": {
+        "description": "The name and version of the application that processed the request. This header provides visibility into which application instance handled the transaction.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -229,7 +288,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme utilizes JSON Web Tokens (JWT) as a means of authentication. Clients must provide a valid JWT in the authorization header to access secured endpoints.",
+        "description": "This security scheme uses JSON Web Tokens (JWT) to authenticate requests. Clients must include a valid bearer token in the `Authorization` header to access secured endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
