@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Corporate Loan Information API",
-    "description": "The Corporate Loan Information API provides access to detailed information about corporate loan offerings, including terms, rates, and eligibility requirements. This API serves as a resource for financial institutions, businesses, and developers needing to integrate comprehensive loan data into their applications. Typical use cases include evaluating loan products, comparing financing options, and enhancing customer service experiences. By utilizing this API, consumers can make informed decisions regarding their corporate lending needs.",
+    "description": "The Corporate Loan Information API provides access to details about corporate loan offerings for businesses looking for financing solutions. Users can retrieve essential information regarding various corporate loan products, terms, and eligibility requirements. This API is particularly useful for financial institutions, corporate clients, and developers integrating loan information into applications. By leveraging this API, stakeholders can streamline their loan processes and better assist their clients in making informed decisions regarding corporate financing.",
     "version": "1.0"
   },
   "servers": [
@@ -24,8 +24,8 @@
         "tags": [
           "Corporate Lending"
         ],
-        "summary": "Retrieve details for corporate loans under deposit lending.",
-        "description": "This endpoint allows clients to fetch specific details related to corporate loans offered in the deposit lending category. Use this to access key information essential for understanding loan options and terms.",
+        "summary": "Retrieve corporate loan details.",
+        "description": "This endpoint allows users to fetch detailed information about corporate loans available under the deposit lending category. The information retrieved can aid in decision-making and financial planning for businesses.",
         "operationId": "getCorporateLoanDetails",
         "parameters": [
           {
@@ -33,7 +33,7 @@
           }
         ],
         "requestBody": {
-          "description": "The request body required to initiate a corporate loan process. This body should contain specific parameters that define the loan details and terms requested by the corporate entity. Ensure all required fields are properly filled to process the request successfully.",
+          "description": "This request body is used to retrieve information related to corporate loan operations. The request may include parameters that determine the specifics of the data being fetched, such as loan details or account information.",
           "content": {
             "application/json": {
               "schema": {
@@ -44,7 +44,7 @@
         },
         "responses": {
           "200": {
-            "description": "The request was processed successfully, and the response contains the requested data.",
+            "description": "Successfully retrieved corporate loan information.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -78,16 +78,15 @@
     "schemas": {
       "GetCorporateLoanDetailsRequest": {
         "type": "string",
-        "description": "A string representation of the request body for the GET operation on corporate loan services.",
+        "description": "This schema represents the request body for a GET operation related to corporate loans in the deposit lending category.",
         "example": "{}"
       },
       "GetCorporateLoanDetailsResponse_200": {
-        "title": "Corporate Loan Response",
         "type": "object",
         "properties": {
           "items": {
             "type": "array",
-            "description": "List of corporate loan items.",
+            "description": "An array of loan detail objects.",
             "example": [
               {
                 "customerId": "CUST-164726",
@@ -104,22 +103,22 @@
               }
             ],
             "items": {
-              "$ref": "#/components/schemas/CorporateLoanItem"
+              "$ref": "#/components/schemas/LoanDetail"
             }
           },
           "pagination": {
-            "$ref": "#/components/schemas/PaginationInfo"
+            "$ref": "#/components/schemas/Pagination"
           },
           "sort": {
             "type": "string",
-            "description": "Sort order of the loan items.",
+            "description": "Sorting criteria for the results.",
             "example": "STANDARD"
           },
           "metadata": {
-            "$ref": "#/components/schemas/ResponseMetadata"
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "This schema represents the response structure for retrieving corporate loan details.",
+        "description": "Response schema for the corporate loan GET operation, encapsulating loan details, pagination, sorting, and metadata.",
         "example": {
           "items": [
             {
@@ -150,8 +149,7 @@
           }
         }
       },
-      "CorporateLoanItem": {
-        "title": "Corporate Loan Item",
+      "LoanDetail": {
         "type": "object",
         "properties": {
           "customerId": {
@@ -166,21 +164,21 @@
           },
           "productCode": {
             "type": "string",
-            "description": "Product code of the loan.",
-            "example": "LOAN2023"
+            "description": "Code representing the loan product.",
+            "example": "PL123"
           },
           "principal": {
-            "$ref": "#/components/schemas/LoanPrincipal"
+            "$ref": "#/components/schemas/Money"
           },
           "termMonths": {
             "type": "integer",
-            "description": "Duration of the loan term in months.",
+            "description": "Term duration of the loan in months.",
             "format": "int32",
             "example": 12
           },
           "repaymentFrequency": {
             "type": "string",
-            "description": "Frequency of loan repayment.",
+            "description": "Frequency of loan repayments.",
             "example": "monthly"
           },
           "recordStatus": {
@@ -190,36 +188,34 @@
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp of when the loan record was last updated.",
-            "example": "2023-10-10T14:48:00.000Z"
+            "description": "Timestamp indicating when the loan record was last updated.",
+            "example": "2023-01-01T12:00:00Z"
           }
         },
-        "description": "Details of a single corporate loan."
+        "description": "Details of a specific loan."
       },
-      "LoanPrincipal": {
-        "title": "Loan Principal",
+      "Money": {
         "type": "object",
         "properties": {
           "amount": {
             "type": "number",
-            "description": "Principal amount of the loan.",
-            "example": 50000.0
+            "description": "The numeric value of the monetary amount.",
+            "example": 10000.0
           },
           "currency": {
             "type": "string",
-            "description": "Currency in which the principal amount is denominated.",
+            "description": "The currency code for the amount.",
             "example": "USD"
           }
         },
-        "description": "Details of the principal amount of the loan."
+        "description": "An object representing an amount of money and its currency."
       },
-      "PaginationInfo": {
-        "title": "Pagination Information",
+      "Pagination": {
         "type": "object",
         "properties": {
           "page": {
             "type": "integer",
-            "description": "Current page number.",
+            "description": "Current page number of the results.",
             "format": "int32",
             "example": 1
           },
@@ -227,43 +223,42 @@
             "type": "integer",
             "description": "Number of items per page.",
             "format": "int32",
-            "example": 20
+            "example": 10
           },
           "totalItems": {
             "type": "integer",
-            "description": "Total number of items available.",
+            "description": "Total number of items available across all pages.",
             "format": "int32",
             "example": 100
           }
         },
-        "description": "Information about pagination in the response."
+        "description": "Pagination information for the response data."
       },
-      "ResponseMetadata": {
-        "title": "Response Metadata",
+      "Metadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
             "description": "Unique identifier for the response.",
-            "example": "resp123456"
+            "example": "RESP123456"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier to correlate requests and responses.",
-            "example": "corr123456"
+            "description": "Identifier used to track requests across systems.",
+            "example": "CORR789012"
           },
           "generatedAt": {
             "type": "string",
             "description": "Timestamp indicating when the response was generated.",
-            "example": "2023-10-10T14:48:00.000Z"
+            "example": "2023-01-01T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
             "description": "Region where the request was processed.",
-            "example": "us-east-1"
+            "example": "us-west-1"
           }
         },
-        "description": "Metadata related to the API response."
+        "description": "Metadata associated with the API response."
       }
     },
     "parameters": {
@@ -284,6 +279,7 @@
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "Unique identifier for the endpoint that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -293,6 +289,7 @@
         "example": "corporate-loan-search-corporate-loan"
       },
       "X-Runtime-App": {
+        "description": "Identifier of the application runtime where the request was processed.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -305,7 +302,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This authentication scheme uses JSON Web Tokens (JWT) to provide a secure method for transmitting information between parties. Clients must include a valid JWT in the Authorization header using the Bearer prefix.",
+        "description": "This security scheme utilizes the Bearer authentication scheme, which requires a valid JSON Web Token (JWT) to be passed in the Authorization header in the format 'Bearer <token>'. This mechanism is commonly used for securing RESTful API endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

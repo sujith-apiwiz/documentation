@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Corporate Current Account Management API",
-    "description": "The Corporate Current Account Management API enables businesses to efficiently manage their corporate banking needs. This API facilitates the creation and management of corporate current accounts, allowing financial institutions to streamline account setup and maintenance processes. Typical consumers include banks and financial services that require robust solutions for corporate clients. By integrating this API, organizations can offer enhanced banking services tailored to the unique requirements of corporate accounts.",
+    "description": "The Corporate Current Account Management API enables businesses to efficiently manage their corporate banking needs. This API facilitates the creation and setup of corporate current accounts, allowing organizations to streamline their financial operations. Typical consumers include corporate finance teams and banking applications that require account management functionality. Developers can integrate this API to enhance features related to account creation, improve user onboarding, and support financial transactions seamlessly.",
     "version": "1.0"
   },
   "servers": [
@@ -22,29 +22,29 @@
     "/v5/banking/deposit-lending/corporate-current-account": {
       "post": {
         "tags": [
-          "Corporate Banking"
+          "Corporate Deposits"
         ],
-        "summary": "Create a corporate current account.",
-        "description": "This endpoint allows the creation of a corporate current account for businesses. It facilitates financial activities for companies, ensuring they have the necessary resources to manage their operations effectively.",
-        "operationId": "createCorporateCurrentAccount",
+        "summary": "Initiates a deposit for a corporate current account.",
+        "description": "This operation allows users to initiate a deposit transaction into a corporate current account, facilitating the efficient management of corporate funds.",
+        "operationId": "createCorporateCurrentAccountDeposit",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to initiate a new corporate current account deposit lending operation. It includes all necessary details required for processing the account creation request.",
+          "description": "This request body is used to initiate a corporate current account transaction. Ensure that all required fields are correctly provided to facilitate the processing of the request.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateCorporateCurrentAccountRequest"
+                "$ref": "#/components/schemas/CreateCorporateCurrentAccountDepositRequest"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Resource created successfully with details in the response.",
+            "description": "Resource created successfully for the corporate current account.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateCorporateCurrentAccountResponse_201"
+                  "$ref": "#/components/schemas/CreateCorporateCurrentAccountDepositResponse_201"
                 }
               }
             }
@@ -76,37 +76,38 @@
   },
   "components": {
     "schemas": {
-      "CreateCorporateCurrentAccountRequest": {
+      "CreateCorporateCurrentAccountDepositRequest": {
+        "title": "Corporate Current Account Operations Request",
         "type": "object",
         "properties": {
           "customerId": {
             "type": "string",
-            "description": "The unique identifier of the customer.",
+            "description": "The unique identifier for the customer.",
             "example": "CUST-995069"
           },
           "accountId": {
             "type": "string",
-            "description": "The unique identifier of the account.",
+            "description": "The unique identifier for the account.",
             "example": "ACC-658151"
           },
           "productCode": {
             "type": "string",
-            "description": "The product code associated with the account.",
+            "description": "The code representing the product offered.",
             "example": "CHK-PREMIUM-US"
           },
           "principal": {
-            "description": "The principal amount associated with the account.",
+            "description": "Contains the principal amount and its currency.",
             "$ref": "#/components/schemas/Principal"
           },
           "termMonths": {
             "type": "integer",
-            "description": "The term of the loan in months.",
+            "description": "The duration of the term in months.",
             "format": "int32",
             "example": 1
           },
           "repaymentFrequency": {
             "type": "string",
-            "description": "The frequency of repayments (e.g., monthly, quarterly).",
+            "description": "The frequency of repayments.",
             "example": "STANDARD"
           },
           "accountPurpose": {
@@ -116,20 +117,20 @@
           },
           "statementFrequency": {
             "type": "string",
-            "description": "The frequency at which statements will be issued.",
+            "description": "How often statements are issued.",
             "example": "STANDARD"
           },
           "overdraftAllowed": {
             "type": "boolean",
-            "description": "Indicates whether overdraft is allowed on the account.",
+            "description": "Indicates if an overdraft is allowed on the account.",
             "example": true
           },
           "requestContext": {
-            "description": "Contextual information related to the request.",
+            "description": "Contextual information for the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Request body for creating a corporate current account in the deposit lending operations.",
+        "description": "Request body for operations related to a corporate current account, including customer and account details as well as lending information.",
         "example": {
           "customerId": "CUST-995069",
           "accountId": "ACC-658151",
@@ -159,121 +160,124 @@
         }
       },
       "Principal": {
+        "title": "Principal Amount and Currency",
         "type": "object",
         "properties": {
           "amount": {
             "type": "number",
-            "description": "The amount of money being requested.",
-            "example": 10000.0
+            "description": "The principal amount.",
+            "example": 0.0
           },
           "currency": {
             "type": "string",
-            "description": "The currency of the principal amount.",
-            "example": "USD"
+            "description": "The currency code for the principal amount.",
+            "example": "string"
           }
         },
-        "description": "Represents the principal amount details."
+        "description": "Represents the principal amount and the currency used."
       },
       "RequestContext": {
+        "title": "Request Context Information",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
-            "description": "The unique identifier for the request.",
-            "example": "REQ12345"
+            "description": "A unique identifier for the request.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "The identifier that correlates multiple requests in a workflow.",
-            "example": "CORR12345"
+            "description": "An identifier used for correlating logs across services.",
+            "example": "string"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "A unique key to ensure the request is idempotent.",
-            "example": "IDEMP12345"
+            "description": "A key to identify the idempotent requests.",
+            "example": "string"
           },
           "requestedAt": {
             "type": "string",
             "description": "The timestamp when the request was made.",
-            "example": "2023-10-01T12:00:00Z"
+            "example": "string"
           },
           "sourceSystem": {
             "type": "string",
             "description": "The system from which the request originated.",
-            "example": "CoreBankingSystem"
+            "example": "string"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application from which the request originated.",
-            "example": "AccountManagementApp"
+            "description": "The application that made the request.",
+            "example": "string"
           },
           "channel": {
-            "description": "Information about the channel through which the request was made.",
+            "description": "Information about the channel used to make the request.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Contains information about the context in which the request was made."
+        "description": "Contextual details of the request, including correlation and source information."
       },
       "Channel": {
+        "title": "Request Channel Information",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "The unique identifier of the channel.",
-            "example": "CHANNEL123"
+            "description": "The unique identifier for the channel.",
+            "example": "string"
           },
           "channelType": {
             "type": "string",
-            "description": "The type of the channel (e.g., web, mobile, API).",
-            "example": "web"
+            "description": "The type of channel used (e.g., Mobile, Web).",
+            "example": "string"
           },
           "deviceId": {
             "type": "string",
-            "description": "The unique identifier of the device used for the request.",
-            "example": "DEVICE123"
+            "description": "The unique identifier for the device used.",
+            "example": "string"
           }
         },
-        "description": "Represents the details of the channel from which the request was made."
+        "description": "Details about the channel used for the request."
       },
-      "CreateCorporateCurrentAccountResponse_201": {
+      "CreateCorporateCurrentAccountDepositResponse_201": {
+        "title": "Corporate Current Account Operation Response",
         "type": "object",
         "properties": {
           "customerId": {
             "type": "string",
-            "description": "Unique identifier for the customer.",
+            "description": "The unique identifier for the customer.",
             "example": "CUST-119845"
           },
           "accountId": {
             "type": "string",
-            "description": "Unique identifier for the newly created account.",
+            "description": "The unique identifier for the account.",
             "example": "ACC-603254"
           },
           "productCode": {
             "type": "string",
-            "description": "Code representing the type of product associated with the account.",
+            "description": "The code representing the product associated with the account.",
             "example": "CHK-PREMIUM-US"
           },
           "resourceId": {
             "type": "string",
-            "description": "Unique identifier for the resource related to this transaction.",
+            "description": "The unique identifier for the resource involved in the operation.",
             "example": "RES-591415"
           },
           "status": {
             "type": "string",
-            "description": "Current status of the account creation process.",
+            "description": "The current status of the operation (e.g., successful, failed).",
             "example": "ACTIVE"
           },
           "createdAt": {
             "type": "string",
-            "description": "Timestamp indicating when the account was created.",
+            "description": "The date and time when the operation was created.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Additional information related to the account creation response.",
-            "$ref": "#/components/schemas/Metadata"
+            "$ref": "#/components/schemas/OperationMetadata"
           }
         },
-        "description": "Response schema for the creation of a corporate current account in the deposit lending service.",
+        "description": "This schema represents the response object returned after a successful operation on a corporate current account.",
         "example": {
           "customerId": "CUST-119845",
           "accountId": "ACC-603254",
@@ -289,31 +293,32 @@
           }
         }
       },
-      "Metadata": {
+      "OperationMetadata": {
+        "title": "Operation Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
+            "description": "The unique identifier for the response.",
             "example": "RESP123456"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier that correlates this request with other related requests.",
+            "description": "The ID used for correlating logs and events across different services.",
             "example": "CORR123456"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the metadata was generated.",
+            "description": "The date and time when the metadata was generated.",
             "example": "2023-10-01T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing of the account creation took place.",
-            "example": "US-East"
+            "description": "The region where the operation was processed.",
+            "example": "US-East-1"
           }
         },
-        "description": "Metadata providing additional contextual information about the account creation response."
+        "description": "This schema contains metadata related to the operation performed on the account."
       }
     },
     "parameters": {
@@ -334,7 +339,7 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "Unique identifier for the endpoint utilized in the request.",
+        "description": "A unique identifier for the API endpoint being called.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -344,7 +349,7 @@
         "example": "corporate-current-account-create-corporate-current-account"
       },
       "X-Runtime-App": {
-        "description": "Indicates the version of the runtime application processing the request.",
+        "description": "The name of the runtime application that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -357,7 +362,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication method that uses JSON Web Tokens (JWT). The client must include a valid JWT in the Authorization header when making requests.",
+        "description": "An HTTP authentication scheme that uses JSON Web Tokens (JWT) for securing API endpoints. Clients must include a valid bearer token in the Authorization header to access protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
