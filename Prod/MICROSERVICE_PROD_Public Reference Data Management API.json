@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Public Reference Data Management API",
-    "description": "The Public Reference Data Management API provides robust access to crucial market data, enabling users to manage and retrieve public reference data efficiently. This API facilitates the integration of essential reference data into applications, supporting financial analysts, traders, and data scientists in their decision-making processes. By offering streamlined access to vital information, it enhances the accuracy and efficiency of market data handling. Typical use cases include financial reporting, analytical modeling, and compliance monitoring, ensuring users have the most up-to-date public reference data at their fingertips.",
+    "description": "The Public Reference Data Management API facilitates the management and distribution of market data used within banking operations. This API allows users to submit and update critical reference data, ensuring accuracy and consistency across various banking systems. Typical consumers include financial analysts, data engineers, and software applications requiring up-to-date reference datasets. By streamlining data management, the API enhances decision-making processes and operational efficiency in market data handling.",
     "version": "1.0"
   },
   "servers": [
@@ -31,31 +31,31 @@
   ],
   "paths": {
     "/v5/banking/market-data/public-reference-data-management": {
-      "get": {
+      "post": {
         "tags": [
-          "Market Data"
+          "Market Data Management"
         ],
-        "summary": "Retrieve public reference data from the market.",
-        "description": "This endpoint allows users to fetch public reference data related to market entities. It provides essential information that can be leveraged for analysis and decision-making.",
-        "operationId": "getPublicReferenceData",
+        "summary": "Create public reference data",
+        "description": "This endpoint allows clients to submit new public reference data to the market data management system. Properly formatted data must be provided to ensure successful processing.",
+        "operationId": "createPublicReferenceData",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to retrieve public reference data from the market data service. It specifies the parameters necessary for the query, allowing clients to obtain specific information based on their requirements.",
+          "description": "This request body is used to manage public reference data within the market data service. Provide the necessary details in JSON format to perform the desired operations.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetPublicReferenceDataRequest"
+                "$ref": "#/components/schemas/CreatePublicReferenceDataRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Request completed successfully, returning the requested market data.",
+          "201": {
+            "description": "Resource created successfully with the provided data.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -67,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetPublicReferenceDataResponse_200"
+                  "$ref": "#/components/schemas/CreatePublicReferenceDataResponse_201"
                 }
               }
             }
@@ -87,147 +87,196 @@
   },
   "components": {
     "schemas": {
-      "GetPublicReferenceDataRequest": {
-        "type": "string",
-        "description": "A request body representation for the operations related to market data public reference data management.",
-        "example": "{}"
-      },
-      "GetPublicReferenceDataResponse_200": {
+      "CreatePublicReferenceDataRequest": {
         "type": "object",
         "properties": {
-          "items": {
-            "type": "array",
-            "description": "List of market data items.",
-            "example": [
-              {
-                "instrumentId": "STANDARD",
-                "isin": "STANDARD",
-                "marketIdentifierCode": "CODE-921",
-                "asOf": "2026-08-11T12:00:00Z",
-                "dataSource": "STANDARD",
-                "recordStatus": "ACTIVE",
-                "updatedAt": "2026-09-15T14:30:00Z"
-              }
-            ],
-            "items": {
-              "$ref": "#/components/schemas/MarketDataItem"
-            }
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/Pagination"
-          },
-          "sort": {
+          "instrumentId": {
             "type": "string",
-            "description": "Sorting information for the retrieved data.",
+            "description": "The unique identifier for the financial instrument.",
             "example": "STANDARD"
           },
+          "isin": {
+            "type": "string",
+            "description": "The International Securities Identification Number for the instrument.",
+            "example": "STANDARD"
+          },
+          "marketIdentifierCode": {
+            "type": "string",
+            "description": "The code that identifies the market where the instrument is traded.",
+            "example": "CODE-383"
+          },
+          "asOf": {
+            "type": "string",
+            "description": "The date at which the data is valid.",
+            "example": "2026-08-11T12:00:00Z"
+          },
+          "dataSource": {
+            "type": "string",
+            "description": "The source from which the data is obtained.",
+            "example": "STANDARD"
+          },
+          "requestContext": {
+            "description": "Contextual information about the request.",
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "example": {
+          "instrumentId": "STANDARD",
+          "isin": "STANDARD",
+          "marketIdentifierCode": "CODE-383",
+          "asOf": "2026-08-11T12:00:00Z",
+          "dataSource": "STANDARD",
+          "requestContext": {
+            "requestId": "f9d5431c-46f6-5ac5-b9f4-2ac6fcf4bef4",
+            "correlationId": "77cb8830-c81f-5b97-a9ae-c5b5331931ee",
+            "idempotencyKey": "aa933032-fbd5-5d9a-a4fe-217ccf1282e8",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-890641"
+            }
+          }
+        }
+      },
+      "RequestContext": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "A unique identifier for the request.",
+            "example": "req-12345"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "An identifier used to correlate requests across services.",
+            "example": "corr-67890"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "A unique key used to ensure that a request is processed only once.",
+            "example": "key-abc123"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "The timestamp when the request was made.",
+            "example": "2023-01-01T12:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The system from which the request originated.",
+            "example": "TradingApp"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application from which the request originated.",
+            "example": "MarketDataClient"
+          },
+          "channel": {
+            "description": "Information about the channel through which the request was made.",
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Contains the context for the request, allowing for tracking and correlation."
+      },
+      "Channel": {
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "The unique identifier for the channel.",
+            "example": "chan-001"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "The type of the channel (e.g., API, UI).",
+            "example": "API"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "The identifier for the device through which the request was made.",
+            "example": "device-xyz"
+          }
+        },
+        "description": "Details about the communication channel used for the request."
+      },
+      "CreatePublicReferenceDataResponse_201": {
+        "title": "Market Data Public Reference Management Response",
+        "type": "object",
+        "properties": {
+          "instrumentId": {
+            "type": "string",
+            "description": "The unique identifier for the financial instrument.",
+            "example": "STANDARD"
+          },
+          "marketIdentifierCode": {
+            "type": "string",
+            "description": "The code representing the market where the instrument is traded.",
+            "example": "CODE-404"
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "The unique identifier for the resource associated with the request.",
+            "example": "RES-971540"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the operation performed.",
+            "example": "ACTIVE"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the resource was created.",
+            "example": "2026-09-15T14:30:00Z"
+          },
           "metadata": {
+            "description": "Contains additional information about the response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Schema representing the response structure for retrieving market data public reference data.",
+        "description": "This schema represents the response structure for the Market Data Public Reference Data Management POST operation.",
         "example": {
-          "items": [
-            {
-              "instrumentId": "STANDARD",
-              "isin": "STANDARD",
-              "marketIdentifierCode": "CODE-921",
-              "asOf": "2026-08-11T12:00:00Z",
-              "dataSource": "STANDARD",
-              "recordStatus": "ACTIVE",
-              "updatedAt": "2026-09-15T14:30:00Z"
-            }
-          ],
-          "pagination": {
-            "page": 1,
-            "pageSize": 1,
-            "totalItems": 1
-          },
-          "sort": "STANDARD",
+          "instrumentId": "STANDARD",
+          "marketIdentifierCode": "CODE-404",
+          "resourceId": "RES-971540",
+          "status": "ACTIVE",
+          "createdAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "8926b592-8ab5-5d56-a68c-e7a88aeb82c4",
-            "correlationId": "b1ac865f-00c0-54ec-8181-1d10c4075d3e",
+            "responseId": "4731436e-9956-5ff5-bf31-c3391da68a85",
+            "correlationId": "77cb8830-c81f-5b97-a9ae-c5b5331931ee",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "MarketDataItem": {
-        "type": "object",
-        "properties": {
-          "instrumentId": {
-            "type": "string",
-            "description": "Unique identifier for the instrument."
-          },
-          "isin": {
-            "type": "string",
-            "description": "International Securities Identification Number for the instrument."
-          },
-          "marketIdentifierCode": {
-            "type": "string",
-            "description": "Identifier for the market where the instrument is traded."
-          },
-          "asOf": {
-            "type": "string",
-            "description": "Date and time for which the data is relevant."
-          },
-          "dataSource": {
-            "type": "string",
-            "description": "The source from which the data was retrieved."
-          },
-          "recordStatus": {
-            "type": "string",
-            "description": "Status of the data record."
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp when the data was last updated."
-          }
-        },
-        "description": "Schema representing an individual market data item."
-      },
-      "Pagination": {
-        "type": "object",
-        "properties": {
-          "page": {
-            "type": "integer",
-            "description": "Current page number.",
-            "format": "int32"
-          },
-          "pageSize": {
-            "type": "integer",
-            "description": "Number of items per page.",
-            "format": "int32"
-          },
-          "totalItems": {
-            "type": "integer",
-            "description": "Total number of items available.",
-            "format": "int32"
-          }
-        },
-        "description": "Schema providing pagination details for the response."
-      },
       "Metadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response."
+            "description": "The unique identifier for the response.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier for correlating related requests and responses."
+            "description": "An identifier used to correlate the request with the response.",
+            "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp for when the response was generated."
+            "description": "Timestamp indicating when the metadata was generated.",
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing was performed."
+            "description": "The geographical region where the request was processed.",
+            "example": "string"
           }
         },
-        "description": "Schema providing metadata about the response."
+        "description": "This schema contains the metadata information about the response."
       }
     },
     "parameters": {
@@ -241,7 +290,7 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_200"
+            "MICROSERVICE_PROD_201"
           ]
         }
       }
@@ -252,9 +301,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "public-reference-data-management-search-public-reference-data-management"
+          "example": "public-reference-data-management-create-public-reference-data-management"
         },
-        "example": "public-reference-data-management-search-public-reference-data-management"
+        "example": "public-reference-data-management-create-public-reference-data-management"
       },
       "X-Runtime-App": {
         "style": "simple",
@@ -269,7 +318,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses Bearer authentication, where the client must include a valid JSON Web Token (JWT) in the Authorization header when making requests to secure endpoints.",
+        "description": "A bearer authentication scheme that utilizes JSON Web Tokens (JWT) to securely transmit information between parties. The token must be included in the Authorization header of your requests.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

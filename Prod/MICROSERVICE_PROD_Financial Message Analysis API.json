@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Financial Message Analysis API",
-    "description": "The Financial Message Analysis API enables the seamless evaluation and extraction of insights from banking financial messages. This API facilitates the analysis of payment transactions by providing essential analytical capabilities, helping users identify patterns and anomalies within financial data. Typical users include financial institutions, analysts, and developers seeking to enhance transaction monitoring and compliance operations. Leverage this API to deepen your understanding of payment flows and improve decision-making processes.",
+    "description": "The Financial Message Analysis API facilitates the evaluation and processing of financial messages in banking transactions. This API allows businesses to submit financial message data for analysis, providing insights into transaction patterns, anomalies, and compliance checks. Typical consumers include financial institutions and compliance teams looking to enhance their transaction oversight. The results can help drive decision-making and improve risk management strategies within banking operations.",
     "version": "1.0"
   },
   "servers": [
@@ -30,32 +30,30 @@
     }
   ],
   "paths": {
-    "/v5/banking/payments/financial-message-analysis": {
-      "get": {
-        "tags": [
-          "Payments"
-        ],
-        "summary": "Retrieve analysis of financial messages.",
-        "description": "This endpoint allows users to access detailed analysis of financial messages, providing insights and information critical for financial operations.",
-        "operationId": "getFinancialMessageAnalysis",
+    "/v5/banking/payments/financial-message-analysis/analyses": {
+      "post": {
+        "tags": [],
+        "summary": "Initiate financial message analysis for payments.",
+        "description": "This endpoint allows users to create an analysis for financial messages related to payments. By providing the necessary data, users can leverage this feature to evaluate and extract insights from financial transactions efficiently.",
+        "operationId": "createFinancialMessageAnalysis",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "Request body for analyzing financial messages. This payload is used to specify parameters related to the financial message that needs to be processed, allowing the system to return relevant analysis results.",
+          "description": "This request body should contain the necessary parameters for initiating a financial message analysis. Ensure that all required fields are properly populated to facilitate accurate processing of the financial message.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetFinancialMessageAnalysisRequest"
+                "$ref": "#/components/schemas/CreateFinancialMessageAnalysisRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The request was successful, and the analysis results are returned.",
+            "description": "Successful analysis of the financial message.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -67,7 +65,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetFinancialMessageAnalysisResponse_200"
+                  "$ref": "#/components/schemas/CreateFinancialMessageAnalysisResponse_200"
                 }
               }
             }
@@ -87,117 +85,69 @@
   },
   "components": {
     "schemas": {
-      "GetFinancialMessageAnalysisRequest": {
-        "type": "string",
-        "description": "A JSON string representing the request body for the 'Financial Message Analysis' operation.",
-        "example": "{}"
-      },
-      "GetFinancialMessageAnalysisResponse_200": {
-        "title": "Financial Message Analysis Response",
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "description": "An array of financial message items.",
-            "example": [
-              {
-                "paymentId": "PAY-759367",
-                "debtorAccountId": "ACC-286303",
-                "creditorAccountId": "ACC-653872",
-                "instructedAmount": {
-                  "amount": 100.0,
-                  "currency": "USD"
-                },
-                "requestedExecutionDate": "2026-09-15",
-                "remittanceInformation": "STANDARD",
-                "recordStatus": "ACTIVE",
-                "updatedAt": "2026-09-15T14:30:00Z"
-              }
-            ],
-            "items": {
-              "$ref": "#/components/schemas/FinancialMessageItem"
-            }
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/Pagination"
-          },
-          "sort": {
-            "type": "string",
-            "description": "Sorting criteria for the response.",
-            "example": "STANDARD"
-          },
-          "metadata": {
-            "$ref": "#/components/schemas/Metadata"
-          }
-        },
-        "description": "A response object containing the results of the financial message analysis operation.",
-        "example": {
-          "items": [
-            {
-              "paymentId": "PAY-759367",
-              "debtorAccountId": "ACC-286303",
-              "creditorAccountId": "ACC-653872",
-              "instructedAmount": {
-                "amount": 100.0,
-                "currency": "USD"
-              },
-              "requestedExecutionDate": "2026-09-15",
-              "remittanceInformation": "STANDARD",
-              "recordStatus": "ACTIVE",
-              "updatedAt": "2026-09-15T14:30:00Z"
-            }
-          ],
-          "pagination": {
-            "page": 1,
-            "pageSize": 1,
-            "totalItems": 1
-          },
-          "sort": "STANDARD",
-          "metadata": {
-            "responseId": "fbefdef1-a223-594e-b64d-e12faf1889cc",
-            "correlationId": "4a380603-feee-5cb4-bca6-e36f93ee737c",
-            "generatedAt": "2026-09-15T14:30:00Z",
-            "processingRegion": "us-east-1"
-          }
-        }
-      },
-      "FinancialMessageItem": {
-        "title": "Financial Message Item",
+      "CreateFinancialMessageAnalysisRequest": {
+        "title": "Financial Message Analysis Request Body",
         "type": "object",
         "properties": {
           "paymentId": {
             "type": "string",
-            "description": "Unique identifier for the payment."
+            "description": "The unique identifier for the payment.",
+            "example": "PAY-491942"
           },
           "debtorAccountId": {
             "type": "string",
-            "description": "Identifier for the debtor's account."
+            "description": "The account ID of the debtor in the transaction.",
+            "example": "ACC-283698"
           },
           "creditorAccountId": {
             "type": "string",
-            "description": "Identifier for the creditor's account."
+            "description": "The account ID of the creditor in the transaction.",
+            "example": "ACC-387617"
           },
           "instructedAmount": {
+            "description": "The amount and currency to be instructed for the payment.",
             "$ref": "#/components/schemas/InstructedAmount"
           },
           "requestedExecutionDate": {
             "type": "string",
-            "description": "The date when the payment is requested to be executed."
+            "description": "The requested date for the execution of the payment.",
+            "example": "2026-09-15"
           },
           "remittanceInformation": {
             "type": "string",
-            "description": "Information about the remittance."
+            "description": "Additional information regarding the remittance.",
+            "example": "STANDARD"
           },
-          "recordStatus": {
-            "type": "string",
-            "description": "Current status of the record."
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp of the last update."
+          "requestContext": {
+            "description": "Contextual information related to the request.",
+            "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Details of a financial message including payment information."
+        "description": "This schema represents the request body for analyzing financial messages related to payments.",
+        "example": {
+          "paymentId": "PAY-491942",
+          "debtorAccountId": "ACC-283698",
+          "creditorAccountId": "ACC-387617",
+          "instructedAmount": {
+            "amount": 100.0,
+            "currency": "USD"
+          },
+          "requestedExecutionDate": "2026-09-15",
+          "remittanceInformation": "STANDARD",
+          "requestContext": {
+            "requestId": "4603864c-2d77-54fa-a078-b21dc5f47df6",
+            "correlationId": "67586c92-0f21-5339-9599-15e6e65d2cff",
+            "idempotencyKey": "7c3050fb-6fd1-545f-8746-d40d21c3e407",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-300649"
+            }
+          }
+        }
       },
       "InstructedAmount": {
         "title": "Instructed Amount",
@@ -205,59 +155,200 @@
         "properties": {
           "amount": {
             "type": "number",
-            "description": "The amount of money to be transferred."
+            "description": "The amount of money to be instructed for payment.",
+            "example": 0.0
           },
           "currency": {
             "type": "string",
-            "description": "Currency code representing the currency of the instructed amount."
+            "description": "The currency code for the instructed amount.",
+            "example": "string"
           }
         },
-        "description": "The amount instructed for the payment including currency."
+        "description": "This schema represents the instructed amount for a payment, including the amount and currency."
       },
-      "Pagination": {
-        "title": "Pagination Information",
+      "RequestContext": {
+        "title": "Request Context",
         "type": "object",
         "properties": {
-          "page": {
-            "type": "integer",
-            "description": "Current page number.",
-            "format": "int32"
+          "requestId": {
+            "type": "string",
+            "description": "A unique identifier for the request.",
+            "example": "string"
           },
-          "pageSize": {
-            "type": "integer",
-            "description": "Number of items per page.",
-            "format": "int32"
+          "correlationId": {
+            "type": "string",
+            "description": "An identifier used to correlate requests and responses.",
+            "example": "string"
           },
-          "totalItems": {
-            "type": "integer",
-            "description": "Total number of items available.",
-            "format": "int32"
+          "idempotencyKey": {
+            "type": "string",
+            "description": "A key that ensures the request is idempotent.",
+            "example": "string"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "The timestamp when the request was made.",
+            "example": "string"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The source system from which the request originated.",
+            "example": "string"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application that is making the request.",
+            "example": "string"
+          },
+          "channel": {
+            "description": "Information about the channel used for the request.",
+            "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Information for paginating the results."
+        "description": "This schema contains contextual information for the payment request."
+      },
+      "Channel": {
+        "title": "Channel",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "The unique identifier for the channel.",
+            "example": "string"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "The type of the channel used for the request.",
+            "example": "string"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "The identifier for the device used in this channel.",
+            "example": "string"
+          }
+        },
+        "description": "This schema represents the communication channel information for the request."
+      },
+      "CreateFinancialMessageAnalysisResponse_200": {
+        "type": "object",
+        "properties": {
+          "paymentId": {
+            "type": "string",
+            "description": "The unique identifier for the payment.",
+            "example": "PAY-394553"
+          },
+          "debtorAccountId": {
+            "type": "string",
+            "description": "The unique identifier for the debtor's account.",
+            "example": "ACC-280278"
+          },
+          "creditorAccountId": {
+            "type": "string",
+            "description": "The unique identifier for the creditor's account.",
+            "example": "ACC-360243"
+          },
+          "analysisId": {
+            "type": "string",
+            "description": "The unique identifier for the analysis conducted.",
+            "example": "STANDARD"
+          },
+          "status": {
+            "type": "string",
+            "description": "The current status of the analysis.",
+            "example": "ACTIVE"
+          },
+          "completedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the analysis was completed.",
+            "example": "2026-09-15T14:30:00Z"
+          },
+          "findings": {
+            "type": "array",
+            "description": "List of findings resulting from the analysis.",
+            "example": [
+              {
+                "metric": "STANDARD",
+                "value": 100.0,
+                "unit": "STANDARD"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/Metadata"
+          }
+        },
+        "description": "Response schema for the financial message analysis operation, providing details about the payment analysis results.",
+        "example": {
+          "paymentId": "PAY-394553",
+          "debtorAccountId": "ACC-280278",
+          "creditorAccountId": "ACC-360243",
+          "analysisId": "STANDARD",
+          "status": "ACTIVE",
+          "completedAt": "2026-09-15T14:30:00Z",
+          "findings": [
+            {
+              "metric": "STANDARD",
+              "value": 100.0,
+              "unit": "STANDARD"
+            }
+          ],
+          "metadata": {
+            "responseId": "d93edc61-c8d9-598f-b6bf-3fac4a05a882",
+            "correlationId": "67586c92-0f21-5339-9599-15e6e65d2cff",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
+      },
+      "Finding": {
+        "type": "object",
+        "properties": {
+          "metric": {
+            "type": "string",
+            "description": "The name of the metric being measured.",
+            "example": "transaction_value"
+          },
+          "value": {
+            "type": "number",
+            "description": "The value associated with the metric.",
+            "example": 100.0
+          },
+          "unit": {
+            "type": "string",
+            "description": "The unit of measurement for the value.",
+            "example": "USD"
+          }
+        },
+        "description": "Represents an individual finding from the analysis, detailing a specific metric and its value."
       },
       "Metadata": {
-        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response."
+            "description": "The unique identifier for the response.",
+            "example": "response_654321"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate multiple requests."
+            "description": "An identifier used for correlating requests and responses.",
+            "example": "correlation_321456"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the response was generated."
+            "description": "Timestamp indicating when the response was generated.",
+            "example": "2023-10-01T12:05:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the request was processed."
+            "description": "The geographic region where the analysis was processed.",
+            "example": "us-west-1"
           }
         },
-        "description": "Metadata related to the response."
+        "description": "Contains metadata related to the analysis response, providing additional context."
       }
     },
     "parameters": {
@@ -278,17 +369,15 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "The unique identifier for the endpoint that processed the request. This ID helps in tracking the financial message analysis operations.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "financial-message-analysis-search-financial-message-analysis"
+          "example": "financial-message-analysis-analyze-financial-message-analysis"
         },
-        "example": "financial-message-analysis-search-financial-message-analysis"
+        "example": "financial-message-analysis-analyze-financial-message-analysis"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that executed the request. This helps identify which service initiated the processing of the financial message.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -301,7 +390,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a Bearer token for authentication, typically in the form of a JSON Web Token (JWT). Clients must include the token in the 'Authorization' header when making requests to secure endpoints.",
+        "description": "Authentication scheme that utilizes a bearer token in the form of a JSON Web Token (JWT). This method enables secure RESTful authentication for API access.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

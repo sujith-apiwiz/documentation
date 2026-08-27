@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Counterparty Management API",
-    "description": "The Counterparty Management API provides access to essential market data related to counterparties within the banking sector. This API allows users to retrieve detailed information about various counterparties, supporting effective decision-making and risk management. Typical consumers include financial analysts, risk managers, and compliance officers who require up-to-date counterparty data for analysis and reporting purposes. By facilitating easy access to this data, the API enhances the users' ability to monitor and manage their counterparty relationships effectively.",
+    "description": "The Counterparty Management API enables efficient updates to counterparty information within the banking market data framework. This API facilitates modifications to existing counterparty records, ensuring that vital data remains accurate and up-to-date. Typical consumers include financial institutions and market analysts who rely on precise counterparty details for compliance and risk assessment. The API streamlines data maintenance processes, thereby enhancing operational efficiency and supporting informed decision-making.",
     "version": "1.0"
   },
   "servers": [
@@ -30,32 +30,35 @@
     }
   ],
   "paths": {
-    "/v5/banking/market-data/counterparty-administration": {
-      "get": {
+    "/v5/banking/market-data/counterparty-administration/{param1}": {
+      "patch": {
         "tags": [
           "Counterparty Management"
         ],
-        "summary": "Retrieve counterparty administration data.",
-        "description": "This endpoint allows developers to fetch detailed information related to counterparty administration. It provides access to essential data, enabling users to manage and analyze counterparties effectively.",
-        "operationId": "getCounterpartyAdministration",
+        "summary": "Update Counterparty Details",
+        "description": "This endpoint allows you to update the details of a specific counterparty identified by PARTY-600045 in the market data system. Make sure to provide the necessary changes in the request body to modify the counterparty information accurately.",
+        "operationId": "patchCounterpartyAdministrationParty600045",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "Request body for retrieving counterparty administration data. This includes the specific parameters needed to filter or specify the counterparty details you wish to query.",
+          "description": "This request body is used to update the details of a specific counterparty identified by PARTY-600045. The payload must comply with the schema defined for this operation, which specifies the required and optional fields that can be included to modify the counterparty's information.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetCounterpartyAdministrationRequest"
+                "$ref": "#/components/schemas/PatchCounterpartyAdministrationParty600045Request"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, returning counterparty administration data.",
+            "description": "The request was successful and the resource has been updated.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -67,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetCounterpartyAdministrationResponse_200"
+                  "$ref": "#/components/schemas/PatchCounterpartyAdministrationParty600045Response_200"
                 }
               }
             }
@@ -87,187 +90,202 @@
   },
   "components": {
     "schemas": {
-      "GetCounterpartyAdministrationRequest": {
-        "type": "string",
-        "description": "This schema represents the request body for the GET operation on counterparty administration within market data. It is expected to contain a string that can be used to identify or describe the request.",
-        "example": "{}"
-      },
-      "GetCounterpartyAdministrationResponse_200": {
-        "title": "Market Data Counterparty Administration Response",
+      "PatchCounterpartyAdministrationParty600045Request": {
         "type": "object",
         "properties": {
-          "items": {
-            "type": "array",
-            "description": "A list of financial instrument details.",
-            "example": [
-              {
-                "instrumentId": "STANDARD",
-                "isin": "STANDARD",
-                "marketIdentifierCode": "CODE-979",
-                "asOf": "2026-08-11T12:00:00Z",
-                "dataSource": "STANDARD",
-                "recordStatus": "ACTIVE",
-                "updatedAt": "2026-09-15T14:30:00Z"
-              }
-            ],
-            "items": {
-              "$ref": "#/components/schemas/InstrumentDetails"
-            }
+          "changes": {
+            "description": "Contains the changes to be made to the market data.",
+            "$ref": "#/components/schemas/Changes"
           },
-          "pagination": {
-            "description": "Pagination information for the response.",
-            "$ref": "#/components/schemas/Pagination"
-          },
-          "sort": {
+          "changeReason": {
             "type": "string",
-            "description": "Sorting parameter used in the request.",
+            "description": "The reason for the requested change.",
             "example": "STANDARD"
           },
+          "effectiveAt": {
+            "type": "string",
+            "description": "The timestamp at which the changes should take effect.",
+            "example": "2026-09-15T14:30:00Z"
+          },
+          "requestedBy": {
+            "type": "string",
+            "description": "Identifier of the user who requested the change.",
+            "example": "STANDARD"
+          },
+          "requestContext": {
+            "description": "Context information for the request including tracking identifiers.",
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "Request body for modifying market data operations pertaining to a counterparty.",
+        "example": {
+          "changes": {
+            "instrumentId": "STANDARD",
+            "isin": "STANDARD",
+            "marketIdentifierCode": "CODE-163"
+          },
+          "changeReason": "STANDARD",
+          "effectiveAt": "2026-09-15T14:30:00Z",
+          "requestedBy": "STANDARD",
+          "requestContext": {
+            "requestId": "82361023-81d3-55ee-927b-82a4883853ea",
+            "correlationId": "5fde063e-488d-5dfe-a9dc-ce019e365ad8",
+            "idempotencyKey": "c413fddb-caa0-5c8c-aead-fd1fefaee146",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-359794"
+            }
+          }
+        }
+      },
+      "Changes": {
+        "type": "object",
+        "properties": {
+          "instrumentId": {
+            "type": "string",
+            "description": "Unique identifier of the financial instrument.",
+            "example": "ABC123"
+          },
+          "isin": {
+            "type": "string",
+            "description": "International Securities Identification Number of the financial instrument.",
+            "example": "US1234567890"
+          },
+          "marketIdentifierCode": {
+            "type": "string",
+            "description": "Code representing the market for the instrument.",
+            "example": "XNAS"
+          }
+        },
+        "description": "Represents the specific changes to the market data elements."
+      },
+      "RequestContext": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique identifier for the request.",
+            "example": "req-456"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier for tracking the request across systems.",
+            "example": "corr-789"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Key used to ensure the request is processed only once.",
+            "example": "idemp-321"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp of when the request was made.",
+            "example": "2023-10-01T09:58:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "Name of the source system initiating the request.",
+            "example": "MarketDataAPI"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "Name of the application making the request.",
+            "example": "TradingApp"
+          },
+          "channel": {
+            "description": "Information about the channel through which the request was made.",
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Contextual details about the request, including identifiers and metadata."
+      },
+      "Channel": {
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Unique identifier of the communication channel.",
+            "example": "channel-001"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "Type of the communication channel (e.g., web, mobile).",
+            "example": "web"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Identifier of the device used to submit the request.",
+            "example": "device-abc123"
+          }
+        },
+        "description": "Information about the communication channel used to submit the request."
+      },
+      "PatchCounterpartyAdministrationParty600045Response_200": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "description": "The version of the response structure.",
+            "format": "int32",
+            "example": 1
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the response, indicating success or failure.",
+            "example": "ACTIVE"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "The timestamp when the resource was last updated.",
+            "example": "2026-09-15T14:30:00Z"
+          },
           "metadata": {
-            "description": "Metadata related to the response.",
+            "description": "Metadata associated with the response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the market data counterparty administration GET operation, providing information about various financial instruments along with pagination and metadata.",
+        "description": "Response schema for the PATCH operation on the specified counterparty.",
         "example": {
-          "items": [
-            {
-              "instrumentId": "STANDARD",
-              "isin": "STANDARD",
-              "marketIdentifierCode": "CODE-979",
-              "asOf": "2026-08-11T12:00:00Z",
-              "dataSource": "STANDARD",
-              "recordStatus": "ACTIVE",
-              "updatedAt": "2026-09-15T14:30:00Z"
-            }
-          ],
-          "pagination": {
-            "page": 1,
-            "pageSize": 1,
-            "totalItems": 1
-          },
-          "sort": "STANDARD",
+          "version": 1,
+          "status": "ACTIVE",
+          "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "2e50a0d3-bdb6-5eb7-b4e9-b38bd29c10a0",
-            "correlationId": "f4575dde-31d3-5301-a01b-dd52c7bb3bd5",
+            "responseId": "a3352536-72f4-5f22-8aa7-3786fe56bb16",
+            "correlationId": "5fde063e-488d-5dfe-a9dc-ce019e365ad8",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "InstrumentDetails": {
-        "title": "Instrument Details",
-        "type": "object",
-        "properties": {
-          "instrumentId": {
-            "type": "string",
-            "description": "The unique identifier for the instrument.",
-            "example": "string"
-          },
-          "isin": {
-            "type": "string",
-            "description": "The International Securities Identification Number for the instrument.",
-            "example": "string"
-          },
-          "marketIdentifierCode": {
-            "type": "string",
-            "description": "The market identifier code where the instrument is traded.",
-            "example": "string"
-          },
-          "asOf": {
-            "type": "string",
-            "description": "The date and time as of which the data is relevant.",
-            "example": "2023-10-01T00:00:00Z"
-          },
-          "dataSource": {
-            "type": "string",
-            "description": "The source of the data provided for the instrument.",
-            "example": "string"
-          },
-          "recordStatus": {
-            "type": "string",
-            "description": "The status of the instrument record.",
-            "example": "string"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "The timestamp of the last update for the instrument's data.",
-            "example": "2023-10-01T00:00:00Z"
-          }
-        },
-        "description": "Details about a financial instrument.",
-        "example": {
-          "instrumentId": "12345",
-          "isin": "US1234567890",
-          "marketIdentifierCode": "NYSE",
-          "asOf": "2023-10-01T00:00:00Z",
-          "dataSource": "DataProviderX",
-          "recordStatus": "active",
-          "updatedAt": "2023-10-01T00:00:00Z"
-        }
-      },
-      "Pagination": {
-        "title": "Pagination",
-        "type": "object",
-        "properties": {
-          "page": {
-            "type": "integer",
-            "description": "The current page number in the pagination.",
-            "format": "int32",
-            "example": 1
-          },
-          "pageSize": {
-            "type": "integer",
-            "description": "The number of items per page.",
-            "format": "int32",
-            "example": 10
-          },
-          "totalItems": {
-            "type": "integer",
-            "description": "The total number of items available.",
-            "format": "int32",
-            "example": 100
-          }
-        },
-        "description": "Information about pagination for the response.",
-        "example": {
-          "page": 1,
-          "pageSize": 10,
-          "totalItems": 100
-        }
-      },
       "Metadata": {
-        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "A unique identifier for the response.",
-            "example": "response-12345"
+            "description": "Unique identifier for the response.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "An identifier to correlate different requests and responses.",
-            "example": "correlation-67890"
+            "description": "Identifier used to correlate requests and responses.",
+            "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the response was generated.",
-            "example": "2023-10-01T00:00:00Z"
+            "description": "The timestamp when the response was generated.",
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the request was processed.",
-            "example": "us-east-1"
+            "description": "The region where the request was processed.",
+            "example": "string"
           }
         },
-        "description": "Additional metadata regarding the response.",
-        "example": {
-          "responseId": "response-12345",
-          "correlationId": "correlation-67890",
-          "generatedAt": "2023-10-01T00:00:00Z",
-          "processingRegion": "us-east-1"
-        }
+        "description": "Contains metadata information about the response."
       }
     },
     "parameters": {
@@ -284,6 +302,16 @@
             "MICROSERVICE_PROD_200"
           ]
         }
+      },
+      "param1": {
+        "name": "param1",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
       }
     },
     "headers": {
@@ -292,9 +320,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "counterparty-administration-search-counterparty-administration"
+          "example": "counterparty-administration-update-counterparty-administration"
         },
-        "example": "counterparty-administration-search-counterparty-administration"
+        "example": "counterparty-administration-update-counterparty-administration"
       },
       "X-Runtime-App": {
         "style": "simple",
@@ -309,7 +337,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses Bearer Authentication. A valid JWT (JSON Web Token) must be included in the Authorization header to access protected resources.",
+        "description": "Authentication scheme using Bearer tokens. This security scheme expects a JSON Web Token (JWT) to be included in the Authorization header of HTTP requests for secure access to protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

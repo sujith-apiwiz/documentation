@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Wholesale Trading Quote Management API",
-    "description": "The Wholesale Trading Quote Management API provides tools for retrieving quotes related to wholesale trading activities. This API allows users to access, filter, and analyze quote information essential for trading decision-making. It is primarily utilized by traders, financial analysts, and investment managers to monitor market conditions and assess trading opportunities. By leveraging this API, consumers can enhance their trading strategies and ensure timely access to critical market data.",
+    "description": "The Wholesale Trading Quote Management API enables users to efficiently update existing quotes in the wholesale trading environment. This API provides the necessary operations to modify quote details, ensuring that pricing and terms remain current and accurate. Typical consumers include trading platforms and financial institutions that require real-time quote adjustments for market responsiveness. By utilizing this API, businesses can enhance their trading strategies and optimize client interactions without extensive manual intervention.",
     "version": "1.0"
   },
   "servers": [
@@ -30,32 +30,35 @@
     }
   ],
   "paths": {
-    "/v5/banking/wholesale-trading/quote-management": {
-      "get": {
+    "/v5/banking/wholesale-trading/quote-management/{param1}": {
+      "patch": {
         "tags": [
           "Wholesale Trading"
         ],
-        "summary": "Retrieve quotes for wholesale trading.",
-        "description": "This endpoint allows you to fetch quotes related to wholesale trading activities. It provides access to all relevant quote data required for analysis and decision-making.",
-        "operationId": "getWholesaleTradingQuoteManagement",
+        "summary": "Update Quote Management for Wholesale Trading",
+        "description": "This operation allows users to update the details of a specific quote management entry identified by RES-100045 within the wholesale trading system. It enables modifications to various attributes of the quote, enhancing the management capabilities of trading quotes.",
+        "operationId": "updateWholesaleTradingQuoteManagementRes100045",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to retrieve quote management details in the wholesale trading context. Ensure that the request adheres to the specified schema to obtain accurate results.",
+          "description": "This request body contains the necessary data to update a quote in the wholesale trading system. It should include all relevant fields that need to be modified or added for the specified quote ID.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetWholesaleTradingQuoteManagementRequest"
+                "$ref": "#/components/schemas/UpdateWholesaleTradingQuoteManagementRes100045Request"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved the quote data.",
+            "description": "Successful update of the resource.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -67,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetWholesaleTradingQuoteManagementResponse_200"
+                  "$ref": "#/components/schemas/UpdateWholesaleTradingQuoteManagementRes100045Response_200"
                 }
               }
             }
@@ -87,157 +90,176 @@
   },
   "components": {
     "schemas": {
-      "GetWholesaleTradingQuoteManagementRequest": {
-        "title": "Quote Management Request Body",
-        "type": "string",
-        "description": "This schema represents the request body for the quote management operations in the wholesale trading API.",
-        "example": "{}"
-      },
-      "GetWholesaleTradingQuoteManagementResponse_200": {
+      "UpdateWholesaleTradingQuoteManagementRes100045Request": {
         "type": "object",
         "properties": {
-          "items": {
-            "type": "array",
-            "description": "A list of quote items returned in the response.",
-            "example": [
-              {
-                "tradingBookId": "STANDARD",
-                "instrumentId": "STANDARD",
-                "side": "STANDARD",
-                "quantity": 1,
-                "limitPrice": {
-                  "value": 100.0,
-                  "currency": "USD"
-                },
-                "recordStatus": "ACTIVE",
-                "updatedAt": "2026-09-15T14:30:00Z"
-              }
-            ],
-            "items": {
-              "$ref": "#/components/schemas/QuoteItem"
-            }
+          "changes": {
+            "description": "Contains details of the changes to be made in the trading quote.",
+            "$ref": "#/components/schemas/Changes"
           },
-          "pagination": {
-            "$ref": "#/components/schemas/Pagination"
-          },
-          "sort": {
+          "changeReason": {
             "type": "string",
-            "description": "Sorting criteria applied to the results.",
+            "description": "The reason for the changes being requested.",
             "example": "STANDARD"
           },
-          "metadata": {
-            "$ref": "#/components/schemas/Metadata"
+          "effectiveAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the changes should take effect.",
+            "example": "2026-09-15T14:30:00Z"
+          },
+          "requestedBy": {
+            "type": "string",
+            "description": "Identifier for the user or system that requested the changes.",
+            "example": "STANDARD"
+          },
+          "requestContext": {
+            "description": "Contextual information about the request.",
+            "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Response schema for the GET operation of the Quote Management service, containing a list of quote items, pagination information, sorting details, and metadata.",
+        "description": "Request body for PATCH operation on quote management in wholesale trading.",
         "example": {
-          "items": [
-            {
-              "tradingBookId": "STANDARD",
-              "instrumentId": "STANDARD",
-              "side": "STANDARD",
-              "quantity": 1,
-              "limitPrice": {
-                "value": 100.0,
-                "currency": "USD"
-              },
-              "recordStatus": "ACTIVE",
-              "updatedAt": "2026-09-15T14:30:00Z"
-            }
-          ],
-          "pagination": {
-            "page": 1,
-            "pageSize": 1,
-            "totalItems": 1
+          "changes": {
+            "tradingBookId": "STANDARD",
+            "instrumentId": "STANDARD",
+            "side": "STANDARD"
           },
-          "sort": "STANDARD",
-          "metadata": {
-            "responseId": "3dd26c74-1af9-55a3-b6e5-0e37e3d85a9e",
-            "correlationId": "caa2d5fd-104e-53a0-b94d-ffec644b9773",
-            "generatedAt": "2026-09-15T14:30:00Z",
-            "processingRegion": "us-east-1"
+          "changeReason": "STANDARD",
+          "effectiveAt": "2026-09-15T14:30:00Z",
+          "requestedBy": "STANDARD",
+          "requestContext": {
+            "requestId": "75e85a6c-3b6d-5321-8ae6-1a6b9ddb0c3a",
+            "correlationId": "c0ba770e-f358-5e04-81b7-993aa5571189",
+            "idempotencyKey": "f0f47c87-2c6d-544b-832e-ae84dd39501d",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-714022"
+            }
           }
         }
       },
-      "QuoteItem": {
+      "Changes": {
         "type": "object",
         "properties": {
           "tradingBookId": {
             "type": "string",
-            "description": "The identifier of the trading book associated with the quote.",
-            "example": "string"
+            "description": "Identifier of the trading book associated with the changes.",
+            "example": "book456"
           },
           "instrumentId": {
             "type": "string",
-            "description": "The identifier of the financial instrument associated with the quote.",
-            "example": "string"
+            "description": "Identifier of the financial instrument being modified.",
+            "example": "instrument789"
           },
           "side": {
             "type": "string",
-            "description": "The trading side, e.g., buy or sell.",
-            "example": "string"
-          },
-          "quantity": {
-            "type": "integer",
-            "description": "The quantity of the instrument in the quote.",
-            "format": "int32",
-            "example": 0
-          },
-          "limitPrice": {
-            "$ref": "#/components/schemas/LimitPrice"
-          },
-          "recordStatus": {
+            "description": "Side of the trade (e.g., buy or sell).",
+            "example": "buy"
+          }
+        },
+        "description": "Details of the specific changes being made to the trading quote."
+      },
+      "RequestContext": {
+        "type": "object",
+        "properties": {
+          "requestId": {
             "type": "string",
-            "description": "The status of the quote record.",
-            "example": "string"
+            "description": "Unique identifier for the request.",
+            "example": "req-001"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier used to correlate logs with a specific request.",
+            "example": "corr-123"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Key to ensure idempotent operations while processing this request.",
+            "example": "idempotency-456"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the request was made.",
+            "example": "2023-10-01T09:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "Name of the system that initiated the request.",
+            "example": "TradingSystem"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "Name of the application that initiated the request.",
+            "example": "TradingApp"
+          },
+          "channel": {
+            "description": "Details about the channel through which the request was made.",
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Contextual information regarding the request's origin and metadata."
+      },
+      "Channel": {
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Identifier for the communication channel.",
+            "example": "channel789"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "Type of channel (e.g., web, mobile, API).",
+            "example": "API"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Identifier of the device used to initiate the request.",
+            "example": "device-001"
+          }
+        },
+        "description": "Information about the channel through which the request was submitted."
+      },
+      "UpdateWholesaleTradingQuoteManagementRes100045Response_200": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "description": "The version number of the response.",
+            "format": "int32",
+            "example": 1
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the operation.",
+            "example": "ACTIVE"
           },
           "updatedAt": {
             "type": "string",
-            "description": "The timestamp when the quote was last updated.",
-            "example": "string"
+            "description": "The timestamp indicating when the response was updated.",
+            "example": "2026-09-15T14:30:00Z"
+          },
+          "metadata": {
+            "description": "Additional information regarding the response.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Schema representing an individual quote item."
-      },
-      "LimitPrice": {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "number",
-            "description": "The numerical value of the limit price.",
-            "example": 0.0
-          },
-          "currency": {
-            "type": "string",
-            "description": "The currency of the limit price.",
-            "example": "string"
+        "description": "Response schema for successful PATCH operations in the quote management system.",
+        "example": {
+          "version": 1,
+          "status": "ACTIVE",
+          "updatedAt": "2026-09-15T14:30:00Z",
+          "metadata": {
+            "responseId": "b7906c70-aaca-53a0-a110-803d6bc26a2b",
+            "correlationId": "c0ba770e-f358-5e04-81b7-993aa5571189",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
           }
-        },
-        "description": "Schema representing the limit price of a quote."
-      },
-      "Pagination": {
-        "type": "object",
-        "properties": {
-          "page": {
-            "type": "integer",
-            "description": "The current page number.",
-            "format": "int32",
-            "example": 0
-          },
-          "pageSize": {
-            "type": "integer",
-            "description": "The number of items per page.",
-            "format": "int32",
-            "example": 0
-          },
-          "totalItems": {
-            "type": "integer",
-            "description": "The total number of items available.",
-            "format": "int32",
-            "example": 0
-          }
-        },
-        "description": "Schema representing pagination information for the response."
+        }
       },
       "Metadata": {
         "type": "object",
@@ -249,12 +271,12 @@
           },
           "correlationId": {
             "type": "string",
-            "description": "A unique identifier for tracking the request across systems.",
+            "description": "An identifier used to correlate requests and responses.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp when the response was generated.",
+            "description": "The timestamp indicating when the metadata was generated.",
             "example": "string"
           },
           "processingRegion": {
@@ -263,7 +285,7 @@
             "example": "string"
           }
         },
-        "description": "Schema representing additional metadata of the response."
+        "description": "Schema containing metadata related to the response."
       }
     },
     "parameters": {
@@ -280,19 +302,31 @@
             "MICROSERVICE_PROD_200"
           ]
         }
+      },
+      "param1": {
+        "name": "param1",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "A unique identifier for the API endpoint being accessed. This helps in tracking and auditing the usage of different endpoints.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "quote-management-search-quote-management"
+          "example": "quote-management-update-quote-management"
         },
-        "example": "quote-management-search-quote-management"
+        "example": "quote-management-update-quote-management"
       },
       "X-Runtime-App": {
+        "description": "The name and version of the application running the API. This provides context about the environment where the request was processed.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -305,7 +339,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme utilizes a Bearer authentication method where the client sends a JSON Web Token (JWT) in the Authorization header. JWTs are employed to securely transmit information between parties and verify the identity of the user.",
+        "description": "This security scheme uses the Bearer authentication mechanism, where a JSON Web Token (JWT) is provided for authorizing API requests. Clients must include the JWT in the Authorization header to access protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
