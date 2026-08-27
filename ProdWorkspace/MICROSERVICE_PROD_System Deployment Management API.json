@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_System Deployment Management API",
-    "description": "The System Deployment Management API facilitates the deployment of microservices within the IT management framework of a banking system. This API allows users to initiate and manage the deployment process, ensuring that updates and new features are seamlessly integrated into the production environment. Typical consumers include DevOps teams and system administrators aiming to enhance operational efficiency and maintain system integrity. Use cases involve pushing new deployments and monitoring ongoing deployment activities to assure quality and compliance.",
+    "description": "The System Deployment Management API provides functionalities to oversee and retrieve information related to the deployment processes of the MICROSERVICE_PROD banking system. This API enables IT managers and system administrators to access deployment details, including status checks and configuration data, to ensure smooth operational continuity. Typical use cases include monitoring deployment progress, troubleshooting deployment issues, and maintaining system integrity. It serves as a vital tool for enhancing system management efficiency within the banking IT infrastructure.",
     "version": "1.0"
   },
   "servers": [
@@ -19,107 +19,44 @@
     }
   ],
   "paths": {
-    "/v5/banking/it-management/system-deployment/deployments": {
-      "post": {
+    "/v5/banking/it-management/system-deployment/{param1}": {
+      "get": {
         "tags": [
           "System Deployment"
         ],
-        "summary": "Deploy a new system deployment.",
-        "description": "This endpoint allows users to create a new system deployment in the IT management module. Ensure that all required parameters are provided to successfully create a deployment instance.",
-        "operationId": "createSystemDeployment",
+        "summary": "Retrieve system deployment details.",
+        "description": "This endpoint allows you to fetch details of a specific system deployment identified by its unique resource ID. It provides comprehensive information about the deployment, including its current status, associated resources, and configuration settings.",
+        "operationId": "getSystemDeploymentById",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/x-workflow-id"
-          },
-          {
-            "$ref": "#/components/parameters/idempotency-key"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-step"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-branch"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-decision"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-internal"
-          },
-          {
-            "$ref": "#/components/parameters/x-workflow-execution-id"
-          },
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "Request payload for deploying a new system within the IT management module. This request provides the necessary details about the deployment configuration and parameters required for the operation.",
+          "description": "This request body is used to obtain detailed information related to the system deployment with the identifier RES-100045. Ensure that the JSON structure adheres to the specified schema for successful processing.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateSystemDeploymentRequest"
+                "$ref": "#/components/schemas/GetSystemDeploymentByIdRequest"
               }
             }
           }
         },
         "responses": {
-          "202": {
-            "description": "The request has been accepted for processing and will be completed asynchronously.",
+          "200": {
+            "description": "Successfully retrieved the requested resource details.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
               },
               "X-Runtime-App": {
                 "$ref": "#/components/headers/X-Runtime-App"
-              },
-              "X-Workflow-Id": {
-                "$ref": "#/components/headers/X-Workflow-Id"
-              },
-              "X-Workflow-Name": {
-                "$ref": "#/components/headers/X-Workflow-Name"
-              },
-              "X-Workflow-State": {
-                "$ref": "#/components/headers/X-Workflow-State"
-              },
-              "X-Workflow-Execution-Id": {
-                "$ref": "#/components/headers/X-Workflow-Execution-Id"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateSystemDeploymentResponse_202"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "An unexpected error occurred while processing the request. Please try again later.",
-            "headers": {
-              "X-Workflow-Id": {
-                "$ref": "#/components/headers/X-Workflow-Id"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateSystemDeploymentResponse_500"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "The request was well-formed but was unable to be processed due to semantic errors.",
-            "headers": {
-              "X-Workflow-Id": {
-                "$ref": "#/components/headers/X-Workflow-Id"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateSystemDeploymentResponse_422"
+                  "$ref": "#/components/schemas/GetSystemDeploymentByIdResponse_200"
                 }
               }
             }
@@ -139,49 +76,91 @@
   },
   "components": {
     "schemas": {
-      "CreateSystemDeploymentResponse_202": {
+      "GetSystemDeploymentByIdRequest": {
+        "type": "string",
+        "description": "This schema represents the request body for the GET operation related to system deployment in IT management. The body is expected to be a string.",
+        "example": "{}"
+      },
+      "GetSystemDeploymentByIdResponse_200": {
         "title": "System Deployment Response",
         "type": "object",
         "properties": {
           "systemId": {
             "type": "string",
-            "description": "Unique identifier for the system.",
+            "description": "The unique identifier for the system.",
+            "example": "STANDARD"
+          },
+          "environment": {
+            "type": "string",
+            "description": "The deployment environment of the system (e.g., production, staging).",
             "example": "STANDARD"
           },
           "changeId": {
             "type": "string",
-            "description": "Identifier for the change request associated with the deployment.",
+            "description": "The unique identifier for the change associated with this deployment.",
             "example": "STANDARD"
           },
-          "processingReference": {
+          "ownerTeam": {
             "type": "string",
-            "description": "Reference identifier for tracking the processing of the request.",
+            "description": "The team responsible for the system.",
             "example": "STANDARD"
           },
-          "status": {
+          "plannedAt": {
             "type": "string",
-            "description": "Current status of the deployment operation.",
+            "description": "The planned date and time for the deployment.",
+            "example": "2026-08-11T12:00:00Z"
+          },
+          "serviceTier": {
+            "type": "string",
+            "description": "The service tier associated with the deployment.",
+            "example": "STANDARD"
+          },
+          "availabilityTargetPercent": {
+            "type": "number",
+            "description": "The target availability percentage for the system.",
+            "example": 100.0
+          },
+          "maintenanceWindow": {
+            "type": "string",
+            "description": "The scheduled maintenance window for the system.",
+            "example": "STANDARD"
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "The status of the deployment record.",
             "example": "ACTIVE"
           },
-          "acceptedAt": {
+          "version": {
+            "type": "integer",
+            "description": "The version number of the deployment.",
+            "format": "int32",
+            "example": 1
+          },
+          "updatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the deployment was accepted.",
-            "example": "2026-08-11T12:00:00Z"
+            "description": "The timestamp of the last update to the deployment record.",
+            "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
             "$ref": "#/components/schemas/DeploymentMetadata"
           }
         },
-        "description": "Schema representing the response of a system deployment operation.",
+        "description": "This schema represents the response for the system deployment operation including various attributes related to the deployment.",
         "example": {
           "systemId": "STANDARD",
+          "environment": "STANDARD",
           "changeId": "STANDARD",
-          "processingReference": "STANDARD",
-          "status": "ACTIVE",
-          "acceptedAt": "2026-08-11T12:00:00Z",
+          "ownerTeam": "STANDARD",
+          "plannedAt": "2026-08-11T12:00:00Z",
+          "serviceTier": "STANDARD",
+          "availabilityTargetPercent": 100.0,
+          "maintenanceWindow": "STANDARD",
+          "recordStatus": "ACTIVE",
+          "version": 1,
+          "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "ca24beb0-0a3a-54d0-80b1-5e46f47774eb",
-            "correlationId": "c040c654-8235-5f0b-a059-000cce8c4170",
+            "responseId": "740ed7be-2289-55a0-bfdd-b8944961326d",
+            "correlationId": "b13f482d-91dc-58aa-8314-b3d2cc372c46",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
@@ -193,315 +172,29 @@
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "response-98765"
+            "description": "The unique identifier for the response.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate multiple related requests and responses.",
-            "example": "correlation-54321"
+            "description": "The correlation identifier used to track the request and response.",
+            "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the metadata was generated.",
-            "example": "2023-09-25T12:35:00Z"
+            "description": "The timestamp when the metadata was generated.",
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing of the deployment request took place.",
-            "example": "us-west-1"
-          }
-        },
-        "description": "Metadata associated with the deployment response."
-      },
-      "CreateSystemDeploymentResponse_500": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "description": "A descriptive message indicating the error that occurred.",
-            "example": "A required core banking dependency is unavailable"
-          },
-          "workflow": {
-            "type": "string",
-            "description": "The current workflow state at the time of the error.",
-            "example": "WF-085"
-          },
-          "failedAfterHop": {
-            "type": "integer",
-            "description": "The hop number after which the deployment failed.",
-            "format": "int32",
-            "example": 3
-          },
-          "code": {
-            "type": "string",
-            "description": "An error code representing the specific type of failure.",
-            "example": "DOWNSTREAM_CORE_UNAVAILABLE"
-          }
-        },
-        "description": "Schema representing the response structure for a 500 error during deployment operations.",
-        "example": {
-          "message": "A required core banking dependency is unavailable",
-          "workflow": "WF-085",
-          "failedAfterHop": 3,
-          "code": "DOWNSTREAM_CORE_UNAVAILABLE"
-        }
-      },
-      "CreateSystemDeploymentRequest": {
-        "title": "System Deployment Request",
-        "type": "object",
-        "properties": {
-          "systemId": {
-            "type": "string",
-            "description": "The unique identifier for the system being deployed.",
-            "example": "STANDARD"
-          },
-          "environment": {
-            "type": "string",
-            "description": "The target environment for the deployment (e.g., production, staging).",
-            "example": "STANDARD"
-          },
-          "changeId": {
-            "type": "string",
-            "description": "The identifier for the change associated with this deployment.",
-            "example": "STANDARD"
-          },
-          "ownerTeam": {
-            "type": "string",
-            "description": "The team responsible for the deployment.",
-            "example": "STANDARD"
-          },
-          "plannedAt": {
-            "type": "string",
-            "description": "The planned date and time for the deployment.",
-            "example": "2026-08-11T12:00:00Z"
-          },
-          "serviceTier": {
-            "type": "string",
-            "description": "The service tier at which the system will operate.",
-            "example": "STANDARD"
-          },
-          "availabilityTargetPercent": {
-            "type": "number",
-            "description": "The target availability percentage for the deployed system.",
-            "example": 100.0
-          },
-          "maintenanceWindow": {
-            "type": "string",
-            "description": "The maintenance window during which the deployment will occur.",
-            "example": "STANDARD"
-          },
-          "requestContext": {
-            "description": "Contextual information about the request.",
-            "$ref": "#/components/schemas/RequestContext"
-          }
-        },
-        "description": "Schema representing the request body for deploying a system in an IT management context.",
-        "example": {
-          "systemId": "STANDARD",
-          "environment": "STANDARD",
-          "changeId": "STANDARD",
-          "ownerTeam": "STANDARD",
-          "plannedAt": "2026-08-11T12:00:00Z",
-          "serviceTier": "STANDARD",
-          "availabilityTargetPercent": 100.0,
-          "maintenanceWindow": "STANDARD",
-          "requestContext": {
-            "requestId": "c09dca55-99ca-56ef-9d2b-45dced7a395a",
-            "correlationId": "c040c654-8235-5f0b-a059-000cce8c4170",
-            "idempotencyKey": "6141cf36-3714-59f7-aecd-dcfd9f4cf0ab",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-800203"
-            }
-          }
-        }
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "string"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier for tracking request correlations across systems.",
-            "example": "string"
-          },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "Key used to ensure that a request is idempotent.",
-            "example": "string"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp indicating when the request was made.",
-            "example": "string"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "The system that initiated the request.",
-            "example": "string"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "The application that initiated the request.",
-            "example": "string"
-          },
-          "channel": {
-            "description": "Information regarding the channel through which the request was made.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Schema representing contextual information for the request."
-      },
-      "Channel": {
-        "title": "Channel",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "string"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of the channel (e.g., web, mobile).",
-            "example": "string"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier for the device through which the request was made.",
+            "description": "The region where the processing occurred.",
             "example": "string"
           }
         },
-        "description": "Schema representing the details of the channel used for the request."
-      },
-      "CreateSystemDeploymentResponse_422": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "description": "A descriptive message about the error.",
-            "example": "Enhanced fraud/compliance review rejected the request"
-          },
-          "workflow": {
-            "type": "string",
-            "description": "The identifier or name of the workflow that encountered the error.",
-            "example": "WF-085"
-          },
-          "code": {
-            "type": "string",
-            "description": "A specific error code that categorizes the type of error.",
-            "example": "RISK_REVIEW_REJECTED"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "A unique identifier for tracing the request across systems.",
-            "example": "14efd74b-8818-4f47-b7fc-1106b93890a4"
-          }
-        },
-        "description": "Response object returned when there is a validation error during deployment.",
-        "example": {
-          "message": "Enhanced fraud/compliance review rejected the request",
-          "workflow": "WF-085",
-          "code": "RISK_REVIEW_REJECTED",
-          "correlationId": "14efd74b-8818-4f47-b7fc-1106b93890a4"
-        }
+        "description": "This schema represents the metadata related to a deployment including IDs and timestamps."
       }
     },
     "parameters": {
-      "x-workflow-id": {
-        "name": "x-workflow-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "WF-085"
-        },
-        "example": "WF-085"
-      },
-      "idempotency-key": {
-        "name": "idempotency-key",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "3651d1cb-9a9d-4a0d-a5b8-14bffb8df777"
-        },
-        "example": "3651d1cb-9a9d-4a0d-a5b8-14bffb8df777"
-      },
-      "x-workflow-step": {
-        "name": "x-workflow-step",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "1"
-        },
-        "example": "1"
-      },
-      "x-workflow-branch": {
-        "name": "x-workflow-branch",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "main"
-        },
-        "example": "main"
-      },
-      "x-workflow-decision": {
-        "name": "x-workflow-decision",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "RISK_REJECT"
-        },
-        "example": "RISK_REJECT"
-      },
-      "x-workflow-internal": {
-        "name": "x-workflow-internal",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "true"
-        },
-        "example": "true"
-      },
-      "x-workflow-execution-id": {
-        "name": "x-workflow-execution-id",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "8da80820-10d7-4d51-a1ae-4765bb9db8a9"
-        },
-        "example": "8da80820-10d7-4d51-a1ae-4765bb9db8a9"
-      },
       "x-mock-response": {
         "name": "x-mock-response",
         "in": "header",
@@ -512,26 +205,22 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_202",
-            "MICROSERVICE_PROD_500",
-            "MICROSERVICE_PROD_422"
+            "MICROSERVICE_PROD_200"
           ]
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint associated with the deployment request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "system-deployment-deploy-system-deployment"
+          "example": "system-deployment-get-system-deployment"
         },
-        "example": "system-deployment-deploy-system-deployment"
+        "example": "system-deployment-get-system-deployment"
       },
       "X-Runtime-App": {
-        "description": "The name and version of the application that is currently running in the deployment.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -539,52 +228,12 @@
           "example": "enterprise-support"
         },
         "example": "enterprise-support"
-      },
-      "X-Workflow-Id": {
-        "description": "A unique identifier for the workflow linked to the request that encountered a validation error, needed for identifying the specific workflow instance.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "WF-085"
-        },
-        "example": "WF-085"
-      },
-      "X-Workflow-Name": {
-        "description": "The name of the workflow associated with the deployment operation.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "IT Production Release and Deployment"
-        },
-        "example": "IT Production Release and Deployment"
-      },
-      "X-Workflow-State": {
-        "description": "The current state of the workflow being executed. Possible values include InProgress, Completed, or Failed.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "IN_PROGRESS"
-        },
-        "example": "IN_PROGRESS"
-      },
-      "X-Workflow-Execution-Id": {
-        "description": "A unique identifier for the specific execution instance of the workflow.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "7b65153e-2ed9-4dc4-a0af-7fedfaf6ffe6"
-        },
-        "example": "7b65153e-2ed9-4dc4-a0af-7fedfaf6ffe6"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a Bearer authentication method. Clients must include a valid JSON Web Token (JWT) in the Authorization header of their requests to access secured endpoints.",
+        "description": "Authentication scheme that uses bearer tokens. This scheme requires a JSON Web Token (JWT) in the Authorization header for secure access to the API.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
