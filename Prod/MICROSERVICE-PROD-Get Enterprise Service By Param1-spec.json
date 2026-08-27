@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Get Enterprise Service By Param1-spec",
-    "description": "The Corporate Billing Service Retrieval API enables users to fetch detailed information about corporate billing services based on a specified parameter. This endpoint primarily returns data pertaining to corporate clients' billing arrangements, facilitating insights and management of financial interactions. Ideal for financial institutions or enterprise clients, it supports use cases such as auditing billing records and reconciling transactions. Developers can leverage this API to integrate corporate billing data into their applications or reporting systems.",
+    "description": "The Approved Supplier Directory API enables users to retrieve detailed information about enterprise services based on a specific parameter. This endpoint supports queries for approved suppliers, facilitating access to essential business data for stakeholders in procurement, sourcing, and vendor management. Typical consumers include business analysts, procurement officers, and software developers who integrate supplier data into applications. Utilizing this API streamlines the decision-making process regarding supplier selection and management, enhancing operational efficiency.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/enterprise-services/corporate-billing/{param1}": {
+    "/v5/banking/enterprise-services/approved-supplier-directory/{param1}": {
       "get": {
         "tags": [
-          "Corporate Billing"
+          "Supplier Management"
         ],
-        "summary": "Retrieve corporate billing details by ID.",
-        "description": "This endpoint allows users to fetch the corporate billing information associated with a specific ID. It returns detailed data relevant to the billing instance, enabling better visibility and management of financial records.",
+        "summary": "Retrieve approved supplier information.",
+        "description": "Fetch detailed information about a specific approved supplier, identified by RES-100045. This endpoint allows you to access the supplier's data for verification and operational needs.",
         "operationId": "getEnterpriseServiceByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body expects a JSON object containing the required parameters for the corporate billing operation. Ensure that the input adheres to the defined schema to process the request successfully.",
+          "description": "This request body contains the parameters required to retrieve information from the approved supplier directory. Ensure that the necessary fields are provided in the correct format.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved corporate billing details.",
+            "description": "Successfully retrieved the approved supplier directory.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -92,39 +92,55 @@
     "schemas": {
       "GetEnterpriseServiceByParam1Request": {
         "type": "string",
-        "description": "This schema represents the request body for the GET operation related to corporate billing.",
+        "description": "This schema represents the request body for the GET operation of the approved supplier directory. It is expected to be a string representing any required information or criteria for fetching the approved suppliers.",
         "example": "{}"
       },
       "GetEnterpriseServiceByParam1Response_200": {
+        "title": "Approved Supplier Directory Response",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
             "description": "Unique identifier for the request.",
-            "example": "965d515a-96e8-5d4b-b438-19c85f3f1360"
+            "example": "bac6927c-1239-5216-9696-8fe08d9b4edb"
           },
           "supplierId": {
             "type": "string",
-            "description": "Identifier for the supplier associated with the billing.",
+            "description": "Identifier for the supplier.",
             "example": "STANDARD"
           },
           "costCenter": {
             "type": "string",
-            "description": "Cost center associated with the billing operation.",
+            "description": "Identifier for the cost center associated with the transaction.",
             "example": "STANDARD"
           },
           "amount": {
-            "description": "Details of the amount billed, including value and currency.",
+            "description": "The monetary amount associated with the transaction.",
             "$ref": "#/components/schemas/Amount"
           },
           "requestedBy": {
             "type": "string",
-            "description": "Name or identifier of the person who requested the billing.",
+            "description": "Identifier for the user who requested the transaction.",
+            "example": "STANDARD"
+          },
+          "purchaseOrderId": {
+            "type": "string",
+            "description": "Identifier for the associated purchase order.",
+            "example": "ORD-546977"
+          },
+          "categoryCode": {
+            "type": "string",
+            "description": "Code representing the category of the supplier or service.",
+            "example": "CODE-695"
+          },
+          "approvalLevel": {
+            "type": "string",
+            "description": "Current approval level of the request.",
             "example": "STANDARD"
           },
           "recordStatus": {
             "type": "string",
-            "description": "Status of the billing record.",
+            "description": "Current status of the record in the system.",
             "example": "ACTIVE"
           },
           "version": {
@@ -139,13 +155,13 @@
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Additional metadata related to the billing response.",
+            "description": "Additional metadata regarding the response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the corporate billing API operation, providing details about the request and related metadata.",
+        "description": "Response schema for the approved supplier directory query.",
         "example": {
-          "requestId": "965d515a-96e8-5d4b-b438-19c85f3f1360",
+          "requestId": "bac6927c-1239-5216-9696-8fe08d9b4edb",
           "supplierId": "STANDARD",
           "costCenter": "STANDARD",
           "amount": {
@@ -153,44 +169,49 @@
             "currency": "USD"
           },
           "requestedBy": "STANDARD",
+          "purchaseOrderId": "ORD-546977",
+          "categoryCode": "CODE-695",
+          "approvalLevel": "STANDARD",
           "recordStatus": "ACTIVE",
           "version": 1,
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "9c8a6532-3ba2-57d4-9111-a145e36c129c",
-            "correlationId": "461fb2f3-b2bf-5eb2-bc46-9bfd2e5ee46d",
+            "responseId": "05cab51f-ad4e-5cdc-acfb-61fa67f4e469",
+            "correlationId": "e61fdc2f-116e-5ca3-83e6-953f789f7f60",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
       "Amount": {
+        "title": "Transaction Amount",
         "type": "object",
         "properties": {
           "value": {
             "type": "number",
-            "description": "The numerical value of the amount being billed.",
+            "description": "Numerical value of the transaction amount.",
             "example": 0.0
           },
           "currency": {
             "type": "string",
-            "description": "The currency in which the amount is expressed.",
-            "example": "string"
+            "description": "Currency code associated with the transaction amount.",
+            "example": "USD"
           }
         },
-        "description": "Contains the amount details for billing, including value and currency."
+        "description": "Schema representing the monetary value and currency of a transaction."
       },
       "Metadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
+            "description": "Identifier for the response.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate requests and responses.",
+            "description": "Identifier used to correlate related requests and responses.",
             "example": "string"
           },
           "generatedAt": {
@@ -200,11 +221,11 @@
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the request was processed.",
+            "description": "Region where the processing of the request occurred.",
             "example": "string"
           }
         },
-        "description": "Metadata for billing responses, including identifiers and timestamps."
+        "description": "Schema containing metadata related to the response."
       }
     },
     "parameters": {
@@ -235,17 +256,15 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint that the request is processed against.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "company-billing-and-payments-get-company-billing-and-payments"
+          "example": "approved-supplier-directory-get-approved-supplier-directory"
         },
-        "example": "company-billing-and-payments-get-company-billing-and-payments"
+        "example": "approved-supplier-directory-get-approved-supplier-directory"
       },
       "X-Runtime-App": {
-        "description": "Indicates the version of the runtime application that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -258,7 +277,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the HTTP Bearer authentication method to secure API endpoints. It requires a bearer token, typically presented in the Authorization header of the HTTP request, which is formatted as a JSON Web Token (JWT).",
+        "description": "This security scheme uses a Bearer token authentication method, where the client must send a valid JSON Web Token (JWT) in the Authorization header. The JWT is typically issued by an authentication server and contains the user's identity and claims.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
