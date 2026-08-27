@@ -1,0 +1,332 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MICROSERVICE_PROD_Card Authorization Reversals API",
+    "description": "The Card Authorization Reversals API enables users to manage the reversal of card authorization transactions efficiently. Businesses can utilize this API to initiate reversals for specific authorizations identified by the authorization ID. This functionality is essential for scenarios such as processing refunds or correcting transaction errors. Typical consumers include financial institutions and payment processors seeking to maintain accurate card transaction records and enhance customer satisfaction through timely resolution of authorization issues.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://prod-workspace-pwmw.apiwiz.io",
+      "description": "Sandbox server",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "Sandbox server",
+      "x-environmentName": "Sandbox",
+      "x-hide": false,
+      "x-environmentId": "6a7f52236ae9a15654cd5721",
+      "x-basePath": "/"
+    },
+    {
+      "url": "https://35.162.152.203:9003",
+      "description": "PROD",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "PROD",
+      "x-environmentName": "PROD",
+      "x-hide": false,
+      "x-environmentId": "6a784eac1d7e36108cc3cb0c",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/v5/banking/cards/card-authorization/authorizations/{authorizationId}/reversals": {
+      "post": {
+        "tags": [
+          "Card Management"
+        ],
+        "summary": "Reverses a card authorization.",
+        "description": "This endpoint allows you to reverse a specific card authorization identified by its unique ID. Upon successful reversal, the authorization will be canceled, and the funds will be returned to the cardholder's account.",
+        "operationId": "reverseCardAuthorization",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/authorizationId"
+          }
+        ],
+        "requestBody": {
+          "description": "This request body is used to initiate a reversal for a specific card authorization identified by CARD-400045. It must include the necessary parameters to process the reversal.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReverseCardAuthorizationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "The request has been accepted and is being processed.",
+            "headers": {
+              "x-endpoint-id": {
+                "$ref": "#/components/headers/x-endpoint-id"
+              },
+              "x-runtime-app": {
+                "$ref": "#/components/headers/x-runtime-app"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReverseCardAuthorizationResponse_202"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "ReverseCardAuthorizationRequest": {
+        "title": "Reversal Request",
+        "type": "object",
+        "properties": {
+          "reversalReason": {
+            "type": "string",
+            "description": "The reason for the reversal of the transaction.",
+            "example": "STANDARD"
+          },
+          "originalReference": {
+            "type": "string",
+            "description": "The reference ID of the original transaction that is being reversed.",
+            "example": "STANDARD"
+          },
+          "requestedBy": {
+            "type": "string",
+            "description": "The identifier of the user who is requesting the reversal.",
+            "example": "STANDARD"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp of when the reversal request was made.",
+            "example": "2026-08-11T12:00:00Z"
+          },
+          "requestContext": {
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "Schema representing a request to reverse a card authorization.",
+        "example": {
+          "reversalReason": "STANDARD",
+          "originalReference": "STANDARD",
+          "requestedBy": "STANDARD",
+          "requestedAt": "2026-08-11T12:00:00Z",
+          "requestContext": {
+            "requestId": "61a30c18-e579-5c0b-ae5c-f566fc048444",
+            "correlationId": "c27c8ec4-b4e5-5ad4-b50c-3505c176471c",
+            "idempotencyKey": "4f2a09d5-e023-52fa-a340-96a85d5058ef",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-166269"
+            }
+          }
+        }
+      },
+      "RequestContext": {
+        "title": "Request Context",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique identifier for the request.",
+            "example": "REQ123456789"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier used to correlate multiple requests.",
+            "example": "CORR123456789"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Key to ensure the request is idempotent.",
+            "example": "IDEMPOTENCY123456"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp of when the context was created.",
+            "example": "2023-10-01T10:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The system from which the request originated.",
+            "example": "BillingSystem"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application from which the request was made.",
+            "example": "MobileApp"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Schema providing contextual information about the request."
+      },
+      "Channel": {
+        "title": "Channel Information",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Identifier for the communication channel.",
+            "example": "CH123456"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "Type of the communication channel (e.g., Web, Mobile).",
+            "example": "Mobile"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Unique identifier for the device used in the request.",
+            "example": "DEVICE123456"
+          }
+        },
+        "description": "Schema representing details about the communication channel used for the request."
+      },
+      "ReverseCardAuthorizationResponse_202": {
+        "title": "Card Reversal Response",
+        "type": "object",
+        "properties": {
+          "actionReference": {
+            "type": "string",
+            "description": "A reference identifier for the action taken during the reversal process.",
+            "example": "STANDARD"
+          },
+          "actionType": {
+            "type": "string",
+            "description": "The type of action that was performed on the card.",
+            "example": "STANDARD"
+          },
+          "status": {
+            "type": "string",
+            "description": "The current status of the reversal operation.",
+            "example": "ACTIVE"
+          },
+          "processedAt": {
+            "type": "string",
+            "description": "The timestamp indicating when the reversal was processed.",
+            "example": "2026-08-11T12:00:00Z"
+          },
+          "metadata": {
+            "description": "Additional metadata related to the reversal operation.",
+            "$ref": "#/components/schemas/ReversalMetadata"
+          }
+        },
+        "description": "A response schema representing the details of a card reversal operation.",
+        "example": {
+          "actionReference": "STANDARD",
+          "actionType": "STANDARD",
+          "status": "ACTIVE",
+          "processedAt": "2026-08-11T12:00:00Z",
+          "metadata": {
+            "responseId": "75e257ce-f689-5d8b-8124-51969e426228",
+            "correlationId": "c27c8ec4-b4e5-5ad4-b50c-3505c176471c",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
+      },
+      "ReversalMetadata": {
+        "title": "Reversal Metadata",
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "A unique identifier for the response generated during the reversal.",
+            "example": "string"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "An identifier used to correlate this reversal with other related requests.",
+            "example": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "The timestamp when the metadata was generated.",
+            "example": "string"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "The region where the processing of the reversal took place.",
+            "example": "string"
+          }
+        },
+        "description": "Metadata accompanying the reversal operation."
+      }
+    },
+    "parameters": {
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "MICROSERVICE_PROD_202"
+          ]
+        }
+      },
+      "authorizationId": {
+        "name": "authorizationId",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "headers": {
+      "x-endpoint-id": {
+        "description": "A unique identifier for the endpoint that processed the request.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "card-authorization-reverse-card-authorization"
+        },
+        "example": "card-authorization-reverse-card-authorization"
+      },
+      "x-runtime-app": {
+        "description": "The name of the runtime application that handled the request.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "cards-merchant"
+        },
+        "example": "cards-merchant"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "Authentication method using bearer tokens in the HTTP Authorization header. The token format is JWT (JSON Web Token), providing a secure means to transmit information between parties.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
