@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Corporate Treasury Management API",
-    "description": "The Corporate Treasury Management API enables organizations to efficiently manage their treasury activities, such as cash flow monitoring and liquidity management. This endpoint allows for the modification of existing treasury records, ensuring that financial data remains up-to-date and accurate. Typical users of this API include financial institutions, corporate accountants, and treasury managers who require real-time access to treasury operations. By integrating this API into their systems, businesses can enhance their financial operations, streamline processes, and ensure compliance with accounting standards.",
+    "description": "The Corporate Treasury Management API enables businesses to efficiently manage their treasury operations. This endpoint allows users to submit treasury-related transactions, enhancing cash flow visibility and liquidity management. It is particularly useful for corporate treasurers and financial analysts who require timely and accurate execution of treasury processes. The API simplifies the integration of treasury functionalities into existing financial systems, ensuring more effective strategy implementation and risk management.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/treasury/corporate-treasury/{param1}": {
-      "patch": {
+    "/v5/banking/treasury/corporate-treasury": {
+      "post": {
         "tags": [
-          "Corporate Treasury Management"
+          "Corporate Treasury"
         ],
-        "summary": "Update Corporate Treasury Resource",
-        "description": "This endpoint allows you to update properties of the specified Corporate Treasury resource identified by the resource ID. Ensure that the request body contains the necessary fields to make the desired updates.",
-        "operationId": "updateCorporateTreasuryResource100045",
+        "summary": "Create a new corporate treasury entry",
+        "description": "This endpoint allows the creation of a new corporate treasury entry in the system. Provide all necessary details in the request body to successfully create the treasury record.",
+        "operationId": "createCorporateTreasury",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body allows the client to update specific properties of the corporate treasury resource identified by RES-100045. The fields that can be updated are defined in the schema.",
+          "description": "This request body is used to perform operations related to corporate treasury management. It should contain the necessary data in a structured format, following the defined schema.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateCorporateTreasuryResource100045Request"
+                "$ref": "#/components/schemas/CreateCorporateTreasuryRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "The request was successfully processed and the resource has been updated.",
+          "201": {
+            "description": "Successfully created a new corporate treasury resource.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateCorporateTreasuryResource100045Response_200"
+                  "$ref": "#/components/schemas/CreateCorporateTreasuryResponse_201"
                 }
               }
             }
@@ -76,121 +76,120 @@
   },
   "components": {
     "schemas": {
-      "UpdateCorporateTreasuryResource100045Request": {
-        "title": "Corporate Treasury Operations Patch Request Body",
+      "CreateCorporateTreasuryRequest": {
+        "title": "Treasury Operations Request Body",
         "type": "object",
         "properties": {
-          "changes": {
-            "description": "Details of the changes to be made to the treasury operations.",
-            "$ref": "#/components/schemas/Changes"
-          },
-          "changeReason": {
+          "portfolioId": {
             "type": "string",
-            "description": "The reason for the change being requested.",
+            "description": "The unique identifier for the portfolio.",
+            "example": "PORT-898870"
+          },
+          "instrumentId": {
+            "type": "string",
+            "description": "The unique identifier for the financial instrument.",
             "example": "STANDARD"
           },
-          "effectiveAt": {
+          "counterpartyId": {
             "type": "string",
-            "description": "The date and time when the changes will take effect.",
-            "example": "2026-09-15T14:30:00Z"
+            "description": "The unique identifier for the counterparty involved in the transaction.",
+            "example": "PARTY-729350"
           },
-          "requestedBy": {
+          "notionalAmount": {
+            "$ref": "#/components/schemas/NotionalAmount"
+          },
+          "maturityDate": {
             "type": "string",
-            "description": "The identifier of the user requesting the change.",
-            "example": "STANDARD"
+            "description": "The date on which the financial instrument matures.",
+            "format": "date",
+            "example": 1789430400000
           },
           "requestContext": {
-            "description": "Contextual information regarding the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Schema representing the request body for PATCH operations in the corporate treasury management API.",
+        "description": "Schema representing the request body for treasury operations in the corporate treasury system.",
         "example": {
-          "changes": {
-            "portfolioId": "PORT-753045",
-            "instrumentId": "STANDARD",
-            "counterpartyId": "PARTY-181940"
+          "portfolioId": "PORT-898870",
+          "instrumentId": "STANDARD",
+          "counterpartyId": "PARTY-729350",
+          "notionalAmount": {
+            "amount": 100.0,
+            "currency": "USD"
           },
-          "changeReason": "STANDARD",
-          "effectiveAt": "2026-09-15T14:30:00Z",
-          "requestedBy": "STANDARD",
+          "maturityDate": "2026-09-15",
           "requestContext": {
-            "requestId": "9e3fc3b5-67e8-5d4e-a390-194966984aca",
-            "correlationId": "60f81c5d-b5a6-5193-9beb-55c7064d1e0b",
-            "idempotencyKey": "066db158-65c5-5166-9a5b-12af7e7422c8",
+            "requestId": "6928dc30-3ae9-5c8d-8be5-2cb6943f9037",
+            "correlationId": "821de735-7da2-59c5-b0a8-5b2ef0fed53c",
+            "idempotencyKey": "0c0ca6aa-7344-5838-8e57-d1ab46927c7f",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-767812"
+              "deviceId": "DEV-555039"
             }
           }
         }
       },
-      "Changes": {
-        "title": "Changes",
+      "NotionalAmount": {
+        "title": "Notional Amount",
         "type": "object",
         "properties": {
-          "portfolioId": {
-            "type": "string",
-            "description": "The identifier of the portfolio that is being changed.",
-            "example": "portfolio-123"
+          "amount": {
+            "type": "number",
+            "description": "The numeric value of the notional amount.",
+            "example": 1000000.0
           },
-          "instrumentId": {
+          "currency": {
             "type": "string",
-            "description": "The identifier of the instrument involved in the changes.",
-            "example": "instrument-456"
-          },
-          "counterpartyId": {
-            "type": "string",
-            "description": "The identifier of the counterparty related to the changes.",
-            "example": "counterparty-789"
+            "description": "The currency code for the notional amount, following ISO 4217.",
+            "example": "USD"
           }
         },
-        "description": "Schema representing the specific changes to treasury operations."
+        "description": "Schema representing the notional amount and its currency."
       },
       "RequestContext": {
-        "title": "RequestContext",
+        "title": "Request Context",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
             "description": "The unique identifier for the request.",
-            "example": "request-abc"
+            "example": "req_001"
           },
           "correlationId": {
             "type": "string",
-            "description": "The identifier used to correlate related requests.",
-            "example": "correlation-xyz"
+            "description": "An identifier used to trace the request across systems.",
+            "example": "corr_001"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "A key used to ensure idempotency of requests.",
-            "example": "idempotency-123456"
+            "description": "A key to ensure that the request is idempotent.",
+            "example": "idempotency_key_001"
           },
           "requestedAt": {
             "type": "string",
             "description": "The timestamp when the request was made.",
-            "example": "2023-10-01T12:00:00Z"
+            "format": "date-time",
+            "example": 1672574400.0
           },
           "sourceSystem": {
             "type": "string",
-            "description": "The system from which the request originated.",
-            "example": "Internal Treasury System"
+            "description": "The identifier of the system that generated the request.",
+            "example": "source_system_001"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application that is making the request.",
-            "example": "Treasury Management App"
+            "description": "The name of the application that generated the request.",
+            "example": "source_app_001"
           },
           "channel": {
-            "description": "Information about the channel through which the request was made.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Schema representing the contextual information of the request."
+        "description": "Schema representing additional context about the request."
       },
       "Channel": {
         "title": "Channel",
@@ -198,86 +197,104 @@
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "The unique identifier of the channel.",
-            "example": "channel-001"
+            "description": "The unique identifier for the channel.",
+            "example": "channel_001"
           },
           "channelType": {
             "type": "string",
-            "description": "The type of the channel such as web, mobile, etc.",
-            "example": "mobile"
+            "description": "The type of the channel (e.g., API, Web, Mobile).",
+            "example": "API"
           },
           "deviceId": {
             "type": "string",
-            "description": "The identifier for the device from which the request was made.",
-            "example": "device-abc"
+            "description": "The identifier for the device used to make the request.",
+            "example": "device_001"
           }
         },
-        "description": "Schema representing the details of the channel from which the request originated."
+        "description": "Schema representing the channel through which the request was made."
       },
-      "UpdateCorporateTreasuryResource100045Response_200": {
-        "title": "Operation Response",
+      "CreateCorporateTreasuryResponse_201": {
+        "title": "Corporate Treasury Operations Response",
         "type": "object",
         "properties": {
-          "version": {
-            "type": "integer",
-            "description": "The version of the response.",
-            "format": "int32",
-            "example": 1
+          "portfolioId": {
+            "type": "string",
+            "description": "The unique identifier for the portfolio.",
+            "example": "PORT-105351"
+          },
+          "instrumentId": {
+            "type": "string",
+            "description": "The unique identifier for the financial instrument.",
+            "example": "STANDARD"
+          },
+          "counterpartyId": {
+            "type": "string",
+            "description": "The unique identifier for the counterparty involved in the transaction.",
+            "example": "PARTY-919900"
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "The unique identifier for the resource associated with the operation.",
+            "example": "RES-210766"
           },
           "status": {
             "type": "string",
-            "description": "The status of the operation.",
+            "description": "The current status of the operation.",
             "example": "ACTIVE"
           },
-          "updatedAt": {
+          "createdAt": {
             "type": "string",
-            "description": "A timestamp indicating when the operation was last updated.",
+            "description": "The timestamp indicating when the operation was created.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Metadata associated with the response.",
-            "$ref": "#/components/schemas/Metadata"
+            "type": "object",
+            "properties": {
+              "responseId": {
+                "type": "string",
+                "description": "The unique identifier for the response.",
+                "example": "response-abcdef"
+              },
+              "correlationId": {
+                "type": "string",
+                "description": "The correlation identifier for tracking related operations.",
+                "example": "correlation-123456"
+              },
+              "generatedAt": {
+                "type": "string",
+                "description": "The timestamp indicating when the response was generated.",
+                "example": "2023-10-01T12:05:00Z"
+              },
+              "processingRegion": {
+                "type": "string",
+                "description": "The geographical region where the processing occurred.",
+                "example": "us-east-1"
+              }
+            },
+            "description": "Additional metadata related to the operation.",
+            "example": {
+              "responseId": "e7a3276c-30e3-5d81-b644-fc504f9348e7",
+              "correlationId": "821de735-7da2-59c5-b0a8-5b2ef0fed53c",
+              "generatedAt": "2026-09-15T14:30:00Z",
+              "processingRegion": "us-east-1"
+            }
           }
         },
-        "description": "This schema represents the response for the operations in the corporate treasury module when a PATCH request is made.",
+        "description": "This schema represents the response structure after a successful operation in the Corporate Treasury.",
         "example": {
-          "version": 1,
+          "portfolioId": "PORT-105351",
+          "instrumentId": "STANDARD",
+          "counterpartyId": "PARTY-919900",
+          "resourceId": "RES-210766",
           "status": "ACTIVE",
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "createdAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "4b49146e-3a2f-5db4-9b52-2323c6d8b6ed",
-            "correlationId": "60f81c5d-b5a6-5193-9beb-55c7064d1e0b",
+            "responseId": "e7a3276c-30e3-5d81-b644-fc504f9348e7",
+            "correlationId": "821de735-7da2-59c5-b0a8-5b2ef0fed53c",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
-      },
-      "Metadata": {
-        "title": "Response Metadata",
-        "type": "object",
-        "properties": {
-          "responseId": {
-            "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "string"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier used to correlate related requests and responses.",
-            "example": "string"
-          },
-          "generatedAt": {
-            "type": "string",
-            "description": "A timestamp indicating when the metadata was generated.",
-            "example": "string"
-          },
-          "processingRegion": {
-            "type": "string",
-            "description": "The region where the processing was performed.",
-            "example": "string"
-          }
-        },
-        "description": "Contains metadata pertaining to the operation response."
       }
     },
     "parameters": {
@@ -291,22 +308,24 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_200"
+            "MICROSERVICE_PROD_201"
           ]
         }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "A unique identifier for the API endpoint that was called, used for tracing and logging purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "corporate-treasury-update-corporate-treasury"
+          "example": "corporate-treasury-create-corporate-treasury"
         },
-        "example": "corporate-treasury-update-corporate-treasury"
+        "example": "corporate-treasury-create-corporate-treasury"
       },
       "X-Runtime-App": {
+        "description": "The name of the application that executed the request, useful for debugging and operational monitoring.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -319,7 +338,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses JSON Web Tokens (JWT) as a bearer token for authentication. Clients must include the token in the Authorization header of their requests for access to protected resources.",
+        "description": "Authorization scheme that utilizes a bearer token, typically in JSON Web Token (JWT) format. This mechanism allows users to authenticate by including the token in the HTTP Authorization header.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
