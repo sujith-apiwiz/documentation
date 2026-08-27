@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE_PROD_Customer Tax Management API",
-    "description": "The Customer Tax Management API provides essential functionality for retrieving and managing customer tax information within the banking ecosystem. This endpoint allows users to access detailed tax records and related data for consumers, ensuring compliance and accurate reporting. Typical consumers of this API include banking applications, financial analysts, and customer service representatives who require insights into customer taxation details. By integrating this API, organizations can streamline their financial operations and enhance customer service capabilities.",
+    "title": "MICROSERVICE_PROD_Credit Card Position Tracking API",
+    "description": "The Credit Card Position Tracking API enables users to access real-time data regarding the positions of their credit cards within the financial system. It facilitates transparency in tracking various credit card metrics and statuses, providing essential insights for financial management. This API is particularly useful for consumers looking to manage their finances more effectively, including tracking spending and available credit. Developers can integrate this API into personal finance applications or banking dashboards to enhance user experiences.",
     "version": "1.0"
   },
   "servers": [
@@ -30,32 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/consumer-services/customer-tax-handling": {
+    "/v5/banking/cards/credit-card-position-keeping": {
       "get": {
         "tags": [
-          "Customer Services"
+          "Credit Cards"
         ],
-        "summary": "Retrieve customer tax handling information.",
-        "description": "This endpoint allows you to fetch details related to the tax handling for a specific customer. It provides necessary data for tax compliance and management based on customer records.",
-        "operationId": "getCustomerTaxHandling",
+        "summary": "Retrieve the current position of a credit card.",
+        "description": "This endpoint allows you to fetch the latest information regarding the position of a specific credit card in the system. Use this to monitor status, available balance, or other relevant details related to the credit card position.",
+        "operationId": "getCreditCardPosition",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to fetch customer tax handling information. Ensure that the request body follows the specified schema to retrieve the correct data.",
+          "description": "This request body is used to retrieve the current position of the credit card. It is expected to be in JSON format, containing relevant parameters for the request.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetCustomerTaxHandlingRequest"
+                "$ref": "#/components/schemas/GetCreditCardPositionRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved customer tax handling information.",
+            "description": "Successfully retrieved the current credit card position.",
             "headers": {
               "x-endpoint-id": {
                 "$ref": "#/components/headers/x-endpoint-id"
@@ -67,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetCustomerTaxHandlingResponse_200"
+                  "$ref": "#/components/schemas/GetCreditCardPositionResponse_200"
                 }
               }
             }
@@ -87,33 +87,34 @@
   },
   "components": {
     "schemas": {
-      "GetCustomerTaxHandlingRequest": {
+      "GetCreditCardPositionRequest": {
         "type": "string",
-        "description": "This schema represents the request body for the customer tax handling operations via GET request in the consumer services API.",
+        "description": "This schema represents the request body for the card position keeping operation in JSON format.",
         "example": "{}"
       },
-      "GetCustomerTaxHandlingResponse_200": {
+      "GetCreditCardPositionResponse_200": {
+        "title": "Credit Card Position Keeping Response",
         "type": "object",
         "properties": {
           "items": {
             "type": "array",
-            "description": "A list of customer tax handling records.",
+            "description": "List of credit card transaction objects.",
             "example": [
               {
-                "customerId": "CUST-636484",
-                "serviceRequestId": "d6776f3c-ba18-50c0-b261-e8db681c6264",
-                "productCode": "CHK-PREMIUM-US",
-                "amount": {
-                  "value": 100,
+                "cardToken": "TOK-990711",
+                "cardholderId": "STANDARD",
+                "merchantId": "MER-789832",
+                "transactionAmount": {
+                  "amount": 100,
                   "currency": "USD"
                 },
-                "requestedDate": "2026-09-15",
+                "merchantCategoryCode": "5411",
                 "recordStatus": "ACTIVE",
                 "updatedAt": "2026-09-15T14:30:00Z"
               }
             ],
             "items": {
-              "$ref": "#/components/schemas/CustomerTaxRecord"
+              "$ref": "#/components/schemas/CreditCardTransaction"
             }
           },
           "pagination": {
@@ -121,25 +122,25 @@
           },
           "sort": {
             "type": "string",
-            "description": "Sorting information for the response.",
+            "description": "Sorting criteria applied to the results.",
             "example": "STANDARD"
           },
           "metadata": {
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for retrieving customer tax handling details.",
+        "description": "Response object for the Credit Card Position Keeping operation, containing a list of credit card transaction details and pagination metadata.",
         "example": {
           "items": [
             {
-              "customerId": "CUST-636484",
-              "serviceRequestId": "d6776f3c-ba18-50c0-b261-e8db681c6264",
-              "productCode": "CHK-PREMIUM-US",
-              "amount": {
-                "value": 100,
+              "cardToken": "TOK-990711",
+              "cardholderId": "STANDARD",
+              "merchantId": "MER-789832",
+              "transactionAmount": {
+                "amount": 100,
                 "currency": "USD"
               },
-              "requestedDate": "2026-09-15",
+              "merchantCategoryCode": "5411",
               "recordStatus": "ACTIVE",
               "updatedAt": "2026-09-15T14:30:00Z"
             }
@@ -151,62 +152,65 @@
           },
           "sort": "STANDARD",
           "metadata": {
-            "responseId": "181eaef2-33d4-5139-9c29-630e7d65db55",
-            "correlationId": "3a757df1-1897-5989-9577-ee3f8bd0b172",
+            "responseId": "dc264960-4f37-55b6-9293-c74b1b9ca109",
+            "correlationId": "be819bcf-ef50-536e-a602-28ec20112ad1",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "CustomerTaxRecord": {
+      "CreditCardTransaction": {
+        "title": "Credit Card Transaction",
         "type": "object",
         "properties": {
-          "customerId": {
+          "cardToken": {
             "type": "string",
-            "description": "Unique identifier for the customer."
+            "description": "Token representing the credit card."
           },
-          "serviceRequestId": {
+          "cardholderId": {
             "type": "string",
-            "description": "Unique identifier for the service request."
+            "description": "Identifier for the cardholder."
           },
-          "productCode": {
+          "merchantId": {
             "type": "string",
-            "description": "Code representing the product associated with the tax handling."
+            "description": "Identifier for the merchant."
           },
-          "amount": {
-            "$ref": "#/components/schemas/Amount"
+          "transactionAmount": {
+            "$ref": "#/components/schemas/TransactionAmount"
           },
-          "requestedDate": {
+          "merchantCategoryCode": {
             "type": "string",
-            "description": "Date when the tax handling was requested."
+            "description": "Category code for the merchant."
           },
           "recordStatus": {
             "type": "string",
-            "description": "Current status of the record."
+            "description": "Current status of the transaction record."
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp of when the record was last updated."
+            "description": "Timestamp of the last update to the transaction record."
           }
         },
-        "description": "Schema representing a single customer tax handling record."
+        "description": "Details of a credit card transaction."
       },
-      "Amount": {
+      "TransactionAmount": {
+        "title": "Transaction Amount",
         "type": "object",
         "properties": {
-          "value": {
+          "amount": {
             "type": "integer",
-            "description": "The numerical value of the amount.",
+            "description": "The amount of the transaction.",
             "format": "int32"
           },
           "currency": {
             "type": "string",
-            "description": "The currency code for the amount."
+            "description": "The currency of the transaction amount."
           }
         },
-        "description": "Schema representing the amount information."
+        "description": "Amount details for a transaction, including the value and currency."
       },
       "Pagination": {
+        "title": "Pagination Metadata",
         "type": "object",
         "properties": {
           "page": {
@@ -225,9 +229,10 @@
             "format": "int32"
           }
         },
-        "description": "Schema for pagination metadata in the response."
+        "description": "Metadata for pagination of results."
       },
       "Metadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
@@ -236,18 +241,18 @@
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation identifier for tracking related requests."
+            "description": "Identifier for tracking related requests."
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp of when the response was generated."
+            "description": "Timestamp when the response was generated."
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing occurred."
+            "description": "Region where the request was processed."
           }
         },
-        "description": "Schema for additional metadata about the response."
+        "description": "Additional metadata regarding the response."
       }
     },
     "parameters": {
@@ -268,17 +273,15 @@
     },
     "headers": {
       "x-endpoint-id": {
-        "description": "A unique identifier for the endpoint, useful for tracking and logging purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "customer-tax-handling-search-customer-tax-handling"
+          "example": "credit-card-position-keeping-search-credit-card-position-keeping"
         },
-        "example": "customer-tax-handling-search-customer-tax-handling"
+        "example": "credit-card-position-keeping-search-credit-card-position-keeping"
       },
       "x-runtime-app": {
-        "description": "The name of the application that is processing this request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -291,7 +294,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a Bearer Authentication method where the client must authenticate by providing a valid JSON Web Token (JWT) in the request's authorization header. The token should be prefixed with the word 'Bearer' followed by a space.",
+        "description": "This security scheme uses a bearer token for authentication, following the JSON Web Token (JWT) format. Clients must provide a valid JWT in the Authorization header to access protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
