@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Bank Guarantee Management API",
-    "description": "The Bank Guarantee Management API enables users to efficiently manage and update bank guarantee agreements. This endpoint allows authorized entities to modify the details of existing guarantees, supporting adjustments such as terms, amounts, and beneficiary information. Typical consumers of this API include financial institutions, trade finance departments, and corporate treasurers looking to streamline their guarantee processes. By providing a structured approach to amendments, the API enhances operational efficiency and compliance in trade transactions.",
+    "description": "The Bank Guarantee Management API provides efficient access to bank guarantees for trade financing. This API allows users to retrieve details on existing bank guarantees, including their status and associated financial instruments. It caters primarily to financial institutions, trade businesses, and developers looking to integrate trade banking functionalities into their applications. By leveraging this API, consumers can enhance their banking workflows and streamline financial operations while ensuring compliance and accuracy.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/trade-banking/bank-guarantee/{param1}": {
-      "patch": {
+    "/v5/banking/trade-banking/bank-guarantee": {
+      "get": {
         "tags": [
-          "Bank Guarantee Management"
+          "Bank Guarantee"
         ],
-        "summary": "Update Bank Guarantee Details",
-        "description": "This endpoint allows for the modification of specific details related to a bank guarantee identified by the resource ID. Users can update attributes such as expiry date, amount, and beneficiary information as needed.",
-        "operationId": "updateBankGuaranteeRes100045",
+        "summary": "Retrieve Bank Guarantee Details",
+        "description": "This endpoint allows users to retrieve detailed information about bank guarantees available through the trade banking service. It provides insights into the terms, conditions, and status of bank guarantees, facilitating better financial decision-making.",
+        "operationId": "getBankGuarantee",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
-          },
-          {
-            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "The request body for patching a bank guarantee resource. This body specifies the updates to be applied to the existing resource identified by RES-100045.",
+          "description": "This request body is used to retrieve bank guarantee information. Ensure the request is properly formatted as per the schema to obtain correct details.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateBankGuaranteeRes100045Request"
+                "$ref": "#/components/schemas/GetBankGuaranteeRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request processed successfully, updates applied.",
+            "description": "Successfully retrieved bank guarantee information.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateBankGuaranteeRes100045Response_200"
+                  "$ref": "#/components/schemas/GetBankGuaranteeResponse_200"
                 }
               }
             }
@@ -90,192 +87,193 @@
   },
   "components": {
     "schemas": {
-      "UpdateBankGuaranteeRes100045Request": {
-        "title": "Bank Guarantee Patch Request Body",
+      "GetBankGuaranteeRequest": {
+        "type": "string",
+        "description": "This schema represents the request body for the GET operation related to bank guarantees in the trade banking context.",
+        "example": "{}"
+      },
+      "GetBankGuaranteeResponse_200": {
+        "title": "Bank Guarantee Operations Response",
         "type": "object",
         "properties": {
-          "changes": {
-            "description": "The changes to be applied to the bank guarantee.",
-            "$ref": "#/components/schemas/Changes"
-          },
-          "changeReason": {
-            "type": "string",
-            "description": "The reason for the change request.",
-            "example": "STANDARD"
-          },
-          "effectiveAt": {
-            "type": "string",
-            "description": "The effective date of the changes.",
-            "example": "2026-09-15T14:30:00Z"
-          },
-          "requestedBy": {
-            "type": "string",
-            "description": "The identifier of the person who requested the change.",
-            "example": "STANDARD"
-          },
-          "requestContext": {
-            "description": "Contextual information about the request.",
-            "$ref": "#/components/schemas/RequestContext"
-          }
-        },
-        "description": "Schema representing the request body for a PATCH operation on a bank guarantee.",
-        "example": {
-          "changes": {
-            "corporateCustomerId": "CUST-873682",
-            "facilityId": "STANDARD",
-            "counterpartyId": "PARTY-934067"
-          },
-          "changeReason": "STANDARD",
-          "effectiveAt": "2026-09-15T14:30:00Z",
-          "requestedBy": "STANDARD",
-          "requestContext": {
-            "requestId": "51313d8b-b180-588c-901f-54a46041a8f6",
-            "correlationId": "801405fe-bb9d-5a17-85aa-91d588a2e717",
-            "idempotencyKey": "4d43273c-8df7-54f5-9102-68978af2e43f",
-            "requestedAt": "2026-09-15T14:30:00Z",
-            "sourceSystem": "DIGITAL_BANKING",
-            "sourceApplication": "MOBILE_APP",
-            "channel": {
-              "channelId": "MOBILE-US",
-              "channelType": "MOBILE",
-              "deviceId": "DEV-587409"
+          "items": {
+            "type": "array",
+            "description": "A list of bank guarantee items.",
+            "example": [
+              {
+                "corporateCustomerId": "CUST-405352",
+                "facilityId": "STANDARD",
+                "counterpartyId": "PARTY-841642",
+                "amount": {
+                  "value": 100.0,
+                  "currency": "USD"
+                },
+                "maturityDate": "2026-09-15",
+                "guaranteeType": "STANDARD",
+                "beneficiaryId": "STANDARD",
+                "claimExpiryDate": "2026-09-15",
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/BankGuaranteeItem"
             }
-          }
-        }
-      },
-      "Changes": {
-        "title": "Changes to Bank Guarantee",
-        "type": "object",
-        "properties": {
-          "corporateCustomerId": {
-            "type": "string",
-            "description": "The ID of the corporate customer associated with the bank guarantee.",
-            "example": "corp123"
           },
-          "facilityId": {
-            "type": "string",
-            "description": "The ID of the facility related to the bank guarantee.",
-            "example": "facility456"
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
           },
-          "counterpartyId": {
+          "sort": {
             "type": "string",
-            "description": "The ID of the counterparty involved in the bank guarantee.",
-            "example": "counterparty789"
-          }
-        },
-        "description": "Schema representing the changes to be made in the bank guarantee."
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req123"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier for correlating requests.",
-            "example": "corr456"
-          },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "Key used to ensure idempotency of requests.",
-            "example": "idemp789"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp when the request was made.",
-            "example": "2023-09-30T15:00:00Z"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "The system from which the request originates.",
-            "example": "MainSystem"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "The application from which the request is initiated.",
-            "example": "App1"
-          },
-          "channel": {
-            "description": "Information about the channel used for the request.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Schema representing the context of the request."
-      },
-      "Channel": {
-        "title": "Channel Information",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "channel001"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of the communication channel.",
-            "example": "Web"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier for the device used to make the request.",
-            "example": "deviceXYZ"
-          }
-        },
-        "description": "Schema representing the channel through which the request is made."
-      },
-      "UpdateBankGuaranteeRes100045Response_200": {
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "integer",
-            "description": "The version of the response.",
-            "format": "int32",
-            "example": 1
-          },
-          "status": {
-            "type": "string",
-            "description": "The status of the operation.",
-            "example": "ACTIVE"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "The timestamp when the record was updated.",
-            "example": "2026-09-15T14:30:00Z"
+            "description": "Sorting criteria for the items.",
+            "example": "STANDARD"
           },
           "metadata": {
-            "description": "Metadata containing additional information about the response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the PATCH operation on bank guarantee, representing the status and metadata of the operation.",
+        "description": "The response object for the bank guarantee operations GET request, containing a list of items and pagination details.",
         "example": {
-          "version": 1,
-          "status": "ACTIVE",
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "items": [
+            {
+              "corporateCustomerId": "CUST-405352",
+              "facilityId": "STANDARD",
+              "counterpartyId": "PARTY-841642",
+              "amount": {
+                "value": 100.0,
+                "currency": "USD"
+              },
+              "maturityDate": "2026-09-15",
+              "guaranteeType": "STANDARD",
+              "beneficiaryId": "STANDARD",
+              "claimExpiryDate": "2026-09-15",
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
+          },
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "d19619e2-f117-5eb1-874e-bdc46233eedc",
-            "correlationId": "801405fe-bb9d-5a17-85aa-91d588a2e717",
+            "responseId": "7a8b2895-6e92-5a82-9954-808a36d84d06",
+            "correlationId": "52414b23-7d0a-5f67-af4e-2d148dcbe16a",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
+      "BankGuaranteeItem": {
+        "title": "Bank Guarantee Item",
+        "type": "object",
+        "properties": {
+          "corporateCustomerId": {
+            "type": "string",
+            "description": "The identifier for the corporate customer.",
+            "example": "string"
+          },
+          "facilityId": {
+            "type": "string",
+            "description": "The identifier for the facility associated with the guarantee.",
+            "example": "string"
+          },
+          "counterpartyId": {
+            "type": "string",
+            "description": "The identifier for the counterparty involved.",
+            "example": "string"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/Amount"
+          },
+          "maturityDate": {
+            "type": "string",
+            "description": "The date on which the guarantee matures.",
+            "example": "string"
+          },
+          "guaranteeType": {
+            "type": "string",
+            "description": "The type of bank guarantee.",
+            "example": "string"
+          },
+          "beneficiaryId": {
+            "type": "string",
+            "description": "The identifier for the beneficiary of the guarantee.",
+            "example": "string"
+          },
+          "claimExpiryDate": {
+            "type": "string",
+            "description": "The date on which the claim expiration occurs.",
+            "example": "string"
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "The status of the bank guarantee record.",
+            "example": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "The timestamp of when the bank guarantee was last updated.",
+            "example": "string"
+          }
+        },
+        "description": "Represents a single bank guarantee item."
+      },
+      "Amount": {
+        "title": "Amount",
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number",
+            "description": "The numeric value of the amount.",
+            "example": 0.0
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency in which the amount is denominated.",
+            "example": "string"
+          }
+        },
+        "description": "Represents the monetary value and currency of the bank guarantee."
+      },
+      "Pagination": {
+        "title": "Pagination Information",
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "The current page number.",
+            "format": "int32",
+            "example": 0
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The number of items per page.",
+            "format": "int32",
+            "example": 0
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "The total number of items available.",
+            "format": "int32",
+            "example": 0
+          }
+        },
+        "description": "Contains pagination details for the list of items."
+      },
       "Metadata": {
+        "title": "Metadata Information",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
+            "description": "A unique identifier for the response.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate requests and responses.",
+            "description": "A unique identifier for correlating requests and responses.",
             "example": "string"
           },
           "generatedAt": {
@@ -285,11 +283,11 @@
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region in which the processing took place.",
+            "description": "The region in which the processing occurred.",
             "example": "string"
           }
         },
-        "description": "Metadata object containing identifiers and timestamps related to the response."
+        "description": "Contains additional information about the response."
       }
     },
     "parameters": {
@@ -306,16 +304,6 @@
             "MICROSERVICE_PROD_200"
           ]
         }
-      },
-      "param1": {
-        "name": "param1",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
-        }
       }
     },
     "headers": {
@@ -324,9 +312,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "bank-guarantee-update-bank-guarantee"
+          "example": "bank-guarantee-search-bank-guarantee"
         },
-        "example": "bank-guarantee-update-bank-guarantee"
+        "example": "bank-guarantee-search-bank-guarantee"
       },
       "X-Runtime-App": {
         "style": "simple",
@@ -341,7 +329,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication method that utilizes a Bearer token, specifically in the form of a JSON Web Token (JWT). This method allows the client to authenticate using a token that is sent in the Authorization header, streamlining secure access to protected resources.",
+        "description": "This security scheme utilizes the Bearer authentication mechanism via JSON Web Tokens (JWT). Clients must include a valid JWT in the Authorization header to access secured endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
