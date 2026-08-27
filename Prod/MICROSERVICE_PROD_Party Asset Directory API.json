@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Party Asset Directory API",
-    "description": "The Party Asset Directory API provides access to a comprehensive catalog of assets associated with parties in the banking domain. This endpoint allows users to retrieve detailed information about specific assets by party identification. Typically utilized by financial institutions and asset managers, this API facilitates efficient asset management and auditing processes. By integrating this API, developers can streamline workflows involving asset tracking and reporting, enhancing transparency and operational efficiency.",
+    "description": "The Party Asset Directory API serves as a comprehensive resource for managing and accessing information related to the assets associated with parties in the banking ecosystem. This API facilitates retrieval of detailed asset records, supporting functionalities such as asset evaluation and portfolio analysis. Typical use cases involve financial institutions seeking to analyze collateral and asset exposures or compliance teams needing visibility into asset holdings. By streamlining access to pertinent asset information, the API enhances decision-making and operational efficiencies.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/collateral-administration/party-asset-directory/{param1}": {
+    "/v5/banking/collateral-administration/party-asset-directory": {
       "get": {
         "tags": [
           "Collateral Administration"
         ],
-        "summary": "Retrieve the asset directory for a specific party.",
-        "description": "This endpoint allows you to fetch the asset directory associated with a specified party ID. It provides detailed information about the assets under that party, helping users understand their asset holdings and management.",
-        "operationId": "getPartyAssetDirectoryByPartyId",
+        "summary": "Retrieve the party asset directory.",
+        "description": "This endpoint fetches the complete list of assets associated with parties in the collateral administration system. It allows developers to access essential asset information for each party, facilitating effective asset management and oversight.",
+        "operationId": "getCollateralAdministrationPartyAssetDirectory",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
-          },
-          {
-            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "Request body for retrieving the asset directory of the specified party. This includes necessary parameters and settings required for the operation.",
+          "description": "Request body for retrieving the party asset directory, containing parameters to filter or specify the desired information regarding collateral assets related to parties.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetPartyAssetDirectoryByPartyIdRequest"
+                "$ref": "#/components/schemas/GetCollateralAdministrationPartyAssetDirectoryRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, returning the asset directory for the specified party.",
+            "description": "Successfully retrieved the asset directory for the party.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetPartyAssetDirectoryByPartyIdResponse_200"
+                  "$ref": "#/components/schemas/GetCollateralAdministrationPartyAssetDirectoryResponse_200"
                 }
               }
             }
@@ -90,139 +87,202 @@
   },
   "components": {
     "schemas": {
-      "GetPartyAssetDirectoryByPartyIdRequest": {
+      "GetCollateralAdministrationPartyAssetDirectoryRequest": {
         "type": "string",
-        "description": "The request body for the party asset directory operations, which is expected to be a string containing relevant information.",
+        "description": "This schema represents the request body for the collateral administration party asset directory operation. It is expected to be a string, typically a JSON object in string format.",
         "example": "{}"
       },
-      "GetPartyAssetDirectoryByPartyIdResponse_200": {
+      "GetCollateralAdministrationPartyAssetDirectoryResponse_200": {
         "type": "object",
         "properties": {
-          "collateralId": {
+          "items": {
+            "type": "array",
+            "description": "List of asset items associated with parties.",
+            "example": [
+              {
+                "collateralId": "STANDARD",
+                "partyId": "PARTY-641751",
+                "assetType": "STANDARD",
+                "marketValue": {
+                  "amount": 100.0,
+                  "currency": "USD"
+                },
+                "valuationDate": "2026-09-15",
+                "securedExposureId": "STANDARD",
+                "haircutPercent": 100.0,
+                "lienStatus": "ACTIVE",
+                "recordStatus": "ACTIVE",
+                "updatedAt": "2026-09-15T14:30:00Z"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/AssetItem"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "sort": {
             "type": "string",
-            "description": "Unique identifier for the collateral item.",
+            "description": "Sort order applied to the asset items.",
             "example": "STANDARD"
-          },
-          "partyId": {
-            "type": "string",
-            "description": "Unique identifier for the party associated with the asset.",
-            "example": "PARTY-615232"
-          },
-          "assetType": {
-            "type": "string",
-            "description": "Type of the asset.",
-            "example": "STANDARD"
-          },
-          "marketValue": {
-            "description": "The market value of the asset.",
-            "$ref": "#/components/schemas/MarketValue"
-          },
-          "valuationDate": {
-            "type": "string",
-            "description": "Date of the asset valuation.",
-            "example": "2026-09-15"
-          },
-          "securedExposureId": {
-            "type": "string",
-            "description": "Unique identifier for the secured exposure.",
-            "example": "STANDARD"
-          },
-          "haircutPercent": {
-            "type": "number",
-            "description": "Percentage haircut applied to the asset.",
-            "example": 100.0
-          },
-          "lienStatus": {
-            "type": "string",
-            "description": "Status of the lien on the asset.",
-            "example": "ACTIVE"
-          },
-          "recordStatus": {
-            "type": "string",
-            "description": "Current status of the record.",
-            "example": "ACTIVE"
-          },
-          "version": {
-            "type": "integer",
-            "description": "Version of the record.",
-            "format": "int32",
-            "example": 1
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp of the last update to the record.",
-            "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Additional metadata related to the response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Schema representing the response structure for a specific collateral party asset directory operation.",
+        "description": "Response schema for retrieving party asset directory.",
         "example": {
-          "collateralId": "STANDARD",
-          "partyId": "PARTY-615232",
-          "assetType": "STANDARD",
-          "marketValue": {
-            "amount": 100.0,
-            "currency": "USD"
+          "items": [
+            {
+              "collateralId": "STANDARD",
+              "partyId": "PARTY-641751",
+              "assetType": "STANDARD",
+              "marketValue": {
+                "amount": 100.0,
+                "currency": "USD"
+              },
+              "valuationDate": "2026-09-15",
+              "securedExposureId": "STANDARD",
+              "haircutPercent": 100.0,
+              "lienStatus": "ACTIVE",
+              "recordStatus": "ACTIVE",
+              "updatedAt": "2026-09-15T14:30:00Z"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "pageSize": 1,
+            "totalItems": 1
           },
-          "valuationDate": "2026-09-15",
-          "securedExposureId": "STANDARD",
-          "haircutPercent": 100.0,
-          "lienStatus": "ACTIVE",
-          "recordStatus": "ACTIVE",
-          "version": 1,
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "sort": "STANDARD",
           "metadata": {
-            "responseId": "8736bb46-d010-5184-a49e-f85a544841bc",
-            "correlationId": "504dc321-56ce-5a41-bde6-a3d99da770e0",
+            "responseId": "44574e18-63a7-52ca-9cd1-5584b8f4619e",
+            "correlationId": "fece399e-b196-5a4f-bc6d-4f7d2935e21d",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
+      },
+      "AssetItem": {
+        "type": "object",
+        "properties": {
+          "collateralId": {
+            "type": "string",
+            "description": "Unique identifier for the collateral associated with this asset.",
+            "example": "string"
+          },
+          "partyId": {
+            "type": "string",
+            "description": "Unique identifier for the party owning the asset.",
+            "example": "string"
+          },
+          "assetType": {
+            "type": "string",
+            "description": "Type of the asset (e.g., equity, bond).",
+            "example": "string"
+          },
+          "marketValue": {
+            "$ref": "#/components/schemas/MarketValue"
+          },
+          "valuationDate": {
+            "type": "string",
+            "description": "Date when the asset was valued.",
+            "example": "string"
+          },
+          "securedExposureId": {
+            "type": "string",
+            "description": "Identifier for the secured exposure related to this asset.",
+            "example": "string"
+          },
+          "haircutPercent": {
+            "type": "number",
+            "description": "Percentage discount applied to the market value of the asset.",
+            "example": 0.0
+          },
+          "lienStatus": {
+            "type": "string",
+            "description": "The lien status of the asset.",
+            "example": "string"
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "Current status of the asset record.",
+            "example": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Date when the asset record was last updated.",
+            "example": "string"
+          }
+        },
+        "description": "Represents a single asset item related to a party."
       },
       "MarketValue": {
         "type": "object",
         "properties": {
           "amount": {
             "type": "number",
-            "description": "The numerical value of the asset in the specified currency.",
+            "description": "Numerical value of the asset in the specified currency.",
             "example": 0.0
           },
           "currency": {
             "type": "string",
-            "description": "The currency in which the market value is expressed.",
+            "description": "Currency in which the asset is valued.",
             "example": "string"
           }
         },
-        "description": "Schema for representing the market value of an asset."
+        "description": "Represents the market value of an asset."
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number of the results.",
+            "format": "int32",
+            "example": 0
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32",
+            "example": 0
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "Total number of items available across all pages.",
+            "format": "int32",
+            "example": 0
+          }
+        },
+        "description": "Pagination information for the response."
       },
       "Metadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
+            "description": "Unique identifier for the API response.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used for correlating request and response.",
+            "description": "Correlation ID for tracking the request across services.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the metadata was generated.",
+            "description": "Timestamp when the response was generated.",
             "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing occurred.",
+            "description": "Region where the request was processed.",
             "example": "string"
           }
         },
-        "description": "Schema for additional metadata information."
+        "description": "Metadata information related to the API response."
       }
     },
     "parameters": {
@@ -239,29 +299,21 @@
             "MICROSERVICE_PROD_200"
           ]
         }
-      },
-      "param1": {
-        "name": "param1",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
-        }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "A unique identifier for the API endpoint that was accessed.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "party-asset-directory-get-party-asset-directory"
+          "example": "party-asset-directory-search-party-asset-directory"
         },
-        "example": "party-asset-directory-get-party-asset-directory"
+        "example": "party-asset-directory-search-party-asset-directory"
       },
       "X-Runtime-App": {
+        "description": "The name of the application that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -274,7 +326,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses Bearer authentication with JSON Web Tokens (JWT) to verify the identity of users. Clients should include a valid JWT in the Authorization header when making requests.",
+        "description": "This security scheme uses a Bearer authentication mechanism where a JSON Web Token (JWT) is provided as a bearer token in the Authorization header of the HTTP request. Clients must acquire the token through a login process or another means before accessing protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
