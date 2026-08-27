@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE_PROD_Document Retrieval API",
-    "description": "The Document Retrieval API enables users to access and retrieve specific banking documents efficiently. By utilizing a unique identifier in the URL, consumers can obtain essential documentation required for compliance, transaction verification, or customer support. This API is particularly useful for financial institutions, auditors, and customer service representatives who need to quickly retrieve pertinent documents. The streamlined process ensures that document management is both effective and user-friendly, enhancing operational efficiency.",
+    "description": "The Document Retrieval API provides access to specific documents associated with loan applications. By using this endpoint, authorized users can fetch detailed document information based on the loan application ID and document ID provided. This functionality is essential for financial institutions and loan officers who need immediate access to applicant documentation for assessment and processing. Typical use cases include reviewing submitted documents, validating information, and facilitating the loan approval workflow.",
     "version": "1.0"
   },
   "servers": [
@@ -19,32 +19,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/documents/document-services/{param1}": {
+    "/v5/loans/loan-applications/{param1}/documents/{documentId}": {
       "get": {
         "tags": [
-          "Document Services"
+          "Loan Applications"
         ],
-        "summary": "Retrieve Document Service Details",
-        "description": "Fetch the detailed information for the specified document service identified by RES-100045. This endpoint provides essential data for managing and utilizing document services effectively.",
-        "operationId": "getDocumentServicesRes100045",
+        "summary": "Retrieve loan application documents.",
+        "description": "Fetches the documents associated with a specific loan application identified by RES-100045. This endpoint allows users to view important files related to the application process.",
+        "operationId": "getLoanApplicationDocumentsRes100045",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to fetch details for the document with identifier RES-100045. It expects a JSON payload that conforms to the specified schema.",
+          "description": "This request body is designed to provide the necessary information for retrieving loan application documents specifically for the application with ID RES-100045. Ensure that the JSON structure defined in the schema is followed precisely for successful processing.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetDocumentServicesRes100045Request"
+                "$ref": "#/components/schemas/GetLoanApplicationDocumentsRes100045Request"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The request was successfully processed, and the requested document is returned.",
+            "description": "Successfully retrieved the requested document.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetDocumentServicesRes100045Response_200"
+                  "$ref": "#/components/schemas/GetLoanApplicationDocumentsRes100045Response_200"
                 }
               }
             }
@@ -76,121 +76,185 @@
   },
   "components": {
     "schemas": {
-      "GetDocumentServicesRes100045Request": {
+      "GetLoanApplicationDocumentsRes100045Request": {
+        "title": "Loan Application Document Reference",
         "type": "string",
-        "description": "This schema represents the request body of the GET operation for document services, specifically for the resource with ID 100045.",
+        "description": "A string representation of the loan application document.",
         "example": "{}"
       },
-      "GetDocumentServicesRes100045Response_200": {
+      "GetLoanApplicationDocumentsRes100045Response_200": {
+        "title": "Loan Application Document",
         "type": "object",
         "properties": {
-          "documentId": {
-            "type": "string",
-            "description": "Unique identifier for the document.",
-            "example": "DOC-413420"
-          },
           "documentType": {
             "type": "string",
-            "description": "The type/category of the document.",
+            "description": "The type of the document (e.g., identity proof, income proof).",
             "example": "STANDARD"
           },
-          "classification": {
+          "applicantId": {
             "type": "string",
-            "description": "Classification level of the document (e.g., confidential, public).",
-            "example": "STANDARD"
+            "description": "Unique identifier for the applicant submitting the document.",
+            "example": "41d598b1-dc3f-d14b-7490-823aedbd1f41"
           },
-          "retentionClass": {
+          "collateralId": {
             "type": "string",
-            "description": "Retention policy class assigned to the document.",
-            "example": "STANDARD"
-          },
-          "ownerId": {
-            "type": "string",
-            "description": "Identifier of the user or entity that owns the document.",
-            "example": "STANDARD"
+            "description": "Unique identifier for the collateral associated with the loan.",
+            "example": "427dfa7b-12f0-9f18-6386-7f89010dd823"
           },
           "fileName": {
             "type": "string",
-            "description": "Name of the file associated with the document.",
+            "description": "The name of the document file.",
             "example": "Northstar Banking Service"
           },
-          "mediaType": {
+          "mimeType": {
             "type": "string",
-            "description": "MIME type of the document's media.",
+            "description": "MIME type of the document file.",
             "example": "STANDARD"
           },
-          "checksumSha256": {
+          "storageReference": {
+            "type": "string",
+            "description": "Reference to the storage location of the document.",
+            "example": "STANDARD"
+          },
+          "sha256Checksum": {
             "type": "string",
             "description": "SHA-256 checksum of the document for integrity verification.",
             "example": "STANDARD"
           },
-          "recordStatus": {
+          "issuedDate": {
             "type": "string",
-            "description": "Current status of the document record.",
-            "example": "ACTIVE"
+            "description": "Date on which the document was issued.",
+            "example": "2026-09-15"
           },
-          "version": {
-            "type": "integer",
-            "description": "Version number of the document.",
-            "format": "int32",
-            "example": 1
-          },
-          "updatedAt": {
+          "expiryDate": {
             "type": "string",
-            "description": "Timestamp of the last update to the document.",
+            "description": "Date on which the document expires.",
+            "example": "2026-09-15"
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the document.",
+            "example": "bdda234f-b5e3-4c3d-de0f-d4d57a062761"
+          },
+          "verificationStatus": {
+            "type": "string",
+            "description": "Current verification status of the document (e.g., verified, pending).",
+            "example": "VERIFIED"
+          },
+          "verificationComments": {
+            "type": "string",
+            "description": "Comments pertaining to the verification of the document.",
+            "example": "STANDARD"
+          },
+          "verifiedAt": {
+            "type": "string",
+            "description": "Timestamp when the document was last verified.",
             "example": "2026-09-15T14:30:00Z"
+          },
+          "verifiedBy": {
+            "type": "string",
+            "description": "Identifier for the user who verified the document.",
+            "example": "STANDARD"
+          },
+          "audit": {
+            "description": "Audit information related to the document.",
+            "$ref": "#/components/schemas/Audit"
           },
           "metadata": {
             "description": "Metadata associated with the document.",
-            "$ref": "#/components/schemas/DocumentMetadata"
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Schema representing the response for the document retrieval operation.",
+        "description": "Schema representing a document associated with a loan application.",
         "example": {
-          "documentId": "DOC-413420",
           "documentType": "STANDARD",
-          "classification": "STANDARD",
-          "retentionClass": "STANDARD",
-          "ownerId": "STANDARD",
+          "applicantId": "41d598b1-dc3f-d14b-7490-823aedbd1f41",
+          "collateralId": "427dfa7b-12f0-9f18-6386-7f89010dd823",
           "fileName": "Northstar Banking Service",
-          "mediaType": "STANDARD",
-          "checksumSha256": "STANDARD",
-          "recordStatus": "ACTIVE",
-          "version": 1,
-          "updatedAt": "2026-09-15T14:30:00Z",
+          "mimeType": "STANDARD",
+          "storageReference": "STANDARD",
+          "sha256Checksum": "STANDARD",
+          "issuedDate": "2026-09-15",
+          "expiryDate": "2026-09-15",
+          "id": "bdda234f-b5e3-4c3d-de0f-d4d57a062761",
+          "verificationStatus": "VERIFIED",
+          "verificationComments": "STANDARD",
+          "verifiedAt": "2026-09-15T14:30:00Z",
+          "verifiedBy": "STANDARD",
+          "audit": {
+            "createdAt": "2026-09-15T14:30:00Z",
+            "createdBy": "STANDARD",
+            "updatedAt": "2026-09-15T14:30:00Z",
+            "updatedBy": "2026-09-15",
+            "version": 1
+          },
           "metadata": {
-            "responseId": "eeb408cd-4487-5fdd-b01a-82a728cd1303",
-            "correlationId": "59017ddd-4f43-554e-9388-c7aa0d6dfbb4",
+            "responseId": "9612c2a5-32db-5f86-b9ad-ceb6cd21c66e",
+            "correlationId": "e35895e4-1a0f-50e0-9d65-8b73d7fa2baf",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "DocumentMetadata": {
+      "Audit": {
+        "title": "Audit Information",
+        "type": "object",
+        "properties": {
+          "createdAt": {
+            "type": "string",
+            "description": "Timestamp when the entity was created.",
+            "example": "2021-01-01T00:00:00Z"
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "Identifier for the user who created the entity.",
+            "example": "creator_001"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp when the entity was last updated.",
+            "example": "2021-06-01T12:00:00Z"
+          },
+          "updatedBy": {
+            "type": "string",
+            "description": "Identifier for the user who last updated the entity.",
+            "example": "updater_001"
+          },
+          "version": {
+            "type": "integer",
+            "description": "Version number of the entity.",
+            "format": "int32",
+            "example": 1
+          }
+        },
+        "description": "Schema representing audit information related to an entity."
+      },
+      "Metadata": {
+        "title": "Document Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Identifier for the response related to the document.",
-            "example": "response-789"
+            "description": "Unique identifier for the response.",
+            "example": "response_001"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation identifier to track the request and response.",
-            "example": "correlation-456"
+            "description": "Unique identifier for the correlation across requests.",
+            "example": "correlation_001"
           },
           "generatedAt": {
             "type": "string",
             "description": "Timestamp when the metadata was generated.",
-            "example": "2023-10-01T12:00:00Z"
+            "example": "2021-06-01T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the document was processed.",
-            "example": "us-east"
+            "description": "Region where the processing took place.",
+            "example": "us-east-1"
           }
         },
-        "description": "Metadata information related to the document."
+        "description": "Schema representing metadata associated with a document."
       }
     },
     "parameters": {
@@ -211,30 +275,30 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint that processed the request. This ID can be used for tracking and logging purposes.",
+        "description": "The unique identifier of the endpoint that processed the request. This value is used for tracking and logging purposes to identify which endpoint was hit.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "document-services-get-document-services"
+          "example": "banking-loans-openapi-get-application-document"
         },
-        "example": "document-services-get-document-services"
+        "example": "banking-loans-openapi-get-application-document"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that handled the request, providing context about which service instance processed this specific transaction.",
+        "description": "The name of the application that handles the request. This helps in understanding which application layer processed the request specific to the API.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "enterprise-support"
+          "example": "lending-credit"
         },
-        "example": "enterprise-support"
+        "example": "lending-credit"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a bearer token that is formatted as a JSON Web Token (JWT). It should be included in the Authorization header of requests to authenticate and authorize access to secured endpoints.",
+        "description": "This security scheme uses Bearer Authentication, where a token (JWT - JSON Web Token) is used as a means of verifying the user's identity. Clients must include the token in the `Authorization` header when making requests to secure endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
