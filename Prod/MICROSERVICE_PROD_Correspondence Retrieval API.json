@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE_PROD_Document Directory Retrieval API",
-    "description": "The Document Directory Retrieval API enables users to access and retrieve a comprehensive list of banking documents. This API serves financial institutions and developers who require integration with banking services to present document information. By utilizing this endpoint, users can effectively manage and display important documentation, facilitating client interactions and compliance. It supports typical functionalities such as document searching and filtering to enhance the user experience.",
+    "title": "MICROSERVICE_PROD_Correspondence Retrieval API",
+    "description": "The Correspondence Retrieval API enables users to access and retrieve various banking correspondence documents. These documents may include important financial statements, account notifications, and regulatory communications essential for customer review and compliance purposes. Typical consumers of this API include financial institutions and developers building customer service applications that require document access. With this API, applications can efficiently fetch necessary documentation to enhance customer interactions and ensure compliance with regulatory standards.",
     "version": "1.0"
   },
   "servers": [
@@ -30,32 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/documents/document-directory": {
+    "/v5/banking/documents/correspondence": {
       "get": {
         "tags": [
-          "Documents"
+          "Document Management"
         ],
-        "summary": "Retrieve the document directory.",
-        "description": "This endpoint allows you to retrieve the list of documents available in the document directory. It provides an overview of documents, including metadata and other relevant information that may be useful for users or applications accessing the documents.",
-        "operationId": "getDocumentDirectory",
+        "summary": "Retrieve correspondence documents",
+        "description": "This endpoint allows users to retrieve a list of correspondence documents stored in the system. You can filter, sort, and paginate the results based on various criteria.",
+        "operationId": "getCorrespondenceDocuments",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
         "requestBody": {
-          "description": "Request body content for retrieving a document directory. This should include any necessary filters or parameters to specify which documents to include in the response.",
+          "description": "This request body is used to retrieve correspondence documents. It should contain the necessary parameters that define the criteria for filtering and fetching the desired documents.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetDocumentDirectoryRequest"
+                "$ref": "#/components/schemas/GetCorrespondenceDocumentsRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved the document directory.",
+            "description": "The request was successful, and the corresponding documents are returned.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -67,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetDocumentDirectoryResponse_200"
+                  "$ref": "#/components/schemas/GetCorrespondenceDocumentsResponse_200"
                 }
               }
             }
@@ -87,20 +87,21 @@
   },
   "components": {
     "schemas": {
-      "GetDocumentDirectoryRequest": {
+      "GetCorrespondenceDocumentsRequest": {
         "type": "string",
-        "description": "The request body for the GET operation on the document directory, represented as a string.",
+        "description": "A JSON-formatted string representing the request body for retrieving correspondence documents.",
         "example": "{}"
       },
-      "GetDocumentDirectoryResponse_200": {
+      "GetCorrespondenceDocumentsResponse_200": {
+        "title": "Documents Correspondence Response",
         "type": "object",
         "properties": {
           "items": {
             "type": "array",
-            "description": "Array of document items retrieved from the directory.",
+            "description": "Array of document objects returned in the response.",
             "example": [
               {
-                "documentId": "DOC-365393",
+                "documentId": "DOC-108022",
                 "documentType": "STANDARD",
                 "classification": "STANDARD",
                 "retentionClass": "STANDARD",
@@ -113,26 +114,28 @@
               }
             ],
             "items": {
-              "$ref": "#/components/schemas/DocumentItem"
+              "$ref": "#/components/schemas/Document"
             }
           },
           "pagination": {
+            "description": "Pagination information for the response.",
             "$ref": "#/components/schemas/Pagination"
           },
           "sort": {
             "type": "string",
-            "description": "Sorting criteria applied to the retrieved items.",
+            "description": "Sorting information for the items listed.",
             "example": "STANDARD"
           },
           "metadata": {
-            "$ref": "#/components/schemas/ResponseMetadata"
+            "description": "Metadata information associated with the response.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the document directory retrieval operation.",
+        "description": "Response schema for the GET operation on documents correspondence endpoint, containing a list of document items along with pagination, sorting, and metadata information.",
         "example": {
           "items": [
             {
-              "documentId": "DOC-365393",
+              "documentId": "DOC-108022",
               "documentType": "STANDARD",
               "classification": "STANDARD",
               "retentionClass": "STANDARD",
@@ -151,14 +154,15 @@
           },
           "sort": "STANDARD",
           "metadata": {
-            "responseId": "844f39f7-5eb1-5971-a03d-0b111f8fecbb",
-            "correlationId": "70bfc204-f0f9-5d5b-9eda-e15d24d8a1ed",
+            "responseId": "37140753-4955-59a3-a8df-5cec784a134c",
+            "correlationId": "f6d87ca3-dc65-5577-9e0f-6c9d43f48d7a",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "DocumentItem": {
+      "Document": {
+        "title": "Document",
         "type": "object",
         "properties": {
           "documentId": {
@@ -167,7 +171,7 @@
           },
           "documentType": {
             "type": "string",
-            "description": "Type of the document, describing its nature."
+            "description": "Type of the document (e.g., invoice, report)."
           },
           "classification": {
             "type": "string",
@@ -175,7 +179,7 @@
           },
           "retentionClass": {
             "type": "string",
-            "description": "Retention class associated with the document."
+            "description": "Retention class indicating how long the document should be kept."
           },
           "ownerId": {
             "type": "string",
@@ -183,15 +187,15 @@
           },
           "fileName": {
             "type": "string",
-            "description": "Name of the file representing the document."
+            "description": "Name of the file associated with the document."
           },
           "mediaType": {
             "type": "string",
-            "description": "Media type of the document file."
+            "description": "MIME type of the document media."
           },
           "checksumSha256": {
             "type": "string",
-            "description": "SHA256 checksum of the document for integrity verification."
+            "description": "SHA-256 checksum of the document for integrity verification."
           },
           "recordStatus": {
             "type": "string",
@@ -199,17 +203,18 @@
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the document was last updated."
+            "description": "Timestamp of the last update to the document."
           }
         },
-        "description": "Details of an individual document item."
+        "description": "Schema representing a document with its properties."
       },
       "Pagination": {
+        "title": "Pagination",
         "type": "object",
         "properties": {
           "page": {
             "type": "integer",
-            "description": "Current page number of the result set.",
+            "description": "Current page number.",
             "format": "int32"
           },
           "pageSize": {
@@ -219,13 +224,14 @@
           },
           "totalItems": {
             "type": "integer",
-            "description": "Total number of items available in the directory.",
+            "description": "Total number of items available.",
             "format": "int32"
           }
         },
-        "description": "Pagination information for the results returned."
+        "description": "Schema representing pagination details of the response."
       },
-      "ResponseMetadata": {
+      "Metadata": {
+        "title": "Metadata",
         "type": "object",
         "properties": {
           "responseId": {
@@ -234,7 +240,7 @@
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier for correlating requests and responses."
+            "description": "Identifier used to correlate requests and responses."
           },
           "generatedAt": {
             "type": "string",
@@ -242,10 +248,10 @@
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the request was processed."
+            "description": "Region where the processing was carried out."
           }
         },
-        "description": "Meta information about the response."
+        "description": "Schema containing metadata related to the response."
       }
     },
     "parameters": {
@@ -266,17 +272,15 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the API endpoint associated with the current request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "document-directory-search-document-directory"
+          "example": "correspondence-search-correspondence"
         },
-        "example": "document-directory-search-document-directory"
+        "example": "correspondence-search-correspondence"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that is processing the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -289,7 +293,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a bearer token for authorization, following the JWT (JSON Web Token) format.",
+        "description": "This security scheme uses JSON Web Tokens (JWT) in the HTTP Authorization header to authenticate requests. Clients must include a valid JWT token to access secured endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
