@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Replace P2m By Param1-spec",
-    "description": "This API facilitates the modification of existing QR payment requests by replacing the payment parameter with a specified value. It allows businesses to dynamically adjust payment requests as needed, ensuring that transactions are aligned with current requirements. Typical consumers of this API include financial institutions and payment service providers who need to manage payment requests efficiently. The endpoint provides an effective means to enhance the accuracy and responsiveness of payment processing services.",
+    "description": "The Update Payment Intent API enables businesses to modify existing payment intents using specific parameters. This endpoint is primarily used for adjusting transaction details based on evolving customer needs or compliance requirements. Typical consumers include payment processors and e-commerce platforms that require flexibility in payment management. By leveraging this API, developers can ensure that payment intents are updated efficiently, reflecting real-time changes and enhancing user experience.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/p2m/qr-payment-requests/{param1}": {
+    "/v5/p2m/payment-intents/{param1}": {
       "put": {
         "tags": [
-          "QR Payment"
+          "Payment Management"
         ],
-        "summary": "Update an existing QR Payment Request.",
-        "description": "This operation allows you to update the details of a specific QR Payment Request identified by its unique ID. Ensure the request includes all necessary fields to successfully update the record.",
+        "summary": "Update a specific payment intent.",
+        "description": "This endpoint allows developers to update the details of a specific payment intent identified by its ID. You can modify various attributes of the payment intent to ensure that it meets your application\u2019s requirements.",
         "operationId": "replaceP2mByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to initiate or update the QR payment request with the specified identifier PAY-300045. The details of the payment, including relevant parameters, must be provided in the JSON format.",
+          "description": "Contains the necessary information to update the payment intent identified by PAY-300045. Ensure all required fields are provided according to the specified schema.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "The request was successful and the resource has been updated.",
+            "description": "Request completed successfully, payment intent updated.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -91,374 +91,110 @@
   "components": {
     "schemas": {
       "ReplaceP2mByParam1Request": {
-        "title": "QR Payment Request",
+        "title": "Payment Intent Request",
         "type": "object",
         "properties": {
           "merchantId": {
             "type": "string",
-            "description": "Unique identifier for the merchant.",
-            "example": "MER-461377"
+            "description": "The unique identifier for the merchant.",
+            "example": "MER-827483"
           },
           "outletId": {
             "type": "string",
-            "description": "Identifier for the specific outlet.",
+            "description": "The identifier for the outlet where the transaction is taking place.",
             "example": "STANDARD"
           },
           "terminalId": {
             "type": "string",
-            "description": "Identifier for the terminal being used.",
-            "example": "STANDARD"
-          },
-          "mode": {
-            "type": "string",
-            "description": "Mode of the transaction.",
-            "example": "STANDARD"
-          },
-          "standard": {
-            "type": "string",
-            "description": "Payment standard type.",
+            "description": "The identifier for the terminal used for the payment.",
             "example": "STANDARD"
           },
           "amount": {
-            "description": "Details of the amount involved in the transaction.",
-            "$ref": "#/components/schemas/AmountDetails"
+            "description": "The amount of money involved in the payment transaction.",
+            "$ref": "#/components/schemas/Amount"
           },
-          "merchantOrderId": {
+          "captureMethod": {
             "type": "string",
-            "description": "Identifier for the merchant's order.",
-            "example": "ORD-312501"
+            "description": "The method used to capture the payment.",
+            "example": "STANDARD"
           },
-          "description": {
+          "channel": {
             "type": "string",
-            "description": "Description of the payment or transaction.",
-            "example": "Customer banking request processed successfully"
+            "description": "The channel through which the payment is processed.",
+            "example": "STANDARD"
           },
-          "tipOptions": {
-            "description": "Options for tips that the customer can apply.",
-            "$ref": "#/components/schemas/TipOptions"
+          "allowedPaymentMethods": {
+            "type": "array",
+            "description": "List of payment methods that are allowed for this transaction.",
+            "example": [
+              "STANDARD"
+            ],
+            "items": {
+              "type": "string",
+              "example": "string"
+            }
           },
-          "expiresAt": {
-            "type": "string",
-            "description": "Expiration time for the payment request.",
-            "example": "2026-08-11T12:00:00Z"
+          "customer": {
+            "description": "Information about the customer making the payment.",
+            "$ref": "#/components/schemas/Customer"
           },
-          "singleUse": {
-            "type": "boolean",
-            "description": "Indicates whether the payment request is single-use.",
-            "example": true
+          "order": {
+            "description": "Details about the order associated with the payment.",
+            "$ref": "#/components/schemas/Order"
           },
           "requestContext": {
-            "description": "Context of the request including identifiers and system source.",
+            "description": "Contextual information regarding the payment request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Schema for requesting a QR payment operation including various parameters such as merchant information, amount details, and request context.",
+        "description": "Schema for creating or updating a payment intent in the system.",
         "example": {
-          "merchantId": "MER-461377",
+          "merchantId": "MER-827483",
           "outletId": "STANDARD",
           "terminalId": "STANDARD",
-          "mode": "STANDARD",
-          "standard": "STANDARD",
           "amount": {
             "currency": "USD",
             "value": "STANDARD"
           },
-          "merchantOrderId": "ORD-312501",
-          "description": "Customer banking request processed successfully",
-          "tipOptions": {
-            "mode": "STANDARD",
-            "fixedAmounts": [
-              {
-                "currency": "USD",
-                "value": "STANDARD"
-              }
-            ],
-            "percentages": [
-              "STANDARD"
-            ],
-            "maximumTip": {
-              "currency": "USD",
-              "value": "STANDARD"
-            }
+          "captureMethod": "STANDARD",
+          "channel": "STANDARD",
+          "allowedPaymentMethods": [
+            "STANDARD"
+          ],
+          "customer": {
+            "id": "STANDARD",
+            "name": "Northstar Banking Service",
+            "email": "olivia.bennett@northstar.example",
+            "phone": "+1-212-555-0147",
+            "riskSegment": "STANDARD"
           },
-          "expiresAt": "2026-08-11T12:00:00Z",
-          "singleUse": true,
+          "order": {
+            "merchantOrderId": "ORD-511863",
+            "description": "Customer banking request processed successfully",
+            "items": [
+              {
+                "itemId": "STANDARD",
+                "name": "Northstar Banking Service",
+                "description": "Customer banking request processed successfully",
+                "quantity": "STANDARD",
+                "unitPrice": {
+                  "currency": "USD"
+                }
+              }
+            ]
+          },
           "requestContext": {
-            "requestId": "542e71e9-3c33-59c1-9dd3-20212f3db9d1",
-            "correlationId": "02b8ad47-7f95-557e-86d0-c31c98d69138",
-            "idempotencyKey": "fac268af-4a07-5501-a785-36aeedf689ee",
+            "requestId": "f5a3b00b-e2c4-5ba3-90d7-554c473774f5",
+            "correlationId": "16c24419-5501-5bec-9d86-e588701993bc",
+            "idempotencyKey": "8d7ef886-9342-5d8d-89f0-ddd01f75a4f0",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-538037"
+              "deviceId": "DEV-348275"
             }
-          }
-        }
-      },
-      "AmountDetails": {
-        "title": "Amount Details",
-        "type": "object",
-        "properties": {
-          "currency": {
-            "type": "string",
-            "description": "Currency code for the amount.",
-            "example": "USD"
-          },
-          "value": {
-            "type": "string",
-            "description": "Value of the amount to be charged.",
-            "example": "100.00"
-          }
-        },
-        "description": "Schema representing the amount included in the payment request."
-      },
-      "TipOptions": {
-        "title": "Tip Options",
-        "type": "object",
-        "properties": {
-          "mode": {
-            "type": "string",
-            "description": "The mode of tips (e.g. fixed or percentage).",
-            "example": "fixed"
-          },
-          "fixedAmounts": {
-            "type": "array",
-            "description": "List of fixed tip amounts available.",
-            "example": "[{\"currency\": \"USD\", \"value\": \"5.00\"}, {\"currency\": \"USD\", \"value\": \"10.00\"}]",
-            "items": {
-              "$ref": "#/components/schemas/Amount"
-            }
-          },
-          "percentages": {
-            "type": "array",
-            "description": "List of percentage tips available.",
-            "example": "[\"10%\", \"15%\"]",
-            "items": {
-              "type": "string",
-              "description": "String representation of the percentage tip.",
-              "example": "10%"
-            }
-          },
-          "maximumTip": {
-            "description": "The maximum allowable tip amount.",
-            "$ref": "#/components/schemas/Amount"
-          }
-        },
-        "description": "Options provided for tipping, including fixed amounts and percentages."
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req-001"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier for correlating requests.",
-            "example": "corr-002"
-          },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "Key used to ensure idempotency of requests.",
-            "example": "idempotent-key-003"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp of when the request was made.",
-            "example": "2023-10-01T09:00:00Z"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "Source system initiating the request.",
-            "example": "mobile-app"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "Source application from which the request is made.",
-            "example": "myApp"
-          },
-          "channel": {
-            "description": "Details regarding the communication channel.",
-            "$ref": "#/components/schemas/ChannelDetails"
-          }
-        },
-        "description": "Schema containing contextual information about the request."
-      },
-      "ChannelDetails": {
-        "title": "Channel Details",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "channel-001"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of the channel (e.g., web, mobile).",
-            "example": "mobile"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Identifier for the device used.",
-            "example": "device-001"
-          }
-        },
-        "description": "Schema representing details of the channel through which the payment request is made."
-      },
-      "ReplaceP2mByParam1Response_200": {
-        "title": "QR Payment Request Response",
-        "type": "object",
-        "properties": {
-          "qrPaymentRequestId": {
-            "type": "string",
-            "description": "Unique identifier for the QR payment request.",
-            "example": "f184179a-e9e5-503d-a027-a1288c03dbb2"
-          },
-          "merchantId": {
-            "type": "string",
-            "description": "Identifier for the merchant making the payment request.",
-            "example": "MER-481260"
-          },
-          "outletId": {
-            "type": "string",
-            "description": "Identifier for the outlet where the payment is being requested.",
-            "example": "STANDARD"
-          },
-          "terminalId": {
-            "type": "string",
-            "description": "Identifier for the terminal used to process the payment request.",
-            "example": "STANDARD"
-          },
-          "mode": {
-            "type": "string",
-            "description": "Mode of the payment transaction, indicating the type of processing required.",
-            "example": "STANDARD"
-          },
-          "standard": {
-            "type": "string",
-            "description": "The standard used for QR payments.",
-            "example": "STANDARD"
-          },
-          "amount": {
-            "description": "The amount involved in the payment request.",
-            "$ref": "#/components/schemas/Amount"
-          },
-          "merchantOrderId": {
-            "type": "string",
-            "description": "Identifier for the order placed by the merchant.",
-            "example": "ORD-987714"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description of the payment request.",
-            "example": "Customer banking request processed successfully"
-          },
-          "tipOptions": {
-            "description": "Options available for tipping included in the payment request.",
-            "$ref": "#/components/schemas/TipOptions"
-          },
-          "qrPayload": {
-            "type": "string",
-            "description": "Payload data encoded in the QR code.",
-            "example": "STANDARD"
-          },
-          "qrImageUrl": {
-            "type": "string",
-            "description": "URL to the generated QR code image.",
-            "example": "https://example.com/resource"
-          },
-          "status": {
-            "type": "string",
-            "description": "Current status of the payment request.",
-            "example": "ACTIVE"
-          },
-          "singleUse": {
-            "type": "boolean",
-            "description": "Indicates whether the QR code is single-use.",
-            "example": true
-          },
-          "paidAmount": {
-            "description": "The amount that has been paid for the transaction.",
-            "$ref": "#/components/schemas/Amount"
-          },
-          "paymentId": {
-            "type": "string",
-            "description": "Unique identifier for the payment.",
-            "example": "PAY-261600"
-          },
-          "expiresAt": {
-            "type": "string",
-            "description": "Expiration date and time of the payment request.",
-            "example": "2026-08-11T12:00:00Z"
-          },
-          "audit": {
-            "description": "Audit details related to the payment request.",
-            "$ref": "#/components/schemas/Audit"
-          },
-          "metadata": {
-            "description": "Additional information related to the payment request.",
-            "$ref": "#/components/schemas/Metadata"
-          }
-        },
-        "description": "A schema representation of the response received upon successfully processing a QR payment request.",
-        "example": {
-          "qrPaymentRequestId": "f184179a-e9e5-503d-a027-a1288c03dbb2",
-          "merchantId": "MER-481260",
-          "outletId": "STANDARD",
-          "terminalId": "STANDARD",
-          "mode": "STANDARD",
-          "standard": "STANDARD",
-          "amount": {
-            "currency": "USD",
-            "value": "STANDARD"
-          },
-          "merchantOrderId": "ORD-987714",
-          "description": "Customer banking request processed successfully",
-          "tipOptions": {
-            "mode": "STANDARD",
-            "fixedAmounts": [
-              {
-                "currency": "USD",
-                "value": "STANDARD"
-              }
-            ],
-            "percentages": [
-              "STANDARD"
-            ],
-            "maximumTip": {
-              "currency": "USD",
-              "value": "STANDARD"
-            }
-          },
-          "qrPayload": "STANDARD",
-          "qrImageUrl": "https://example.com/resource",
-          "status": "ACTIVE",
-          "singleUse": true,
-          "paidAmount": {
-            "currency": "USD",
-            "value": "STANDARD"
-          },
-          "paymentId": "PAY-261600",
-          "expiresAt": "2026-08-11T12:00:00Z",
-          "audit": {
-            "createdAt": "2026-09-15T14:30:00Z",
-            "createdBy": "STANDARD",
-            "updatedAt": "2026-09-15T14:30:00Z",
-            "updatedBy": "2026-09-15",
-            "version": 1
-          },
-          "metadata": {
-            "responseId": "b0b38b0f-229c-5ad4-a041-1d70eda6ef12",
-            "correlationId": "02b8ad47-7f95-557e-86d0-c31c98d69138",
-            "generatedAt": "2026-09-15T14:30:00Z",
-            "processingRegion": "us-east-1"
           }
         }
       },
@@ -468,76 +204,481 @@
         "properties": {
           "currency": {
             "type": "string",
-            "description": "The currency of the amount.",
+            "description": "The currency in which the amount is specified.",
             "example": "USD"
           },
           "value": {
             "type": "string",
-            "description": "The numeric value of the amount.",
+            "description": "The value or amount to be paid.",
             "example": "100.00"
           }
         },
-        "description": "Represents an amount of money, including its currency."
+        "description": "Schema to define the amount and currency for a payment."
       },
-      "Audit": {
-        "title": "Audit",
+      "Customer": {
+        "title": "Customer",
         "type": "object",
         "properties": {
-          "createdAt": {
+          "id": {
             "type": "string",
-            "description": "Timestamp when the payment request was created.",
-            "example": "2023-01-01T12:00:00Z"
+            "description": "The unique identifier for the customer.",
+            "example": "C12345"
           },
-          "createdBy": {
+          "name": {
             "type": "string",
-            "description": "Identifier of the user who created the payment request.",
-            "example": "user123"
+            "description": "The name of the customer.",
+            "example": "John Doe"
           },
-          "updatedAt": {
+          "email": {
             "type": "string",
-            "description": "Timestamp when the payment request was last updated.",
-            "example": "2023-01-02T12:00:00Z"
+            "description": "The email address of the customer.",
+            "example": "john.doe@example.com"
           },
-          "updatedBy": {
+          "phone": {
             "type": "string",
-            "description": "Identifier of the user who last updated the payment request.",
-            "example": "user456"
+            "description": "The phone number of the customer.",
+            "example": "+123456789"
           },
-          "version": {
-            "type": "integer",
-            "description": "Version number of the payment request.",
-            "format": "int32",
-            "example": 1
+          "riskSegment": {
+            "type": "string",
+            "description": "Risk segment associated with the customer for evaluation purposes.",
+            "example": "low"
           }
         },
-        "description": "Details related to the audit trail of the payment request."
+        "description": "Schema containing information about the customer."
       },
-      "Metadata": {
-        "title": "Metadata",
+      "Order": {
+        "title": "Order",
+        "type": "object",
+        "properties": {
+          "merchantOrderId": {
+            "type": "string",
+            "description": "The identifier for the order issued by the merchant.",
+            "example": "ORD123456"
+          },
+          "description": {
+            "type": "string",
+            "description": "A description of the order.",
+            "example": "Purchase of electronic goods"
+          },
+          "items": {
+            "type": "array",
+            "description": "List of items included in the order.",
+            "items": {
+              "$ref": "#/components/schemas/OrderItem"
+            }
+          }
+        },
+        "description": "Schema containing details about the order tied to the payment."
+      },
+      "OrderItem": {
+        "title": "Order Item",
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "description": "The unique identifier for the item.",
+            "example": "ITEM12345"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the item.",
+            "example": "Laptop"
+          },
+          "description": {
+            "type": "string",
+            "description": "A description of the item.",
+            "example": "High-performance laptop with 16GB RAM."
+          },
+          "quantity": {
+            "type": "string",
+            "description": "The number of units of the item.",
+            "example": "1"
+          },
+          "unitPrice": {
+            "description": "The price per unit of the item.",
+            "$ref": "#/components/schemas/Amount"
+          }
+        },
+        "description": "Schema representing an item within an order."
+      },
+      "RequestContext": {
+        "title": "Request Context",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "The unique identifier for the request.",
+            "example": "REQ123456"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "An identifier used to correlate related requests.",
+            "example": "CORR123456"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "A unique key used to identify an idempotent request.",
+            "example": "IDEMP123456"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp when the request was made.",
+            "example": "2023-10-10T10:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The system that initiated the request.",
+            "example": "System A"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application that initiated the request.",
+            "example": "App A"
+          },
+          "channel": {
+            "description": "Details about the channel used for the request.",
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Schema containing contextual information about the request."
+      },
+      "Channel": {
+        "title": "Channel",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "The unique identifier for the channel.",
+            "example": "CH12345"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "The type of the channel (e.g., web, mobile).",
+            "example": "mobile"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "The identifier for the device through which the payment is made.",
+            "example": "DEVICE123"
+          }
+        },
+        "description": "Schema representing the channel details for a request."
+      },
+      "ReplaceP2mByParam1Response_200": {
+        "type": "object",
+        "properties": {
+          "paymentIntentId": {
+            "type": "string",
+            "description": "Unique identifier for the payment intent.",
+            "example": "STANDARD"
+          },
+          "merchantId": {
+            "type": "string",
+            "description": "Unique identifier for the merchant initiating the payment.",
+            "example": "MER-918902"
+          },
+          "outletId": {
+            "type": "string",
+            "description": "Unique identifier for the outlet where the transaction is occurring.",
+            "example": "STANDARD"
+          },
+          "terminalId": {
+            "type": "string",
+            "description": "Unique identifier for the terminal used for the transaction.",
+            "example": "STANDARD"
+          },
+          "amount": {
+            "description": "The total amount for the payment.",
+            "$ref": "#/components/schemas/AmountDetails"
+          },
+          "amountAuthorized": {
+            "description": "The amount that has been authorized for capture.",
+            "$ref": "#/components/schemas/AmountDetails"
+          },
+          "amountCaptured": {
+            "description": "The amount that has been captured from the authorized payment.",
+            "$ref": "#/components/schemas/AmountDetails"
+          },
+          "amountRefunded": {
+            "description": "The total amount that has been refunded to the customer.",
+            "$ref": "#/components/schemas/AmountDetails"
+          },
+          "captureMethod": {
+            "type": "string",
+            "description": "Indicates how the funds will be captured (e.g., manual, automatic).",
+            "example": "STANDARD"
+          },
+          "channel": {
+            "type": "string",
+            "description": "The channel through which the payment is processed (e.g., online, in-store).",
+            "example": "STANDARD"
+          },
+          "allowedPaymentMethods": {
+            "type": "array",
+            "description": "List of payment methods allowed for this transaction.",
+            "example": [
+              "STANDARD"
+            ],
+            "items": {
+              "type": "string",
+              "example": "credit_card"
+            }
+          },
+          "selectedPaymentMethod": {
+            "description": "Details of the payment method selected by the customer.",
+            "$ref": "#/components/schemas/PaymentMethodDetails"
+          },
+          "customer": {
+            "description": "Information about the customer making the payment.",
+            "$ref": "#/components/schemas/CustomerDetails"
+          },
+          "order": {
+            "description": "Details about the order associated with this payment intent.",
+            "$ref": "#/components/schemas/OrderDetails"
+          },
+          "metadata": {
+            "description": "Additional information related to the payment process.",
+            "$ref": "#/components/schemas/MetadataDetails"
+          }
+        },
+        "description": "Response schema for payment intent operations, containing details about the payment intent and associated entities.",
+        "example": {
+          "paymentIntentId": "STANDARD",
+          "merchantId": "MER-918902",
+          "outletId": "STANDARD",
+          "terminalId": "STANDARD",
+          "amount": {
+            "currency": "USD",
+            "value": "STANDARD"
+          },
+          "amountAuthorized": {
+            "currency": "USD",
+            "value": "STANDARD"
+          },
+          "amountCaptured": {
+            "currency": "USD",
+            "value": "STANDARD"
+          },
+          "amountRefunded": {
+            "currency": "USD",
+            "value": "STANDARD"
+          },
+          "captureMethod": "STANDARD",
+          "channel": "STANDARD",
+          "allowedPaymentMethods": [
+            "STANDARD"
+          ],
+          "selectedPaymentMethod": {
+            "type": "STANDARD",
+            "token": "STANDARD",
+            "issuerBankCode": "CODE-817",
+            "maskedIdentifier": "STANDARD",
+            "walletProvider": "STANDARD"
+          },
+          "customer": {
+            "id": "STANDARD",
+            "name": "Northstar Banking Service",
+            "email": "olivia.bennett@northstar.example",
+            "phone": "+1-212-555-0147",
+            "riskSegment": "STANDARD"
+          },
+          "order": {
+            "merchantOrderId": "ORD-993142",
+            "description": "Customer banking request processed successfully",
+            "items": [
+              {
+                "itemId": "STANDARD",
+                "name": "Northstar Banking Service",
+                "description": "Customer banking request processed successfully",
+                "quantity": "STANDARD",
+                "unitPrice": {
+                  "currency": "USD",
+                  "value": "STANDARD"
+                },
+                "totalAmount": {
+                  "currency": "USD",
+                  "value": "STANDARD"
+                }
+              }
+            ]
+          },
+          "metadata": {
+            "responseId": "128a9d9e-9f15-558d-9ae3-85774f8134c8",
+            "correlationId": "16c24419-5501-5bec-9d86-e588701993bc",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
+      },
+      "AmountDetails": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "The currency code (e.g., USD, EUR).",
+            "example": "USD"
+          },
+          "value": {
+            "type": "string",
+            "description": "The value of the amount, typically in the smallest currency unit.",
+            "example": "100.00"
+          }
+        },
+        "description": "Details of an amount including currency and value."
+      },
+      "PaymentMethodDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of payment method (e.g., card, wallet).",
+            "example": "credit_card"
+          },
+          "token": {
+            "type": "string",
+            "description": "Token representing the payment method.",
+            "example": "tok_12345"
+          },
+          "issuerBankCode": {
+            "type": "string",
+            "description": "The bank code of the card issuer.",
+            "example": "issuer_123"
+          },
+          "maskedIdentifier": {
+            "type": "string",
+            "description": "Masked identifier for the payment method (e.g., last four digits of a card).",
+            "example": "**** **** **** 1234"
+          },
+          "walletProvider": {
+            "type": "string",
+            "description": "The provider of the wallet, if applicable.",
+            "example": "PayPal"
+          }
+        },
+        "description": "Details of the payment method selected for the transaction."
+      },
+      "CustomerDetails": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the customer.",
+            "example": "customer_123"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the customer.",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the customer.",
+            "example": "john.doe@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number of the customer.",
+            "example": "+123456789"
+          },
+          "riskSegment": {
+            "type": "string",
+            "description": "Risk segment assigned to the customer based on analysis.",
+            "example": "low"
+          }
+        },
+        "description": "Information about the customer involved in the payment."
+      },
+      "OrderDetails": {
+        "type": "object",
+        "properties": {
+          "merchantOrderId": {
+            "type": "string",
+            "description": "Unique identifier for the order in the merchant's system.",
+            "example": "order_123"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the order.",
+            "example": "Purchase of electronics"
+          },
+          "items": {
+            "type": "array",
+            "description": "List of items included in the order.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "itemId": {
+                  "type": "string",
+                  "description": "Unique identifier for each item.",
+                  "example": "item_123"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name of the product.",
+                  "example": "Smartphone"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Description of the product.",
+                  "example": "Latest model smartphone with 128GB storage."
+                },
+                "quantity": {
+                  "type": "string",
+                  "description": "Quantity of the item ordered.",
+                  "example": "2"
+                },
+                "unitPrice": {
+                  "$ref": "#/components/schemas/AmountDetails"
+                },
+                "totalAmount": {
+                  "$ref": "#/components/schemas/AmountDetails"
+                }
+              },
+              "example": {
+                "itemId": "item_123",
+                "name": "Smartphone",
+                "description": "Latest model smartphone with 128GB storage.",
+                "quantity": "2",
+                "unitPrice": {
+                  "currency": "USD",
+                  "value": "500.00"
+                },
+                "totalAmount": {
+                  "currency": "USD",
+                  "value": "1000.00"
+                }
+              }
+            }
+          }
+        },
+        "description": "Details of the order linked to the payment."
+      },
+      "MetadataDetails": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Identifier for the response of the payment request.",
-            "example": "response123"
+            "description": "Unique identifier for the response.",
+            "example": "response_123"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate requests and responses.",
-            "example": "corr123"
+            "description": "Correlation identifier for tracking requests.",
+            "example": "correlation_123"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the metadata was generated.",
-            "example": "2023-01-01T12:00:00Z"
+            "description": "Timestamp when the response was generated.",
+            "example": "2023-10-01T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region in which the payment request is being processed.",
-            "example": "US-East"
+            "description": "Region where the payment was processed.",
+            "example": "US"
           }
         },
-        "description": "Additional metadata related to the payment request."
+        "description": "Metadata related to the payment process."
       }
     },
     "parameters": {
@@ -568,17 +709,15 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "Unique identifier for the endpoint handling the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "banking-p2m-openapi-replace-qr-payment-request"
+          "example": "banking-p2m-openapi-replace-payment-intent"
         },
-        "example": "banking-p2m-openapi-replace-qr-payment-request"
+        "example": "banking-p2m-openapi-replace-payment-intent"
       },
       "X-Runtime-App": {
-        "description": "Indicates the runtime application version that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -591,7 +730,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication schema using JSON Web Tokens (JWT). Clients must include a valid JWT token in the 'Authorization' header for secured endpoints. This token represents the user's identity and permissions.",
+        "description": "This security scheme uses the Bearer authentication method. Clients must present a valid JWT (JSON Web Token) as part of the Authorization header in their requests to access protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
