@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Update Trade Banking By Param1-spec",
-    "description": "The Trade Banking Update API enables organizations to modify existing syndicated loan details within trade banking. Utilizing the PATCH method, users can update specific parameters of a syndicated loan identified by {param1}. This API serves financial institutions and business users who require timely adjustments to loan agreements or terms in response to market conditions or client needs. It is designed to ensure efficient management of trade banking operations, enhancing the agility and responsiveness of financial services.",
+    "description": "This API allows the modification of trade banking parameters for notional pooling based on specified criteria. By utilizing the PATCH method, users can update individual attributes related to trade banking plans with a unique identifier represented by param1. Typical consumers of this API include financial institutions managing trade financing models and their applications requiring flexible updates to banking settings. This endpoint enhances operational efficiency by enabling targeted adjustments rather than broad changes.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/trade-banking/syndicated-loan/{param1}": {
+    "/v5/banking/trade-banking/notional-pooling/{param1}": {
       "patch": {
         "tags": [
-          "Syndicated Loan Management"
+          "Notional Pooling"
         ],
-        "summary": "Update details of a specific syndicated loan.",
-        "description": "This endpoint allows you to modify information related to a specific syndicated loan identified by its loan ID. Use this operation to update parameters like interest rates, payment schedules, or borrower details. Ensure all required fields are included in the request body for the update to succeed.",
+        "summary": "Update Notional Pooling Resource",
+        "description": "This endpoint allows you to update the details of the specified Notional Pooling resource identified by RES-100045. Make use of this operation to modify existing resource attributes, improving your trading operations.",
         "operationId": "updateTradeBankingByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "Request body for updating the details of a syndicated loan identified by LOAN-500045. This body contains fields that specify the modifications to be made to the existing loan data.",
+          "description": "This request allows the client to update specific properties of the Notional Pooling resource identified by RES-100045. The request body should contain the updated values following the defined schema for PATCH operations.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "Request successfully processed, loan details updated.",
+            "description": "Request completed successfully; resource updated.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -91,177 +91,214 @@
   "components": {
     "schemas": {
       "UpdateTradeBankingByParam1Request": {
+        "title": "Notional Pooling Request Body",
         "type": "object",
         "properties": {
           "changes": {
-            "description": "Contains the details on changes being requested.",
-            "$ref": "#/components/schemas/LoanChanges"
+            "description": "Contains the details of the changes requested for notional pooling.",
+            "$ref": "#/components/schemas/NotionalPoolingChanges"
           },
           "changeReason": {
             "type": "string",
-            "description": "The reason for the change request.",
+            "description": "Reason for the change being requested.",
             "example": "STANDARD"
           },
           "effectiveAt": {
             "type": "string",
-            "description": "The date and time at which the changes should take effect.",
+            "description": "Timestamp indicating when the changes should take effect.",
             "example": "2026-09-15T14:30:00Z"
           },
           "requestedBy": {
             "type": "string",
-            "description": "Identifier for the user requesting the changes.",
+            "description": "Identifier for the person or system requesting the changes.",
             "example": "STANDARD"
           },
           "requestContext": {
-            "description": "Contextual information regarding the request.",
+            "description": "Contextual information related to the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Schema for the PATCH request body concerning operations on a syndicated loan.",
+        "description": "Schema representing the request body for a notional pooling operation.",
         "example": {
           "changes": {
-            "corporateCustomerId": "CUST-627760",
-            "facilityId": "STANDARD",
-            "counterpartyId": "PARTY-890785"
+            "poolId": "STANDARD",
+            "headerAccountId": "ACC-396751",
+            "participantAccountIds": [
+              "ACC-875514"
+            ]
           },
           "changeReason": "STANDARD",
           "effectiveAt": "2026-09-15T14:30:00Z",
           "requestedBy": "STANDARD",
           "requestContext": {
-            "requestId": "3391d407-1546-51dc-b8c4-c09e3bc9a9b5",
-            "correlationId": "3d437357-9a74-543a-a411-ad3a6ae7553c",
-            "idempotencyKey": "e9d5e2ae-0281-5a73-a48b-e6440c98f21d",
+            "requestId": "e5ca2cbc-36d8-5a51-9ffe-a3e52365fb1b",
+            "correlationId": "bb536f92-bdc0-56fc-a77d-8a71b7b0f59f",
+            "idempotencyKey": "d3e1f72d-2cec-5932-b46e-245d1da48320",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-480889"
+              "deviceId": "DEV-778880"
             }
           }
         }
       },
-      "LoanChanges": {
+      "NotionalPoolingChanges": {
+        "title": "Notional Pooling Changes",
         "type": "object",
         "properties": {
-          "corporateCustomerId": {
+          "poolId": {
             "type": "string",
-            "description": "The identifier for the corporate customer associated with the loan.",
-            "example": "string"
+            "description": "Identifier of the notional pooling account.",
+            "example": "pool123"
           },
-          "facilityId": {
+          "headerAccountId": {
             "type": "string",
-            "description": "The identifier for the loan facility.",
-            "example": "string"
+            "description": "Identifier of the header account associated with the pooling.",
+            "example": "account456"
           },
-          "counterpartyId": {
-            "type": "string",
-            "description": "The identifier for the counterparty involved in the loan.",
-            "example": "string"
+          "participantAccountIds": {
+            "type": "array",
+            "description": "Array of account identifiers that are participants in the notional pool.",
+            "items": {
+              "type": "string",
+              "description": "List of participant account identifiers involved in the pooling.",
+              "example": "account789"
+            }
           }
         },
-        "description": "Schema representing the changes requested for a loan."
+        "description": "Schema representing the changes to be made in notional pooling.",
+        "example": {
+          "poolId": "pool123",
+          "headerAccountId": "account456",
+          "participantAccountIds": [
+            "account789",
+            "account012"
+          ]
+        }
       },
       "RequestContext": {
+        "title": "Request Context",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
             "description": "Unique identifier for the request.",
-            "example": "string"
+            "example": "req12345"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier for correlating multiple requests across systems.",
-            "example": "string"
+            "description": "Identifier for tracking related requests.",
+            "example": "corr67890"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key used to ensure that a request is processed only once.",
-            "example": "string"
+            "description": "Key used to ensure the request is idempotent.",
+            "example": "key123456"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the request was made.",
-            "example": "string"
+            "description": "Timestamp when the request was made.",
+            "example": "2023-09-30T10:00:00Z"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "The system that initiated the request.",
-            "example": "string"
+            "description": "Source system from which the request originated.",
+            "example": "BankingSystem"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application from which the request originated.",
-            "example": "string"
+            "description": "Application through which the request was made.",
+            "example": "NotionalPoolingApp"
           },
           "channel": {
-            "description": "Details about the communication channel used for the request.",
+            "description": "Details about the channel used for the request.",
             "$ref": "#/components/schemas/RequestChannel"
           }
         },
-        "description": "Schema containing details about the context of the request."
+        "description": "Schema representing contextual information related to the request.",
+        "example": {
+          "requestId": "req12345",
+          "correlationId": "corr67890",
+          "idempotencyKey": "key123456",
+          "requestedAt": "2023-09-30T10:00:00Z",
+          "sourceSystem": "BankingSystem",
+          "sourceApplication": "NotionalPoolingApp",
+          "channel": {
+            "channelId": "channel123",
+            "channelType": "API",
+            "deviceId": "device12345"
+          }
+        }
       },
       "RequestChannel": {
+        "title": "Request Channel",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "The unique identifier for the communication channel.",
-            "example": "string"
+            "description": "Unique identifier for the channel.",
+            "example": "channel123"
           },
           "channelType": {
             "type": "string",
-            "description": "The type of channel used (e.g., web, mobile, etc.).",
-            "example": "string"
+            "description": "Type of channel used for the transaction (e.g., API, Web, Mobile).",
+            "example": "API"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier for the device used to make the request.",
-            "example": "string"
+            "description": "Identifier of the device used to make the request.",
+            "example": "device12345"
           }
         },
-        "description": "Schema that provides information about the channel used for communication."
+        "description": "Schema that describes the channel through which the request was made.",
+        "example": {
+          "channelId": "channel123",
+          "channelType": "API",
+          "deviceId": "device12345"
+        }
       },
       "UpdateTradeBankingByParam1Response_200": {
-        "title": "Loan Operation Response",
+        "title": "Notional Pooling Operation Response",
         "type": "object",
         "properties": {
           "version": {
             "type": "integer",
-            "description": "The version number of the response.",
+            "description": "The version of the response.",
             "format": "int32",
             "example": 1
           },
           "status": {
             "type": "string",
-            "description": "The status of the loan operation.",
+            "description": "The status of the operation.",
             "example": "ACTIVE"
           },
           "updatedAt": {
             "type": "string",
-            "description": "The timestamp when the loan operation was last updated.",
+            "description": "The timestamp when the operation was last updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "$ref": "#/components/schemas/ResponseMetadata"
+            "description": "Metadata related to the response.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response structure for the PATCH operation on a syndicated loan.",
+        "description": "Response schema for Notional Pooling Operation PATCH requests.",
         "example": {
           "version": 1,
           "status": "ACTIVE",
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "1b54b91f-0435-519e-8ed1-3b8212eef84d",
-            "correlationId": "3d437357-9a74-543a-a411-ad3a6ae7553c",
+            "responseId": "7886c465-e9f3-5325-99b1-6f5155ef063e",
+            "correlationId": "bb536f92-bdc0-56fc-a77d-8a71b7b0f59f",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "ResponseMetadata": {
+      "Metadata": {
         "title": "Response Metadata",
         "type": "object",
         "properties": {
@@ -272,7 +309,7 @@
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate related requests and responses.",
+            "description": "Identifier used to correlate requests and responses.",
             "example": "string"
           },
           "generatedAt": {
@@ -282,11 +319,11 @@
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the response was processed.",
+            "description": "Region where the response was processed.",
             "example": "string"
           }
         },
-        "description": "Metadata related to the loan operation response."
+        "description": "Metadata information for the response."
       }
     },
     "parameters": {
@@ -317,15 +354,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "A unique identifier for the endpoint, used for tracking and debugging purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "syndicated-loan-update-syndicated-loan"
+          "example": "notional-pooling-update-notional-pooling"
         },
-        "example": "syndicated-loan-update-syndicated-loan"
+        "example": "notional-pooling-update-notional-pooling"
       },
       "X-Runtime-App": {
+        "description": "The name of the application that processed the request, useful for performance monitoring.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -338,7 +377,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a Bearer Authentication method, allowing clients to authenticate using a JSON Web Token (JWT). The token should be included in the 'Authorization' header of each request as 'Bearer {token}'.",
+        "description": "This security scheme utilizes the Bearer authentication method, which allows authorization via JSON Web Tokens (JWT). Clients must include a valid JWT in the 'Authorization' header of their requests to authenticate.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
