@@ -1,0 +1,662 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MICROSERVICE-PROD-Create Customer Prequalvoa-spec",
+    "description": "The Customer Prequalification API facilitates the process of assessing customer eligibility for various financial products. This endpoint allows for the submission of a customer's prequalification request using their unique customer identifier. Typically utilized by financial service applications, this API helps streamline customer onboarding and enhances decision-making processes for loan approvals. With its capability to evaluate customer data in real time, businesses can quickly respond to customer inquiries and improve the overall user experience.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://prod-workspace-pwmw.apiwiz.io",
+      "description": "Sandbox server",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "Sandbox server",
+      "x-environmentName": "Sandbox",
+      "x-hide": false,
+      "x-environmentId": "6a7f52236ae9a15654cd5721",
+      "x-basePath": "/"
+    },
+    {
+      "url": "https://35.162.152.203:9004",
+      "description": "PROD",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "PROD",
+      "x-environmentName": "PROD",
+      "x-hide": false,
+      "x-environmentId": "6a784eac1d7e36108cc3cb0c",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/v5/decisioning/customers/{customerId}/prequalvoa": {
+      "post": {
+        "tags": [
+          "Customer Prequalification"
+        ],
+        "summary": "Prequalify customer for VOAs",
+        "description": "This endpoint initiates a prequalification process for a specific customer identified by their unique ID. It assesses the customer's eligibility for various options available under the VOAs (Value of Assets) services, ensuring they meet necessary criteria before proceeding.",
+        "operationId": "createCustomerPrequalvoa",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/customerId"
+          }
+        ],
+        "requestBody": {
+          "description": "Request body for initiating a pre-qualification operation for the specified customer. This operation requires customer-specific data to process the pre-qualification request effectively.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerPrequalvoaRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "The request has been accepted for processing and will be processed asynchronously.",
+            "headers": {
+              "X-Endpoint-Id": {
+                "$ref": "#/components/headers/X-Endpoint-Id"
+              },
+              "X-Runtime-App": {
+                "$ref": "#/components/headers/X-Runtime-App"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCustomerPrequalvoaResponse_202"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateCustomerPrequalvoaRequest": {
+        "title": "Prequalvoa Operations Request Body",
+        "type": "object",
+        "properties": {
+          "accountIds": {
+            "type": "string",
+            "description": "A string representing the IDs of the accounts involved.",
+            "example": "ACC-639648"
+          },
+          "reportCustomFields": {
+            "type": "array",
+            "description": "An array of custom fields for the report.",
+            "example": [
+              {
+                "label": "STANDARD",
+                "value": "STANDARD",
+                "shown": true
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ReportCustomField"
+            }
+          },
+          "showNsf": {
+            "type": "boolean",
+            "description": "Flag to indicate whether to show NSF transactions.",
+            "example": true
+          },
+          "fromDate": {
+            "type": "integer",
+            "description": "The integer representation of the date from which the report starts.",
+            "format": "int32",
+            "example": 1
+          },
+          "requestContext": {
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "Schema representing the request body for Prequalvoa Operations.",
+        "example": {
+          "accountIds": "ACC-639648",
+          "reportCustomFields": [
+            {
+              "label": "STANDARD",
+              "value": "STANDARD",
+              "shown": true
+            }
+          ],
+          "showNsf": true,
+          "fromDate": 1,
+          "requestContext": {
+            "requestId": "2d10d0b1-b051-5a68-a9fa-cfbff106b4a1",
+            "correlationId": "f3593434-c9b2-5183-8d25-4eb219a9dc12",
+            "idempotencyKey": "9ea96b66-2cd5-5d63-8c61-8deb9d019626",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-409464"
+            }
+          }
+        }
+      },
+      "ReportCustomField": {
+        "title": "Report Custom Field",
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "The label for the custom field.",
+            "example": "Transaction Type"
+          },
+          "value": {
+            "type": "string",
+            "description": "The value associated with the custom field.",
+            "example": "Deposit"
+          },
+          "shown": {
+            "type": "boolean",
+            "description": "Indicates if the custom field should be displayed.",
+            "example": false
+          }
+        },
+        "description": "Schema representing a custom field in the report."
+      },
+      "RequestContext": {
+        "title": "Request Context",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "A unique identifier for the request.",
+            "example": "REQ-7890"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "A correlation identifier used for tracking.",
+            "example": "CORR-1234"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "A key for ensuring the request is idempotent.",
+            "example": "IDEMP-5678"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the request was made.",
+            "example": "2023-10-01T12:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "Identifier of the source system making the request.",
+            "example": "SystemX"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "Identifier of the application making the request.",
+            "example": "AppY"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Schema representing the context of the request."
+      },
+      "Channel": {
+        "title": "Channel",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "The unique identifier for the channel.",
+            "example": "CHANNEL-001"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "The type of channel through which the request was made.",
+            "example": "Mobile"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "The identifier of the device used for the request.",
+            "example": "DEVICE-XYZ"
+          }
+        },
+        "description": "Schema representing the channel information of the request."
+      },
+      "CreateCustomerPrequalvoaResponse_202": {
+        "title": "Prequalification Response",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the prequalification request.",
+            "example": "STANDARD"
+          },
+          "customerType": {
+            "type": "string",
+            "description": "Type of the customer (e.g. individual, business).",
+            "example": "STANDARD"
+          },
+          "customerId": {
+            "type": "integer",
+            "description": "Unique identifier for the customer.",
+            "format": "int32",
+            "example": 1
+          },
+          "requestId": {
+            "type": "string",
+            "description": "The identifier for the request.",
+            "example": "e66c0b70-b0c5-5358-ad88-68808a62af4c"
+          },
+          "requesterName": {
+            "type": "string",
+            "description": "Name of the person who requested the prequalification.",
+            "example": "Northstar Banking Service"
+          },
+          "endUser": {
+            "description": "Details about the end user.",
+            "$ref": "#/components/schemas/EndUser"
+          },
+          "createdDate": {
+            "type": "integer",
+            "description": "Timestamp of when the prequalification was created.",
+            "format": "int32",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "Title or subject of the prequalification request.",
+            "example": "Banking operation completed"
+          },
+          "consumerId": {
+            "type": "string",
+            "description": "Unique identifier for the consumer.",
+            "example": "STANDARD"
+          },
+          "consumerSsn": {
+            "type": "string",
+            "description": "Social Security Number of the consumer.",
+            "example": "STANDARD"
+          },
+          "consumerDetails": {
+            "description": "Details about the consumer.",
+            "$ref": "#/components/schemas/ConsumerDetails"
+          },
+          "disputeStatement": {
+            "type": "string",
+            "description": "Dispute statement related to the prequalification.",
+            "example": "STANDARD"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the prequalification request.",
+            "example": "STANDARD"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the prequalification.",
+            "example": "ACTIVE"
+          },
+          "constraints": {
+            "description": "Constraints related to the prequalification.",
+            "$ref": "#/components/schemas/Constraints"
+          },
+          "metadata": {
+            "description": "Metadata related to the response.",
+            "$ref": "#/components/schemas/Metadata"
+          }
+        },
+        "description": "Response object for customer prequalification operations.",
+        "example": {
+          "id": "STANDARD",
+          "customerType": "STANDARD",
+          "customerId": 1,
+          "requestId": "e66c0b70-b0c5-5358-ad88-68808a62af4c",
+          "requesterName": "Northstar Banking Service",
+          "endUser": {
+            "name": "Northstar Banking Service",
+            "address": "STANDARD",
+            "city": "New York",
+            "state": "STANDARD",
+            "zip": "STANDARD",
+            "phone": "+1-212-555-0147",
+            "email": "olivia.bennett@northstar.example",
+            "url": "https://banking.northstar.example/callbacks/status"
+          },
+          "createdDate": 1,
+          "title": "Banking operation completed",
+          "consumerId": "STANDARD",
+          "consumerSsn": "STANDARD",
+          "consumerDetails": {
+            "id": "STANDARD",
+            "firstName": "Northstar Banking Service",
+            "middleName": "Northstar Banking Service",
+            "lastName": "Northstar Banking Service",
+            "address": "STANDARD",
+            "city": "New York",
+            "state": "STANDARD",
+            "zip": "STANDARD",
+            "phone": "+1-212-555-0147",
+            "ssn": "STANDARD",
+            "email": "olivia.bennett@northstar.example"
+          },
+          "disputeStatement": "STANDARD",
+          "type": "STANDARD",
+          "status": "ACTIVE",
+          "constraints": {
+            "accountIds": [
+              "ACC-872485"
+            ],
+            "reportCustomFields": [
+              {
+                "label": "STANDARD",
+                "value": "STANDARD",
+                "shown": true
+              }
+            ]
+          },
+          "metadata": {
+            "responseId": "bef32a74-b499-57ce-a3e9-d5f65e3ba872",
+            "correlationId": "f3593434-c9b2-5183-8d25-4eb219a9dc12",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
+      },
+      "EndUser": {
+        "title": "End User",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the end user.",
+            "example": "string"
+          },
+          "address": {
+            "type": "string",
+            "description": "Street address of the end user.",
+            "example": "string"
+          },
+          "city": {
+            "type": "string",
+            "description": "City where the end user resides.",
+            "example": "string"
+          },
+          "state": {
+            "type": "string",
+            "description": "State where the end user resides.",
+            "example": "string"
+          },
+          "zip": {
+            "type": "string",
+            "description": "ZIP code of the end user's address.",
+            "example": "string"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number of the end user.",
+            "example": "string"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the end user.",
+            "example": "string"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL of the end user (if applicable).",
+            "example": "string"
+          }
+        },
+        "description": "Detailed information about the end user.",
+        "example": {
+          "name": "string",
+          "address": "string",
+          "city": "string",
+          "state": "string",
+          "zip": "string",
+          "phone": "string",
+          "email": "string",
+          "url": "string"
+        }
+      },
+      "ConsumerDetails": {
+        "title": "Consumer Details",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the consumer.",
+            "example": "string"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First name of the consumer.",
+            "example": "string"
+          },
+          "middleName": {
+            "type": "string",
+            "description": "Middle name of the consumer.",
+            "example": "string"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name of the consumer.",
+            "example": "string"
+          },
+          "address": {
+            "type": "string",
+            "description": "Street address of the consumer.",
+            "example": "string"
+          },
+          "city": {
+            "type": "string",
+            "description": "City where the consumer resides.",
+            "example": "string"
+          },
+          "state": {
+            "type": "string",
+            "description": "State where the consumer resides.",
+            "example": "string"
+          },
+          "zip": {
+            "type": "string",
+            "description": "ZIP code of the consumer's address.",
+            "example": "string"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number of the consumer.",
+            "example": "string"
+          },
+          "ssn": {
+            "type": "string",
+            "description": "Social Security Number of the consumer.",
+            "example": "string"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the consumer.",
+            "example": "string"
+          }
+        },
+        "description": "Detailed information about the consumer.",
+        "example": {
+          "id": "string",
+          "firstName": "string",
+          "middleName": "string",
+          "lastName": "string",
+          "address": "string",
+          "city": "string",
+          "state": "string",
+          "zip": "string",
+          "phone": "string",
+          "ssn": "string",
+          "email": "string"
+        }
+      },
+      "Constraints": {
+        "title": "Constraints",
+        "type": "object",
+        "properties": {
+          "accountIds": {
+            "type": "array",
+            "description": "List of account identifiers associated with the request.",
+            "example": [
+              "string"
+            ],
+            "items": {
+              "type": "string",
+              "example": "string"
+            }
+          },
+          "reportCustomFields": {
+            "type": "array",
+            "description": "Custom fields for reporting.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Label for the custom field.",
+                  "example": "string"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Value for the custom field.",
+                  "example": "string"
+                },
+                "shown": {
+                  "type": "boolean",
+                  "description": "Indicates if the custom field should be displayed.",
+                  "example": false
+                }
+              },
+              "example": {
+                "label": "string",
+                "value": "string",
+                "shown": false
+              }
+            }
+          }
+        },
+        "description": "Constraints associated with the prequalification request.",
+        "example": {
+          "accountIds": [
+            "string"
+          ],
+          "reportCustomFields": [
+            {
+              "label": "string",
+              "value": "string",
+              "shown": false
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "title": "Metadata",
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "Unique identifier for the response.",
+            "example": "string"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Correlation ID for tracking the request.",
+            "example": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "Timestamp of when the response was generated.",
+            "example": "string"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "Region where the processing occurred.",
+            "example": "string"
+          }
+        },
+        "description": "Metadata related to the prequalification response.",
+        "example": {
+          "responseId": "string",
+          "correlationId": "string",
+          "generatedAt": "string",
+          "processingRegion": "string"
+        }
+      }
+    },
+    "parameters": {
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "MICROSERVICE_PROD_202"
+          ]
+        }
+      },
+      "customerId": {
+        "name": "customerId",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "headers": {
+      "X-Endpoint-Id": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "open-finance-api-generate-prequalification-cra-report"
+        },
+        "example": "open-finance-api-generate-prequalification-cra-report"
+      },
+      "X-Runtime-App": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "lending-credit"
+        },
+        "example": "lending-credit"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "This security scheme utilizes a Bearer authentication mechanism based on JSON Web Tokens (JWT). Clients must include a valid JWT in the `Authorization` header of requests to access secured endpoints.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
