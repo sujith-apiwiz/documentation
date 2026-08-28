@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-List Account Transactions-spec",
-    "description": "The Account Transactions Retrieval API allows users to access detailed transaction histories for specific accounts associated with a customer. By providing a customer ID and account ID, clients can retrieve a comprehensive list of transactions, including date, amount, and transaction type. This API is particularly useful for financial institutions and customer service applications that require insight into customer spending or transaction behaviors. Typical consumers include banking applications and financial analysts seeking to analyze account activity.",
+    "description": "The Account Transaction Retrieval API allows users to access detailed transaction data associated with a specific bank account. By utilizing this API, financial institutions and third-party service providers can facilitate transaction overviews for account holders, enabling enhanced financial management and reporting. This endpoint supports the retrieval of a comprehensive list of transactions for a given account identified by its unique account ID. Typical consumers of this API include banking applications, personal finance management tools, and audit systems that require transaction history for analysis.",
     "version": "1.0"
   },
   "servers": [
@@ -30,27 +30,24 @@
     }
   ],
   "paths": {
-    "/v5/aggregation/customers/{customerId}/accounts/{accountId}/transactions": {
+    "/v5/open-banking/aisp/accounts/{accountId}/transactions": {
       "get": {
         "tags": [
-          "Customer Transactions"
+          "AISP Account Management"
         ],
-        "summary": "Retrieve transactions for a specific customer account.",
-        "description": "This endpoint allows you to fetch all transactions associated with a particular customer account identified by the customer ID and account ID. Useful for auditing and tracking financial activities.",
+        "summary": "Retrieve transactions for a specific AISP account.",
+        "description": "Fetch a list of all transactions associated with the AISP account identified by ACC-200045. This endpoint allows users to track their financial activities and monitor their spending over time.",
         "operationId": "listAccountTransactions",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
           },
           {
-            "$ref": "#/components/parameters/customerId"
-          },
-          {
             "$ref": "#/components/parameters/accountId"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to retrieve transaction details for a specific account belonging to a customer. The provided account and customer identifiers help the API identify the correct data set to return.",
+          "description": "This request body is used to fetch transaction details for a specific account identified by ACC-200045. It must conform to the schema defined for this operation.",
           "content": {
             "application/json": {
               "schema": {
@@ -61,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved the transaction details for the specified account.",
+            "description": "Successfully retrieved the list of transactions for the specified account.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -95,85 +92,88 @@
     "schemas": {
       "ListAccountTransactionsRequest": {
         "type": "string",
-        "description": "The request body for fetching operations related to the specified transaction. This is a placeholder for the actual JSON structure that defines filter or criteria for the data retrieval.",
+        "description": "This schema represents the request body for a GET operation on transactions related to a specific account.",
         "example": "{}"
       },
       "ListAccountTransactionsResponse_200": {
-        "title": "Transactions Response",
         "type": "object",
         "properties": {
-          "found": {
-            "type": "integer",
-            "description": "Total number of transactions found.",
-            "format": "int32",
-            "example": 1
-          },
-          "displaying": {
-            "type": "integer",
-            "description": "Number of transactions currently being displayed.",
-            "format": "int32",
-            "example": 1
-          },
-          "moreAvailable": {
-            "type": "string",
-            "description": "Indicates if more transactions are available.",
-            "example": "STANDARD"
-          },
-          "fromDate": {
-            "type": "string",
-            "description": "Start date for the transaction query.",
-            "example": "2026-09-15"
-          },
-          "toDate": {
-            "type": "string",
-            "description": "End date for the transaction query.",
-            "example": "2026-09-15"
-          },
-          "sort": {
-            "type": "string",
-            "description": "Sorting criteria for transactions.",
-            "example": "STANDARD"
-          },
-          "transactions": {
-            "type": "array",
-            "description": "List of transactions for the account.",
-            "example": [
-              {
-                "id": 1,
-                "amount": 100.0,
-                "uniqueTransactionId": "TXN-803786",
-                "accountId": 1,
-                "customerId": 1,
-                "status": "ACTIVE",
-                "description": "Customer banking request processed successfully",
-                "memo": "STANDARD",
-                "type": "STANDARD",
-                "transactionDate": 1,
-                "postedDate": 1,
-                "createdDate": 1,
-                "firstEffectiveDate": 1,
-                "effectiveDate": 1,
-                "optionExpireDate": 1,
-                "checkNum": "STANDARD",
-                "escrowAmount": 100.0,
-                "feeAmount": 100.0,
-                "suspenseAmount": 100.0,
-                "interestAmount": 100.0,
-                "principalAmount": 100.0,
-                "optionStrikePrice": 100.0,
-                "unitQuantity": 100.0,
-                "unitPrice": 100.0,
-                "categorization": {
-                  "normalizedPayeeName": "Northstar Banking Service",
-                  "category": "STANDARD",
-                  "city": "New York",
-                  "state": "STANDARD",
-                  "postalCode": "10001"
+          "Data": {
+            "type": "object",
+            "properties": {
+              "Transaction": {
+                "type": "array",
+                "description": "List of transactions associated with the account.",
+                "items": {
+                  "$ref": "#/components/schemas/Transaction"
                 }
               }
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Transaction"
+            },
+            "description": "Holds the transaction data.",
+            "example": {
+              "Transaction": [
+                {
+                  "AccountId": "ACC-487474",
+                  "id": "STANDARD",
+                  "reference": "STANDARD",
+                  "StatementReference": [
+                    "STANDARD"
+                  ],
+                  "CreditDebitIndicator": "STANDARD",
+                  "Status": "ACTIVE",
+                  "mutability": "STANDARD",
+                  "BookingDateTime": "2026-09-15T14:30:00Z",
+                  "ValueDateTime": "2026-09-15T14:30:00Z",
+                  "information": "STANDARD",
+                  "AddressLine": "STANDARD",
+                  "Amount": {
+                    "Amount": "1250.75",
+                    "Currency": "USD"
+                  },
+                  "ChargeAmount": {
+                    "Amount": "1250.75",
+                    "Currency": "USD"
+                  },
+                  "CurrencyExchange": {
+                    "SourceCurrency": "USD",
+                    "TargetCurrency": "USD",
+                    "UnitCurrency": "USD",
+                    "ExchangeRate": 100.0,
+                    "ContractIdentification": "STANDARD",
+                    "QuotationDate": "2026-09-15",
+                    "InstructedAmount": {
+                      "Amount": "1250.75",
+                      "Currency": "USD"
+                    }
+                  },
+                  "BankTransactionCode": {
+                    "Code": "SUCCESS",
+                    "SubCode": "CODE-911"
+                  },
+                  "code": {
+                    "Code": "SUCCESS",
+                    "Issuer": "STANDARD"
+                  },
+                  "ExtendedProprietaryBankTransactionCodes": [
+                    {
+                      "Code": "SUCCESS",
+                      "Issuer": "STANDARD",
+                      "Description": "Customer banking request processed successfully"
+                    }
+                  ],
+                  "Balance": {
+                    "CreditDebitIndicator": "STANDARD",
+                    "Type": "STANDARD",
+                    "Amount": {
+                      "Amount": "1250.75",
+                      "Currency": "USD"
+                    }
+                  },
+                  "MerchantDetails": {
+                    "MerchantName": "Northstar Banking Service"
+                  }
+                }
+              ]
             }
           },
           "metadata": {
@@ -186,12 +186,12 @@
               },
               "correlationId": {
                 "type": "string",
-                "description": "Correlation ID for tracking the request.",
+                "description": "ID for correlating multiple related requests.",
                 "example": "string"
               },
               "generatedAt": {
                 "type": "string",
-                "description": "Timestamp when the response was generated.",
+                "description": "Timestamp indicating when the response was generated.",
                 "example": "string"
               },
               "processingRegion": {
@@ -200,236 +200,328 @@
                 "example": "string"
               }
             },
-            "description": "Meta-information about the response.",
+            "description": "Metadata about the response.",
             "example": {
-              "responseId": "ab65e5dd-d35b-5220-adb8-fb83b187f011",
-              "correlationId": "958d1c76-8ca3-5ccc-ba04-f2b2e06c82d1",
+              "responseId": "30580a67-e2dd-5391-b45d-146e86911043",
+              "correlationId": "318d758c-3e8b-5963-9d0a-8a6d3eb8d186",
               "generatedAt": "2026-09-15T14:30:00Z",
               "processingRegion": "us-east-1"
             }
           }
         },
-        "description": "Response schema for retrieving transactions associated with a customer account.",
+        "description": "Response schema for the GET Transactions operation related to account ACC-200045.",
         "example": {
-          "found": 1,
-          "displaying": 1,
-          "moreAvailable": "STANDARD",
-          "fromDate": "2026-09-15",
-          "toDate": "2026-09-15",
-          "sort": "STANDARD",
-          "transactions": [
-            {
-              "id": 1,
-              "amount": 100.0,
-              "uniqueTransactionId": "TXN-803786",
-              "accountId": 1,
-              "customerId": 1,
-              "status": "ACTIVE",
-              "description": "Customer banking request processed successfully",
-              "memo": "STANDARD",
-              "type": "STANDARD",
-              "transactionDate": 1,
-              "postedDate": 1,
-              "createdDate": 1,
-              "firstEffectiveDate": 1,
-              "effectiveDate": 1,
-              "optionExpireDate": 1,
-              "checkNum": "STANDARD",
-              "escrowAmount": 100.0,
-              "feeAmount": 100.0,
-              "suspenseAmount": 100.0,
-              "interestAmount": 100.0,
-              "principalAmount": 100.0,
-              "optionStrikePrice": 100.0,
-              "unitQuantity": 100.0,
-              "unitPrice": 100.0,
-              "categorization": {
-                "normalizedPayeeName": "Northstar Banking Service",
-                "category": "STANDARD",
-                "city": "New York",
-                "state": "STANDARD",
-                "postalCode": "10001"
+          "Data": {
+            "Transaction": [
+              {
+                "AccountId": "ACC-487474",
+                "id": "STANDARD",
+                "reference": "STANDARD",
+                "StatementReference": [
+                  "STANDARD"
+                ],
+                "CreditDebitIndicator": "STANDARD",
+                "Status": "ACTIVE",
+                "mutability": "STANDARD",
+                "BookingDateTime": "2026-09-15T14:30:00Z",
+                "ValueDateTime": "2026-09-15T14:30:00Z",
+                "information": "STANDARD",
+                "AddressLine": "STANDARD",
+                "Amount": {
+                  "Amount": "1250.75",
+                  "Currency": "USD"
+                },
+                "ChargeAmount": {
+                  "Amount": "1250.75",
+                  "Currency": "USD"
+                },
+                "CurrencyExchange": {
+                  "SourceCurrency": "USD",
+                  "TargetCurrency": "USD",
+                  "UnitCurrency": "USD",
+                  "ExchangeRate": 100.0,
+                  "ContractIdentification": "STANDARD",
+                  "QuotationDate": "2026-09-15",
+                  "InstructedAmount": {
+                    "Amount": "1250.75",
+                    "Currency": "USD"
+                  }
+                },
+                "BankTransactionCode": {
+                  "Code": "SUCCESS",
+                  "SubCode": "CODE-911"
+                },
+                "code": {
+                  "Code": "SUCCESS",
+                  "Issuer": "STANDARD"
+                },
+                "ExtendedProprietaryBankTransactionCodes": [
+                  {
+                    "Code": "SUCCESS",
+                    "Issuer": "STANDARD",
+                    "Description": "Customer banking request processed successfully"
+                  }
+                ],
+                "Balance": {
+                  "CreditDebitIndicator": "STANDARD",
+                  "Type": "STANDARD",
+                  "Amount": {
+                    "Amount": "1250.75",
+                    "Currency": "USD"
+                  }
+                },
+                "MerchantDetails": {
+                  "MerchantName": "Northstar Banking Service"
+                }
               }
-            }
-          ],
+            ]
+          },
           "metadata": {
-            "responseId": "ab65e5dd-d35b-5220-adb8-fb83b187f011",
-            "correlationId": "958d1c76-8ca3-5ccc-ba04-f2b2e06c82d1",
+            "responseId": "30580a67-e2dd-5391-b45d-146e86911043",
+            "correlationId": "318d758c-3e8b-5963-9d0a-8a6d3eb8d186",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
       "Transaction": {
-        "title": "Transaction",
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "description": "Unique identifier for the transaction.",
-            "format": "int32",
-            "example": 0
-          },
-          "amount": {
-            "type": "number",
-            "description": "Total amount of the transaction.",
-            "example": 0.0
-          },
-          "uniqueTransactionId": {
+          "AccountId": {
             "type": "string",
-            "description": "A unique identifier for the transaction.",
+            "description": "Identifier for the account this transaction belongs to.",
             "example": "string"
           },
-          "accountId": {
-            "type": "integer",
-            "description": "ID of the account associated with the transaction.",
-            "format": "int32",
-            "example": 0
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the transaction.",
+            "example": "string"
           },
-          "customerId": {
-            "type": "integer",
-            "description": "ID of the customer associated with the transaction.",
-            "format": "int32",
-            "example": 0
+          "reference": {
+            "type": "string",
+            "description": "Reference number for the transaction.",
+            "example": "string"
           },
-          "status": {
+          "StatementReference": {
+            "type": "array",
+            "description": "List of statement references associated with the transaction.",
+            "items": {
+              "type": "string",
+              "example": "string"
+            }
+          },
+          "CreditDebitIndicator": {
+            "type": "string",
+            "description": "Indicates whether the transaction is a credit or debit.",
+            "example": "string"
+          },
+          "Status": {
             "type": "string",
             "description": "Current status of the transaction.",
             "example": "string"
           },
-          "description": {
+          "mutability": {
             "type": "string",
-            "description": "Description of the transaction.",
+            "description": "Indicates whether the transaction is mutable or not.",
             "example": "string"
           },
-          "memo": {
+          "BookingDateTime": {
             "type": "string",
-            "description": "Optional memo for the transaction.",
+            "description": "Date and time when the transaction was booked.",
             "example": "string"
           },
-          "type": {
+          "ValueDateTime": {
             "type": "string",
-            "description": "Type of the transaction (e.g. credit, debit).",
+            "description": "Value date and time of the transaction.",
             "example": "string"
           },
-          "transactionDate": {
-            "type": "integer",
-            "description": "Date when the transaction occurred.",
-            "format": "int32",
-            "example": 0
-          },
-          "postedDate": {
-            "type": "integer",
-            "description": "Date when the transaction was posted.",
-            "format": "int32",
-            "example": 0
-          },
-          "createdDate": {
-            "type": "integer",
-            "description": "Date when the transaction was created.",
-            "format": "int32",
-            "example": 0
-          },
-          "firstEffectiveDate": {
-            "type": "integer",
-            "description": "First effective date for the transaction.",
-            "format": "int32",
-            "example": 0
-          },
-          "effectiveDate": {
-            "type": "integer",
-            "description": "Effective date of the transaction.",
-            "format": "int32",
-            "example": 0
-          },
-          "optionExpireDate": {
-            "type": "integer",
-            "description": "Expiration date for any options related to the transaction.",
-            "format": "int32",
-            "example": 0
-          },
-          "checkNum": {
+          "information": {
             "type": "string",
-            "description": "Check number for the transaction, if applicable.",
+            "description": "Additional information about the transaction.",
             "example": "string"
           },
-          "escrowAmount": {
-            "type": "number",
-            "description": "Amount held in escrow for the transaction.",
-            "example": 0.0
+          "AddressLine": {
+            "type": "string",
+            "description": "Address line related to the transaction.",
+            "example": "string"
           },
-          "feeAmount": {
-            "type": "number",
-            "description": "Fees associated with the transaction.",
-            "example": 0.0
+          "Amount": {
+            "description": "Amount related to the transaction.",
+            "$ref": "#/components/schemas/Amount"
           },
-          "suspenseAmount": {
-            "type": "number",
-            "description": "Suspense amount related to the transaction.",
-            "example": 0.0
+          "ChargeAmount": {
+            "description": "Charges applicable to the transaction.",
+            "$ref": "#/components/schemas/Amount"
           },
-          "interestAmount": {
-            "type": "number",
-            "description": "Interest amount applied to the transaction.",
-            "example": 0.0
+          "CurrencyExchange": {
+            "description": "Currency exchange details if applicable.",
+            "$ref": "#/components/schemas/CurrencyExchange"
           },
-          "principalAmount": {
-            "type": "number",
-            "description": "Principal amount associated with the transaction.",
-            "example": 0.0
+          "BankTransactionCode": {
+            "description": "Code detailing the type of bank transaction.",
+            "$ref": "#/components/schemas/BankTransactionCode"
           },
-          "optionStrikePrice": {
-            "type": "number",
-            "description": "Strike price for any options related to the transaction.",
-            "example": 0.0
+          "code": {
+            "description": "Proprietary code associated with the transaction.",
+            "$ref": "#/components/schemas/ProprietaryCode"
           },
-          "unitQuantity": {
-            "type": "number",
-            "description": "Quantity of units involved in the transaction.",
-            "example": 0.0
+          "ExtendedProprietaryBankTransactionCodes": {
+            "type": "array",
+            "description": "List of extended proprietary bank transaction codes.",
+            "items": {
+              "$ref": "#/components/schemas/ExtendedProprietaryBankTransactionCode"
+            }
           },
-          "unitPrice": {
-            "type": "number",
-            "description": "Price per unit for the transaction.",
-            "example": 0.0
+          "Balance": {
+            "description": "Balance details of the account after the transaction.",
+            "$ref": "#/components/schemas/Balance"
           },
-          "categorization": {
-            "$ref": "#/components/schemas/Categorization"
+          "MerchantDetails": {
+            "description": "Details about the merchant involved in the transaction.",
+            "$ref": "#/components/schemas/MerchantDetails"
           }
         },
-        "description": "Schema representing a single transaction record."
+        "description": "Details of a financial transaction."
       },
-      "Categorization": {
-        "title": "Categorization",
+      "Amount": {
         "type": "object",
         "properties": {
-          "normalizedPayeeName": {
+          "Amount": {
             "type": "string",
-            "description": "Normalized name of the payee involved in the transaction.",
+            "description": "The amount value.",
             "example": "string"
           },
-          "category": {
+          "Currency": {
             "type": "string",
-            "description": "Category assigned to the transaction.",
-            "example": "string"
-          },
-          "city": {
-            "type": "string",
-            "description": "City related to the transaction.",
-            "example": "string"
-          },
-          "state": {
-            "type": "string",
-            "description": "State related to the transaction.",
-            "example": "string"
-          },
-          "postalCode": {
-            "type": "string",
-            "description": "Postal code related to the transaction.",
+            "description": "The currency of the amount.",
             "example": "string"
           }
         },
-        "description": "Schema representing the categorization details of a transaction."
+        "description": "Represents an amount and its currency."
+      },
+      "CurrencyExchange": {
+        "type": "object",
+        "properties": {
+          "SourceCurrency": {
+            "type": "string",
+            "description": "The currency from which the conversion is made.",
+            "example": "string"
+          },
+          "TargetCurrency": {
+            "type": "string",
+            "description": "The currency to which the conversion is made.",
+            "example": "string"
+          },
+          "UnitCurrency": {
+            "type": "string",
+            "description": "The unit currency used in the exchange.",
+            "example": "string"
+          },
+          "ExchangeRate": {
+            "type": "number",
+            "description": "The exchange rate applied for the conversion.",
+            "example": 0.0
+          },
+          "ContractIdentification": {
+            "type": "string",
+            "description": "Identifier for the currency exchange contract.",
+            "example": "string"
+          },
+          "QuotationDate": {
+            "type": "string",
+            "description": "Date when the exchange rate was quoted.",
+            "example": "string"
+          },
+          "InstructedAmount": {
+            "description": "The amount instructed for the currency exchange.",
+            "$ref": "#/components/schemas/Amount"
+          }
+        },
+        "description": "Details of currency exchange related to a transaction."
+      },
+      "BankTransactionCode": {
+        "type": "object",
+        "properties": {
+          "Code": {
+            "type": "string",
+            "description": "The main code for the bank transaction.",
+            "example": "string"
+          },
+          "SubCode": {
+            "type": "string",
+            "description": "Sub-code providing further detail on the bank transaction.",
+            "example": "string"
+          }
+        },
+        "description": "Bank transaction code detailing the type of transaction."
+      },
+      "ProprietaryCode": {
+        "type": "object",
+        "properties": {
+          "Code": {
+            "type": "string",
+            "description": "The proprietary code.",
+            "example": "string"
+          },
+          "Issuer": {
+            "type": "string",
+            "description": "The issuer of the proprietary code.",
+            "example": "string"
+          }
+        },
+        "description": "Proprietary code related to the transaction."
+      },
+      "ExtendedProprietaryBankTransactionCode": {
+        "type": "object",
+        "properties": {
+          "Code": {
+            "type": "string",
+            "description": "The extended code for the bank transaction.",
+            "example": "string"
+          },
+          "Issuer": {
+            "type": "string",
+            "description": "The issuer of the extended code.",
+            "example": "string"
+          },
+          "Description": {
+            "type": "string",
+            "description": "Description of the extended bank transaction code.",
+            "example": "string"
+          }
+        },
+        "description": "Extended proprietary bank transaction code details."
+      },
+      "Balance": {
+        "type": "object",
+        "properties": {
+          "CreditDebitIndicator": {
+            "type": "string",
+            "description": "Indicates if the balance is a credit or debit.",
+            "example": "string"
+          },
+          "Type": {
+            "type": "string",
+            "description": "Type of balance (e.g., available balance, current balance).",
+            "example": "string"
+          },
+          "Amount": {
+            "description": "Current amount and currency of the balance.",
+            "$ref": "#/components/schemas/Amount"
+          }
+        },
+        "description": "Details of the balance status of the account."
+      },
+      "MerchantDetails": {
+        "type": "object",
+        "properties": {
+          "MerchantName": {
+            "type": "string",
+            "description": "Name of the merchant.",
+            "example": "string"
+          }
+        },
+        "description": "Information regarding the merchant involved in the transaction."
       }
     },
     "parameters": {
@@ -445,16 +537,6 @@
           "enum": [
             "MICROSERVICE_PROD_200"
           ]
-        }
-      },
-      "customerId": {
-        "name": "customerId",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
         }
       },
       "accountId": {
@@ -474,9 +556,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "open-finance-api-get-customer-account-transactions"
+          "example": "accounts-api-get-accounts-account-id-transactions"
         },
-        "example": "open-finance-api-get-customer-account-transactions"
+        "example": "accounts-api-get-accounts-account-id-transactions"
       },
       "X-Runtime-App": {
         "style": "simple",
@@ -491,7 +573,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication scheme that requires a Bearer token in the request. This uses JSON Web Tokens (JWT) for secure access.",
+        "description": "This security scheme uses the Bearer authentication method where a JWT (JSON Web Token) is required in the 'Authorization' header of the request. It is suitable for scenarios where you need to pass non-sensitive user credentials or information between the client and the server.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
