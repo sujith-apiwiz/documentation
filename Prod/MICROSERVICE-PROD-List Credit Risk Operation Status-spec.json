@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE-PROD-Get Wholesale Trading By Param1-spec",
-    "description": "This API enables users to access detailed credit risk operations related to wholesale trading by providing a specific parameter. It serves as a vital resource for financial institutions and traders who need to evaluate credit risk associated with various transactions. By querying this endpoint, clients can gain insights into risk assessments, manage their exposure, and make informed trading decisions. Typical consumers include risk managers, financial analysts, and compliance officers who leverage this data for enhanced risk management and regulatory reporting.",
+    "title": "MICROSERVICE-PROD-List Credit Risk Operation Status-spec",
+    "description": "The Credit Risk Operations Status API provides users with real-time insights into the status of various credit risk operations within wholesale trading. It delivers critical information such as pending, completed, and failed operations, enabling financial professionals to monitor and manage risks effectively. This API is primarily utilized by risk managers, compliance officers, and financial analysts who require up-to-date operational data to inform decision-making processes. By ensuring visibility into risk operations, users can respond quickly to emerging issues and maintain the integrity of their trading activities.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/wholesale-trading/credit-risk-operations/{param1}": {
+    "/v5/banking/wholesale-trading/credit-risk-operations/status": {
       "get": {
         "tags": [
-          "CreditRisk"
+          "Wholesale Trading"
         ],
-        "summary": "Retrieve Credit Risk Operation Details",
-        "description": "This endpoint allows users to fetch detailed information regarding the credit risk operation specified by the given identifier (RES-100045). It provides all relevant data associated with the operation, enabling users to assess and analyze credit risk effectively.",
-        "operationId": "getWholesaleTradingByParam1",
+        "summary": "Retrieve the status of credit risk operations in wholesale trading.",
+        "description": "This endpoint allows users to fetch the current status of credit risk operations within the wholesale trading sector. It provides insights into various metrics and operational parameters to inform decision-making.",
+        "operationId": "listCreditRiskOperationStatus",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
-          },
-          {
-            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "Request body for fetching credit risk operations related to wholesale trading for a specific resource. It is used to provide necessary parameters for the API call.",
+          "description": "This request body is used to retrieve the status of credit risk operations in wholesale trading. It should contain the necessary parameters to specify the details of the status request.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetWholesaleTradingByParam1Request"
+                "$ref": "#/components/schemas/ListCreditRiskOperationStatusRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The request was successful, and the desired resource has been returned.",
+            "description": "The request was successful, and the current status is returned.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetWholesaleTradingByParam1Response_200"
+                  "$ref": "#/components/schemas/ListCreditRiskOperationStatusResponse_200"
                 }
               }
             }
@@ -90,42 +87,43 @@
   },
   "components": {
     "schemas": {
-      "GetWholesaleTradingByParam1Request": {
+      "ListCreditRiskOperationStatusRequest": {
         "type": "string",
-        "description": "This schema represents the request body for the operations related to credit risk in wholesale trading.",
+        "description": "The request body for the GET operation related to credit risk operations status in wholesale trading.",
         "example": "{}"
       },
-      "GetWholesaleTradingByParam1Response_200": {
+      "ListCreditRiskOperationStatusResponse_200": {
+        "title": "Credit Risk Operations Response",
         "type": "object",
         "properties": {
           "tradingBookId": {
             "type": "string",
-            "description": "Unique identifier for the trading book.",
+            "description": "Identifier for the trading book.",
             "example": "STANDARD"
           },
           "instrumentId": {
             "type": "string",
-            "description": "Unique identifier for the financial instrument.",
+            "description": "Identifier for the financial instrument.",
             "example": "STANDARD"
           },
           "side": {
             "type": "string",
-            "description": "Indicates the side of the trade (e.g., buy or sell).",
+            "description": "Indicates if the operation is a buy or sell side.",
             "example": "STANDARD"
           },
           "quantity": {
             "type": "integer",
-            "description": "Number of units of the instrument being traded.",
+            "description": "The quantity of the instrument involved in the operation.",
             "format": "int32",
             "example": 1
           },
           "limitPrice": {
-            "description": "The limit price for the trade.",
+            "description": "The limit price information for the operation.",
             "$ref": "#/components/schemas/LimitPrice"
           },
           "recordStatus": {
             "type": "string",
-            "description": "Status of the record (e.g., active, inactive).",
+            "description": "Status of the record, indicating if it is active, inactive, etc.",
             "example": "ACTIVE"
           },
           "version": {
@@ -136,15 +134,15 @@
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp of the last update to the record.",
+            "description": "Timestamp indicating when the record was last updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Metadata information related to the response.",
-            "$ref": "#/components/schemas/Metadata"
+            "description": "Metadata associated with the response.",
+            "$ref": "#/components/schemas/ResponseMetadata"
           }
         },
-        "description": "Response schema for the GET operations in wholesale trading credit risk.",
+        "description": "This schema represents the response structure for the Credit Risk Operations GET request.",
         "example": {
           "tradingBookId": "STANDARD",
           "instrumentId": "STANDARD",
@@ -166,46 +164,48 @@
         }
       },
       "LimitPrice": {
+        "title": "Limit Price",
         "type": "object",
         "properties": {
           "value": {
             "type": "number",
-            "description": "The numerical value of the limit price.",
+            "description": "The value of the limit price.",
             "example": 0.0
           },
           "currency": {
             "type": "string",
-            "description": "The currency in which the limit price is denominated.",
+            "description": "The currency in which the limit price is quoted.",
             "example": "string"
           }
         },
-        "description": "Represents the limit price for a trade."
+        "description": "This schema represents the limit price structure for a trading operation."
       },
-      "Metadata": {
+      "ResponseMetadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
+            "description": "Unique identifier for the API response.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used for correlating requests and responses.",
+            "description": "Identifier used to correlate requests and responses.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the response was generated.",
+            "description": "Timestamp indicating when the response was generated.",
             "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing occurred.",
+            "description": "Region where the request was processed.",
             "example": "string"
           }
         },
-        "description": "Contains metadata information regarding the response."
+        "description": "This schema represents additional metadata for the API response."
       }
     },
     "parameters": {
@@ -222,21 +222,10 @@
             "MICROSERVICE_PROD_200"
           ]
         }
-      },
-      "param1": {
-        "name": "param1",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
-        }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "The unique identifier for the endpoint being accessed, used for tracking and monitoring purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -246,7 +235,6 @@
         "example": "credit-risk-operations-get-credit-risk-operations"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that is handling the request, providing context for performance and reliability metrics.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -259,7 +247,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses Bearer authentication, where a JSON Web Token (JWT) is passed in the Authorization header of HTTP requests. The token must be included in the request to access secured endpoints.",
+        "description": "This security scheme uses the Bearer authentication method, utilizing JSON Web Tokens (JWT) to provide a secure means of access to the API. Clients must include a valid JWT token in the Authorization header with the 'Bearer' prefix in each request to access protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
