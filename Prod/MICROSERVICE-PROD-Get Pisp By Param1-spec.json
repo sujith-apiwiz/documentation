@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Get Pisp By Param1-spec",
-    "description": "The Domestic Payment Retrieval API allows users to access specific PISP-related information associated with domestic payments by utilizing a unique identifier. This endpoint is designed for financial institutions and third-party providers looking to query payment initiation service providers (PISPs) effectively. Typical consumers of this API include payment processors and financial application developers. With this API, users can streamline their payment solutions and enhance the customer experience by directly integrating domestic payment tracking functionality.",
+    "description": "The PISP Domestic Payment Consent Retrieval API allows clients to securely retrieve payment consent details using a specified parameter. This operation is vital for Payment Initiation Service Providers (PISPs) that need to access and manage payment consents effectively. Developers working on financial applications can utilize this API to ensure compliance with Open Banking standards while providing seamless user experiences. Typical consumers of this API include banks and fintech companies that integrate payment services into their platforms.",
     "version": "1.0"
   },
   "servers": [
@@ -30,11 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/open-banking/pisp/domestic-payments/{param1}": {
+    "/v5/open-banking/pisp/domestic-payment-consents/{param1}": {
       "get": {
-        "tags": [],
-        "summary": "Retrieve domestic payment details",
-        "description": "This endpoint allows you to fetch the details of a specific domestic payment using its unique identifier. It provides comprehensive information about the payment status, amount, and recipient details.",
+        "tags": [
+          "Payment Consent"
+        ],
+        "summary": "Retrieve a specific domestic payment consent",
+        "description": "This endpoint allows developers to retrieve details of a specific domestic payment consent using its unique identifier. It provides insights into the payment consent's status, created date, and other relevant information that assists in payment processing.",
         "operationId": "getPispByParam1",
         "parameters": [
           {
@@ -45,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is utilized to retrieve information regarding the domestic payment transaction identified by PAY-300045. It is structured in JSON format and contains the necessary parameters to ensure a successful API call.",
+          "description": "Request body for retrieving a specific domestic payment consent based on the provided consent ID. This request should be formatted in JSON and must comply with the defined schema.",
           "content": {
             "application/json": {
               "schema": {
@@ -56,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "The request was successfully processed and the expected response is provided.",
+            "description": "Request completed successfully, returning the details of the payment consent.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -90,28 +92,25 @@
     "schemas": {
       "GetPispByParam1Request": {
         "type": "string",
-        "description": "A request body for the GET operation on domestic payments. This schema represents the payload that is expected to be sent along with the request.",
+        "description": "This schema represents the request body for the GET operation to retrieve domestic payment consents.",
         "example": "{}"
       },
       "GetPispByParam1Response_200": {
-        "title": "Domestic Payments Response",
         "type": "object",
         "properties": {
           "Data": {
-            "$ref": "#/components/schemas/DomesticPaymentData"
+            "$ref": "#/components/schemas/DomesticPaymentConsentData"
           },
           "metadata": {
-            "$ref": "#/components/schemas/ResponseMetadata"
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Schema representing the response from a domestic payments API.",
+        "description": "Schema representing the response for domestic payment consents operation.",
         "example": {
           "Data": {
-            "DomesticPaymentId": "PAY-994873",
             "ConsentId": "STANDARD",
             "CreationDateTime": "2026-09-15T14:30:00Z",
             "Status": "ACTIVE",
-            "StatusUpdateDateTime": "2026-09-15T14:30:00Z",
             "StatusReason": [
               {
                 "code": "SUCCESS",
@@ -119,16 +118,11 @@
                 "Path": "STANDARD"
               }
             ],
+            "StatusUpdateDateTime": "2026-09-15T14:30:00Z",
+            "ReadRefundAccount": "STANDARD",
+            "CutOffDateTime": "2026-09-15T14:30:00Z",
             "ExpectedExecutionDateTime": "2026-09-15T14:30:00Z",
             "ExpectedSettlementDateTime": "2026-09-15T14:30:00Z",
-            "Refund": {
-              "Account": {
-                "SchemeName": "Northstar Banking Service",
-                "Identification": "STANDARD",
-                "Name": "Northstar Banking Service",
-                "SecondaryIdentification": "STANDARD"
-              }
-            },
             "Charges": [
               {
                 "ChargeBearer": "STANDARD",
@@ -164,179 +158,126 @@
                 "Name": "Northstar Banking Service",
                 "LEI": "STANDARD",
                 "PostalAddress": {
-                  "AddressType": "STANDARD"
+                  "AddressType": "STANDARD",
+                  "Department": "STANDARD",
+                  "SubDepartment": "STANDARD",
+                  "StreetName": "Northstar Banking Service"
                 }
               }
             }
           },
           "metadata": {
-            "responseId": "b2488c8b-f200-5af1-8acd-b05f1256e7a6",
-            "correlationId": "a688c41a-0c07-5c58-b8d4-83a3adc0ce29",
+            "responseId": "6033b0db-6e24-54c5-95e6-4e29c6673ad0",
+            "correlationId": "f9eb10da-4fdc-5817-b5cc-7c008cb04517",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "DomesticPaymentData": {
-        "title": "Domestic Payment Data",
+      "DomesticPaymentConsentData": {
         "type": "object",
         "properties": {
-          "DomesticPaymentId": {
-            "type": "string",
-            "description": "Unique identifier for the domestic payment.",
-            "example": "string"
-          },
           "ConsentId": {
             "type": "string",
-            "description": "Identifier for the consent associated with the payment.",
+            "description": "Unique identifier for the consent.",
             "example": "string"
           },
           "CreationDateTime": {
             "type": "string",
-            "description": "Timestamp when the domestic payment was created.",
+            "description": "The date and time when the consent was created.",
             "example": "string"
           },
           "Status": {
             "type": "string",
-            "description": "Current status of the domestic payment.",
-            "example": "string"
-          },
-          "StatusUpdateDateTime": {
-            "type": "string",
-            "description": "Timestamp when the status was last updated.",
+            "description": "Current status of the consent.",
             "example": "string"
           },
           "StatusReason": {
             "type": "array",
-            "description": "Array of reasons explaining the current status.",
+            "description": "Reasons for the current status of the consent.",
             "items": {
               "$ref": "#/components/schemas/StatusReason"
             }
           },
+          "StatusUpdateDateTime": {
+            "type": "string",
+            "description": "The date and time when the status was last updated.",
+            "example": "string"
+          },
+          "ReadRefundAccount": {
+            "type": "string",
+            "description": "Indicates whether the refund account can be read.",
+            "example": "string"
+          },
+          "CutOffDateTime": {
+            "type": "string",
+            "description": "The date and time when the cutoff occurs.",
+            "example": "string"
+          },
           "ExpectedExecutionDateTime": {
             "type": "string",
-            "description": "The expected execution date and time of the payment.",
+            "description": "The expected date and time of execution.",
             "example": "string"
           },
           "ExpectedSettlementDateTime": {
             "type": "string",
-            "description": "The expected settlement date and time of the payment.",
+            "description": "The expected date and time of settlement.",
             "example": "string"
-          },
-          "Refund": {
-            "$ref": "#/components/schemas/RefundDetails"
           },
           "Charges": {
             "type": "array",
-            "description": "Array of charges associated with the domestic payment.",
+            "description": "List of charges associated with the consent.",
             "items": {
               "$ref": "#/components/schemas/Charge"
             }
           },
           "Initiation": {
-            "$ref": "#/components/schemas/PaymentInitiation"
+            "$ref": "#/components/schemas/Initiation"
           }
         },
-        "description": "Details regarding the domestic payment."
+        "description": "Contains details about the domestic payment consent."
       },
       "StatusReason": {
-        "title": "Status Reason",
         "type": "object",
         "properties": {
           "code": {
             "type": "string",
-            "description": "Error or status code relevant to the payment.",
+            "description": "Code representing the reason.",
             "example": "string"
           },
           "description": {
             "type": "string",
-            "description": "Description providing details about the status.",
+            "description": "Detailed description of the reason.",
             "example": "string"
           },
           "Path": {
             "type": "string",
-            "description": "Path providing contextual information related to the status.",
+            "description": "Path related to the reason.",
             "example": "string"
           }
         },
-        "description": "Reason providing additional information on the payment status."
-      },
-      "RefundDetails": {
-        "title": "Refund Details",
-        "type": "object",
-        "properties": {
-          "Account": {
-            "$ref": "#/components/schemas/AccountDetails"
-          }
-        },
-        "description": "Information regarding the refund associated with the payment."
-      },
-      "AccountDetails": {
-        "title": "Account Details",
-        "type": "object",
-        "properties": {
-          "SchemeName": {
-            "type": "string",
-            "description": "Name of the scheme for the account.",
-            "example": "string"
-          },
-          "Identification": {
-            "type": "string",
-            "description": "Unique identifier for the account.",
-            "example": "string"
-          },
-          "Name": {
-            "type": "string",
-            "description": "Name associated with the account.",
-            "example": "string"
-          },
-          "SecondaryIdentification": {
-            "type": "string",
-            "description": "Secondary identification related to the account.",
-            "example": "string"
-          }
-        },
-        "description": "Details of the account involved in the refund."
+        "description": "Reason details for the status of the consent."
       },
       "Charge": {
-        "title": "Charge",
         "type": "object",
         "properties": {
           "ChargeBearer": {
             "type": "string",
-            "description": "Who bears the charge for this payment.",
+            "description": "Who bears the charge.",
             "example": "string"
           },
           "Type": {
             "type": "string",
-            "description": "Type of charge applied to the payment.",
+            "description": "Type of the charge.",
             "example": "string"
           },
           "Amount": {
-            "$ref": "#/components/schemas/ChargeAmount"
+            "$ref": "#/components/schemas/Money"
           }
         },
-        "description": "Details of a charge associated with the payment."
+        "description": "Details about the charge related to the consent."
       },
-      "ChargeAmount": {
-        "title": "Charge Amount",
-        "type": "object",
-        "properties": {
-          "Amount": {
-            "type": "string",
-            "description": "Amount of the charge.",
-            "example": "string"
-          },
-          "Currency": {
-            "type": "string",
-            "description": "Currency in which the charge is denoted.",
-            "example": "string"
-          }
-        },
-        "description": "Amount and currency details of the charge."
-      },
-      "PaymentInitiation": {
-        "title": "Payment Initiation Details",
+      "Initiation": {
         "type": "object",
         "properties": {
           "InstructionIdentification": {
@@ -346,139 +287,148 @@
           },
           "EndToEndIdentification": {
             "type": "string",
-            "description": "End-to-end identification for tracking the payment.",
+            "description": "End-to-end identifier for tracking the payment.",
             "example": "string"
           },
           "LocalInstrument": {
             "type": "string",
-            "description": "Local instrument used for the payment.",
+            "description": "The local instrument used for the payment.",
             "example": "string"
           },
           "InstructedAmount": {
-            "$ref": "#/components/schemas/InstructedAmount"
+            "$ref": "#/components/schemas/Money"
           },
           "DebtorAccount": {
-            "$ref": "#/components/schemas/DebtorAccountDetails"
+            "$ref": "#/components/schemas/Account"
           },
           "CreditorAgent": {
-            "$ref": "#/components/schemas/CreditorAgentDetails"
+            "$ref": "#/components/schemas/Agent"
           }
         },
-        "description": "Details regarding the initiation of the payment."
+        "description": "Details about the initiation of the payment."
       },
-      "InstructedAmount": {
-        "title": "Instructed Amount",
+      "Money": {
         "type": "object",
         "properties": {
           "Amount": {
             "type": "string",
-            "description": "Instructed amount for the payment.",
+            "description": "The monetary amount.",
             "example": "string"
           },
           "Currency": {
             "type": "string",
-            "description": "Currency of the instructed amount.",
-            "example": "string"
+            "description": "Currency code in ISO 4217 format.",
+            "example": "EUR"
           }
         },
-        "description": "Amount details that have been instructed for the payment."
+        "description": "Representation of monetary value and currency."
       },
-      "DebtorAccountDetails": {
-        "title": "Debtor Account Details",
+      "Account": {
         "type": "object",
         "properties": {
           "SchemeName": {
             "type": "string",
-            "description": "Account scheme name.",
-            "example": "string"
+            "description": "Name of the scheme used for the account identification.",
+            "example": "IBAN"
           },
           "Identification": {
             "type": "string",
-            "description": "Account identification number.",
+            "description": "Unique identifier for the account.",
             "example": "string"
           },
           "Name": {
             "type": "string",
-            "description": "Name associated with the debtor account.",
-            "example": "string"
+            "description": "Name of the account holder.",
+            "example": "John Doe"
           },
           "SecondaryIdentification": {
             "type": "string",
-            "description": "Secondary identification for the debtor account.",
+            "description": "Additional identification for the account.",
             "example": "string"
           },
           "Proxy": {
-            "$ref": "#/components/schemas/ProxyDetails"
+            "$ref": "#/components/schemas/Proxy"
           }
         },
-        "description": "Details of the account from which the payment is debited."
+        "description": "Details of the account involved in the transaction."
       },
-      "ProxyDetails": {
-        "title": "Proxy Details",
+      "Proxy": {
         "type": "object",
         "properties": {
           "Identification": {
             "type": "string",
-            "description": "Proxy identification number.",
+            "description": "Proxy identification.",
             "example": "string"
           },
           "Code": {
             "type": "string",
-            "description": "Proxy code associated with the debtor account.",
+            "description": "Type of proxy code.",
             "example": "string"
           },
           "Type": {
             "type": "string",
-            "description": "Type of proxy for the account.",
-            "example": "string"
+            "description": "Type of proxy.",
+            "example": "email"
           }
         },
-        "description": "Proxy identification details for the debtor account."
+        "description": "Proxy details for account identification."
       },
-      "CreditorAgentDetails": {
-        "title": "Creditor Agent Details",
+      "Agent": {
         "type": "object",
         "properties": {
           "SchemeName": {
             "type": "string",
-            "description": "Name of the scheme for the creditor agent.",
-            "example": "string"
+            "description": "Name of the scheme used for the agent identification.",
+            "example": "BIC"
           },
           "Identification": {
             "type": "string",
-            "description": "Unique identifier for the creditor agent.",
+            "description": "Unique identifier for the agent.",
             "example": "string"
           },
           "Name": {
             "type": "string",
-            "description": "Name of the creditor agent.",
-            "example": "string"
+            "description": "Name of the agent.",
+            "example": "Bank of Example"
           },
           "LEI": {
             "type": "string",
-            "description": "Legal Entity Identifier of the creditor agent.",
+            "description": "Legal Entity Identifier of the agent.",
             "example": "string"
           },
           "PostalAddress": {
-            "$ref": "#/components/schemas/PostAddressDetails"
+            "$ref": "#/components/schemas/PostalAddress"
           }
         },
-        "description": "Details of the agent receiving the payment."
+        "description": "Details of the agent involved in the transaction."
       },
-      "PostAddressDetails": {
-        "title": "Postal Address Details",
+      "PostalAddress": {
         "type": "object",
         "properties": {
           "AddressType": {
             "type": "string",
-            "description": "Type of address provided.",
+            "description": "Type of address (e.g., residential, business).",
             "example": "string"
+          },
+          "Department": {
+            "type": "string",
+            "description": "Department associated with the address.",
+            "example": "string"
+          },
+          "SubDepartment": {
+            "type": "string",
+            "description": "Subdepartment associated with the address.",
+            "example": "string"
+          },
+          "StreetName": {
+            "type": "string",
+            "description": "Name of the street.",
+            "example": "Main St"
           }
         },
-        "description": "Postal address details for the creditor agent."
+        "description": "Postal address details."
       },
-      "ResponseMetadata": {
-        "title": "Response Metadata",
+      "Metadata": {
         "type": "object",
         "properties": {
           "responseId": {
@@ -488,21 +438,21 @@
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate requests and responses.",
+            "description": "Correlation ID for tracking requests.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the response was generated.",
+            "description": "The date and time when the response was generated.",
             "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing occurred.",
+            "description": "Region where the request was processed.",
             "example": "string"
           }
         },
-        "description": "Metadata related to the response of the API call."
+        "description": "Metadata related to the response."
       }
     },
     "parameters": {
@@ -533,17 +483,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "The unique identifier for the endpoint processing the request.",
+        "description": "A unique identifier for the API endpoint being accessed. This allows for tracing and auditing of the specific endpoint utilized during the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "payment-initiation-openapi-get-domestic-payment"
+          "example": "payment-initiation-openapi-get-domestic-payment-consent"
         },
-        "example": "payment-initiation-openapi-get-domestic-payment"
+        "example": "payment-initiation-openapi-get-domestic-payment-consent"
       },
       "X-Runtime-App": {
-        "description": "The name of the runtime application responsible for handling the request.",
+        "description": "Indicates the runtime application that processed the request. This information can be useful for diagnostics and performance tracking.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -556,7 +506,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses Bearer Authentication via JSON Web Tokens (JWT). The client must include a valid JWT token in the Authorization header to access protected resources.",
+        "description": "This security scheme utilizes the Bearer authentication method. The client must include a bearer token in the Authorization header when making requests, where the token should be a valid JSON Web Token (JWT) that is used to authenticate and authorize the user.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
