@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Update Operational Service By Param1-spec",
-    "description": "The Operational Services Management API allows users to modify specific operational service parameters for internal bank accounts. By using this API, organizations can efficiently update details related to their banking operations, ensuring compliance and optimization of service delivery. Typical consumers include financial institutions and operational managers who require real-time access to make adjustments. This functionality streamlines banking processes and enhances service management capabilities.",
+    "description": "This API allows for the modification of customer billing operational services using a specified parameter. It enables businesses to keep billing information up-to-date by applying changes directly to the designated customer\u2019s service. Common use cases include adjusting billing addresses, updating payment methods, or modifying service tiers. By integrating this API, developers can create dynamic billing management solutions tailored to customer needs.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/operational-services/internal-bank-account/{param1}": {
+    "/v5/banking/operational-services/customer-billing/{param1}": {
       "patch": {
         "tags": [
-          "Internal Bank Account Management"
+          "Billing Management"
         ],
-        "summary": "Update Internal Bank Account",
-        "description": "This endpoint allows authorized users to update details of the internal bank account identified by ACC-200045. Ensure that all necessary fields are provided to make the update successfully.",
+        "summary": "Update customer billing information.",
+        "description": "This endpoint allows you to update billing information for a specific customer identified by their unique ID (CUST-100045). You can modify various fields related to the customer's billing details.",
         "operationId": "updateOperationalServiceByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "Request body for updating the internal bank account associated with the given account ID. The structure must adhere to the defined schema, which specifies the necessary fields for the update operation.",
+          "description": "Updates the billing information for the customer with the specified ID. This request body should include the fields that need to be updated, adhering to the predefined schema.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully and the bank account details have been updated.",
+            "description": "Request processed successfully; the resource is updated.",
             "headers": {
               "x-endpoint-id": {
                 "$ref": "#/components/headers/x-endpoint-id"
@@ -91,15 +91,16 @@
   "components": {
     "schemas": {
       "UpdateOperationalServiceByParam1Request": {
+        "title": "Customer Billing Update Request",
         "type": "object",
         "properties": {
           "changes": {
-            "description": "An object representing the changes being requested for the internal bank account.",
+            "description": "An object containing the details about the billing changes requested.",
             "$ref": "#/components/schemas/Changes"
           },
           "changeReason": {
             "type": "string",
-            "description": "The reason for the change request.",
+            "description": "The reason for the change in billing information.",
             "example": "STANDARD"
           },
           "effectiveAt": {
@@ -109,184 +110,186 @@
           },
           "requestedBy": {
             "type": "string",
-            "description": "The identifier of the user who is requesting the change.",
+            "description": "The identifier of the user or system requesting the changes.",
             "example": "STANDARD"
           },
           "requestContext": {
-            "description": "Context information about the request.",
+            "description": "Contextual information about the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
+        "description": "Schema representing the request body for updating customer billing information.",
         "example": {
           "changes": {
-            "operationId": "STANDARD",
-            "customerId": "CUST-910002",
-            "accountId": "ACC-506558"
+            "billingAccountId": "ACC-135233",
+            "customerId": "CUST-686220",
+            "billingPeriod": "STANDARD"
           },
           "changeReason": "STANDARD",
           "effectiveAt": "2026-09-15T14:30:00Z",
           "requestedBy": "STANDARD",
           "requestContext": {
-            "requestId": "2ac97acc-9f12-51e1-8147-bfa4e446def1",
-            "correlationId": "0dfc4e53-f541-53f0-8900-372683f52474",
-            "idempotencyKey": "c03da3e4-0ede-5542-b519-c673c5176924",
+            "requestId": "ede401ff-c995-5083-93e8-f71b5483e7a4",
+            "correlationId": "706a8be9-8973-5632-bed5-b89ba8dc943f",
+            "idempotencyKey": "64f5553a-bd0a-5ee4-9f5e-6b706f19758a",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-571519"
+              "deviceId": "DEV-598684"
             }
           }
         }
       },
       "Changes": {
+        "title": "Billing Changes",
         "type": "object",
         "properties": {
-          "operationId": {
+          "billingAccountId": {
             "type": "string",
-            "description": "The unique identifier for the operation being requested.",
-            "example": "string"
+            "description": "The unique identifier for the billing account.",
+            "example": "billing123"
           },
           "customerId": {
             "type": "string",
-            "description": "The unique identifier of the customer associated with the account.",
-            "example": "string"
+            "description": "The unique identifier for the customer.",
+            "example": "customer456"
           },
-          "accountId": {
+          "billingPeriod": {
             "type": "string",
-            "description": "The unique identifier of the account being modified.",
-            "example": "string"
+            "description": "The billing period for which changes are applied.",
+            "example": "2023-10"
           }
         },
-        "description": "An object that encapsulates the details of changes to be made."
+        "description": "Schema representing the changes to be made to the billing information."
       },
       "RequestContext": {
+        "title": "Request Context",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
-            "description": "The unique identifier for the request.",
-            "example": "string"
+            "description": "A unique identifier for the request.",
+            "example": "req789"
           },
           "correlationId": {
             "type": "string",
-            "description": "An identifier used to correlate multiple requests.",
-            "example": "string"
+            "description": "An identifier used to correlate related requests.",
+            "example": "corr321"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "A unique key to prevent duplicate processing of the request.",
-            "example": "string"
+            "description": "A key to ensure the request is idempotent.",
+            "example": "idempotency-abc"
           },
           "requestedAt": {
             "type": "string",
             "description": "The timestamp when the request was made.",
-            "example": "string"
+            "example": "2023-10-01T10:00:00Z"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "The source system where the request originated.",
-            "example": "string"
+            "description": "The system from which the request originated.",
+            "example": "billingSystem"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application from which the request was made.",
-            "example": "string"
+            "description": "The application through which the request was made.",
+            "example": "billingApp"
           },
           "channel": {
             "description": "Information about the channel through which the request was made.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Contextual information surrounding the request."
+        "description": "Schema representing the context of the request."
       },
       "Channel": {
+        "title": "Request Channel",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "A unique identifier for the channel.",
-            "example": "string"
+            "description": "The unique identifier for the channel.",
+            "example": "channelId123"
           },
           "channelType": {
             "type": "string",
-            "description": "The type of channel (e.g., web, mobile).",
-            "example": "string"
+            "description": "The type of channel used for making the request.",
+            "example": "web"
           },
           "deviceId": {
             "type": "string",
-            "description": "The identifier for the device used in the request.",
-            "example": "string"
+            "description": "The unique identifier for the device used in the request.",
+            "example": "device456"
           }
         },
-        "description": "An object representing the channel information of the request."
+        "description": "Schema representing details about the channel used for the request."
       },
       "UpdateOperationalServiceByParam1Response_200": {
-        "title": "Internal Bank Account Update Response",
         "type": "object",
         "properties": {
           "version": {
             "type": "integer",
-            "description": "The version of the response schema.",
+            "description": "The version number of the response.",
             "format": "int32",
             "example": 1
           },
           "status": {
             "type": "string",
-            "description": "The status of the operation performed on the internal bank account.",
+            "description": "The status of the operation.",
             "example": "ACTIVE"
           },
           "updatedAt": {
             "type": "string",
-            "description": "The timestamp indicating when the internal bank account was last updated.",
+            "description": "The timestamp when the operation was last updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Additional metadata related to the request and response.",
+            "description": "Metadata related to the operation response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "This schema represents the response structure for the PATCH operation on an internal bank account.",
+        "description": "Response schema for customer billing operation patch request.",
         "example": {
           "version": 1,
           "status": "ACTIVE",
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "8ae4d2d9-2337-530d-8a2c-818d8622c4fc",
-            "correlationId": "0dfc4e53-f541-53f0-8900-372683f52474",
+            "responseId": "04068e08-76e0-5760-af5c-6b85058f7ce3",
+            "correlationId": "706a8be9-8973-5632-bed5-b89ba8dc943f",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
       "Metadata": {
-        "title": "Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "A unique identifier for the response.",
-            "example": "abc123"
+            "description": "Unique identifier for the response.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "A unique identifier used to correlate related operations.",
-            "example": "xyz456"
+            "description": "Identifier to track the request across different services.",
+            "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp when the response was generated.",
-            "example": "2023-10-25T14:48:00Z"
+            "description": "The timestamp when the metadata was generated.",
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing took place.",
-            "example": "us-east-1"
+            "description": "The geographical region where the processing occurred.",
+            "example": "string"
           }
         },
-        "description": "This schema contains additional metadata information for the operation."
+        "description": "Detailed information related to the response metadata."
       }
     },
     "parameters": {
@@ -317,21 +320,21 @@
     },
     "headers": {
       "x-endpoint-id": {
+        "description": "An identifier unique to the specific endpoint being accessed. This can be useful for tracking requests.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "description": "A unique identifier for the specific API endpoint being accessed.",
-          "example": "internal-bank-account-update-internal-bank-account"
+          "example": "customer-billing-update-customer-billing"
         },
-        "example": "internal-bank-account-update-internal-bank-account"
+        "example": "customer-billing-update-customer-billing"
       },
       "x-runtime-app": {
+        "description": "The name of the application that handled the request. It helps in identifying the source of the operation.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "description": "The name of the application where the API is being executed.",
           "example": "operations-openfinance"
         },
         "example": "operations-openfinance"
@@ -340,7 +343,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme utilizes the Bearer authentication method using JSON Web Tokens (JWT). Clients must include a valid JWT token in the authorization header of their requests to access protected resources.",
+        "description": "Authentication scheme using Bearer tokens. The tokens should be in the format of JSON Web Tokens (JWT), which are commonly used for securely transmitting information between parties as a JSON object.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
