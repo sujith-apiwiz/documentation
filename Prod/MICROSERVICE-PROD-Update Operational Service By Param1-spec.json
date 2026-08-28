@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Update Operational Service By Param1-spec",
-    "description": "This API facilitates the update of specific operational service records based on the provided parameter, 'param1'. It allows businesses to modify detailed channel activity history associated with operational services, ensuring data relevance and accuracy. Typical consumers of this API include financial institutions and service administrators who need to maintain up-to-date records. In use cases, this API aids in real-time system adjustments and optimizations to enhance customer interactions.",
+    "description": "The Update Operational Service Parameters API allows users to adjust specific operational services identified by unique parameters. This endpoint is essential for maintaining the accuracy and relevance of service offerings, enabling financial institutions to tailor their card collections effectively. Typical consumers include banking partners, system integrators, and operational teams looking to enhance service configurations. The API supports dynamic updates to operational parameters, ensuring that banking services are responsive to changing business needs.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/operational-services/channel-activity-history/{param1}": {
+    "/v5/banking/operational-services/card-collections/{param1}": {
       "patch": {
         "tags": [
-          "Channel Activity Management"
+          "Card Collection Management"
         ],
-        "summary": "Update Channel Activity History",
-        "description": "This operation allows you to update the channel activity history for a specified resource. It is essential for maintaining the accuracy and relevance of channel data within the operational services.",
+        "summary": "Update card collection details.",
+        "description": "This endpoint allows you to update the details of a specific card collection by its unique identifier. Ensure that you provide the necessary fields that need to be updated in the request body.",
         "operationId": "updateOperationalServiceByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to update the channel activity history for a specific resource identified by RES-100045. It contains the necessary information to modify the existing resource attributes, ensuring that the channel's operational data is accurately represented.",
+          "description": "This request body contains the necessary information to update the state of the card collection identified by CARD-400045. It allows for the modification of various attributes related to the card collection.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "The request was successful, and the resource was updated.",
+            "description": "Request completed successfully, and the resource has been updated.",
             "headers": {
               "x-endpoint-id": {
                 "$ref": "#/components/headers/x-endpoint-id"
@@ -91,176 +91,172 @@
   "components": {
     "schemas": {
       "UpdateOperationalServiceByParam1Request": {
-        "title": "Channel Activity History Request Body",
         "type": "object",
         "properties": {
           "changes": {
-            "description": "An object containing the changes to be applied to the channel activity.",
-            "$ref": "#/components/schemas/Changes"
+            "description": "An object containing the changes to be applied to the card account.",
+            "$ref": "#/components/schemas/CardChanges"
           },
           "changeReason": {
             "type": "string",
-            "description": "The reason for the changes being requested.",
+            "description": "The reason for the change being requested.",
             "example": "STANDARD"
           },
           "effectiveAt": {
             "type": "string",
-            "description": "The date and time when the changes should take effect.",
+            "description": "The date and time when the change should take effect.",
             "example": "2026-09-15T14:30:00Z"
           },
           "requestedBy": {
             "type": "string",
-            "description": "Identifier of the user or system requesting the change.",
+            "description": "The identifier of the user or system requesting this change.",
             "example": "STANDARD"
           },
           "requestContext": {
-            "description": "Contextual information regarding the request.",
+            "description": "Contextual information about the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Schema representing the request body for the PATCH operation on channel activity history.",
+        "description": "Request body for the PATCH operation on a card collection service.",
         "example": {
           "changes": {
-            "operationId": "STANDARD",
-            "customerId": "CUST-666405",
-            "accountId": "ACC-166983"
+            "cardAccountId": "ACC-649553",
+            "customerId": "CUST-138918",
+            "daysPastDue": 1
           },
           "changeReason": "STANDARD",
           "effectiveAt": "2026-09-15T14:30:00Z",
           "requestedBy": "STANDARD",
           "requestContext": {
-            "requestId": "649c6609-e677-5581-9006-27732be743da",
-            "correlationId": "4f18914c-2e88-5f47-891b-8db121b02d1f",
-            "idempotencyKey": "0449198a-a862-532d-8c70-c0686596d199",
+            "requestId": "9db0d1fb-4d20-5bce-9a17-0946df933446",
+            "correlationId": "fe88c396-ed12-5cea-aa96-3287c405c151",
+            "idempotencyKey": "f65c7633-8542-582f-b061-2322e08c9602",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-448968"
+              "deviceId": "DEV-903386"
             }
           }
         }
       },
-      "Changes": {
-        "title": "Changes Object",
+      "CardChanges": {
         "type": "object",
         "properties": {
-          "operationId": {
+          "cardAccountId": {
             "type": "string",
-            "description": "Identifier for the operation being requested.",
-            "example": "string"
+            "description": "The unique identifier for the card account.",
+            "example": "1234-5678-9876-5432"
           },
           "customerId": {
             "type": "string",
-            "description": "Identifier for the customer associated with the operation.",
-            "example": "string"
+            "description": "The unique identifier for the customer associated with the card account.",
+            "example": "customer_456"
           },
-          "accountId": {
-            "type": "string",
-            "description": "Identifier for the account related to the changes.",
-            "example": "string"
+          "daysPastDue": {
+            "type": "integer",
+            "description": "The number of days the account is overdue.",
+            "format": "int32",
+            "example": 0
           }
         },
-        "description": "Schema representing the changes that need to be applied."
+        "description": "Details of the changes made to a card account."
       },
       "RequestContext": {
-        "title": "Request Context Object",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "string"
+            "description": "A unique identifier for the request.",
+            "example": "req_789"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to track related requests.",
-            "example": "string"
+            "description": "An identifier to correlate logs related to the request.",
+            "example": "corr_456"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key to ensure the idempotency of the request.",
-            "example": "string"
+            "description": "A key to ensure that the request can be safely retried without unintended effects.",
+            "example": "idemp_123"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp when the request was made.",
-            "example": "string"
+            "description": "The timestamp when the request was made.",
+            "example": "2023-01-01T00:00:00Z"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "System from where the request was originated.",
-            "example": "string"
+            "description": "The system from which the request originates.",
+            "example": "card_system"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "Application that is making the request.",
-            "example": "string"
+            "description": "The application from which the request originates.",
+            "example": "card_app"
           },
           "channel": {
-            "description": "Information regarding the channel through which the request was made.",
-            "$ref": "#/components/schemas/Channel"
+            "description": "Information about the channel used for the request.",
+            "$ref": "#/components/schemas/RequestChannel"
           }
         },
-        "description": "Schema containing contextual information for the request."
+        "description": "Information about the context of the request."
       },
-      "Channel": {
-        "title": "Channel Object",
+      "RequestChannel": {
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "string"
+            "description": "The unique identifier for the communication channel.",
+            "example": "chan_001"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of the channel (e.g., mobile, web).",
-            "example": "string"
+            "description": "The type of communication channel (e.g., web, mobile).",
+            "example": "mobile"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier of the device being used.",
-            "example": "string"
+            "description": "The identifier for the device used to make the request.",
+            "example": "device_001"
           }
         },
-        "description": "Schema representing channel information."
+        "description": "Information about the channel through which the request was made."
       },
       "UpdateOperationalServiceByParam1Response_200": {
-        "title": "Operations Channel Activity History Response",
         "type": "object",
         "properties": {
           "version": {
             "type": "integer",
-            "description": "The version of the response schema.",
+            "description": "Indicates the version of the response.",
             "format": "int32",
             "example": 1
           },
           "status": {
             "type": "string",
-            "description": "The status of the operation, indicating its result.",
+            "description": "The status message of the operation.",
             "example": "ACTIVE"
           },
           "updatedAt": {
             "type": "string",
-            "description": "The timestamp when the operation was last updated.",
+            "description": "Timestamp of when the operation was last updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "An object containing additional metadata related to the response.",
+            "description": "Metadata related to the operation response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "This schema represents the response structure for the PATCH operation on channel activity history.",
+        "description": "Response schema for the PATCH operation on card collections. Contains status and metadata regarding the update.",
         "example": {
           "version": 1,
           "status": "ACTIVE",
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "25620239-4950-5dc4-b449-6191b819798e",
-            "correlationId": "4f18914c-2e88-5f47-891b-8db121b02d1f",
+            "responseId": "bd22bd91-9da1-527f-adaa-6e2497f98ace",
+            "correlationId": "fe88c396-ed12-5cea-aa96-3287c405c151",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
@@ -271,26 +267,26 @@
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "A unique identifier for the response.",
+            "description": "Unique identifier for the response.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "An identifier that correlates multiple requests or operations together.",
+            "description": "Identifier for correlating requests and responses.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp when the response was generated.",
+            "description": "Timestamp of when the metadata was generated.",
             "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the operation was processed.",
+            "description": "The region where the processing took place.",
             "example": "string"
           }
         },
-        "description": "Contains metadata about the operation response."
+        "description": "Metadata information regarding the operation."
       }
     },
     "parameters": {
@@ -321,17 +317,17 @@
     },
     "headers": {
       "x-endpoint-id": {
-        "description": "The unique identifier for the endpoint that processed the request.",
+        "description": "A unique identifier for the API endpoint being executed. This value allows tracking of requests and debugging.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "channel-activity-history-update-channel-activity-history"
+          "example": "card-collections-update-card-collections"
         },
-        "example": "channel-activity-history-update-channel-activity-history"
+        "example": "card-collections-update-card-collections"
       },
       "x-runtime-app": {
-        "description": "The name of the application that handled the request.",
+        "description": "The name of the application that initiated the API call. This is helpful for identifying application-specific issues.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -344,7 +340,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses Bearer Authentication as defined in RFC 6750. Clients must include a JWT (JSON Web Token) in the authorization header of their requests to access secured resources.",
+        "description": "This security scheme uses Bearer authentication. A valid JWT (JSON Web Token) must be provided in the 'Authorization' header of the request. The token grants access to the API, ensuring that only authenticated users can interact with the application.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

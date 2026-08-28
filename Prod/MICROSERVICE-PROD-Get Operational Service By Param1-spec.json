@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Get Operational Service By Param1-spec",
-    "description": "This API allows users to retrieve operational service details related to card transactions using a specific parameter. It is designed to support financial institutions and service providers in accessing critical transaction information efficiently. Typical consumers include developers working on banking applications and integration specialists who require real-time data for transaction processing. By utilizing this endpoint, businesses can enhance their operational capabilities and improve service delivery within their banking environments.",
+    "description": "The Card Collections Retrieval API enables users to access detailed operational service information related to specific card collections based on provided parameters. This API facilitates access to important financial data, helping banking professionals and developers integrate operational insights into their applications. Typical consumers include financial institutions, app developers, and analysts seeking to optimize their banking solutions. It supports efficient data retrieval for enhanced decision-making and customer service.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/operational-services/card-transaction-switch/{param1}": {
+    "/v5/banking/operational-services/card-collections/{param1}": {
       "get": {
         "tags": [
-          "Card Transactions"
+          "Card Collections"
         ],
-        "summary": "Retrieve details of a specific card transaction switch.",
-        "description": "This endpoint allows you to fetch detailed information about the card transaction switch identified by CARD-400045. It provides the necessary data related to the transaction which can be useful for auditing or operational checks.",
+        "summary": "Retrieve the details of a specified card collection.",
+        "description": "This endpoint fetches detailed information about the specified card collection, identified by its unique identifier. It allows developers to access various attributes and status information related to the card collection, facilitating transparency and management of card-related data.",
         "operationId": "getOperationalServiceByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "Request body for retrieving card transaction details associated with a specific operation. This payload should contain all necessary parameters to process the request.",
+          "description": "This request body is used to obtain details about the specific card collection identified by CARD-400045. It must include all necessary parameters required by the service.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "The request was successful and the response contains the requested data.",
+            "description": "The request was successful, and the resource data is returned.",
             "headers": {
               "x-endpoint-id": {
                 "$ref": "#/components/headers/x-endpoint-id"
@@ -92,103 +92,121 @@
     "schemas": {
       "GetOperationalServiceByParam1Request": {
         "type": "string",
-        "description": "This schema represents the request body for the GET operation related to card transaction switching services. It is intended to receive data in string format.",
+        "description": "This schema represents the request body expected for the operations related to card collections.",
         "example": "{}"
       },
       "GetOperationalServiceByParam1Response_200": {
-        "title": "Card Transaction Operation Response",
         "type": "object",
         "properties": {
-          "operationId": {
+          "cardAccountId": {
             "type": "string",
-            "description": "Unique identifier for the operation.",
-            "example": "STANDARD"
+            "description": "Unique identifier for the card account.",
+            "example": "ACC-500138"
           },
           "customerId": {
             "type": "string",
-            "description": "Identifier for the customer associated with the transaction.",
-            "example": "CUST-785945"
+            "description": "Unique identifier for the customer associated with the card account.",
+            "example": "CUST-224716"
           },
-          "accountId": {
-            "type": "string",
-            "description": "Identifier for the account involved in the transaction.",
-            "example": "ACC-315091"
+          "daysPastDue": {
+            "type": "integer",
+            "description": "Number of days the payment is past due.",
+            "format": "int32",
+            "example": 1
           },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp indicating when the transaction was requested.",
-            "example": "2026-08-11T12:00:00Z"
+          "outstandingBalance": {
+            "description": "Current outstanding balance details for the card account.",
+            "$ref": "#/components/schemas/OutstandingBalance"
           },
-          "priority": {
+          "collectionStrategy": {
             "type": "string",
-            "description": "Priority level of the transaction request.",
-            "example": "NORMAL"
+            "description": "The strategy applied for managing collections on this card account.",
+            "example": "STANDARD"
           },
           "recordStatus": {
             "type": "string",
-            "description": "Current status of the transaction record.",
+            "description": "Current status of the record.",
             "example": "ACTIVE"
           },
           "version": {
             "type": "integer",
-            "description": "Version number of the transaction record.",
+            "description": "Version number of the card account data.",
             "format": "int32",
             "example": 1
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the transaction record was last updated.",
+            "description": "Timestamp of the last update made to the card account.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Additional metadata related to the transaction.",
-            "$ref": "#/components/schemas/TransactionMetadata"
+            "description": "Metadata associated with the card account.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Represents the response object for a card transaction operation.",
+        "description": "Schema representing the response for a successful GET operation on card collections.",
         "example": {
-          "operationId": "STANDARD",
-          "customerId": "CUST-785945",
-          "accountId": "ACC-315091",
-          "requestedAt": "2026-08-11T12:00:00Z",
-          "priority": "NORMAL",
+          "cardAccountId": "ACC-500138",
+          "customerId": "CUST-224716",
+          "daysPastDue": 1,
+          "outstandingBalance": {
+            "amount": 100,
+            "currency": "USD"
+          },
+          "collectionStrategy": "STANDARD",
           "recordStatus": "ACTIVE",
           "version": 1,
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "248ea54d-e2d3-51e8-9c65-32568456dfb7",
-            "correlationId": "a5fdf0b5-86e1-508c-a979-dc932fb43588",
+            "responseId": "8e30dae6-1298-5bdf-9ec5-bd524b9620bc",
+            "correlationId": "e0204384-7a16-5e8d-b811-7d0590291de8",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "TransactionMetadata": {
-        "title": "Transaction Metadata",
+      "OutstandingBalance": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "description": "The total outstanding amount on the card account.",
+            "format": "int32",
+            "example": 0
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency in which the outstanding balance is denominated.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing the outstanding balance details for a card account."
+      },
+      "Metadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
             "description": "Unique identifier for the response.",
-            "example": "res-98765"
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate requests and responses.",
-            "example": "cor-54321"
+            "description": "Unique identifier for tracing the request across systems.",
+            "example": "string"
           },
           "generatedAt": {
             "type": "string",
             "description": "Timestamp indicating when the metadata was generated.",
-            "example": "2023-10-01T12:30:00Z"
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing of the transaction occurred.",
-            "example": "us-east-1"
+            "description": "Region where the processing took place.",
+            "example": "string"
           }
         },
-        "description": "Contains metadata information about the transaction."
+        "description": "Schema representing metadata associated with the card account."
       }
     },
     "parameters": {
@@ -223,9 +241,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "card-transaction-switch-get-card-transaction-switch"
+          "example": "card-collections-get-card-collections"
         },
-        "example": "card-transaction-switch-get-card-transaction-switch"
+        "example": "card-collections-get-card-collections"
       },
       "x-runtime-app": {
         "style": "simple",
@@ -240,7 +258,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme utilizes HTTP Bearer authentication. Clients must provide a JWT (JSON Web Token) in the Authorization header of the request to gain access to protected resources.",
+        "description": "Authentication scheme that utilizes Bearer tokens, typically in the form of a JSON Web Token (JWT), to authenticate users. Ensure the token is included in the 'Authorization' header for secure API access.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
