@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Update Operational Service By Param1-spec",
-    "description": "The Operational Services Management API allows users to update specific operational services based on parameterized input. This endpoint is designed for businesses to manage their banking operational workflows efficiently. Developers can utilize this API to tailor operational services, optimize resource allocation, and improve service management. Typical consumers include banking application developers and operational management teams looking to refine their service offerings.",
+    "description": "The Operational Device Tracking Update API allows businesses to modify attributes of issued devices based on specific parameters. This endpoint enables users to efficiently manage device tracking information and ensure that operational data remains accurate and up-to-date. Typical consumers include banking institutions and operational managers needing real-time updates to device status. By utilizing this API, organizations can streamline their operational workflows and improve reporting capabilities.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/operational-services/open-item-management/{param1}": {
+    "/v5/banking/operational-services/issued-device-tracking/{param1}": {
       "patch": {
         "tags": [
-          "Open Item Management"
+          "Issued Device Management"
         ],
-        "summary": "Update Open Item Management Resource",
-        "description": "This operation allows you to update the details of a specific Open Item Management resource identified by the given ID. Use this endpoint to apply changes to the item attributes as necessary.",
+        "summary": "Update the tracking information for an issued device.",
+        "description": "This endpoint allows you to update the tracking details of a specific issued device identified by its resource ID, enabling better management of device allocation and usage.",
         "operationId": "updateOperationalServiceByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to perform a partial update on the specified resource (RES-100045) within the Open Item Management operational services. It allows clients to send only the fields that require updating without needing to provide the entire resource representation.",
+          "description": "This request body is used for updating the tracking details of an issued device. It should contain the necessary fields to modify the current state of the device tracking information.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "The request was successful and the resource has been updated.",
+            "description": "The request was processed successfully and the resource has been updated.",
             "headers": {
               "x-endpoint-id": {
                 "$ref": "#/components/headers/x-endpoint-id"
@@ -91,171 +91,201 @@
   "components": {
     "schemas": {
       "UpdateOperationalServiceByParam1Request": {
+        "title": "Device Tracking Update Request",
+        "required": [
+          "changeReason",
+          "changes",
+          "effectiveAt",
+          "requestContext",
+          "requestedBy"
+        ],
         "type": "object",
         "properties": {
           "changes": {
-            "description": "Contains the details of the changes to be made to the open item.",
-            "$ref": "#/components/schemas/Changes"
+            "description": "Details of the changes being made to the device.",
+            "$ref": "#/components/schemas/DeviceChanges"
           },
           "changeReason": {
             "type": "string",
-            "description": "The reason for the change being requested.",
+            "description": "Reason for making the changes.",
             "example": "STANDARD"
           },
           "effectiveAt": {
             "type": "string",
-            "description": "The timestamp indicating when the changes should take effect.",
+            "description": "Timestamp of when the changes become effective.",
             "example": "2026-09-15T14:30:00Z"
           },
           "requestedBy": {
             "type": "string",
-            "description": "The identifier for the person or system requesting the change.",
+            "description": "Identifier of the user making the request.",
             "example": "STANDARD"
           },
           "requestContext": {
-            "description": "Contextual information about the request.",
+            "description": "Context information about the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "A schema representing the request body for the PATCH operation to manage open items.",
+        "description": "Schema representing the request body to update device tracking information.",
         "example": {
           "changes": {
-            "operationId": "STANDARD",
-            "customerId": "CUST-362774",
-            "accountId": "ACC-188732"
+            "deviceId": "DEV-567363",
+            "deviceType": "STANDARD",
+            "assignedPartyId": "PARTY-301189"
           },
           "changeReason": "STANDARD",
           "effectiveAt": "2026-09-15T14:30:00Z",
           "requestedBy": "STANDARD",
           "requestContext": {
-            "requestId": "a4efaea1-30bf-5108-888d-f52ee56ce2e0",
-            "correlationId": "31459425-34fe-5f66-af05-c31a04ca0346",
-            "idempotencyKey": "72fa7cf6-a32b-54f5-913b-8629b4b79c32",
+            "requestId": "2f456e13-8b1e-5108-8d65-07a76042bbc5",
+            "correlationId": "c3c76640-82c3-5240-acae-0c8f6af23c8b",
+            "idempotencyKey": "4cf92d62-e118-5da6-922b-af5a8810997e",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-850709"
+              "deviceId": "DEV-827079"
             }
           }
         }
       },
-      "Changes": {
+      "DeviceChanges": {
+        "title": "Device Changes",
+        "required": [
+          "assignedPartyId",
+          "deviceId",
+          "deviceType"
+        ],
         "type": "object",
         "properties": {
-          "operationId": {
+          "deviceId": {
             "type": "string",
-            "description": "Unique identifier for the operation.",
-            "example": "string"
+            "description": "Unique identifier for the device.",
+            "example": "device-001"
           },
-          "customerId": {
+          "deviceType": {
             "type": "string",
-            "description": "Identifier for the customer related to the change.",
-            "example": "string"
+            "description": "Type of the device, e.g., 'smartphone', 'tablet'.",
+            "example": "smartphone"
           },
-          "accountId": {
+          "assignedPartyId": {
             "type": "string",
-            "description": "Identifier for the account associated with the change.",
-            "example": "string"
+            "description": "Identifier for the party to whom the device is assigned.",
+            "example": "party-123"
           }
         },
-        "description": "A schema representing the specific changes to be applied to the open item."
+        "description": "Schema representing the details of changes made to a device."
       },
       "RequestContext": {
+        "title": "Request Context",
+        "required": [
+          "channel",
+          "correlationId",
+          "idempotencyKey",
+          "requestId",
+          "requestedAt",
+          "sourceApplication",
+          "sourceSystem"
+        ],
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
             "description": "Unique identifier for the request.",
-            "example": "string"
+            "example": "req-001"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate multiple related requests.",
-            "example": "string"
+            "description": "Identifier used to trace multiple calls related to the same transaction.",
+            "example": "corr-001"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key to ensure that the request is idempotent.",
-            "example": "string"
+            "description": "Key used to ensure that requests are processed only once.",
+            "example": "idempotent-key-001"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp for when the request was made.",
-            "example": "string"
+            "description": "Timestamp of when the request was made.",
+            "example": "2023-10-01T12:00:00Z"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "Identifier for the system from which the request originated.",
-            "example": "string"
+            "description": "System from which the request originated.",
+            "example": "mobile-app"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "Identifier for the application from which the request originated.",
-            "example": "string"
+            "description": "Application from which the request was sent.",
+            "example": "device-manager"
           },
           "channel": {
-            "description": "Information about the channel through which the request was made.",
-            "$ref": "#/components/schemas/Channel"
+            "description": "Information about the channel used for the request.",
+            "$ref": "#/components/schemas/RequestChannel"
           }
         },
-        "description": "Contextual information regarding the request made for the API operation."
+        "description": "Schema representing the context of the request, including correlation and tracking information."
       },
-      "Channel": {
+      "RequestChannel": {
+        "title": "Request Channel",
+        "required": [
+          "channelId",
+          "channelType",
+          "deviceId"
+        ],
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
             "description": "Unique identifier for the channel.",
-            "example": "string"
+            "example": "channel-001"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of channel used for the request.",
-            "example": "string"
+            "description": "Type of the channel used for the request, e.g., 'web', 'mobile'.",
+            "example": "mobile"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier for the device used to make the request.",
-            "example": "string"
+            "description": "The device ID that initiated the request.",
+            "example": "device-001"
           }
         },
-        "description": "Information about the channel used for the request."
+        "description": "Schema representing details about the channel used for the request."
       },
       "UpdateOperationalServiceByParam1Response_200": {
         "type": "object",
         "properties": {
           "version": {
             "type": "integer",
-            "description": "Indicates the version of the response.",
+            "description": "The version number of the API response.",
             "format": "int32",
             "example": 1
           },
           "status": {
             "type": "string",
-            "description": "Describes the status of the operation.",
+            "description": "The status of the operation, providing information about the success or failure.",
             "example": "ACTIVE"
           },
           "updatedAt": {
             "type": "string",
-            "description": "The timestamp when the resource was last updated.",
+            "description": "The timestamp indicating when the operation was last updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Contains additional information about the response.",
+            "description": "Additional metadata about the response, including identifiers and processing information.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the PATCH operation in the Open Item Management service.",
+        "description": "Response schema for the PATCH operation on issued device tracking, indicating the status and metadata of the operation.",
         "example": {
           "version": 1,
           "status": "ACTIVE",
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "3fc43ba3-73ca-5e5a-ba9b-bab3a9a8d17e",
-            "correlationId": "31459425-34fe-5f66-af05-c31a04ca0346",
+            "responseId": "cf011153-aabe-5b11-aaca-3b8f0ecff947",
+            "correlationId": "c3c76640-82c3-5240-acae-0c8f6af23c8b",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
@@ -266,26 +296,26 @@
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "12345"
+            "description": "A unique identifier for the response.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to trace requests across systems.",
-            "example": "abcde"
+            "description": "An identifier used to correlate multiple related operations.",
+            "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the response was generated.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "The timestamp indicating when the metadata was generated.",
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing occurred.",
-            "example": "us-west-1"
+            "description": "The region where the operation was processed.",
+            "example": "string"
           }
         },
-        "description": "Metadata about the response including identifiers and timestamps."
+        "description": "Metadata schema containing additional information about the operation."
       }
     },
     "parameters": {
@@ -316,15 +346,17 @@
     },
     "headers": {
       "x-endpoint-id": {
+        "description": "A unique identifier for the endpoint that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "open-item-management-update-open-item-management"
+          "example": "issued-device-tracking-update-issued-device-tracking"
         },
-        "example": "open-item-management-update-open-item-management"
+        "example": "issued-device-tracking-update-issued-device-tracking"
       },
       "x-runtime-app": {
+        "description": "The name of the application where the request was handled.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -337,7 +369,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the Bearer authentication scheme. Clients must include a valid JSON Web Token (JWT) in the Authorization header to access secured endpoints.",
+        "description": "This security scheme uses a Bearer Authentication mechanism, where a JWT (JSON Web Token) is transmitted in the 'Authorization' header to authenticate requests.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

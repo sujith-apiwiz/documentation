@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Get Operational Service By Param1-spec",
-    "description": "The Operational Service Retrieval API enables users to access details of operational services based on specific parameters. Through this API endpoint, consumers can retrieve information pertaining to open item management by supplying the required param1. This functionality is particularly valuable for banking institutions and financial services that require quick access to operational data for reporting and analysis. Typical use cases include customer support, operational audits, and data reconciliation.",
+    "description": "The Operational Service Retrieval API allows authorized users to fetch detailed information about specific operational services related to leasing item administration. By providing an identifier as 'param1', users can access relevant data for a designated service, facilitating efficient management and decision-making. This API is particularly useful for banking professionals who require real-time access to operational service details for reporting, compliance, or system integration purposes. Typical consumers include application developers, banking analysts, and operational managers.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/operational-services/open-item-management/{param1}": {
+    "/v5/banking/operational-services/leasing-item-administration/{param1}": {
       "get": {
         "tags": [
-          "Open Item Management"
+          "Leasing Management"
         ],
-        "summary": "Retrieve open item details.",
-        "description": "Fetch detailed information about the open item with the specified ID. This endpoint provides comprehensive data regarding the item's current status, associated transactions, and relevant metadata.",
+        "summary": "Retrieve Leasing Item Details",
+        "description": "Fetches detailed information about a specific leasing item identified by the given resource ID. This endpoint provides all relevant attributes associated with the leasing item, enabling clients to understand its specifications and status.",
         "operationId": "getOperationalServiceByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "The request body for retrieving operational services regarding open item management for the specified resource. Ensure that the payload adheres to the expected schema for a successful response.",
+          "description": "This request body is used to retrieve specific information regarding leasing item administration for the service identified by RES-100045. Ensure that the required parameters and data formatting are strictly followed according to the schema provided.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful retrieval of the open item data.",
+            "description": "The request was successful and the relevant data has been returned.",
             "headers": {
               "x-endpoint-id": {
                 "$ref": "#/components/headers/x-endpoint-id"
@@ -92,11 +92,11 @@
     "schemas": {
       "GetOperationalServiceByParam1Request": {
         "type": "string",
-        "description": "This schema represents the request body for the GET operation related to the open item management service, specifically for operation ID RES-100045.",
+        "description": "This schema represents the JSON body of a request for the GET operation on leasing item administration services.",
         "example": "{}"
       },
       "GetOperationalServiceByParam1Response_200": {
-        "title": "Open Item Management Response",
+        "title": "Operational Services Lease Item Administration Response",
         "type": "object",
         "properties": {
           "operationId": {
@@ -107,12 +107,12 @@
           "customerId": {
             "type": "string",
             "description": "Identifier for the customer associated with the operation.",
-            "example": "CUST-428317"
+            "example": "CUST-193831"
           },
           "accountId": {
             "type": "string",
             "description": "Identifier for the account associated with the operation.",
-            "example": "ACC-308151"
+            "example": "ACC-494311"
           },
           "requestedAt": {
             "type": "string",
@@ -124,9 +124,24 @@
             "description": "Priority level of the operation.",
             "example": "NORMAL"
           },
+          "leasedAssetId": {
+            "type": "string",
+            "description": "Identifier for the leased asset involved in the operation.",
+            "example": "STANDARD"
+          },
+          "residualValue": {
+            "description": "Object representing the residual value of the leased asset.",
+            "$ref": "#/components/schemas/ResidualValue"
+          },
+          "leaseTermMonths": {
+            "type": "integer",
+            "description": "Duration of the lease term expressed in months.",
+            "format": "int32",
+            "example": 1
+          },
           "recordStatus": {
             "type": "string",
-            "description": "Current status of the operation record.",
+            "description": "Current status of the record.",
             "example": "ACTIVE"
           },
           "version": {
@@ -137,34 +152,58 @@
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the operation was last updated.",
+            "description": "Timestamp indicating when the record was last updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Metadata related to the operation, including various identifiers and timestamps.",
-            "$ref": "#/components/schemas/OperationMetadata"
+            "description": "Object containing additional metadata related to the operation.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "This schema represents the response structure for the Open Item Management API, specifically for retrieving operational items.",
+        "description": "Schema representing the response structure for lease item administration operations.",
         "example": {
           "operationId": "STANDARD",
-          "customerId": "CUST-428317",
-          "accountId": "ACC-308151",
+          "customerId": "CUST-193831",
+          "accountId": "ACC-494311",
           "requestedAt": "2026-08-11T12:00:00Z",
           "priority": "NORMAL",
+          "leasedAssetId": "STANDARD",
+          "residualValue": {
+            "amount": 100,
+            "currency": "USD"
+          },
+          "leaseTermMonths": 1,
           "recordStatus": "ACTIVE",
           "version": 1,
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "86ddc7a4-e06a-5f36-9515-d4d5109649c4",
-            "correlationId": "ab2c5d28-57fa-55ba-9b92-8ae23ede8669",
+            "responseId": "a18ef174-67ad-5ff0-bfa5-77528920ef4d",
+            "correlationId": "9dccd774-7c0b-577f-8c96-be13b1346127",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "OperationMetadata": {
-        "title": "Operation Metadata",
+      "ResidualValue": {
+        "title": "Residual Value",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "description": "Numeric value representing the amount of the residual value.",
+            "format": "int32",
+            "example": 0
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency in which the residual value is denoted.",
+            "example": "USD"
+          }
+        },
+        "description": "Schema representing the residual value of a leased asset."
+      },
+      "Metadata": {
+        "title": "Metadata",
         "type": "object",
         "properties": {
           "responseId": {
@@ -174,7 +213,7 @@
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate requests and responses.",
+            "description": "Identifier for tracking the operation across systems.",
             "example": "string"
           },
           "generatedAt": {
@@ -184,11 +223,11 @@
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing of the operation took place.",
+            "description": "Geographical region where the processing occurred.",
             "example": "string"
           }
         },
-        "description": "This schema represents metadata associated with an operation including identifiers and processing timestamps."
+        "description": "Schema containing additional metadata information for the operation."
       }
     },
     "parameters": {
@@ -219,17 +258,17 @@
     },
     "headers": {
       "x-endpoint-id": {
-        "description": "Unique identifier for the endpoint associated with the request.",
+        "description": "A unique identifier for the endpoint that was called, useful for tracking the specific operation.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "open-item-management-get-open-item-management"
+          "example": "leasing-item-administration-get-leasing-item-administration"
         },
-        "example": "open-item-management-get-open-item-management"
+        "example": "leasing-item-administration-get-leasing-item-administration"
       },
       "x-runtime-app": {
-        "description": "Name of the runtime application processing the request.",
+        "description": "The name of the application that processed the request, helpful for identifying the source of the response.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -242,7 +281,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the Bearer authentication method, which requires a valid JSON Web Token (JWT) to be included in the request headers. The token should be received from a valid authentication endpoint and included as 'Authorization: Bearer <token>' in the request.",
+        "description": "This security scheme uses JSON Web Tokens (JWT) through a Bearer authentication mechanism. Clients include the JWT in the Authorization header when making API requests to authenticate themselves.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
