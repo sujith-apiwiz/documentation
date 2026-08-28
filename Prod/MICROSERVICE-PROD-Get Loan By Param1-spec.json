@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Get Loan By Param1-spec",
-    "description": "The Loan Application Retrieval API enables users to fetch details of specific loan applications using unique identifiers. By providing a parameter, consumers can access relevant loan data efficiently, which is vital for financial institutions and service providers. This API is commonly utilized by loan officers, customer service representatives, and integration systems managing loan workflows. It streamlines the process of information access, enhancing user experience and operational efficiency.",
+    "description": "The Loan Products Retrieval API allows users to fetch detailed information about specific loan products based on a unique parameter. This endpoint is designed for developers seeking to access loan product data for applications in financial services or personal finance management. Typical consumers include banking applications, loan comparison tools, and customer support systems. By using this API, developers can enhance their applications with accurate loan information tailored to user needs.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/loans/loan-applications/{param1}": {
+    "/v5/loans/loan-products/{param1}": {
       "get": {
         "tags": [
-          "Loan Management"
+          "Loan Products"
         ],
-        "summary": "Retrieve a specific loan application.",
-        "description": "This endpoint allows you to fetch the details of a loan application by its unique identifier. It provides essential information about the application, including its current status and other relevant data.",
+        "summary": "Retrieve loan product details by ID.",
+        "description": "Fetches the details of a specific loan product identified by its unique ID. This endpoint returns all relevant information related to the loan product, including criteria, terms, and conditions, which can help users make informed decisions.",
         "operationId": "getLoanByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to retrieve specific details for the loan application identified by the provided RES-100045 identifier. It is expected to contain the necessary data fields that allow the server to process the request and return the corresponding loan application information.",
+          "description": "Request body for fetching specific loan product details based on the provided loan product ID. This endpoint retrieves information such as interest rates, terms, and conditions related to the specified loan product.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved the loan application details.",
+            "description": "Successfully retrieved loan product details.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -91,324 +91,340 @@
   "components": {
     "schemas": {
       "GetLoanByParam1Request": {
-        "title": "Loan Application Request Body",
         "type": "string",
-        "description": "This schema represents the payload for a loan application request. It is expected to be sent as a JSON string.",
+        "description": "This schema represents the request body for the GET operation on loan products, specifically identified by LOAN-500045. It is expected to contain a JSON string payload.",
         "example": "{}"
       },
       "GetLoanByParam1Response_200": {
-        "title": "Loan Application Response",
+        "title": "Loan Product Response",
         "type": "object",
         "properties": {
-          "productId": {
+          "code": {
             "type": "string",
-            "description": "Unique identifier for the product associated with the loan application.",
-            "example": "PROD-835519"
+            "description": "A unique code representing the loan product.",
+            "example": "SUCCESS"
           },
-          "externalReference": {
+          "name": {
             "type": "string",
-            "description": "External reference identifier for tracking the loan application.",
+            "description": "The name of the loan product.",
+            "example": "Northstar Banking Service"
+          },
+          "description": {
+            "type": "string",
+            "description": "A brief description of the loan product.",
+            "example": "Customer banking request processed successfully"
+          },
+          "productType": {
+            "type": "string",
+            "description": "The type/category of the loan product.",
             "example": "STANDARD"
           },
-          "channel": {
+          "currency": {
             "type": "string",
-            "description": "Channel through which the loan application was submitted.",
-            "example": "STANDARD"
+            "description": "The currency in which the loan product is denominated.",
+            "example": "USD"
           },
-          "purpose": {
-            "type": "string",
-            "description": "Purpose of the loan application.",
-            "example": "STANDARD"
+          "minPrincipal": {
+            "description": "The minimum principal amount for this loan product.",
+            "$ref": "#/components/schemas/LoanPrincipal"
           },
-          "purposeDescription": {
-            "type": "string",
-            "description": "Detailed description of the purpose of the loan.",
-            "example": "STANDARD"
+          "maxPrincipal": {
+            "description": "The maximum principal amount for this loan product.",
+            "$ref": "#/components/schemas/LoanPrincipal"
           },
-          "requestedPrincipal": {
-            "description": "Amount and currency requested in the loan application.",
-            "$ref": "#/components/schemas/RequestedPrincipal"
-          },
-          "requestedTermMonths": {
+          "minTermMonths": {
             "type": "integer",
-            "description": "Term of the loan in months as requested by the applicant.",
+            "description": "The minimum term length in months for which the loan can be taken.",
             "format": "int32",
             "example": 1
           },
-          "preferredRepaymentDay": {
+          "maxTermMonths": {
             "type": "integer",
-            "description": "Preferred day of the month for loan repayment.",
+            "description": "The maximum term length in months for which the loan can be taken.",
             "format": "int32",
             "example": 1
           },
-          "primaryCustomerId": {
+          "interestRateType": {
             "type": "string",
-            "description": "Identifier of the primary customer applying for the loan.",
-            "example": "CUST-941496"
-          },
-          "branchCode": {
-            "type": "string",
-            "description": "Code of the branch where the loan application is processed.",
-            "example": "CODE-765"
-          },
-          "relationshipManagerId": {
-            "type": "string",
-            "description": "Identifier for the relationship manager handling the application.",
+            "description": "The type of interest rate applicable to the loan.",
             "example": "STANDARD"
           },
-          "campaignCode": {
+          "annualInterestRatePercent": {
             "type": "string",
-            "description": "Identifier for the marketing campaign associated with the loan application.",
-            "example": "CODE-374"
-          },
-          "customerConsent": {
-            "description": "Consent information provided by the customer related to credit bureau, data processing and marketing.",
-            "$ref": "#/components/schemas/CustomerConsent"
-          },
-          "id": {
-            "type": "string",
-            "description": "Unique identifier for the loan application.",
-            "example": "11aa6459-7ddb-1c66-12a8-f399d3da0026"
-          },
-          "applicationNumber": {
-            "type": "string",
-            "description": "Application number assigned to the loan application.",
+            "description": "The annual interest rate expressed as a percentage.",
             "example": "STANDARD"
           },
-          "status": {
+          "baseRateCode": {
             "type": "string",
-            "description": "Current status of the loan application.",
-            "example": "ACTIVE"
+            "description": "A code representing the base interest rate used for the loan.",
+            "example": "CODE-984"
           },
-          "submittedAt": {
+          "marginPercent": {
             "type": "string",
-            "description": "Timestamp when the loan application was submitted.",
-            "example": "2026-09-15T14:30:00Z"
+            "description": "The margin percentage that is added to the base rate.",
+            "example": "STANDARD"
           },
-          "decisionAt": {
+          "repaymentFrequency": {
             "type": "string",
-            "description": "Timestamp when a decision was made on the loan application.",
-            "example": "2026-08-11T12:00:00Z"
+            "description": "The frequency of loan repayments.",
+            "example": "STANDARD"
           },
-          "bookedLoanId": {
+          "secured": {
+            "type": "boolean",
+            "description": "Indicates if the loan is secured against an asset.",
+            "example": true
+          },
+          "maximumLoanToValuePercent": {
             "type": "string",
-            "description": "Identifier for the booked loan, if applicable.",
-            "example": "LOAN-267023"
+            "description": "The maximum loan-to-value ratio expressed as a percentage.",
+            "example": "STANDARD"
           },
-          "completionPercent": {
-            "type": "integer",
-            "description": "Percentage of the loan application process that is complete.",
-            "format": "int32",
-            "example": 1
+          "eligibility": {
+            "description": "The eligibility criteria for applying for this loan product.",
+            "$ref": "#/components/schemas/LoanEligibility"
           },
-          "outstandingRequirements": {
+          "fees": {
             "type": "array",
-            "description": "List of outstanding requirements for the loan application.",
+            "description": "List of fees associated with the loan product.",
             "example": [
               {
                 "code": "SUCCESS",
-                "description": "Customer banking request processed successfully",
-                "status": "ACTIVE",
-                "dueDate": "2026-09-15"
+                "name": "Northstar Banking Service",
+                "calculationMethod": "STANDARD",
+                "amount": {
+                  "currency": "USD",
+                  "amount": "1250.75"
+                },
+                "percent": "STANDARD",
+                "capitalized": true
               }
             ],
             "items": {
-              "$ref": "#/components/schemas/OutstandingRequirement"
+              "$ref": "#/components/schemas/LoanFee"
             }
           },
+          "status": {
+            "type": "string",
+            "description": "The current status of the loan product.",
+            "example": "ACTIVE"
+          },
+          "id": {
+            "type": "string",
+            "description": "A unique identifier for the loan product.",
+            "example": "412a3880-40f4-800d-c768-aebe387bba96"
+          },
           "audit": {
-            "description": "Audit information related to the loan application.",
+            "description": "Audit information about the loan product.",
             "$ref": "#/components/schemas/AuditInfo"
           },
           "metadata": {
-            "description": "Metadata information regarding processing of the loan application.",
-            "$ref": "#/components/schemas/MetadataInfo"
+            "description": "Additional metadata related to the loan product response.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Schema representing the details of a loan application response.",
+        "description": "Schema representing the response details of a loan product operation.",
         "example": {
-          "productId": "PROD-835519",
-          "externalReference": "STANDARD",
-          "channel": "STANDARD",
-          "purpose": "STANDARD",
-          "purposeDescription": "STANDARD",
-          "requestedPrincipal": {
+          "code": "SUCCESS",
+          "name": "Northstar Banking Service",
+          "description": "Customer banking request processed successfully",
+          "productType": "STANDARD",
+          "currency": "USD",
+          "minPrincipal": {
             "currency": "USD",
             "amount": "1250.75"
           },
-          "requestedTermMonths": 1,
-          "preferredRepaymentDay": 1,
-          "primaryCustomerId": "CUST-941496",
-          "branchCode": "CODE-765",
-          "relationshipManagerId": "STANDARD",
-          "campaignCode": "CODE-374",
-          "customerConsent": {
-            "creditBureauConsent": true,
-            "dataProcessingConsent": true,
-            "marketingConsent": true,
-            "consentTimestamp": "2026-09-15T14:30:00Z",
-            "consentReference": "STANDARD"
+          "maxPrincipal": {
+            "currency": "USD",
+            "amount": "1250.75"
           },
-          "id": "11aa6459-7ddb-1c66-12a8-f399d3da0026",
-          "applicationNumber": "STANDARD",
-          "status": "ACTIVE",
-          "submittedAt": "2026-09-15T14:30:00Z",
-          "decisionAt": "2026-08-11T12:00:00Z",
-          "bookedLoanId": "LOAN-267023",
-          "completionPercent": 1,
-          "outstandingRequirements": [
+          "minTermMonths": 1,
+          "maxTermMonths": 1,
+          "interestRateType": "STANDARD",
+          "annualInterestRatePercent": "STANDARD",
+          "baseRateCode": "CODE-984",
+          "marginPercent": "STANDARD",
+          "repaymentFrequency": "STANDARD",
+          "secured": true,
+          "maximumLoanToValuePercent": "STANDARD",
+          "eligibility": {
+            "minApplicantAge": 1,
+            "maxApplicantAgeAtMaturity": 1,
+            "minMonthlyIncome": {
+              "currency": "USD",
+              "amount": "1250.75"
+            },
+            "allowedEmploymentTypes": [
+              "STANDARD"
+            ],
+            "allowedResidencyCountries": [
+              "STANDARD"
+            ],
+            "minCreditScore": 1
+          },
+          "fees": [
             {
               "code": "SUCCESS",
-              "description": "Customer banking request processed successfully",
-              "status": "ACTIVE",
-              "dueDate": "2026-09-15"
+              "name": "Northstar Banking Service",
+              "calculationMethod": "STANDARD",
+              "amount": {
+                "currency": "USD",
+                "amount": "1250.75"
+              },
+              "percent": "STANDARD",
+              "capitalized": true
             }
           ],
+          "status": "ACTIVE",
+          "id": "412a3880-40f4-800d-c768-aebe387bba96",
           "audit": {
-            "createdAt": "2026-09-15T14:30:00Z",
-            "createdBy": "STANDARD",
-            "updatedAt": "2026-09-15T14:30:00Z",
-            "updatedBy": "2026-09-15",
-            "version": 1
+            "createdAt": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "responseId": "313037ee-89ec-5015-a141-a59f6821acaf",
-            "correlationId": "5527df2b-004a-5e39-9f7d-108774d04613",
+            "responseId": "29551bd1-7ada-5ba5-845d-8a69472de36c",
+            "correlationId": "9cd69c8d-eb8c-55bd-ac36-d57f00819829",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "RequestedPrincipal": {
+      "LoanPrincipal": {
+        "title": "Loan Principal",
         "type": "object",
         "properties": {
           "currency": {
             "type": "string",
-            "description": "Currency in which the loan amount is requested.",
+            "description": "The currency of the loan principal amount.",
             "example": "USD"
           },
           "amount": {
             "type": "string",
-            "description": "Amount of money requested in the loan.",
+            "description": "The principal amount of the loan.",
             "example": "10000"
           }
         },
-        "description": "Details of the principal requested in the loan application."
+        "description": "Defines the principal amount details for a loan including currency and amount."
       },
-      "CustomerConsent": {
+      "LoanEligibility": {
+        "title": "Loan Eligibility",
         "type": "object",
         "properties": {
-          "creditBureauConsent": {
-            "type": "boolean",
-            "description": "Indicates if the customer has given consent for credit bureau checks.",
-            "example": false
+          "minApplicantAge": {
+            "type": "integer",
+            "description": "The minimum age of the applicant.",
+            "format": "int32",
+            "example": 18
           },
-          "dataProcessingConsent": {
-            "type": "boolean",
-            "description": "Indicates if the customer has consented to data processing.",
-            "example": false
+          "maxApplicantAgeAtMaturity": {
+            "type": "integer",
+            "description": "The maximum age of the applicant at the loan's maturity.",
+            "format": "int32",
+            "example": 65
           },
-          "marketingConsent": {
-            "type": "boolean",
-            "description": "Indicates if the customer has consented to marketing communications.",
-            "example": false
+          "minMonthlyIncome": {
+            "description": "The minimum monthly income required to qualify for the loan.",
+            "$ref": "#/components/schemas/LoanPrincipal"
           },
-          "consentTimestamp": {
-            "type": "string",
-            "description": "Timestamp when the consent was given.",
-            "example": "2023-01-01T12:00:00Z"
+          "allowedEmploymentTypes": {
+            "type": "array",
+            "description": "List of employment types allowed for applicants.",
+            "items": {
+              "type": "string",
+              "description": "Type of employment allowed.",
+              "example": "Full-time"
+            }
           },
-          "consentReference": {
-            "type": "string",
-            "description": "Reference number associated with the customer's consent.",
-            "example": "consentRef789"
+          "allowedResidencyCountries": {
+            "type": "array",
+            "description": "List of residency countries eligible for this loan.",
+            "items": {
+              "type": "string",
+              "description": "Residency country.",
+              "example": "USA"
+            }
+          },
+          "minCreditScore": {
+            "type": "integer",
+            "description": "The minimum credit score required for eligibility.",
+            "format": "int32",
+            "example": 650
           }
         },
-        "description": "Consent details provided by the customer."
+        "description": "Criteria that must be satisfied for a loan application."
       },
-      "OutstandingRequirement": {
+      "LoanFee": {
+        "title": "Loan Fee",
         "type": "object",
         "properties": {
           "code": {
             "type": "string",
-            "description": "Code of the outstanding requirement.",
-            "example": "reqCode123"
+            "description": "A unique code identifying the fee.",
+            "example": "FEE-001"
           },
-          "description": {
+          "name": {
             "type": "string",
-            "description": "Description of the outstanding requirement.",
-            "example": "Proof of income"
+            "description": "The name/description of the fee.",
+            "example": "Processing Fee"
           },
-          "status": {
+          "calculationMethod": {
             "type": "string",
-            "description": "Current status of the outstanding requirement.",
-            "example": "pending"
+            "description": "The method used to calculate the fee.",
+            "example": "Flat"
           },
-          "dueDate": {
+          "amount": {
+            "description": "The amount of the fee including currency.",
+            "$ref": "#/components/schemas/LoanPrincipal"
+          },
+          "percent": {
             "type": "string",
-            "description": "Due date for fulfilling the outstanding requirement.",
-            "example": "2023-02-01"
+            "description": "The percentage if the fee is calculated based on a percentage.",
+            "example": "5"
+          },
+          "capitalized": {
+            "type": "boolean",
+            "description": "Indicates if the fee is capitalized in the loan amount.",
+            "example": false
           }
         },
-        "description": "Details of an outstanding requirement for the loan application."
+        "description": "Details of a fee associated with a loan product."
       },
       "AuditInfo": {
+        "title": "Audit Information",
         "type": "object",
         "properties": {
           "createdAt": {
             "type": "string",
-            "description": "Timestamp when the loan application was created.",
-            "example": "2023-01-01T12:00:00Z"
-          },
-          "createdBy": {
-            "type": "string",
-            "description": "Identifier of the user who created the loan application.",
-            "example": "user123"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp when the loan application was last updated.",
-            "example": "2023-01-02T12:00:00Z"
-          },
-          "updatedBy": {
-            "type": "string",
-            "description": "Identifier of the user who last updated the loan application.",
-            "example": "user456"
-          },
-          "version": {
-            "type": "integer",
-            "description": "Version of the loan application data.",
-            "format": "int32",
-            "example": 1
+            "description": "The timestamp when the loan product was created.",
+            "example": "2023-10-01T12:00:00Z"
           }
         },
-        "description": "Audit information regarding the loan application."
+        "description": "Information regarding the auditing of the loan product."
       },
-      "MetadataInfo": {
+      "Metadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "respId123"
+            "description": "The unique identifier for the response.",
+            "example": "response-123"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation ID used for tracking the response.",
-            "example": "corrId456"
+            "description": "The correlation ID for tracking the request.",
+            "example": "correlation-456"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the response was generated.",
-            "example": "2023-01-01T12:00:00Z"
+            "description": "The timestamp when the response was generated.",
+            "example": "2023-10-01T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing of the loan application took place.",
-            "example": "US-East"
+            "description": "The region where the request was processed.",
+            "example": "us-east-1"
           }
         },
-        "description": "Metadata information associated with the loan application."
+        "description": "Metadata information of the response."
       }
     },
     "parameters": {
@@ -439,15 +455,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "Unique identifier for the API endpoint associated with this response.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "banking-loans-openapi-get-loan-application"
+          "example": "banking-loans-openapi-get-loan-product"
         },
-        "example": "banking-loans-openapi-get-loan-application"
+        "example": "banking-loans-openapi-get-loan-product"
       },
       "X-Runtime-App": {
+        "description": "Identifier for the application that executed the request, allowing for tracking and auditing.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -460,7 +478,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a bearer token for authentication. The token is typically a JSON Web Token (JWT) that is passed in the HTTP Authorization header.",
+        "description": "Authentication mechanism that uses a bearer token, typically a JSON Web Token (JWT), to authorize API requests. The token should be included in the Authorization header of the request.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
