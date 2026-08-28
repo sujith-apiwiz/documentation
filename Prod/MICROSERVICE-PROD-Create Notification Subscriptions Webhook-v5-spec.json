@@ -1,0 +1,490 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MICROSERVICE-PROD-Create Notification Subscriptions Webhook-v5-spec",
+    "description": "The Notification Subscription Management API allows users to establish webhook subscriptions for real-time notifications. This API endpoint is crucial for businesses that rely on timely updates related to their services or applications. By enabling webhook subscriptions, clients can automate workflows and enhance user engagement through immediate notifications. Typical consumers include developers and system integrators looking to streamline notifications within their applications. This API facilitates the integration of notifications into various client systems, thereby improving responsiveness and operational efficiency.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://prod-workspace-pwmw.apiwiz.io",
+      "description": "Sandbox server",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "Sandbox server",
+      "x-environmentName": "Sandbox",
+      "x-hide": false,
+      "x-environmentId": "6a7f52236ae9a15654cd5721",
+      "x-basePath": "/"
+    },
+    {
+      "url": "https://35.162.152.203:9009",
+      "description": "PROD",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "PROD",
+      "x-environmentName": "PROD",
+      "x-hide": false,
+      "x-environmentId": "6a784eac1d7e36108cc3cb0c",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/v5/notification-subscriptions/webhooks": {
+      "post": {
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "Create a new webhook.",
+        "description": "This endpoint allows you to create a new webhook that can be used to receive real-time updates from the system. Specify the necessary parameters to correctly set up the webhook and ensure you provide a valid endpoint URL.",
+        "operationId": "createNotificationSubscriptionsWebhook",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          }
+        ],
+        "requestBody": {
+          "description": "The payload for creating a new webhook. This must include the necessary parameters to configure the webhook subscription correctly.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateNotificationSubscriptionsWebhookRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Webhook created successfully.",
+            "headers": {
+              "x-endpoint-id": {
+                "$ref": "#/components/headers/x-endpoint-id"
+              },
+              "x-runtime-app": {
+                "$ref": "#/components/headers/x-runtime-app"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateNotificationSubscriptionsWebhookResponse_201"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateNotificationSubscriptionsWebhookRequest": {
+        "title": "Webhook Request Body",
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL to which webhook notifications will be sent.",
+            "example": "https://banking.northstar.example/callbacks/status"
+          },
+          "events": {
+            "type": "array",
+            "description": "List of events to subscribe to.",
+            "example": [
+              {
+                "name": "Northstar Banking Service",
+                "url": "https://banking.northstar.example/callbacks/status",
+                "condition": {
+                  "subscribeFor": "STANDARD",
+                  "includes": [
+                    "STANDARD"
+                  ],
+                  "excludes": [
+                    "STANDARD"
+                  ]
+                }
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Event"
+            }
+          },
+          "requestContext": {
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "Schema representing the request body for creating a webhook.",
+        "example": {
+          "url": "https://banking.northstar.example/callbacks/status",
+          "events": [
+            {
+              "name": "Northstar Banking Service",
+              "url": "https://banking.northstar.example/callbacks/status",
+              "condition": {
+                "subscribeFor": "STANDARD",
+                "includes": [
+                  "STANDARD"
+                ],
+                "excludes": [
+                  "STANDARD"
+                ]
+              }
+            }
+          ],
+          "requestContext": {
+            "requestId": "ee6328c2-8c87-5776-8c79-d3aa1b3619ac",
+            "correlationId": "8bf776c6-3120-525e-8a0d-6dac377bf331",
+            "idempotencyKey": "00efaedd-3ee0-5b2d-89c3-e82af4668478",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-654901"
+            }
+          }
+        }
+      },
+      "Event": {
+        "title": "Event",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the event.",
+            "example": "user.created"
+          },
+          "url": {
+            "type": "string",
+            "description": "The URL associated with the event.",
+            "example": "https://example.com/event"
+          },
+          "condition": {
+            "$ref": "#/components/schemas/Condition"
+          }
+        },
+        "description": "Schema representing an individual event in the webhook."
+      },
+      "Condition": {
+        "title": "Condition",
+        "type": "object",
+        "properties": {
+          "subscribeFor": {
+            "type": "string",
+            "description": "Specifies what to subscribe for.",
+            "example": "all"
+          },
+          "includes": {
+            "type": "array",
+            "description": "List of items included in the subscription.",
+            "items": {
+              "type": "string",
+              "example": "item1"
+            }
+          },
+          "excludes": {
+            "type": "array",
+            "description": "List of items excluded from the subscription.",
+            "items": {
+              "type": "string",
+              "example": "item2"
+            }
+          }
+        },
+        "description": "Schema representing conditions for subscribing to events."
+      },
+      "RequestContext": {
+        "title": "Request Context",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique identifier for the request.",
+            "example": "req-12345"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier to correlate requests.",
+            "example": "corr-12345"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Key to ensure idempotent requests.",
+            "example": "idempotent-12345"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp when the request was made.",
+            "example": "2023-10-10T12:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The source system from where the request originated.",
+            "example": "SystemA"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application from where the request originated.",
+            "example": "AppA"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Schema representing the context of the request."
+      },
+      "Channel": {
+        "title": "Channel",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Identifier of the channel.",
+            "example": "channel-123"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "Type of the channel (e.g. API, Webhook).",
+            "example": "Webhook"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Identifier of the device related to the channel.",
+            "example": "device-123"
+          }
+        },
+        "description": "Schema representing the channel information in the request context."
+      },
+      "CreateNotificationSubscriptionsWebhookResponse_201": {
+        "title": "Webhook Subscription Response",
+        "type": "object",
+        "properties": {
+          "subscriptionId": {
+            "type": "string",
+            "description": "The unique identifier for the subscription.",
+            "example": "STANDARD"
+          },
+          "url": {
+            "type": "string",
+            "description": "The URL to which the webhook will send notifications.",
+            "example": "https://banking.northstar.example/callbacks/status"
+          },
+          "events": {
+            "type": "array",
+            "description": "A list of events associated with the webhook subscription.",
+            "example": [
+              {
+                "webhookEventId": "STANDARD",
+                "name": "Northstar Banking Service",
+                "url": "https://banking.northstar.example/callbacks/status",
+                "status": "ACTIVE",
+                "condition": {
+                  "subscribeFor": "STANDARD",
+                  "includes": [
+                    "STANDARD"
+                  ],
+                  "excludes": [
+                    "STANDARD"
+                  ]
+                }
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/WebhookEvent"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "The current status of the webhook subscription.",
+            "example": "ACTIVE"
+          },
+          "createdDate": {
+            "type": "string",
+            "description": "The date and time when the subscription was created.",
+            "example": "2026-09-15"
+          },
+          "lastUpdatedDate": {
+            "type": "string",
+            "description": "The date and time when the subscription was last updated.",
+            "example": "2026-09-15"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/Metadata"
+          }
+        },
+        "description": "The response object for a successful subscription creation via webhooks.",
+        "example": {
+          "subscriptionId": "STANDARD",
+          "url": "https://banking.northstar.example/callbacks/status",
+          "events": [
+            {
+              "webhookEventId": "STANDARD",
+              "name": "Northstar Banking Service",
+              "url": "https://banking.northstar.example/callbacks/status",
+              "status": "ACTIVE",
+              "condition": {
+                "subscribeFor": "STANDARD",
+                "includes": [
+                  "STANDARD"
+                ],
+                "excludes": [
+                  "STANDARD"
+                ]
+              }
+            }
+          ],
+          "status": "ACTIVE",
+          "createdDate": "2026-09-15",
+          "lastUpdatedDate": "2026-09-15",
+          "metadata": {
+            "responseId": "01706a71-8fbe-5af1-bdcc-55528bb4d25b",
+            "correlationId": "8bf776c6-3120-525e-8a0d-6dac377bf331",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
+      },
+      "WebhookEvent": {
+        "title": "Webhook Event",
+        "type": "object",
+        "properties": {
+          "webhookEventId": {
+            "type": "string",
+            "description": "Unique identifier for the webhook event.",
+            "example": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the webhook event.",
+            "example": "string"
+          },
+          "url": {
+            "type": "string",
+            "description": "The URL associated with the webhook event.",
+            "example": "string"
+          },
+          "status": {
+            "type": "string",
+            "description": "The current status of the webhook event.",
+            "example": "string"
+          },
+          "condition": {
+            "$ref": "#/components/schemas/WebhookEventCondition"
+          }
+        },
+        "description": "Details about a specific event related to the webhook subscription."
+      },
+      "WebhookEventCondition": {
+        "title": "Webhook Event Condition",
+        "type": "object",
+        "properties": {
+          "subscribeFor": {
+            "type": "string",
+            "description": "Describes what the webhook is subscribing for.",
+            "example": "string"
+          },
+          "includes": {
+            "type": "array",
+            "description": "List of event types included in the subscription.",
+            "items": {
+              "type": "string",
+              "description": "An event included in the subscription.",
+              "example": "string"
+            }
+          },
+          "excludes": {
+            "type": "array",
+            "description": "List of event types excluded from the subscription.",
+            "items": {
+              "type": "string",
+              "description": "An event excluded from the subscription.",
+              "example": "string"
+            }
+          }
+        },
+        "description": "Conditions that determine the triggering of the webhook event."
+      },
+      "Metadata": {
+        "title": "Response Metadata",
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "Unique identifier for the response.",
+            "example": "string"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Correlation identifier to track the request and response.",
+            "example": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the response was generated.",
+            "example": "string"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "Indicates the region where the response was processed.",
+            "example": "string"
+          }
+        },
+        "description": "Metadata information about the response."
+      }
+    },
+    "parameters": {
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "MICROSERVICE_PROD_201"
+          ]
+        }
+      }
+    },
+    "headers": {
+      "x-endpoint-id": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "open-finance-api-create-webhook-subscription"
+        },
+        "example": "open-finance-api-create-webhook-subscription"
+      },
+      "x-runtime-app": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "operations-openfinance"
+        },
+        "example": "operations-openfinance"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "This security scheme uses JSON Web Tokens (JWT) for authentication. Clients must include a valid JWT token in the Authorization header when making requests.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
