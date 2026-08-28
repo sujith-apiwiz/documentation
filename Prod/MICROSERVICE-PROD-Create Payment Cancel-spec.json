@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE-PROD-Create Payment Reverse-spec",
-    "description": "The Payment Reversal API allows businesses to initiate the reversal of previously processed payments using the payment ID. This functionality is crucial for correcting payment errors or handling refund requests efficiently. The API provides immediate access to payment reversal capabilities, ensuring that consumers can quickly rectify transactions as needed. Typical users include financial institutions, payment processors, and merchant systems looking to maintain accurate transaction records.",
+    "title": "MICROSERVICE-PROD-Create Payment Cancel-spec",
+    "description": "The Payment Cancellation API enables businesses to efficiently manage and cancel payment transactions. By using this endpoint, authorized users can request the cancellation of a specific payment identified by its unique payment ID. This functionality is essential for payment processors, financial services, and retail platforms needing to handle changes in transaction status. Typical consumers include customer support teams and finance departments that deal with payment adjustments and customer inquiries regarding cancellations.",
     "version": "1.0"
   },
   "servers": [
@@ -30,14 +30,14 @@
     }
   ],
   "paths": {
-    "/v5/p2m/payments/{paymentId}/reverse": {
+    "/v5/p2m/payments/{paymentId}/cancel": {
       "post": {
         "tags": [
           "Payments"
         ],
-        "summary": "Reverse a payment",
-        "description": "This operation allows you to reverse a payment that was previously processed. Providing the payment ID will ensure the correct transaction is affected. Make sure to have the appropriate permissions to perform this action.",
-        "operationId": "createPaymentReverse",
+        "summary": "Cancel a specific payment.",
+        "description": "This endpoint allows you to cancel a payment identified by its unique ID, ensuring that the transaction is halted and funds are not processed. Use this operation for payments that need to be reverted due to various reasons.",
+        "operationId": "createPaymentCancel",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
@@ -47,18 +47,18 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to reverse a payment identified by the payment ID PAY-300045. The reversal process may require specific details that define how the payment should be reversed. Please ensure that all required fields are populated according to the defined schema.",
+          "description": "Request body for canceling a payment identified by PAY-300045. This operation allows the user to send a request to cancel the specified payment, triggering necessary validations and processing on the server side.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreatePaymentReverseRequest"
+                "$ref": "#/components/schemas/CreatePaymentCancelRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Payment reversal completed successfully.",
+            "description": "The payment cancellation request was successful.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +70,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreatePaymentReverseResponse_200"
+                  "$ref": "#/components/schemas/CreatePaymentCancelResponse_200"
                 }
               }
             }
@@ -90,154 +90,127 @@
   },
   "components": {
     "schemas": {
-      "CreatePaymentReverseRequest": {
-        "title": "Reverse Payment Request",
+      "CreatePaymentCancelRequest": {
         "type": "object",
         "properties": {
-          "amount": {
-            "description": "The amount to reverse, including currency and value.",
-            "$ref": "#/components/schemas/PaymentAmount"
-          },
           "reasonCode": {
             "type": "string",
-            "description": "Code representing the reason for the reversal.",
-            "example": "CODE-770"
+            "description": "Code representing the reason for the cancellation.",
+            "example": "CODE-674"
           },
           "reason": {
             "type": "string",
-            "description": "Description of the reason for the reversal.",
+            "description": "Description of the reason for cancellation.",
             "example": "STANDARD"
           },
           "requestContext": {
-            "description": "Contextual information regarding the request.",
+            "description": "Contextual information about the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Schema representing the request body for reversing a payment in the payment operations.",
+        "description": "Request body for cancelling a payment operation.",
         "example": {
-          "amount": {
-            "currency": "USD",
-            "value": "STANDARD"
-          },
-          "reasonCode": "CODE-770",
+          "reasonCode": "CODE-674",
           "reason": "STANDARD",
           "requestContext": {
-            "requestId": "1be8f1ea-a802-5519-b463-c07a34a31f68",
-            "correlationId": "23710e79-455c-5d59-9444-a78fcb50f0b0",
-            "idempotencyKey": "c5651487-3203-5d98-b53c-a7ee69493197",
+            "requestId": "0fdf03b1-c68d-5b70-affb-e9574dfcefb3",
+            "correlationId": "e1b0ad04-e563-5a77-953b-fcf5702a0ee0",
+            "idempotencyKey": "4caa320c-5381-5842-82de-e3a68798f7f7",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-828989"
+              "deviceId": "DEV-550429"
             }
           }
         }
       },
-      "PaymentAmount": {
-        "title": "Payment Amount",
-        "type": "object",
-        "properties": {
-          "currency": {
-            "type": "string",
-            "description": "The currency of the payment amount.",
-            "example": "USD"
-          },
-          "value": {
-            "type": "string",
-            "description": "The numerical value of the payment amount.",
-            "example": "100.00"
-          }
-        },
-        "description": "Schema representing the amount details including currency and value."
-      },
       "RequestContext": {
-        "title": "Request Context",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
             "description": "Unique identifier for the request.",
-            "example": "abc-123"
+            "example": "req-12345"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier to correlate related requests.",
-            "example": "xyz-456"
+            "description": "Identifier used to correlate multiple requests.",
+            "example": "corr-67890"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key to ensure the operation is idempotent.",
-            "example": "idempotent-789"
+            "description": "Key used to ensure idempotency of the request.",
+            "example": "idempotency-abc"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp of when the request was made.",
-            "example": "2023-10-20T15:00:00Z"
+            "description": "Timestamp when the request was made.",
+            "example": "2023-10-01T12:00:00Z"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "Source system from which the request originated.",
-            "example": "PaymentGateway"
+            "description": "Identifier for the system that originated the request.",
+            "example": "payment_system"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "Application from which the request is sent.",
-            "example": "MobileApp"
+            "description": "Name of the application that initiated the request.",
+            "example": "payment_app"
           },
           "channel": {
-            "description": "Information regarding the channel used for the request.",
+            "description": "Information about the channel used for the request.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Schema containing context details for the request made."
+        "description": "Contextual information related to the request execution."
       },
       "Channel": {
-        "title": "Channel Information",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "Identifier for the channel.",
-            "example": "channel-001"
+            "description": "Identifier for the communication channel being used.",
+            "example": "channel-123"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of channel used (e.g., web, mobile).",
+            "description": "Type of the communication channel.",
             "example": "mobile"
           },
           "deviceId": {
             "type": "string",
-            "description": "Unique identifier for the device used in the channel.",
-            "example": "device-xyz"
+            "description": "Identifier for the device used in the channel.",
+            "example": "device-abc"
           }
         },
-        "description": "Schema containing details about the channel used in the request."
+        "description": "Information about the channel through which the request was made."
       },
-      "CreatePaymentReverseResponse_200": {
+      "CreatePaymentCancelResponse_200": {
+        "title": "Payment Cancellation Response",
         "type": "object",
         "properties": {
           "paymentId": {
             "type": "string",
             "description": "Unique identifier for the payment.",
-            "example": "PAY-123632"
+            "example": "PAY-139366"
           },
           "paymentIntentId": {
             "type": "string",
-            "description": "Identifier for the payment intent associated with this payment.",
+            "description": "Identifier for the payment intent.",
             "example": "STANDARD"
           },
           "qrPaymentRequestId": {
             "type": "string",
             "description": "Identifier for the QR payment request.",
-            "example": "15f7d7ec-8a0e-53ad-a2cf-1ac99cf413e2"
+            "example": "4427b359-cf44-537d-92ef-a148a783db89"
           },
           "merchantId": {
             "type": "string",
             "description": "Unique identifier for the merchant.",
-            "example": "MER-731406"
+            "example": "MER-778819"
           },
           "outletId": {
             "type": "string",
@@ -252,7 +225,7 @@
           "merchantOrderId": {
             "type": "string",
             "description": "Identifier for the merchant's order.",
-            "example": "ORD-419701"
+            "example": "ORD-134694"
           },
           "channel": {
             "type": "string",
@@ -260,36 +233,36 @@
             "example": "STANDARD"
           },
           "paymentMethod": {
-            "description": "Details about the payment method used for this transaction.",
+            "description": "Details about the payment method used.",
             "$ref": "#/components/schemas/PaymentMethod"
           },
           "customer": {
-            "description": "Information about the customer involved in the transaction.",
+            "description": "Details about the customer who made the payment.",
             "$ref": "#/components/schemas/Customer"
           },
           "amounts": {
-            "description": "Breakdown of amounts related to the transaction.",
+            "description": "Details regarding various amount statuses of the payment.",
             "$ref": "#/components/schemas/Amounts"
           },
           "metadata": {
-            "description": "Additional metadata regarding the transaction.",
+            "description": "Additional metadata related to the payment operation.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for payment reversal operation.",
+        "description": "Response object for a successful payment cancellation operation.",
         "example": {
-          "paymentId": "PAY-123632",
+          "paymentId": "PAY-139366",
           "paymentIntentId": "STANDARD",
-          "qrPaymentRequestId": "15f7d7ec-8a0e-53ad-a2cf-1ac99cf413e2",
-          "merchantId": "MER-731406",
+          "qrPaymentRequestId": "4427b359-cf44-537d-92ef-a148a783db89",
+          "merchantId": "MER-778819",
           "outletId": "STANDARD",
           "terminalId": "STANDARD",
-          "merchantOrderId": "ORD-419701",
+          "merchantOrderId": "ORD-134694",
           "channel": "STANDARD",
           "paymentMethod": {
             "type": "STANDARD",
             "token": "STANDARD",
-            "issuerBankCode": "CODE-634",
+            "issuerBankCode": "CODE-465",
             "maskedIdentifier": "STANDARD",
             "walletProvider": "STANDARD"
           },
@@ -340,45 +313,47 @@
             }
           },
           "metadata": {
-            "responseId": "31787655-cba1-5cfb-bf94-0ae38e8643aa",
-            "correlationId": "23710e79-455c-5d59-9444-a78fcb50f0b0",
+            "responseId": "e4234037-eb3a-55d9-914b-e7d865e01481",
+            "correlationId": "e1b0ad04-e563-5a77-953b-fcf5702a0ee0",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
       "PaymentMethod": {
+        "title": "Payment Method",
         "type": "object",
         "properties": {
           "type": {
             "type": "string",
-            "description": "Type of payment method (e.g., credit card, digital wallet).",
+            "description": "Type of payment method (e.g., credit card, debit card, etc.).",
             "example": "string"
           },
           "token": {
             "type": "string",
-            "description": "Token representing the payment method for security purposes.",
+            "description": "Token representation of the payment method.",
             "example": "string"
           },
           "issuerBankCode": {
             "type": "string",
-            "description": "Bank code of the issuer of the payment method.",
+            "description": "Bank code of the issuing bank.",
             "example": "string"
           },
           "maskedIdentifier": {
             "type": "string",
-            "description": "Masked identifier for the payment method (e.g., last four digits).",
+            "description": "Masked representation of the payment method identifier.",
             "example": "string"
           },
           "walletProvider": {
             "type": "string",
-            "description": "Provider of the digital wallet if applicable.",
+            "description": "Provider of the wallet service, if applicable.",
             "example": "string"
           }
         },
-        "description": "Schema representing the method used for the payment."
+        "description": "Details regarding the method used for the payment."
       },
       "Customer": {
+        "title": "Customer Details",
         "type": "object",
         "properties": {
           "id": {
@@ -403,101 +378,94 @@
           },
           "riskSegment": {
             "type": "string",
-            "description": "Risk segmentation category of the customer.",
+            "description": "Risk segment classification for the customer.",
             "example": "string"
           }
         },
-        "description": "Schema representing customer information."
+        "description": "Information regarding the customer associated with the payment."
       },
       "Amounts": {
+        "title": "Amounts",
         "type": "object",
         "properties": {
           "requested": {
-            "description": "Amount requested for the transaction.",
-            "$ref": "#/components/schemas/AmountDetails"
+            "description": "Amount requested for the payment.",
+            "$ref": "#/components/schemas/AmountDetail"
           },
           "authorized": {
-            "description": "Amount authorized for the transaction.",
-            "$ref": "#/components/schemas/AmountDetails"
+            "description": "Amount authorized for the payment.",
+            "$ref": "#/components/schemas/AmountDetail"
           },
           "captured": {
-            "description": "Amount captured for the transaction.",
-            "$ref": "#/components/schemas/AmountDetails"
+            "description": "Amount captured from the payment.",
+            "$ref": "#/components/schemas/AmountDetail"
           },
           "refunded": {
-            "description": "Amount refunded for the transaction.",
-            "$ref": "#/components/schemas/AmountDetails"
+            "description": "Amount refunded from the payment.",
+            "$ref": "#/components/schemas/AmountDetail"
           },
           "reversed": {
-            "description": "Amount reversed for the transaction.",
-            "$ref": "#/components/schemas/AmountDetails"
+            "description": "Amount reversed from the payment.",
+            "$ref": "#/components/schemas/AmountDetail"
           },
           "tip": {
-            "description": "Tip amount included in the transaction.",
-            "$ref": "#/components/schemas/AmountDetails"
+            "description": "Tip amount associated with the payment.",
+            "$ref": "#/components/schemas/AmountDetail"
           },
           "fees": {
             "type": "array",
-            "description": "List of fees associated with the transaction.",
+            "description": "List of fees associated with the payment.",
             "items": {
-              "$ref": "#/components/schemas/FeeDetails"
+              "$ref": "#/components/schemas/FeeDetail"
             }
           },
           "netToMerchant": {
-            "description": "Net amount received by the merchant.",
-            "$ref": "#/components/schemas/NetToMerchant"
+            "description": "Net amount to the merchant after all deductions.",
+            "$ref": "#/components/schemas/AmountDetail"
           }
         },
-        "description": "Schema representing the breakdown of transaction amounts."
+        "description": "Details about various amounts involved in the payment."
       },
-      "AmountDetails": {
+      "AmountDetail": {
+        "title": "Amount Detail",
         "type": "object",
         "properties": {
           "currency": {
             "type": "string",
-            "description": "Currency code of the amount.",
+            "description": "Currency of the amount.",
             "example": "string"
           },
           "value": {
             "type": "string",
-            "description": "Value of the amount in specified currency.",
+            "description": "Value of the amount.",
             "example": "string"
           }
         },
-        "description": "Schema representing the details of an amount (currency and value)."
+        "description": "Details for a specific amount including currency and value."
       },
-      "FeeDetails": {
+      "FeeDetail": {
+        "title": "Fee Detail",
         "type": "object",
         "properties": {
           "feeType": {
             "type": "string",
-            "description": "Type of fee applied to the transaction.",
+            "description": "Type of the fee (e.g., processing fee, service fee, etc.).",
             "example": "string"
           },
           "amount": {
-            "description": "The amount of the fee.",
-            "$ref": "#/components/schemas/AmountDetails"
+            "description": "Details regarding the amount of the fee.",
+            "$ref": "#/components/schemas/AmountDetail"
           },
           "bearer": {
             "type": "string",
-            "description": "Indicates who bears the fee (merchant or customer).",
+            "description": "Indicates who bears the fee (e.g., merchant, customer).",
             "example": "string"
           }
         },
-        "description": "Schema representing the details of a fee applied to the transaction."
-      },
-      "NetToMerchant": {
-        "type": "object",
-        "properties": {
-          "currency": {
-            "type": "string",
-            "description": "Currency code of the net amount.",
-            "example": "string"
-          }
-        },
-        "description": "Schema representing the net amount received by the merchant after various deductions."
+        "description": "Details regarding a specific fee associated with the payment."
       },
       "Metadata": {
+        "title": "Payment Metadata",
         "type": "object",
         "properties": {
           "responseId": {
@@ -512,7 +480,7 @@
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp for when the response was generated.",
+            "description": "Timestamp when the response was generated.",
             "example": "string"
           },
           "processingRegion": {
@@ -521,7 +489,7 @@
             "example": "string"
           }
         },
-        "description": "Schema representing additional metadata regarding the transaction."
+        "description": "Metadata details related to the payment operation."
       }
     },
     "parameters": {
@@ -556,9 +524,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "banking-p2m-openapi-reverse-payment"
+          "example": "banking-p2m-openapi-cancel-payment"
         },
-        "example": "banking-p2m-openapi-reverse-payment"
+        "example": "banking-p2m-openapi-cancel-payment"
       },
       "X-Runtime-App": {
         "style": "simple",
@@ -573,7 +541,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authorization scheme that uses a Bearer token to access restricted resources. The token is typically a JSON Web Token (JWT), which is a compact, URL-safe means of representing claims to be transferred between two parties.",
+        "description": "This security scheme uses the Bearer Authentication method, where the client must include a JSON Web Token (JWT) in the Authorization header of the request. Ensure that the token is valid and has not expired for successful access to protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
