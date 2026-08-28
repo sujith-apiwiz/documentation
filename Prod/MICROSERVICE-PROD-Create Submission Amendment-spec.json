@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Create Submission Amendment-spec",
-    "description": "The Submission Amendment Management API facilitates the process of amending existing trade submissions within the banking market operations. This API enables users to submit requests for modifications to prior submissions based on evolving trade conditions or compliance requirements. Users such as financial analysts and reporting teams leverage this API to ensure that trade records are accurate and up-to-date. It supports operations on specific submission IDs, allowing for precise management of trade reporting obligations.",
+    "description": "The Submission Amendment Management API enables users to submit amendments for existing regulatory submissions, ensuring compliance with evolving regulatory requirements. This API allows financial institutions to maintain accurate records and adjust prior submissions as needed. Typical consumers include compliance officers and financial analysts who manage regulatory reporting and require flexibility in submitting amendments. By utilizing this API, organizations can streamline their regulatory processes and improve their response to changing compliance obligations.",
     "version": "1.0"
   },
   "servers": [
@@ -18,7 +18,7 @@
       "x-basePath": "/"
     },
     {
-      "url": "https://35.162.152.203:9006",
+      "url": "https://35.162.152.203:9005",
       "description": "PROD",
       "variables": {},
       "x-schema": "https://",
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/market-operations/trade-reporting/submissions/{submissionId}/amendments": {
+    "/v5/banking/compliance/regulatory-reporting/submissions/{submissionId}/amendments": {
       "post": {
         "tags": [
-          "Trade Submission"
+          "Compliance"
         ],
-        "summary": "Create an amendment for a trade submission.",
-        "description": "This endpoint allows users to create an amendment for a specific trade submission identified by its unique ID. Amendments can include changes to trade terms, conditions, or related metadata. Ensure all required fields are accurately provided to process the amendment successfully.",
+        "summary": "Amend a regulatory submission.",
+        "description": "This endpoint allows users to submit amendments for a specific regulatory submission identified by its ID. Ensure that all necessary fields are correctly provided in the request body to process the amendment successfully.",
         "operationId": "createSubmissionAmendment",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to submit amendments for the trade reporting submission identified by RES-100045. It must include all required fields as defined in the schema and adhere to the specified structure to ensure correct processing of the amendment.",
+          "description": "This request body is used to submit amendments for the specified regulatory reporting submission identified by RES-100045. The payload must adhere to the defined schema and should include all necessary fields for the amendment process.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "202": {
-            "description": "The request has been accepted for processing, but the operation is not yet complete.",
+            "description": "The request has been accepted and is being processed.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -91,141 +91,142 @@
   "components": {
     "schemas": {
       "CreateSubmissionAmendmentRequest": {
+        "title": "Regulatory Reporting Submission Amendment Request",
         "type": "object",
         "properties": {
           "amendmentReason": {
             "type": "string",
-            "description": "The reason for the amendment being requested.",
+            "description": "The reason for the amendment.",
             "example": "STANDARD"
           },
           "submissionReference": {
             "type": "string",
-            "description": "A reference identifier for the submission.",
+            "description": "Reference identifier for the original submission.",
             "example": "STANDARD"
           },
           "changes": {
-            "description": "Details of the changes being requested in the amendment.",
-            "$ref": "#/components/schemas/AmendmentChanges"
+            "$ref": "#/components/schemas/SubmissionChanges"
           },
           "requestedBy": {
             "type": "string",
-            "description": "The user or system requesting the amendment.",
+            "description": "Identifier of the person making the request.",
             "example": "STANDARD"
           },
           "requestContext": {
-            "description": "Contextual information regarding the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Request body schema for amending submissions in trade reporting operations.",
+        "description": "Request body schema for submitting an amendment to a regulatory reporting submission.",
         "example": {
           "amendmentReason": "STANDARD",
           "submissionReference": "STANDARD",
           "changes": {
-            "tradeId": "STANDARD",
-            "instrumentId": "STANDARD",
-            "settlementDate": "2026-09-15"
+            "submissionId": "STANDARD",
+            "legalEntityId": "STANDARD",
+            "jurisdiction": "STANDARD"
           },
           "requestedBy": "STANDARD",
           "requestContext": {
-            "requestId": "3ea6457b-cf88-5e9b-8288-96b1d2a51ace",
-            "correlationId": "2f8a7f4c-6161-5ba7-9189-5447e317217c",
-            "idempotencyKey": "909b04a1-50f8-5994-a189-46f9e6730ab3",
+            "requestId": "4af8b283-f803-5410-b9c9-d1f2565c4144",
+            "correlationId": "ca9c9839-9e2c-5e50-bb45-0a2c8fd94cc6",
+            "idempotencyKey": "a39549a6-fd20-59b9-ac68-f4a21de586e8",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-351298"
+              "deviceId": "DEV-580925"
             }
           }
         }
       },
-      "AmendmentChanges": {
+      "SubmissionChanges": {
+        "title": "Submission Changes",
         "type": "object",
         "properties": {
-          "tradeId": {
+          "submissionId": {
             "type": "string",
-            "description": "Identifier for the trade that is being amended.",
-            "example": "TRADE-001"
+            "description": "Identifier of the submission being amended.",
+            "example": "SUB-123456"
           },
-          "instrumentId": {
+          "legalEntityId": {
             "type": "string",
-            "description": "Identifier for the financial instrument related to the trade.",
-            "example": "INSTR-456"
+            "description": "Identifier of the legal entity associated with the submission.",
+            "example": "LE-7890"
           },
-          "settlementDate": {
+          "jurisdiction": {
             "type": "string",
-            "description": "New requested settlement date for the trade.",
-            "example": "2023-10-15"
+            "description": "Jurisdiction related to the submission.",
+            "example": "US"
           }
         },
-        "description": "Schema for the changes being made in the amendment request."
+        "description": "Details of the changes being made to the submission."
       },
       "RequestContext": {
+        "title": "Request Context",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
             "description": "Unique identifier for the request.",
-            "example": "REQ-98765"
+            "example": "REQ-987654"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation ID for tracking related requests.",
-            "example": "CORR-54321"
+            "description": "Identifier to correlate related requests.",
+            "example": "CORR-123456"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key to ensure idempotence of the request.",
-            "example": "IDEMP-111"
+            "description": "Key to ensure the request is processed only once.",
+            "example": "IDEMPOTENT-KEY-ABC"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp of when the request was made.",
-            "example": "2023-10-10T12:00:00Z"
+            "description": "Timestamp at which the request was made.",
+            "example": "2023-10-02T14:48:00Z"
           },
           "sourceSystem": {
             "type": "string",
             "description": "The system from which the request originated.",
-            "example": "Trade Execution System"
+            "example": "InternalSystemA"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application that generated the request.",
-            "example": "TradeApp"
+            "description": "The application that initiated the request.",
+            "example": "RegulatoryApp"
           },
           "channel": {
-            "description": "Information about the channel used to make the request.",
-            "$ref": "#/components/schemas/ChannelInformation"
+            "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Detailed context of the request including identifiers and timestamps."
+        "description": "Contextual information about the request."
       },
-      "ChannelInformation": {
+      "Channel": {
+        "title": "Channel Information",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "Identifier for the channel used for the request.",
-            "example": "CHANNEL-001"
+            "description": "Unique identifier for the channel.",
+            "example": "CHANNEL-123"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of channel used (e.g., API, UI, etc.).",
+            "description": "Type of channel used for the request.",
             "example": "API"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier for the device through which the request was made.",
-            "example": "DEVICE-123"
+            "description": "Identifier of the device used to make the request.",
+            "example": "DEVICE-456"
           }
         },
-        "description": "Schema that defines the channel details for the request context."
+        "description": "Information about the channel through which the request was made."
       },
       "CreateSubmissionAmendmentResponse_202": {
-        "title": "Trade Reporting Submission Amendment Response",
+        "title": "Regulatory Reporting Submission Response",
         "type": "object",
         "properties": {
           "actionReference": {
@@ -235,64 +236,63 @@
           },
           "actionType": {
             "type": "string",
-            "description": "The type of action that was performed.",
+            "description": "The type of action performed during the submission process.",
             "example": "STANDARD"
           },
           "status": {
             "type": "string",
-            "description": "The current status of the submitted amendment.",
+            "description": "The current status of the submission.",
             "example": "ACTIVE"
           },
           "processedAt": {
             "type": "string",
-            "description": "The timestamp indicating when the amendment was processed.",
+            "description": "The timestamp when the submission was processed.",
             "example": "2026-08-11T12:00:00Z"
           },
           "metadata": {
-            "description": "Additional information regarding the amendment response.",
-            "$ref": "#/components/schemas/Metadata"
+            "$ref": "#/components/schemas/SubmissionMetadata"
           }
         },
-        "description": "Represents the response received after submitting an amendment for trade reporting operations.",
+        "description": "This schema represents the response for a regulatory reporting submission operation, including details about the action taken, its status, and metadata related to processing.",
         "example": {
           "actionReference": "STANDARD",
           "actionType": "STANDARD",
           "status": "ACTIVE",
           "processedAt": "2026-08-11T12:00:00Z",
           "metadata": {
-            "responseId": "5f49c98b-cece-53b4-85a6-97cc3d78a3d1",
-            "correlationId": "2f8a7f4c-6161-5ba7-9189-5447e317217c",
+            "responseId": "dff4ebd5-f109-5322-929c-08d8e68396b1",
+            "correlationId": "ca9c9839-9e2c-5e50-bb45-0a2c8fd94cc6",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "Metadata": {
-        "title": "Metadata Information",
+      "SubmissionMetadata": {
+        "title": "Submission Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "The unique identifier for the response.",
+            "description": "A unique identifier for the response of the submission.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "An identifier used to associate related requests and responses.",
+            "description": "An identifier used to correlate requests and responses between systems.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the metadata was generated.",
+            "description": "The timestamp when the metadata was generated.",
             "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region in which the processing of the amendment took place.",
+            "description": "The geographical region where the submission was processed.",
             "example": "string"
           }
         },
-        "description": "Contains metadata related to the trade reporting submission amendment."
+        "description": "Detailed information related to the submission processing, including identifiers and timestamps."
       }
     },
     "parameters": {
@@ -323,28 +323,30 @@
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "A unique identifier for the endpoint associated with the request, typically used for tracking and routing purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "trade-and-price-reporting-amend-trade-and-price-reporting"
+          "example": "regulatory-reporting-amend-regulatory-reporting"
         },
-        "example": "trade-and-price-reporting-amend-trade-and-price-reporting"
+        "example": "regulatory-reporting-amend-regulatory-reporting"
       },
       "X-Runtime-App": {
+        "description": "The name of the application or service that generated the request, useful for monitoring and analytics.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "treasury-markets"
+          "example": "risk-compliance"
         },
-        "example": "treasury-markets"
+        "example": "risk-compliance"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication scheme employing a Bearer Token using JSON Web Tokens (JWT). Clients must include a valid JWT in the Authorization header to authenticate requests.",
+        "description": "This security scheme uses the Bearer authentication method, which requires a valid JSON Web Token (JWT) to authenticate requests. The JWT should be included in the 'Authorization' header as 'Bearer {token}'.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
