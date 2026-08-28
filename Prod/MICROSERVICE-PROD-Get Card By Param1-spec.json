@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Get Card By Param1-spec",
-    "description": "The Merchant Acquiring Facility Retrieval API enables users to access detailed information about specific banking cards using a designated parameter. This endpoint serves as a crucial tool for financial institutions and businesses that require card-related data for transaction processing or customer verification. By utilizing the path parameter, developers can efficiently retrieve data regarding card facilities relevant to their operations. Typical consumers include banking applications and financial service providers that facilitate merchant transactions.",
+    "description": "The Credit Card Retrieval API allows users to fetch specific credit card details using a unique parameter identifier. This endpoint is designed for applications that require retrieval of card information for user verification, account management, or transaction processing. Typical consumers include banking applications and financial service providers that need to display or verify credit card data securely. By utilizing this API, developers can enhance user experiences through quick and reliable access to card information.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/cards/merchant-acquiring-facility/{param1}": {
+    "/v5/banking/cards/credit-card/{param1}": {
       "get": {
         "tags": [
-          "Merchant Acquiring Facility"
+          "Credit Card Management"
         ],
-        "summary": "Retrieve Merchant Acquiring Facility by ID",
-        "description": "Fetch the details of a specific Merchant Acquiring Facility using its unique identifier. This endpoint allows users to obtain comprehensive information about the facility, including its status and associated details.",
+        "summary": "Retrieve credit card details",
+        "description": "This endpoint allows you to fetch detailed information about a specific credit card identified by its unique identifier. It provides essential data such as the cardholder's name, expiration date, and balance.",
         "operationId": "getCardByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "Request to retrieve information about a specific merchant acquiring facility identified by MER-800045. Ensure that the request adheres to the defined schema for proper processing.",
+          "description": "This request body is used to retrieve the details of a specific credit card with the identifier CARD-400045. The request must be in JSON format, and it is expected to conform to the defined schema.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved the merchant acquiring facility details.",
+            "description": "Request completed successfully, returning the requested credit card details.",
             "headers": {
               "x-endpoint-id": {
                 "$ref": "#/components/headers/x-endpoint-id"
@@ -91,112 +91,124 @@
   "components": {
     "schemas": {
       "GetCardByParam1Request": {
-        "title": "Merchant Acquiring Facility Operation Request Body",
         "type": "string",
-        "description": "Represents the request body for the GET operation related to the merchant acquiring facility.",
+        "description": "This schema represents the request body expected for the GET operations on the specified credit card.",
         "example": "{}"
       },
       "GetCardByParam1Response_200": {
-        "title": "Merchant Acquiring Facility Response",
+        "title": "Credit Card Operation Response",
         "type": "object",
         "properties": {
+          "cardToken": {
+            "type": "string",
+            "description": "Unique token associated with the credit card.",
+            "example": "TOK-103204"
+          },
+          "cardholderId": {
+            "type": "string",
+            "description": "Identifier for the cardholder.",
+            "example": "STANDARD"
+          },
           "merchantId": {
             "type": "string",
-            "description": "Unique identifier for the merchant.",
-            "example": "MER-323881"
+            "description": "Identifier for the merchant involved in the transaction.",
+            "example": "MER-256621"
           },
-          "legalName": {
-            "type": "string",
-            "description": "Legal name of the merchant.",
-            "example": "Olivia Bennett"
+          "transactionAmount": {
+            "description": "Details of the transaction amount including value and currency.",
+            "$ref": "#/components/schemas/TransactionAmount"
           },
           "merchantCategoryCode": {
             "type": "string",
-            "description": "Category code that identifies the merchant's type.",
+            "description": "The category code of the merchant.",
             "example": "5411"
-          },
-          "settlementAccountId": {
-            "type": "string",
-            "description": "Identifier for the settlement account associated with the merchant.",
-            "example": "ACC-144502"
-          },
-          "settlementCurrency": {
-            "type": "string",
-            "description": "Currency in which the settlements will be made.",
-            "example": "USD"
-          },
-          "pricingPlan": {
-            "type": "string",
-            "description": "The pricing plan under which the merchant operates.",
-            "example": "STANDARD"
           },
           "recordStatus": {
             "type": "string",
-            "description": "Current status of the merchant record.",
+            "description": "Current status of the record.",
             "example": "ACTIVE"
           },
           "version": {
             "type": "integer",
-            "description": "Version of the merchant record.",
+            "description": "Version of the record.",
             "format": "int32",
             "example": 1
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp of the last update made to the merchant record.",
+            "description": "Timestamp indicating when the record was last updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "type": "object",
-            "properties": {
-              "responseId": {
-                "type": "string",
-                "description": "Unique identifier for the response.",
-                "example": "RESP-7890"
-              },
-              "correlationId": {
-                "type": "string",
-                "description": "Identifier to correlate the request and response.",
-                "example": "CORR-1234"
-              },
-              "generatedAt": {
-                "type": "string",
-                "description": "Timestamp when the response was generated.",
-                "example": "2023-10-01T12:05:00Z"
-              },
-              "processingRegion": {
-                "type": "string",
-                "description": "Region where the processing occurred.",
-                "example": "US-East"
-              }
-            },
-            "description": "Metadata related to the response.",
-            "example": {
-              "responseId": "76ae6393-b79f-5d26-adcc-bd3e9c298833",
-              "correlationId": "629c1d39-90bc-5a25-9b74-4ec60e5a0d36",
-              "generatedAt": "2026-09-15T14:30:00Z",
-              "processingRegion": "us-east-1"
-            }
+            "description": "Additional metadata related to the transaction.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Schema representing the response for the merchant acquiring facility operation.",
+        "description": "Schema representing the response structure for the credit card operation retrieval.",
         "example": {
-          "merchantId": "MER-323881",
-          "legalName": "Olivia Bennett",
+          "cardToken": "TOK-103204",
+          "cardholderId": "STANDARD",
+          "merchantId": "MER-256621",
+          "transactionAmount": {
+            "amount": 100,
+            "currency": "USD"
+          },
           "merchantCategoryCode": "5411",
-          "settlementAccountId": "ACC-144502",
-          "settlementCurrency": "USD",
-          "pricingPlan": "STANDARD",
           "recordStatus": "ACTIVE",
           "version": 1,
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "76ae6393-b79f-5d26-adcc-bd3e9c298833",
-            "correlationId": "629c1d39-90bc-5a25-9b74-4ec60e5a0d36",
+            "responseId": "93725268-bc82-570a-b119-21d57634113a",
+            "correlationId": "ba31c8f1-37d0-5b1f-9ae8-f6028521eb6c",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
+      },
+      "TransactionAmount": {
+        "title": "Transaction Amount",
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "description": "The numerical amount of the transaction.",
+            "format": "int32",
+            "example": 0
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency code for the transaction.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing the details of a transaction amount including the amount and currency."
+      },
+      "Metadata": {
+        "title": "Transaction Metadata",
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "Unique identifier for the response.",
+            "example": "string"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier used for correlating requests and responses.",
+            "example": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "Timestamp when the metadata was generated.",
+            "example": "string"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "Region where the transaction processing occurred.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing additional metadata related to a transaction."
       }
     },
     "parameters": {
@@ -227,17 +239,17 @@
     },
     "headers": {
       "x-endpoint-id": {
-        "description": "A unique identifier for the endpoint that processed the request.",
+        "description": "A unique identifier for the endpoint being called.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "merchant-acquiring-facility-get-merchant-acquiring-facility"
+          "example": "credit-card-get-credit-card"
         },
-        "example": "merchant-acquiring-facility-get-merchant-acquiring-facility"
+        "example": "credit-card-get-credit-card"
       },
       "x-runtime-app": {
-        "description": "The name of the application runtime environment where the request was executed.",
+        "description": "Indicates the application that is processing the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -250,7 +262,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a bearer token for authentication. The token should be a JSON Web Token (JWT) and is required for accessing protected resources.",
+        "description": "This security scheme uses the Bearer authentication scheme defined in RFC 6750, with JSON Web Tokens (JWT) as the format for the token. Clients must include the JWT in the 'Authorization' header of their requests to authenticate.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
