@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE-PROD-Get Payment By Param1-spec",
-    "description": "The Payment Retrieval API enables users to obtain detailed information about ACH payment operations using specific parameters. This endpoint is designed for financial institutions and payment processing systems that require visibility into transaction history and payment status. By querying with the designated parameter, consumers can efficiently access relevant payment records, enhancing their ability to manage and reconcile transactions. Typical use cases include auditing, monitoring payment flows, and troubleshooting payment-related issues.",
+    "title": "MICROSERVICE-PROD-List Ach Operation Status-spec",
+    "description": "The ACH Operation Status Retrieval API provides insights into the current status of ACH transactions. This endpoint allows users to gather real-time information on various ACH operations, enabling financial institutions and businesses to monitor transaction statuses effectively. Typical consumers include banking applications and payment processing systems, which rely on this data for enhancing user experience and ensuring timely updates. By leveraging this API, developers can integrate ACH operation status checks seamlessly into their applications.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/payments/ach-operations/{param1}": {
+    "/v5/banking/payments/ach-operations/status": {
       "get": {
         "tags": [
           "Payments"
         ],
-        "summary": "Retrieve ACH operation details",
-        "description": "This endpoint fetches the detailed information about a specific ACH operation using its unique resource identifier (RES-100045). Utilize this to get the current status and relevant details associated with the ACH operation.",
-        "operationId": "getPaymentByParam1",
+        "summary": "Retrieve the status of ACH operations.",
+        "description": "This endpoint allows you to fetch the current status of Automated Clearing House (ACH) operations, providing insight into the ongoing transactions and their outcomes.",
+        "operationId": "listAchOperationStatus",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
-          },
-          {
-            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "This request body is used to retrieve information for the ACH operation specified by the unique reference identifier 'RES-100045'. It facilitates the retrieval of detailed data pertaining to the specified operation, ensuring that the client can accurately obtain the relevant information about the ACH transactions.",
+          "description": "This request body is used to retrieve the status of ACH operations. It should contain the necessary parameters to identify the specific operations whose status is being queried.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetPaymentByParam1Request"
+                "$ref": "#/components/schemas/ListAchOperationStatusRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, returning the operation details.",
+            "description": "The request was successful, and the payment status is returned.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetPaymentByParam1Response_200"
+                  "$ref": "#/components/schemas/ListAchOperationStatusResponse_200"
                 }
               }
             }
@@ -90,12 +87,12 @@
   },
   "components": {
     "schemas": {
-      "GetPaymentByParam1Request": {
+      "ListAchOperationStatusRequest": {
         "type": "string",
-        "description": "This schema represents the request body for the ACH operations GET request in JSON format.",
+        "description": "This schema represents the request body for getting the status of ACH operations. The body is expected to be a string that specifies the details of the request.",
         "example": "{}"
       },
-      "GetPaymentByParam1Response_200": {
+      "ListAchOperationStatusResponse_200": {
         "type": "object",
         "properties": {
           "paymentId": {
@@ -114,41 +111,41 @@
             "example": "ACC-629884"
           },
           "instructedAmount": {
-            "description": "The amount that is instructed for payment.",
+            "description": "The amount and currency specified for the payment.",
             "$ref": "#/components/schemas/InstructedAmount"
           },
           "requestedExecutionDate": {
             "type": "string",
-            "description": "The date when the payment is requested to be executed.",
+            "description": "The date on which the payment is requested to be executed.",
             "example": "2026-09-15"
           },
           "remittanceInformation": {
             "type": "string",
-            "description": "Information related to the remittance.",
+            "description": "Information provided for remittance purposes.",
             "example": "STANDARD"
           },
           "recordStatus": {
             "type": "string",
-            "description": "The current status of the payment record.",
+            "description": "Current status of the payment record.",
             "example": "ACTIVE"
           },
           "version": {
             "type": "integer",
-            "description": "Version of the payment record.",
+            "description": "Version number of the payment record.",
             "format": "int32",
             "example": 1
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the record was last updated.",
+            "description": "Timestamp of the last update of the payment record.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Metadata related to the payment response.",
+            "description": "Additional metadata regarding the payment.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for ACH operations request containing payment details.",
+        "description": "Schema representing the response from the ACH operations status GET request.",
         "example": {
           "paymentId": "PAY-209291",
           "debtorAccountId": "ACC-139384",
@@ -175,16 +172,16 @@
         "properties": {
           "amount": {
             "type": "number",
-            "description": "The monetary amount to be processed.",
-            "example": 0.0
+            "description": "The amount to be transferred.",
+            "example": 100.0
           },
           "currency": {
             "type": "string",
             "description": "The currency of the instructed amount.",
-            "example": "string"
+            "example": "USD"
           }
         },
-        "description": "Schema representing the instructed amount for a payment."
+        "description": "Schema representing the instructed amount and currency for a payment."
       },
       "Metadata": {
         "type": "object",
@@ -192,25 +189,25 @@
           "responseId": {
             "type": "string",
             "description": "Unique identifier for the response.",
-            "example": "string"
+            "example": "res-12345"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier for correlating requests and responses.",
-            "example": "string"
+            "description": "Identifier used to correlate requests and responses.",
+            "example": "cor-67890"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the response was generated.",
-            "example": "string"
+            "description": "Timestamp when the metadata was generated.",
+            "example": "2023-10-05T12:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing took place.",
-            "example": "string"
+            "description": "Region where the processing occurred.",
+            "example": "US"
           }
         },
-        "description": "Schema containing metadata information of the payment response."
+        "description": "Schema representing additional metadata for a payment operation."
       }
     },
     "parameters": {
@@ -227,21 +224,11 @@
             "MICROSERVICE_PROD_200"
           ]
         }
-      },
-      "param1": {
-        "name": "param1",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
-        }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint being accessed. This helps in tracking requests and routing them correctly.",
+        "description": "The unique identifier for the API endpoint that was called.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -251,7 +238,7 @@
         "example": "ach-operations-get-ach-operations"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that processed the request. This header can be useful for debugging and monitoring application performance.",
+        "description": "The name of the application that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -264,7 +251,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses Bearer authentication, utilizing JSON Web Tokens (JWT) as the format for the tokens. It is commonly used for authorization in API requests, allowing clients to access protected resources.",
+        "description": "This security scheme uses a Bearer Authentication method with JSON Web Tokens (JWT). Clients must send a bearer token in the Authorization header to authenticate requests. The bearer token grants access to the resources on the server.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
