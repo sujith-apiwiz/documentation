@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Create Submission Amendment-spec",
-    "description": "The Submission Amendment Management API enables users to submit amendments for existing regulatory submissions, ensuring compliance with evolving regulatory requirements. This API allows financial institutions to maintain accurate records and adjust prior submissions as needed. Typical consumers include compliance officers and financial analysts who manage regulatory reporting and require flexibility in submitting amendments. By utilizing this API, organizations can streamline their regulatory processes and improve their response to changing compliance obligations.",
+    "description": "The Submission Amendment Management API enables users to create amendments for existing submission reports in the compliance banking domain. With this API, compliance officers and analysts can efficiently update submission details to reflect new information or changes in context. Users can leverage this capability to enhance compliance reporting accuracy and maintain regulatory requirements. This API streamlines the process of managing submission amendments, ensuring timely and accurate reporting for audits and reviews.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/compliance/regulatory-reporting/submissions/{submissionId}/amendments": {
+    "/v5/banking/compliance/compliance-reporting/submissions/{submissionId}/amendments": {
       "post": {
         "tags": [
-          "Compliance"
+          "Compliance Management"
         ],
-        "summary": "Amend a regulatory submission.",
-        "description": "This endpoint allows users to submit amendments for a specific regulatory submission identified by its ID. Ensure that all necessary fields are correctly provided in the request body to process the amendment successfully.",
+        "summary": "Create an amendment for a specific compliance submission.",
+        "description": "This endpoint allows users to create an amendment for a specific compliance submission identified by its unique RES-100045 identifier. The amendment will be processed and associated with the compliance report, enabling users to update or correct submission details as necessary.",
         "operationId": "createSubmissionAmendment",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to submit amendments for the specified regulatory reporting submission identified by RES-100045. The payload must adhere to the defined schema and should include all necessary fields for the amendment process.",
+          "description": "This request body is used to submit amendments for the compliance report associated with the specific submission ID 'RES-100045'. It contains the necessary details required for processing the amendments.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "202": {
-            "description": "The request has been accepted and is being processed.",
+            "description": "Request has been accepted and is being processed.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -91,32 +91,33 @@
   "components": {
     "schemas": {
       "CreateSubmissionAmendmentRequest": {
-        "title": "Regulatory Reporting Submission Amendment Request",
         "type": "object",
         "properties": {
           "amendmentReason": {
             "type": "string",
-            "description": "The reason for the amendment.",
+            "description": "The reason for the amendment being requested.",
             "example": "STANDARD"
           },
           "submissionReference": {
             "type": "string",
-            "description": "Reference identifier for the original submission.",
+            "description": "Reference identifier for the submission.",
             "example": "STANDARD"
           },
           "changes": {
-            "$ref": "#/components/schemas/SubmissionChanges"
+            "description": "Details of the changes being requested.",
+            "$ref": "#/components/schemas/Changes"
           },
           "requestedBy": {
             "type": "string",
-            "description": "Identifier of the person making the request.",
+            "description": "Identifier for the individual or entity requesting the amendment.",
             "example": "STANDARD"
           },
           "requestContext": {
+            "description": "Contextual information regarding the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Request body schema for submitting an amendment to a regulatory reporting submission.",
+        "description": "Schema representing the request body for submitting amendment operations.",
         "example": {
           "amendmentReason": "STANDARD",
           "submissionReference": "STANDARD",
@@ -127,172 +128,171 @@
           },
           "requestedBy": "STANDARD",
           "requestContext": {
-            "requestId": "4af8b283-f803-5410-b9c9-d1f2565c4144",
-            "correlationId": "ca9c9839-9e2c-5e50-bb45-0a2c8fd94cc6",
-            "idempotencyKey": "a39549a6-fd20-59b9-ac68-f4a21de586e8",
+            "requestId": "ba9862b0-37be-5d4e-9869-8c5a0dd2ecb5",
+            "correlationId": "040f3b50-144e-5d8b-b96a-296f25a58f67",
+            "idempotencyKey": "66934684-5cd8-5137-8a5c-0947976022cd",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-580925"
+              "deviceId": "DEV-801924"
             }
           }
         }
       },
-      "SubmissionChanges": {
-        "title": "Submission Changes",
+      "Changes": {
         "type": "object",
         "properties": {
           "submissionId": {
             "type": "string",
-            "description": "Identifier of the submission being amended.",
-            "example": "SUB-123456"
+            "description": "The ID of the submission that is being amended.",
+            "example": "SUB-123"
           },
           "legalEntityId": {
             "type": "string",
-            "description": "Identifier of the legal entity associated with the submission.",
-            "example": "LE-7890"
+            "description": "The ID of the legal entity associated with the amendment.",
+            "example": "LE-456"
           },
           "jurisdiction": {
             "type": "string",
-            "description": "Jurisdiction related to the submission.",
-            "example": "US"
+            "description": "The jurisdiction relevant to the submission.",
+            "example": "CA"
           }
         },
-        "description": "Details of the changes being made to the submission."
+        "description": "Schema for detailing the specific changes related to an amendment."
       },
       "RequestContext": {
-        "title": "Request Context",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
             "description": "Unique identifier for the request.",
-            "example": "REQ-987654"
+            "example": "REQ-7890"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier to correlate related requests.",
-            "example": "CORR-123456"
+            "description": "Identifier to track the flow across multiple services.",
+            "example": "CORR-5678"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key to ensure the request is processed only once.",
-            "example": "IDEMPOTENT-KEY-ABC"
+            "description": "Key to ensure the request is idempotent.",
+            "example": "IDEM-13579"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp at which the request was made.",
-            "example": "2023-10-02T14:48:00Z"
+            "description": "Timestamp for when the request was made.",
+            "example": "2023-10-01T12:00:00Z"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "The system from which the request originated.",
-            "example": "InternalSystemA"
+            "description": "Identifier for the system from which the request originated.",
+            "example": "SystemA"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application that initiated the request.",
-            "example": "RegulatoryApp"
+            "description": "Name of the application making the request.",
+            "example": "AppX"
           },
           "channel": {
+            "description": "Information regarding the communication channel used for the request.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Contextual information about the request."
+        "description": "Schema for the context surrounding the request."
       },
       "Channel": {
-        "title": "Channel Information",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
             "description": "Unique identifier for the channel.",
-            "example": "CHANNEL-123"
+            "example": "CHANNEL-1"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of channel used for the request.",
-            "example": "API"
+            "description": "Type of channel (e.g. web, mobile, etc.).",
+            "example": "web"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier of the device used to make the request.",
-            "example": "DEVICE-456"
+            "description": "Identifier for the device used in the communication.",
+            "example": "DEVICE-XYZ"
           }
         },
-        "description": "Information about the channel through which the request was made."
+        "description": "Schema representing information about the channel through which a request is made."
       },
       "CreateSubmissionAmendmentResponse_202": {
-        "title": "Regulatory Reporting Submission Response",
+        "title": "Compliance Reporting Submission Response",
         "type": "object",
         "properties": {
           "actionReference": {
             "type": "string",
-            "description": "A reference identifier for the action taken.",
+            "description": "A unique reference for the action taken.",
             "example": "STANDARD"
           },
           "actionType": {
             "type": "string",
-            "description": "The type of action performed during the submission process.",
+            "description": "The type of action that was performed.",
             "example": "STANDARD"
           },
           "status": {
             "type": "string",
-            "description": "The current status of the submission.",
+            "description": "The status of the action performed.",
             "example": "ACTIVE"
           },
           "processedAt": {
             "type": "string",
-            "description": "The timestamp when the submission was processed.",
+            "description": "Timestamp indicating when the action was processed.",
             "example": "2026-08-11T12:00:00Z"
           },
           "metadata": {
-            "$ref": "#/components/schemas/SubmissionMetadata"
+            "description": "Metadata related to the processing of the action.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "This schema represents the response for a regulatory reporting submission operation, including details about the action taken, its status, and metadata related to processing.",
+        "description": "Response object for a compliance reporting submission that includes action details and metadata.",
         "example": {
           "actionReference": "STANDARD",
           "actionType": "STANDARD",
           "status": "ACTIVE",
           "processedAt": "2026-08-11T12:00:00Z",
           "metadata": {
-            "responseId": "dff4ebd5-f109-5322-929c-08d8e68396b1",
-            "correlationId": "ca9c9839-9e2c-5e50-bb45-0a2c8fd94cc6",
+            "responseId": "6dcc492d-5d49-543d-81d7-4729fd848215",
+            "correlationId": "040f3b50-144e-5d8b-b96a-296f25a58f67",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "SubmissionMetadata": {
-        "title": "Submission Metadata",
+      "Metadata": {
+        "title": "Processing Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "A unique identifier for the response of the submission.",
+            "description": "A unique identifier for the response.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "An identifier used to correlate requests and responses between systems.",
+            "description": "A unique identifier for tracking the correlation of requests and responses.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp when the metadata was generated.",
+            "description": "Timestamp indicating when the metadata was generated.",
             "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The geographical region where the submission was processed.",
+            "description": "The geographic region where the processing occurred.",
             "example": "string"
           }
         },
-        "description": "Detailed information related to the submission processing, including identifiers and timestamps."
+        "description": "Metadata details associated with the processing of the compliance reporting submission."
       }
     },
     "parameters": {
@@ -323,17 +323,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint associated with the request, typically used for tracking and routing purposes.",
+        "description": "Unique identifier for the endpoint that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "regulatory-reporting-amend-regulatory-reporting"
+          "example": "compliance-reporting-amend-compliance-reporting"
         },
-        "example": "regulatory-reporting-amend-regulatory-reporting"
+        "example": "compliance-reporting-amend-compliance-reporting"
       },
       "X-Runtime-App": {
-        "description": "The name of the application or service that generated the request, useful for monitoring and analytics.",
+        "description": "The name of the application responsible for processing this request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -346,7 +346,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the Bearer authentication method, which requires a valid JSON Web Token (JWT) to authenticate requests. The JWT should be included in the 'Authorization' header as 'Bearer {token}'.",
+        "description": "Security scheme that utilizes JSON Web Tokens (JWT) for user authentication. Clients must include a valid JWT token in the Authorization header when making requests to access protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
