@@ -1,0 +1,332 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MICROSERVICE-PROD-Create Service Directory Validation-spec",
+    "description": "The Service Directory Validation API enables the submission of validation requests for service directories within the banking domain. This endpoint allows clients to upload validation data associated with specified service directories, helping ensure accuracy and compliance. Typical consumers include banking application developers and operations teams looking to maintain service integrity across various channels. By validating service entries, businesses can enhance their operational efficiency and improve customer interactions.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://prod-workspace-pwmw.apiwiz.io",
+      "description": "Sandbox server",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "Sandbox server",
+      "x-environmentName": "Sandbox",
+      "x-hide": false,
+      "x-environmentId": "6a7f52236ae9a15654cd5721",
+      "x-basePath": "/"
+    },
+    {
+      "url": "https://35.162.152.203:9000",
+      "description": "PROD",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "PROD",
+      "x-environmentName": "PROD",
+      "x-hide": false,
+      "x-environmentId": "6a784eac1d7e36108cc3cb0c",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/v5/banking/cross-channel/service-directory/{param1}/validations": {
+      "post": {
+        "tags": [
+          "Service Directory Validation"
+        ],
+        "summary": "Validate the service directory entry.",
+        "description": "This endpoint is used to validate a specific service directory entry (RES-100045) in the cross-channel system. It ensures that all required fields are correctly filled and that the entry complies with the necessary standards.",
+        "operationId": "createServiceDirectoryValidation",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/param1"
+          }
+        ],
+        "requestBody": {
+          "description": "This request body is used to validate the cross-channel service directory for the specified resource. It contains information required for the validation process, including details necessary for the operation to be executed successfully.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateServiceDirectoryValidationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request completed successfully, validation results returned.",
+            "headers": {
+              "X-Endpoint-Id": {
+                "$ref": "#/components/headers/X-Endpoint-Id"
+              },
+              "X-Runtime-App": {
+                "$ref": "#/components/headers/X-Runtime-App"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateServiceDirectoryValidationResponse_200"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateServiceDirectoryValidationRequest": {
+        "title": "POST Request Body for Validation Operations",
+        "type": "object",
+        "properties": {
+          "validationScope": {
+            "type": "array",
+            "description": "A list of validation scopes to be applied during the operation.",
+            "example": [
+              "STANDARD"
+            ],
+            "items": {
+              "type": "string",
+              "example": "userValidation"
+            }
+          },
+          "asOfDate": {
+            "type": "string",
+            "description": "The date as of which the validation is requested.",
+            "example": "2026-09-15"
+          },
+          "requestedBy": {
+            "type": "string",
+            "description": "The identifier of the user or system that requested the operation.",
+            "example": "STANDARD"
+          },
+          "requestContext": {
+            "description": "The context of the request including metadata for tracking.",
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "This schema represents the structure of the request body for validation operations in the service directory.",
+        "example": {
+          "validationScope": [
+            "STANDARD"
+          ],
+          "asOfDate": "2026-09-15",
+          "requestedBy": "STANDARD",
+          "requestContext": {
+            "requestId": "5875ab90-e959-5c10-af70-d33445eee8bd",
+            "correlationId": "28fd4273-b696-530d-8784-641f388c4fe8",
+            "idempotencyKey": "219fe61c-0b0a-5d2b-920d-ba40fa3de93a",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-607903"
+            }
+          }
+        }
+      },
+      "RequestContext": {
+        "title": "Request Context Object",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique identifier for the request.",
+            "example": "req-001"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier used to correlate multiple requests across systems.",
+            "example": "corr-001"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Key to ensure that a request is not processed multiple times.",
+            "example": "idempotency-001"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the request was made.",
+            "example": "2023-10-01T12:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The system initiating the request.",
+            "example": "systemA"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "Application from which the request originated.",
+            "example": "appA"
+          },
+          "channel": {
+            "description": "Information about the channel used to make the request.",
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Contains contextual information about the request, useful for tracking and identifying requests."
+      },
+      "Channel": {
+        "title": "Channel Object",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Unique identifier for the channel.",
+            "example": "channel-001"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "The type of channel (e.g., web, mobile).",
+            "example": "mobile"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Identifier for the device making the request.",
+            "example": "device-001"
+          }
+        },
+        "description": "Represents details about the communication channel used for the request."
+      },
+      "CreateServiceDirectoryValidationResponse_200": {
+        "type": "object",
+        "properties": {
+          "actionReference": {
+            "type": "string",
+            "description": "A reference string associated with the action.",
+            "example": "STANDARD"
+          },
+          "actionType": {
+            "type": "string",
+            "description": "The type of action that was performed.",
+            "example": "STANDARD"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the operation.",
+            "example": "ACTIVE"
+          },
+          "processedAt": {
+            "type": "string",
+            "description": "The timestamp when the operation was processed.",
+            "example": "2026-08-11T12:00:00Z"
+          },
+          "metadata": {
+            "description": "Additional metadata related to the operation.",
+            "$ref": "#/components/schemas/Metadata"
+          }
+        },
+        "description": "Response schema for operations, including action details and metadata.",
+        "example": {
+          "actionReference": "STANDARD",
+          "actionType": "STANDARD",
+          "status": "ACTIVE",
+          "processedAt": "2026-08-11T12:00:00Z",
+          "metadata": {
+            "responseId": "903c984f-c1bf-5f27-b312-e2eb4f88ee8b",
+            "correlationId": "28fd4273-b696-530d-8784-641f388c4fe8",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
+      },
+      "Metadata": {
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "A unique identifier for the response.",
+            "example": "string"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "A unique identifier to correlate requests and responses.",
+            "example": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "The timestamp when the metadata was generated.",
+            "example": "string"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "The geographic region where the processing occurred.",
+            "example": "string"
+          }
+        },
+        "description": "Metadata information related to the operation response."
+      }
+    },
+    "parameters": {
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "MICROSERVICE_PROD_200"
+          ]
+        }
+      },
+      "param1": {
+        "name": "param1",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "headers": {
+      "X-Endpoint-Id": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "service-directory-validate-service-directory"
+        },
+        "example": "service-directory-validate-service-directory"
+      },
+      "X-Runtime-App": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "customer-channel"
+        },
+        "example": "customer-channel"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "This security scheme uses bearer tokens to authenticate requests. Tokens must be in JSON Web Token (JWT) format to ensure a compact and secure transmission of claims.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
