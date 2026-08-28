@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Get Pisp By Param1-spec",
-    "description": "The International Standing Order Consent Lookup API enables consumers to retrieve specific consent details related to international standing orders using a unique identifier. This functionality is essential for financial institutions and payment service providers seeking to manage customer consents securely and efficiently. Typical use cases include validating user consents before processing payments or fetching consent statuses for compliance purposes. This API streamlines access to key consent information, facilitating better customer service and operational transparency.",
+    "description": "The International Scheduled Payments Retrieval API enables users to access detailed information about specific international scheduled payments identified by a unique parameter. This API is essential for financial institutions and service providers involved in the processing of cross-border payment transactions. By utilizing this endpoint, users can query the payment status, transaction details, and associated metadata, facilitating efficient transaction tracking and reporting. Typical consumers include banking applications and financial management platforms that require insight into ongoing international payment activities.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/open-banking/pisp/international-standing-order-consents/{param1}": {
+    "/v5/open-banking/pisp/international-scheduled-payments/{param1}": {
       "get": {
         "tags": [
-          "International Standing Order Consent"
+          "International Payments"
         ],
-        "summary": "Retrieve an international standing order consent by its ID.",
-        "description": "This endpoint allows you to fetch details of a specific international standing order consent using its unique identifier. It provides the necessary information for verification and further processing.",
+        "summary": "Retrieve International Scheduled Payment Details",
+        "description": "Fetches the details of an international scheduled payment identified by the specified payment ID. This endpoint allows users to access comprehensive information related to a specific scheduled payment, including its status, amount, and recipient details.",
         "operationId": "getPispByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to retrieve details about a specific international standing order consent identified by the given RES-100045 reference. The request provides necessary parameters in JSON format to allow for the accurate fetching of the relevant consent data.",
+          "description": "This request body allows the client to initiate a GET request for the international scheduled payment with the identifier PAY-300045. Ensure that the request body adheres to the specified schema to retrieve the correct payment details.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "The request was successful, and the resource data is returned.",
+            "description": "Successfully retrieved the scheduled payment details.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -92,119 +92,84 @@
     "schemas": {
       "GetPispByParam1Request": {
         "type": "string",
-        "description": "This schema represents the request body for the GET operation on international standing order consents.",
+        "description": "Represents the request body for the GET operation of the international scheduled payments.",
         "example": "{}"
       },
       "GetPispByParam1Response_200": {
-        "title": "International Standing Order Consent Response",
+        "title": "International Scheduled Payments Response",
         "type": "object",
         "properties": {
           "Data": {
             "type": "object",
             "properties": {
+              "paymentId": {
+                "type": "string",
+                "description": "Unique identifier for the payment.",
+                "example": "string"
+              },
               "ConsentId": {
                 "type": "string",
-                "description": "Unique identifier for the consent.",
+                "description": "Identifier for the consent related to the payment.",
                 "example": "string"
               },
               "CreationDateTime": {
                 "type": "string",
-                "description": "Timestamp when the consent was created.",
-                "example": "2021-12-01T10:00:00Z"
+                "description": "Timestamp when the payment was created.",
+                "example": "string"
               },
               "Status": {
                 "type": "string",
-                "description": "Current status of the consent.",
-                "example": "ACTIVE"
-              },
-              "StatusReason": {
-                "type": "array",
-                "description": "Reasons for the current status of the consent.",
-                "example": [
-                  {
-                    "code": "Approved",
-                    "description": "Consent has been approved.",
-                    "Path": "/consents/1"
-                  }
-                ],
-                "items": {
-                  "$ref": "#/components/schemas/StatusReasonDetail"
-                }
+                "description": "Current status of the payment.",
+                "example": "string"
               },
               "StatusUpdateDateTime": {
                 "type": "string",
-                "description": "Timestamp when the consent status was last updated.",
-                "example": "2021-12-02T10:00:00Z"
+                "description": "Timestamp of the last status update.",
+                "example": "string"
               },
-              "Permission": {
-                "type": "string",
-                "description": "Permission details related to the consent.",
-                "example": "GRANTED"
+              "StatusReason": {
+                "type": "array",
+                "description": "List of reasons for the payment status.",
+                "example": [],
+                "items": {
+                  "$ref": "#/components/schemas/StatusReason"
+                }
               },
-              "ReadRefundAccount": {
+              "ExpectedExecutionDateTime": {
                 "type": "string",
-                "description": "Indicates whether the refund account can be read.",
-                "example": "true"
+                "description": "Expected date and time for the execution of the payment.",
+                "example": "string"
               },
-              "CutOffDateTime": {
+              "ExpectedSettlementDateTime": {
                 "type": "string",
-                "description": "Timestamp indicating the cut-off date for the payment.",
-                "example": "2021-12-31T23:59:59Z"
+                "description": "Expected date and time for the settlement of the payment.",
+                "example": "string"
+              },
+              "Refund": {
+                "$ref": "#/components/schemas/Refund"
               },
               "Charges": {
                 "type": "array",
-                "description": "List of charges associated with the standing order.",
-                "example": [
-                  {
-                    "ChargeBearer": "SENDER",
-                    "Type": "ADMINISTRATIVE",
-                    "Amount": {
-                      "Amount": "10.00",
-                      "Currency": "USD"
-                    }
-                  }
-                ],
+                "description": "List of charges associated with the payment.",
+                "example": [],
                 "items": {
-                  "$ref": "#/components/schemas/ChargeDetail"
+                  "$ref": "#/components/schemas/Charge"
                 }
               },
+              "ExchangeRateInformation": {
+                "$ref": "#/components/schemas/ExchangeRateInformation"
+              },
               "Initiation": {
-                "$ref": "#/components/schemas/InitiationDetail"
-              },
-              "NumberOfPayments": {
-                "type": "string",
-                "description": "Total number of payments under the standing order.",
-                "example": "5"
-              },
-              "ExtendedPurpose": {
-                "type": "string",
-                "description": "Extended purpose of the standing order.",
-                "example": "Rent Payment"
-              },
-              "ChargeBearer": {
-                "type": "string",
-                "description": "Party responsible for the charges.",
-                "example": "RECEIVER"
-              },
-              "CurrencyOfTransfer": {
-                "type": "string",
-                "description": "Currency in which the transfer is made.",
-                "example": "EUR"
-              },
-              "DestinationCountryCode": {
-                "type": "string",
-                "description": "Country code for the destination of the transfer.",
-                "example": "DE"
-              },
-              "InstructedAmount": {
-                "$ref": "#/components/schemas/MoneyDetail"
+                "$ref": "#/components/schemas/Initiation"
               }
             },
-            "description": "Details of the consent including its status and related information.",
+            "description": "Contains the details of the payment request and the associated metadata.",
             "example": {
+              "paymentId": "PAY-446463",
               "ConsentId": "STANDARD",
               "CreationDateTime": "2026-09-15T14:30:00Z",
               "Status": "ACTIVE",
+              "StatusUpdateDateTime": "2026-09-15T14:30:00Z",
               "StatusReason": [
                 {
                   "code": "SUCCESS",
@@ -212,10 +177,16 @@
                   "Path": "STANDARD"
                 }
               ],
-              "StatusUpdateDateTime": "2026-09-15T14:30:00Z",
-              "Permission": "STANDARD",
-              "ReadRefundAccount": "STANDARD",
-              "CutOffDateTime": "2026-09-15T14:30:00Z",
+              "ExpectedExecutionDateTime": "2026-09-15T14:30:00Z",
+              "ExpectedSettlementDateTime": "2026-09-15T14:30:00Z",
+              "Refund": {
+                "Account": {
+                  "SchemeName": "Northstar Banking Service",
+                  "Identification": "STANDARD",
+                  "Name": "Northstar Banking Service",
+                  "SecondaryIdentification": "STANDARD"
+                }
+              },
               "Charges": [
                 {
                   "ChargeBearer": "STANDARD",
@@ -226,90 +197,46 @@
                   }
                 }
               ],
+              "ExchangeRateInformation": {
+                "UnitCurrency": "USD",
+                "ExchangeRate": 100.0,
+                "RateType": "STANDARD",
+                "ContractIdentification": "STANDARD",
+                "ExpirationDateTime": "2026-09-15T14:30:00Z"
+              },
               "Initiation": {
-                "RemittanceInformation": {
-                  "Structured": [
-                    {
-                      "ReferredDocumentInformation": [
-                        {
-                          "Code": "SUCCESS",
-                          "Issuer": "STANDARD",
-                          "Number": "STANDARD",
-                          "RelatedDate": "2026-09-15",
-                          "LineDetails": [
-                            "STANDARD"
-                          ]
-                        }
-                      ],
-                      "ReferredDocumentAmount": "1250.75",
-                      "CreditorReferenceInformation": {
-                        "Code": "SUCCESS",
-                        "Issuer": "STANDARD",
-                        "Reference": "STANDARD"
-                      },
-                      "Invoicer": "STANDARD",
-                      "Invoicee": "STANDARD",
-                      "TaxRemittance": "STANDARD",
-                      "AdditionalRemittanceInformation": [
-                        "STANDARD"
-                      ]
-                    }
-                  ],
-                  "Unstructured": [
-                    "STANDARD"
-                  ]
-                },
-                "NumberOfPayments": "STANDARD",
+                "InstructionIdentification": "STANDARD",
+                "EndToEndIdentification": "STANDARD",
+                "LocalInstrument": "STANDARD",
+                "InstructionPriority": "STANDARD",
                 "ExtendedPurpose": "STANDARD",
                 "ChargeBearer": "STANDARD",
+                "RequestedExecutionDateTime": "2026-09-15T14:30:00Z",
                 "CurrencyOfTransfer": "STANDARD",
                 "DestinationCountryCode": "US",
                 "InstructedAmount": {
                   "Amount": "1250.75",
                   "Currency": "USD"
+                },
+                "ExchangeRateInformation": {
+                  "UnitCurrency": "USD"
                 }
               }
             }
           },
           "metadata": {
-            "type": "object",
-            "properties": {
-              "responseId": {
-                "type": "string",
-                "description": "Unique identifier for the API response.",
-                "example": "abc-123"
-              },
-              "correlationId": {
-                "type": "string",
-                "description": "Identifier to correlate multiple responses.",
-                "example": "corr-456"
-              },
-              "generatedAt": {
-                "type": "string",
-                "description": "Timestamp when the response was generated.",
-                "example": "2021-12-01T12:00:00Z"
-              },
-              "processingRegion": {
-                "type": "string",
-                "description": "Region where the request was processed.",
-                "example": "EU"
-              }
-            },
-            "description": "Metadata related to the API response.",
-            "example": {
-              "responseId": "3de043ca-a6ae-5b79-855a-fb9770b891f9",
-              "correlationId": "d600e7c9-16d7-5fc7-afae-89fbb76de353",
-              "generatedAt": "2026-09-15T14:30:00Z",
-              "processingRegion": "us-east-1"
-            }
+            "description": "Metadata about the response, including identifiers and timestamps.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for International Standing Order Consent operations.",
+        "description": "Response schema for the International Scheduled Payments GET operation, containing payment details and metadata.",
         "example": {
           "Data": {
+            "paymentId": "PAY-446463",
             "ConsentId": "STANDARD",
             "CreationDateTime": "2026-09-15T14:30:00Z",
             "Status": "ACTIVE",
+            "StatusUpdateDateTime": "2026-09-15T14:30:00Z",
             "StatusReason": [
               {
                 "code": "SUCCESS",
@@ -317,10 +244,16 @@
                 "Path": "STANDARD"
               }
             ],
-            "StatusUpdateDateTime": "2026-09-15T14:30:00Z",
-            "Permission": "STANDARD",
-            "ReadRefundAccount": "STANDARD",
-            "CutOffDateTime": "2026-09-15T14:30:00Z",
+            "ExpectedExecutionDateTime": "2026-09-15T14:30:00Z",
+            "ExpectedSettlementDateTime": "2026-09-15T14:30:00Z",
+            "Refund": {
+              "Account": {
+                "SchemeName": "Northstar Banking Service",
+                "Identification": "STANDARD",
+                "Name": "Northstar Banking Service",
+                "SecondaryIdentification": "STANDARD"
+              }
+            },
             "Charges": [
               {
                 "ChargeBearer": "STANDARD",
@@ -331,256 +264,256 @@
                 }
               }
             ],
+            "ExchangeRateInformation": {
+              "UnitCurrency": "USD",
+              "ExchangeRate": 100.0,
+              "RateType": "STANDARD",
+              "ContractIdentification": "STANDARD",
+              "ExpirationDateTime": "2026-09-15T14:30:00Z"
+            },
             "Initiation": {
-              "RemittanceInformation": {
-                "Structured": [
-                  {
-                    "ReferredDocumentInformation": [
-                      {
-                        "Code": "SUCCESS",
-                        "Issuer": "STANDARD",
-                        "Number": "STANDARD",
-                        "RelatedDate": "2026-09-15",
-                        "LineDetails": [
-                          "STANDARD"
-                        ]
-                      }
-                    ],
-                    "ReferredDocumentAmount": "1250.75",
-                    "CreditorReferenceInformation": {
-                      "Code": "SUCCESS",
-                      "Issuer": "STANDARD",
-                      "Reference": "STANDARD"
-                    },
-                    "Invoicer": "STANDARD",
-                    "Invoicee": "STANDARD",
-                    "TaxRemittance": "STANDARD",
-                    "AdditionalRemittanceInformation": [
-                      "STANDARD"
-                    ]
-                  }
-                ],
-                "Unstructured": [
-                  "STANDARD"
-                ]
-              },
-              "NumberOfPayments": "STANDARD",
+              "InstructionIdentification": "STANDARD",
+              "EndToEndIdentification": "STANDARD",
+              "LocalInstrument": "STANDARD",
+              "InstructionPriority": "STANDARD",
               "ExtendedPurpose": "STANDARD",
               "ChargeBearer": "STANDARD",
+              "RequestedExecutionDateTime": "2026-09-15T14:30:00Z",
               "CurrencyOfTransfer": "STANDARD",
               "DestinationCountryCode": "US",
               "InstructedAmount": {
                 "Amount": "1250.75",
                 "Currency": "USD"
+              },
+              "ExchangeRateInformation": {
+                "UnitCurrency": "USD"
               }
             }
           },
           "metadata": {
-            "responseId": "3de043ca-a6ae-5b79-855a-fb9770b891f9",
-            "correlationId": "d600e7c9-16d7-5fc7-afae-89fbb76de353",
+            "responseId": "ebf567e1-43f1-5d6c-8650-dd5f34da928e",
+            "correlationId": "826e0159-4558-580e-ade3-e2ccb208d279",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "StatusReasonDetail": {
+      "StatusReason": {
+        "title": "Status Reason",
         "type": "object",
         "properties": {
           "code": {
             "type": "string",
-            "description": "Code representing the reason.",
-            "example": "Approved"
+            "description": "Code representing the reason for the status.",
+            "example": "string"
           },
           "description": {
             "type": "string",
             "description": "Description of the status reason.",
-            "example": "Consent has been approved."
+            "example": "string"
           },
           "Path": {
             "type": "string",
-            "description": "Path for further details regarding the status change.",
-            "example": "/consents/1"
+            "description": "Path associated with the status reason.",
+            "example": "string"
           }
         },
-        "description": "Details about the reasons for status changes."
+        "description": "Contains details about the reasons for a payment's status."
       },
-      "ChargeDetail": {
+      "Refund": {
+        "title": "Refund Details",
+        "type": "object",
+        "properties": {
+          "Account": {
+            "description": "Account details related to the refund.",
+            "$ref": "#/components/schemas/AccountDetails"
+          }
+        },
+        "description": "Schema representing the details of a refund related to the payment."
+      },
+      "AccountDetails": {
+        "title": "Account Details",
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string",
+            "description": "Name of the scheme for the account.",
+            "example": "string"
+          },
+          "Identification": {
+            "type": "string",
+            "description": "Identifier for the account.",
+            "example": "string"
+          },
+          "Name": {
+            "type": "string",
+            "description": "Name associated with the account.",
+            "example": "string"
+          },
+          "SecondaryIdentification": {
+            "type": "string",
+            "description": "Secondary identifier for the account.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing details about the account involved in the refund."
+      },
+      "Charge": {
+        "title": "Charge Details",
         "type": "object",
         "properties": {
           "ChargeBearer": {
             "type": "string",
-            "description": "Party responsible for the charge.",
-            "example": "SENDER"
+            "description": "Indicates who is responsible for the charge.",
+            "example": "string"
           },
           "Type": {
             "type": "string",
-            "description": "Type of charge.",
-            "example": "ADMINISTRATIVE"
+            "description": "Type of the charge.",
+            "example": "string"
           },
           "Amount": {
-            "$ref": "#/components/schemas/MoneyDetail"
+            "description": "The amount and currency of the charge.",
+            "$ref": "#/components/schemas/Money"
           }
         },
-        "description": "Charge details associated with the standing order."
+        "description": "Schema representing details of a charge associated with the payment."
       },
-      "InitiationDetail": {
-        "type": "object",
-        "properties": {
-          "RemittanceInformation": {
-            "type": "object",
-            "properties": {
-              "Structured": {
-                "type": "array",
-                "description": "Structured remittance information.",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "ReferredDocumentInformation": {
-                      "type": "array",
-                      "description": "List of referred documents.",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "Code": {
-                            "type": "string",
-                            "description": "Code of the referred document.",
-                            "example": "INV"
-                          },
-                          "Issuer": {
-                            "type": "string",
-                            "description": "Issuer of the referred document.",
-                            "example": "Company ABC"
-                          },
-                          "Number": {
-                            "type": "string",
-                            "description": "Document number.",
-                            "example": "1234"
-                          },
-                          "RelatedDate": {
-                            "type": "string",
-                            "description": "Date related to the referred document.",
-                            "example": "2021-11-01"
-                          },
-                          "LineDetails": {
-                            "type": "array",
-                            "description": "Details of the line items in the referred document.",
-                            "items": {
-                              "type": "string",
-                              "example": "Item 1"
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "ReferredDocumentAmount": {
-                      "type": "string",
-                      "description": "Amount related to the referred document.",
-                      "example": "100.00"
-                    },
-                    "CreditorReferenceInformation": {
-                      "type": "object",
-                      "properties": {
-                        "Code": {
-                          "type": "string",
-                          "description": "Code of the creditor reference.",
-                          "example": "CR"
-                        },
-                        "Issuer": {
-                          "type": "string",
-                          "description": "Issuer of the creditor reference.",
-                          "example": "Issuer ABC"
-                        },
-                        "Reference": {
-                          "type": "string",
-                          "description": "Reference ID for the creditor.",
-                          "example": "Ref-001"
-                        }
-                      },
-                      "description": "Details regarding the creditor reference."
-                    },
-                    "Invoicer": {
-                      "type": "string",
-                      "description": "Invoicer details.",
-                      "example": "Company XYZ"
-                    },
-                    "Invoicee": {
-                      "type": "string",
-                      "description": "Invoicee details.",
-                      "example": "Client ABC"
-                    },
-                    "TaxRemittance": {
-                      "type": "string",
-                      "description": "Amount for tax remittance.",
-                      "example": "20.00"
-                    },
-                    "AdditionalRemittanceInformation": {
-                      "type": "array",
-                      "description": "Additional remittance information.",
-                      "items": {
-                        "type": "string",
-                        "example": "Note 1"
-                      }
-                    }
-                  }
-                }
-              },
-              "Unstructured": {
-                "type": "array",
-                "description": "Unstructured remittance information.",
-                "items": {
-                  "type": "string",
-                  "example": "Payment for invoice 1234"
-                }
-              }
-            },
-            "description": "Information related to the remittance."
-          },
-          "NumberOfPayments": {
-            "type": "string",
-            "description": "Total number of payments involved.",
-            "example": "5"
-          },
-          "ExtendedPurpose": {
-            "type": "string",
-            "description": "Extended purpose for the payment.",
-            "example": "Rental Payment"
-          },
-          "ChargeBearer": {
-            "type": "string",
-            "description": "Party responsible for the charges.",
-            "example": "RECEIVER"
-          },
-          "CurrencyOfTransfer": {
-            "type": "string",
-            "description": "Currency used for the transfer.",
-            "example": "EUR"
-          },
-          "DestinationCountryCode": {
-            "type": "string",
-            "description": "Country code for the destination of the transfer.",
-            "example": "DE"
-          },
-          "InstructedAmount": {
-            "$ref": "#/components/schemas/MoneyDetail"
-          }
-        },
-        "description": "Details regarding the initiation of the payment."
-      },
-      "MoneyDetail": {
+      "Money": {
+        "title": "Money",
         "type": "object",
         "properties": {
           "Amount": {
             "type": "string",
-            "description": "Amount of money.",
-            "example": "100.00"
+            "description": "The amount of money.",
+            "example": "string"
           },
           "Currency": {
             "type": "string",
-            "description": "Currency code for the amount.",
-            "example": "EUR"
+            "description": "Currency of the amount.",
+            "example": "string"
           }
         },
-        "description": "Details of monetary amounts."
+        "description": "Schema representing an amount of money including its currency."
+      },
+      "ExchangeRateInformation": {
+        "title": "Exchange Rate Information",
+        "type": "object",
+        "properties": {
+          "UnitCurrency": {
+            "type": "string",
+            "description": "The currency used for the unit exchange rate.",
+            "example": "string"
+          },
+          "ExchangeRate": {
+            "type": "number",
+            "description": "The exchange rate that was applied.",
+            "example": 0.0
+          },
+          "RateType": {
+            "type": "string",
+            "description": "The type of exchange rate (e.g., fixed, floating).",
+            "example": "string"
+          },
+          "ContractIdentification": {
+            "type": "string",
+            "description": "Identifier for the exchange rate contract.",
+            "example": "string"
+          },
+          "ExpirationDateTime": {
+            "type": "string",
+            "description": "Date and time when the exchange rate expires.",
+            "example": "string"
+          }
+        },
+        "description": "Schema providing information about the exchange rate applied to the payment."
+      },
+      "Initiation": {
+        "title": "Payment Initiation",
+        "type": "object",
+        "properties": {
+          "InstructionIdentification": {
+            "type": "string",
+            "description": "Identifier for the payment instruction.",
+            "example": "string"
+          },
+          "EndToEndIdentification": {
+            "type": "string",
+            "description": "Identifier for tracking the entire payment process.",
+            "example": "string"
+          },
+          "LocalInstrument": {
+            "type": "string",
+            "description": "Local instrument used for the payment.",
+            "example": "string"
+          },
+          "InstructionPriority": {
+            "type": "string",
+            "description": "Priority level of the instruction.",
+            "example": "string"
+          },
+          "ExtendedPurpose": {
+            "type": "string",
+            "description": "Extended purpose of the payment initiation.",
+            "example": "string"
+          },
+          "ChargeBearer": {
+            "type": "string",
+            "description": "Indicates who will bear the costs of the payment.",
+            "example": "string"
+          },
+          "RequestedExecutionDateTime": {
+            "type": "string",
+            "description": "Date and time requested for execution of payment.",
+            "example": "string"
+          },
+          "CurrencyOfTransfer": {
+            "type": "string",
+            "description": "Currency to be used for the transfer.",
+            "example": "string"
+          },
+          "DestinationCountryCode": {
+            "type": "string",
+            "description": "Country code of the payment destination.",
+            "example": "string"
+          },
+          "InstructedAmount": {
+            "description": "The amount and currency to be transferred.",
+            "$ref": "#/components/schemas/Money"
+          },
+          "ExchangeRateInformation": {
+            "description": "Information about the exchange rate applicable for the initiated payment.",
+            "$ref": "#/components/schemas/ExchangeRateInformation"
+          }
+        },
+        "description": "Schema representing the initiation details of the payment."
+      },
+      "Metadata": {
+        "title": "Metadata for Response",
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "Unique identifier for the response.",
+            "example": "string"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier for tracing requests across different services.",
+            "example": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "Timestamp of when the response was generated.",
+            "example": "string"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "Region where the processing took place.",
+            "example": "string"
+          }
+        },
+        "description": "Metadata associated with the response, including identifiers and timestamps."
       }
     },
     "parameters": {
@@ -611,17 +544,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint that processed the request. This helps to trace the transaction flow.",
+        "description": "A unique identifier for the endpoint handling the international scheduled payment operation.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "payment-initiation-openapi-get-international-standing-order-consent"
+          "example": "payment-initiation-openapi-get-international-scheduled-payment"
         },
-        "example": "payment-initiation-openapi-get-international-standing-order-consent"
+        "example": "payment-initiation-openapi-get-international-scheduled-payment"
       },
       "X-Runtime-App": {
-        "description": "The name or identifier of the application that handled the request, facilitating the identification of service components.",
+        "description": "The runtime application identifier that processed the request for this payment operation.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -634,7 +567,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the Bearer authentication method, which involves a token (JWT) being issued to the client upon successful authentication. The token must be included in the Authorization header of the request.",
+        "description": "This security scheme uses a Bearer authentication method, which requires a token transmitted in the Authorization header in the format 'Bearer <token>'. The token is typically a JSON Web Token (JWT) that grants access to the secured endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
