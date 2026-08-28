@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE-PROD-Update P2m By Param1-spec",
-    "description": "The Update Settlement Accounts API allows businesses to modify specific parameters of settlement accounts using designated identifiers. This operation is essential for ensuring accurate financial data management and responsiveness to changing business requirements. It is typically used by financial institutions and accounting software to keep records up-to-date. By utilizing this API, organizations can enhance their operational efficiency and maintain compliance with financial regulations.",
+    "title": "MICROSERVICE-PROD-Create P2m Settlement Account-spec",
+    "description": "The P2M Settlement Account Creation API enables businesses to establish payment settlement accounts for P2M transactions. This endpoint allows users to set up new accounts by submitting relevant details, streamlining the onboarding process for payment infrastructure. Typical consumers include financial institutions and payment service providers looking to enhance their transaction handling capabilities. By automating account creation, businesses can improve efficiency and ensure a seamless user experience in managing payment settlements.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/p2m/settlement-accounts/{param1}": {
-      "patch": {
+    "/v5/p2m/settlement-accounts": {
+      "post": {
         "tags": [
           "Settlement Accounts"
         ],
-        "summary": "Update a specific settlement account.",
-        "description": "This endpoint allows you to update the details of a specific settlement account identified by its unique account number. It facilitates adjustments necessary for account management and ensures that relevant information is kept up to date.",
-        "operationId": "updateP2mByParam1",
+        "summary": "Create a new settlement account",
+        "description": "This operation allows you to create a new settlement account within the system, enabling the management and tracking of financial transactions seamlessly.",
+        "operationId": "createP2mSettlementAccount",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
-          },
-          {
-            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "This request body represents the patch operation for modifying a specific settlement account identified by ACC-200045. It should include the fields that need to be updated in the account.",
+          "description": "This request body is used to create a new settlement account. It should contain the necessary details for the account, such as account type, currency, and other relevant information as defined in the schema.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateP2mByParam1Request"
+                "$ref": "#/components/schemas/CreateP2mSettlementAccountRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Request completed successfully, and the settlement account has been updated.",
+          "201": {
+            "description": "Resource created successfully with the new settlement account details.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateP2mByParam1Response_200"
+                  "$ref": "#/components/schemas/CreateP2mSettlementAccountResponse_201"
                 }
               }
             }
@@ -90,12 +87,25 @@
   },
   "components": {
     "schemas": {
-      "UpdateP2mByParam1Request": {
-        "title": "Settlement Account Operations PATCH Request Body",
+      "CreateP2mSettlementAccountRequest": {
         "type": "object",
         "properties": {
+          "merchantId": {
+            "type": "string",
+            "description": "Unique identifier for the merchant.",
+            "example": "MER-720692"
+          },
+          "bankAccountToken": {
+            "type": "string",
+            "description": "Token representing the bank account.",
+            "example": "STANDARD"
+          },
+          "account": {
+            "description": "Details of the bank account associated with the merchant.",
+            "$ref": "#/components/schemas/BankAccount"
+          },
           "schedule": {
-            "description": "Schedule configuration for the settlement account.",
+            "description": "Schedule for account settlements.",
             "$ref": "#/components/schemas/Schedule"
           },
           "isDefault": {
@@ -103,18 +113,23 @@
             "description": "Indicates if this is the default settlement account.",
             "example": true
           },
-          "status": {
-            "type": "string",
-            "description": "Current status of the settlement operation.",
-            "example": "ACTIVE"
-          },
           "requestContext": {
             "description": "Contextual information about the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Schema representing the request body for PATCH operations on settlement accounts.",
+        "description": "Schema representing the request body for setting up settlement accounts.",
         "example": {
+          "merchantId": "MER-720692",
+          "bankAccountToken": "STANDARD",
+          "account": {
+            "bankCode": "CODE-820",
+            "branchCode": "CODE-268",
+            "numberMasked": "STANDARD",
+            "name": "Northstar Banking Service",
+            "type": "STANDARD",
+            "currency": "USD"
+          },
           "schedule": {
             "frequency": "STANDARD",
             "cutoffTime": "STANDARD",
@@ -126,21 +141,56 @@
             }
           },
           "isDefault": true,
-          "status": "ACTIVE",
           "requestContext": {
-            "requestId": "315ddf4e-f5a6-5593-9665-bf3ad019089a",
-            "correlationId": "c77de93f-998b-5ed7-a5a3-0c874e87cd0d",
-            "idempotencyKey": "401f36a4-57b7-5d73-8048-1c0162d95afd",
+            "requestId": "805bc0c8-076b-5ce1-b56a-513e4853c223",
+            "correlationId": "3e8ee308-e82b-543f-8cc4-97bf61eed135",
+            "idempotencyKey": "83a2c8a8-83f0-5bc6-8ddb-b89caf19152f",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-694447"
+              "deviceId": "DEV-812603"
             }
           }
         }
+      },
+      "BankAccount": {
+        "type": "object",
+        "properties": {
+          "bankCode": {
+            "type": "string",
+            "description": "The bank's code.",
+            "example": "ABC123"
+          },
+          "branchCode": {
+            "type": "string",
+            "description": "The branch code of the bank.",
+            "example": "BR001"
+          },
+          "numberMasked": {
+            "type": "string",
+            "description": "Masked bank account number for security.",
+            "example": "****-****-1234"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the account holder.",
+            "example": "John Doe"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the bank account.",
+            "example": "checking"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency of the bank account.",
+            "example": "USD"
+          }
+        },
+        "description": "Schema representing the details of a bank account."
       },
       "Schedule": {
         "title": "Settlement Schedule",
@@ -148,72 +198,31 @@
         "properties": {
           "frequency": {
             "type": "string",
-            "description": "Frequency of the settlements (e.g., daily, weekly).",
+            "description": "The frequency of the settlements.",
             "example": "string"
           },
           "cutoffTime": {
             "type": "string",
-            "description": "Cutoff time for settlements.",
+            "description": "Cutoff time for processing settlements.",
             "example": "string"
           },
           "timezone": {
             "type": "string",
-            "description": "Timezone applicable for the settlement schedule.",
+            "description": "Timezone in which the settlement operates.",
             "example": "string"
           },
           "settlementDelayBusinessDays": {
             "type": "integer",
-            "description": "Number of business days to delay the settlement.",
+            "description": "Number of business days before settlement is processed.",
             "format": "int32",
             "example": 0
           },
           "minimumPayoutAmount": {
-            "description": "Minimum payout amount for the settlement.",
+            "description": "Minimum payout amount required for the settlement.",
             "$ref": "#/components/schemas/MinimumPayoutAmount"
           }
         },
-        "description": "Schema representing the schedule for settlements."
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "string"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Correlation identifier for tracking related requests.",
-            "example": "string"
-          },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "Key to ensure the request is processed only once.",
-            "example": "string"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp when the request was made.",
-            "example": "string"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "System from which the request originated.",
-            "example": "string"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "Application from which the request originated.",
-            "example": "string"
-          },
-          "channel": {
-            "description": "Details about the channel used for the request.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Schema representing the context details of the request."
+        "description": "Details regarding the settlement schedule."
       },
       "MinimumPayoutAmount": {
         "title": "Minimum Payout Amount",
@@ -221,64 +230,103 @@
         "properties": {
           "currency": {
             "type": "string",
-            "description": "Currency type for the minimum payout amount.",
+            "description": "Currency of the payout amount.",
             "example": "string"
           },
           "value": {
             "type": "string",
-            "description": "Value of the minimum payout amount.",
+            "description": "The minimum payout value.",
             "example": "string"
           }
         },
-        "description": "Schema representing the minimum payout amount details."
+        "description": "Details of the minimum payout amount."
+      },
+      "RequestContext": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique identifier for the request.",
+            "example": "req-54321"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier for correlating multiple requests.",
+            "example": "corr-98765"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Key used to ensure the operation is idempotent.",
+            "example": "idempotency-key-abc123"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp when the request was made.",
+            "example": "2023-10-01T12:34:56Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The system from which the request originated.",
+            "example": "paymentGateway"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application from which the request originated.",
+            "example": "merchantApp"
+          },
+          "channel": {
+            "description": "Information about the channel used for the request.",
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Schema representing the context of the request."
       },
       "Channel": {
-        "title": "Channel",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
             "description": "Unique identifier for the channel.",
-            "example": "string"
+            "example": "channel-1"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of the channel used.",
-            "example": "string"
+            "description": "Type of the channel (e.g., web, mobile).",
+            "example": "web"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier for the device used to make the request.",
-            "example": "string"
+            "description": "Unique identifier for the device used.",
+            "example": "device-987"
           }
         },
-        "description": "Schema representing the channel information for the request."
+        "description": "Schema representing the channel used for the request."
       },
-      "UpdateP2mByParam1Response_200": {
+      "CreateP2mSettlementAccountResponse_201": {
         "title": "Settlement Account Response",
         "type": "object",
         "properties": {
           "settlementAccountId": {
             "type": "string",
             "description": "Unique identifier for the settlement account.",
-            "example": "ACC-845566"
+            "example": "ACC-344239"
           },
           "merchantId": {
             "type": "string",
-            "description": "Unique identifier for the merchant associated with the settlement account.",
-            "example": "MER-740084"
+            "description": "Unique identifier for the merchant associated with the account.",
+            "example": "MER-278936"
           },
           "account": {
-            "description": "Details of the bank account associated with the settlement account.",
+            "description": "Details of the bank account.",
             "$ref": "#/components/schemas/Account"
           },
           "schedule": {
-            "description": "Schedule details for settlement operations.",
+            "description": "Schedule information for settlement.",
             "$ref": "#/components/schemas/Schedule"
           },
           "isDefault": {
             "type": "boolean",
-            "description": "Indicates if this settlement account is the default account.",
+            "description": "Indicates whether this is the default settlement account.",
             "example": true
           },
           "verificationStatus": {
@@ -292,21 +340,21 @@
             "example": "ACTIVE"
           },
           "audit": {
-            "description": "Audit information regarding the creation and updates of the settlement account.",
+            "description": "Audit information for the settlement account.",
             "$ref": "#/components/schemas/Audit"
           },
           "metadata": {
-            "description": "Additional metadata regarding the settlement account response.",
+            "description": "Additional metadata related to the response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Schema representing the response for a PATCH operation on a settlement account.",
+        "description": "Response schema for creating a settlement account.",
         "example": {
-          "settlementAccountId": "ACC-845566",
-          "merchantId": "MER-740084",
+          "settlementAccountId": "ACC-344239",
+          "merchantId": "MER-278936",
           "account": {
-            "bankCode": "CODE-273",
-            "branchCode": "CODE-570",
+            "bankCode": "CODE-618",
+            "branchCode": "CODE-506",
             "numberMasked": "STANDARD",
             "name": "Northstar Banking Service",
             "type": "STANDARD",
@@ -333,49 +381,49 @@
             "version": 1
           },
           "metadata": {
-            "responseId": "567516c6-8c31-584c-85c0-1a160151c3a2",
-            "correlationId": "c77de93f-998b-5ed7-a5a3-0c874e87cd0d",
+            "responseId": "2d4f3211-87a0-5d1e-8951-0e4dbf5d166a",
+            "correlationId": "3e8ee308-e82b-543f-8cc4-97bf61eed135",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
       "Account": {
-        "title": "Bank Account Details",
+        "title": "Bank Account",
         "type": "object",
         "properties": {
           "bankCode": {
             "type": "string",
-            "description": "The bank code of the associated bank.",
+            "description": "The bank code for the account.",
             "example": "string"
           },
           "branchCode": {
             "type": "string",
-            "description": "The branch code of the associated bank.",
+            "description": "The branch code for the account.",
             "example": "string"
           },
           "numberMasked": {
             "type": "string",
-            "description": "Masked number of the bank account.",
+            "description": "A masked version of the account number.",
             "example": "string"
           },
           "name": {
             "type": "string",
-            "description": "Name of the account holder.",
+            "description": "The name of the account holder.",
             "example": "string"
           },
           "type": {
             "type": "string",
-            "description": "Type of the bank account (e.g., checking, savings).",
+            "description": "The type of the bank account.",
             "example": "string"
           },
           "currency": {
             "type": "string",
-            "description": "Currency type of the bank account.",
+            "description": "Currency of the bank account.",
             "example": "string"
           }
         },
-        "description": "Schema representing the bank account details for a settlement account."
+        "description": "Details of a bank account."
       },
       "Audit": {
         "title": "Audit Information",
@@ -383,32 +431,32 @@
         "properties": {
           "createdAt": {
             "type": "string",
-            "description": "Timestamp when the settlement account was created.",
+            "description": "Timestamp when the account was created.",
             "example": "string"
           },
           "createdBy": {
             "type": "string",
-            "description": "Identifier of the user who created the settlement account.",
+            "description": "Identifier for the user who created the account.",
             "example": "string"
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp when the settlement account was last updated.",
+            "description": "Timestamp when the account was last updated.",
             "example": "string"
           },
           "updatedBy": {
             "type": "string",
-            "description": "Identifier of the user who last updated the settlement account.",
+            "description": "Identifier for the user who last updated the account.",
             "example": "string"
           },
           "version": {
             "type": "integer",
-            "description": "Version number of the settlement account.",
+            "description": "Version number of the account record.",
             "format": "int32",
             "example": 0
           }
         },
-        "description": "Schema representing audit information of the settlement account."
+        "description": "Audit information for account change tracking."
       },
       "Metadata": {
         "title": "Response Metadata",
@@ -416,12 +464,12 @@
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Identifier for the response.",
+            "description": "Unique identifier for the response.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation ID for tracking the request.",
+            "description": "Identifier for correlating the request and response.",
             "example": "string"
           },
           "generatedAt": {
@@ -431,11 +479,11 @@
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the processing occurred.",
+            "description": "Region where the processing took place.",
             "example": "string"
           }
         },
-        "description": "Schema representing additional metadata for the settlement account response."
+        "description": "Additional metadata in the response."
       }
     },
     "parameters": {
@@ -449,18 +497,8 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_PROD_200"
+            "MICROSERVICE_PROD_201"
           ]
-        }
-      },
-      "param1": {
-        "name": "param1",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
         }
       }
     },
@@ -470,9 +508,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "banking-p2m-openapi-update-settlement-account"
+          "example": "banking-p2m-openapi-create-settlement-account"
         },
-        "example": "banking-p2m-openapi-update-settlement-account"
+        "example": "banking-p2m-openapi-create-settlement-account"
       },
       "X-Runtime-App": {
         "style": "simple",
@@ -487,7 +525,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a bearer token for authentication. It expects a JSON Web Token (JWT) to be included in the authorization header of the HTTP request.",
+        "description": "This security scheme uses Bearer authentication via JSON Web Tokens (JWT). Clients must include a valid JWT in the 'Authorization' header when making requests to access secure endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }

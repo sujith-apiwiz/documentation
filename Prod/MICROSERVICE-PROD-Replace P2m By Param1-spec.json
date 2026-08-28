@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Replace P2m By Param1-spec",
-    "description": "The Update Payment Intent API enables businesses to modify existing payment intents using specific parameters. This endpoint is primarily used for adjusting transaction details based on evolving customer needs or compliance requirements. Typical consumers include payment processors and e-commerce platforms that require flexibility in payment management. By leveraging this API, developers can ensure that payment intents are updated efficiently, reflecting real-time changes and enhancing user experience.",
+    "description": "This API allows the modification of settlement account parameters, specifically targeting the replacement of P2m configurations with the specified parameter. The primary resource, settlement accounts, plays a crucial role in processing financial transactions and ensuring accurate account management. Typical consumers include financial institutions and businesses that require seamless adjustments to their account settings for compliance or operational efficiency. This endpoint supports the updating of specific parameters, making it essential for maintaining up-to-date account configurations.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/p2m/payment-intents/{param1}": {
+    "/v5/p2m/settlement-accounts/{param1}": {
       "put": {
         "tags": [
-          "Payment Management"
+          "Settlement Accounts"
         ],
-        "summary": "Update a specific payment intent.",
-        "description": "This endpoint allows developers to update the details of a specific payment intent identified by its ID. You can modify various attributes of the payment intent to ensure that it meets your application\u2019s requirements.",
+        "summary": "Update Settlement Account",
+        "description": "This endpoint allows you to update the details of a specific settlement account identified by its unique account number. Ensure that you have the correct account number and the necessary information to perform the update.",
         "operationId": "replaceP2mByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "Contains the necessary information to update the payment intent identified by PAY-300045. Ensure all required fields are provided according to the specified schema.",
+          "description": "The request body for updating the details of a specific settlement account identified by ACC-200045. This should contain the necessary information such as account name, type, status, and any relevant attributes required for the update operation.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, payment intent updated.",
+            "description": "Request completed successfully, and the resource has been updated.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -91,594 +91,426 @@
   "components": {
     "schemas": {
       "ReplaceP2mByParam1Request": {
-        "title": "Payment Intent Request",
         "type": "object",
         "properties": {
           "merchantId": {
             "type": "string",
-            "description": "The unique identifier for the merchant.",
-            "example": "MER-827483"
+            "description": "Unique identifier for the merchant.",
+            "example": "MER-272013"
           },
-          "outletId": {
+          "bankAccountToken": {
             "type": "string",
-            "description": "The identifier for the outlet where the transaction is taking place.",
+            "description": "Token that securely identifies the bank account.",
             "example": "STANDARD"
           },
-          "terminalId": {
-            "type": "string",
-            "description": "The identifier for the terminal used for the payment.",
-            "example": "STANDARD"
+          "account": {
+            "description": "Details about the bank account.",
+            "$ref": "#/components/schemas/Account"
           },
-          "amount": {
-            "description": "The amount of money involved in the payment transaction.",
-            "$ref": "#/components/schemas/Amount"
+          "schedule": {
+            "description": "Schedule for settlement operations.",
+            "$ref": "#/components/schemas/Schedule"
           },
-          "captureMethod": {
-            "type": "string",
-            "description": "The method used to capture the payment.",
-            "example": "STANDARD"
-          },
-          "channel": {
-            "type": "string",
-            "description": "The channel through which the payment is processed.",
-            "example": "STANDARD"
-          },
-          "allowedPaymentMethods": {
-            "type": "array",
-            "description": "List of payment methods that are allowed for this transaction.",
-            "example": [
-              "STANDARD"
-            ],
-            "items": {
-              "type": "string",
-              "example": "string"
-            }
-          },
-          "customer": {
-            "description": "Information about the customer making the payment.",
-            "$ref": "#/components/schemas/Customer"
-          },
-          "order": {
-            "description": "Details about the order associated with the payment.",
-            "$ref": "#/components/schemas/Order"
+          "isDefault": {
+            "type": "boolean",
+            "description": "Indicates if this account is the default for the merchant.",
+            "example": true
           },
           "requestContext": {
-            "description": "Contextual information regarding the payment request.",
+            "description": "Context information regarding the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Schema for creating or updating a payment intent in the system.",
         "example": {
-          "merchantId": "MER-827483",
-          "outletId": "STANDARD",
-          "terminalId": "STANDARD",
-          "amount": {
-            "currency": "USD",
-            "value": "STANDARD"
-          },
-          "captureMethod": "STANDARD",
-          "channel": "STANDARD",
-          "allowedPaymentMethods": [
-            "STANDARD"
-          ],
-          "customer": {
-            "id": "STANDARD",
+          "merchantId": "MER-272013",
+          "bankAccountToken": "STANDARD",
+          "account": {
+            "bankCode": "CODE-539",
+            "branchCode": "CODE-315",
+            "numberMasked": "STANDARD",
             "name": "Northstar Banking Service",
-            "email": "olivia.bennett@northstar.example",
-            "phone": "+1-212-555-0147",
-            "riskSegment": "STANDARD"
+            "type": "STANDARD",
+            "currency": "USD"
           },
-          "order": {
-            "merchantOrderId": "ORD-511863",
-            "description": "Customer banking request processed successfully",
-            "items": [
-              {
-                "itemId": "STANDARD",
-                "name": "Northstar Banking Service",
-                "description": "Customer banking request processed successfully",
-                "quantity": "STANDARD",
-                "unitPrice": {
-                  "currency": "USD"
-                }
-              }
-            ]
+          "schedule": {
+            "frequency": "STANDARD",
+            "cutoffTime": "STANDARD",
+            "timezone": "America/New_York",
+            "settlementDelayBusinessDays": 1,
+            "minimumPayoutAmount": {
+              "currency": "USD",
+              "value": "STANDARD"
+            }
           },
+          "isDefault": true,
           "requestContext": {
-            "requestId": "f5a3b00b-e2c4-5ba3-90d7-554c473774f5",
-            "correlationId": "16c24419-5501-5bec-9d86-e588701993bc",
-            "idempotencyKey": "8d7ef886-9342-5d8d-89f0-ddd01f75a4f0",
+            "requestId": "87faae8b-9c55-5c6a-8ed4-2a8d9a24287c",
+            "correlationId": "c803fa1f-0e5a-5fe6-a889-73c8342099aa",
+            "idempotencyKey": "9fbfeb3e-d772-50b3-9d70-5e5258ccbcdc",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-348275"
+              "deviceId": "DEV-862990"
             }
           }
         }
       },
-      "Amount": {
-        "title": "Amount",
+      "Account": {
         "type": "object",
         "properties": {
+          "bankCode": {
+            "type": "string",
+            "description": "Bank code associated with the account.",
+            "example": "string"
+          },
+          "branchCode": {
+            "type": "string",
+            "description": "Branch code associated with the account.",
+            "example": "string"
+          },
+          "numberMasked": {
+            "type": "string",
+            "description": "Masked account number for security.",
+            "example": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the account holder.",
+            "example": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of bank account.",
+            "example": "string"
+          },
           "currency": {
             "type": "string",
-            "description": "The currency in which the amount is specified.",
-            "example": "USD"
-          },
-          "value": {
-            "type": "string",
-            "description": "The value or amount to be paid.",
-            "example": "100.00"
+            "description": "Currency of the bank account.",
+            "example": "string"
           }
         },
-        "description": "Schema to define the amount and currency for a payment."
+        "description": "Schema representing the details of a bank account."
       },
-      "Customer": {
-        "title": "Customer",
+      "Schedule": {
         "type": "object",
         "properties": {
-          "id": {
+          "frequency": {
             "type": "string",
-            "description": "The unique identifier for the customer.",
-            "example": "C12345"
+            "description": "Frequency of the settlement schedule (e.g., daily, weekly).",
+            "example": "string"
           },
-          "name": {
+          "cutoffTime": {
             "type": "string",
-            "description": "The name of the customer.",
-            "example": "John Doe"
+            "description": "Cutoff time for processing settlements.",
+            "example": "string"
           },
-          "email": {
+          "timezone": {
             "type": "string",
-            "description": "The email address of the customer.",
-            "example": "john.doe@example.com"
+            "description": "Timezone for the settlement schedule.",
+            "example": "string"
           },
-          "phone": {
-            "type": "string",
-            "description": "The phone number of the customer.",
-            "example": "+123456789"
+          "settlementDelayBusinessDays": {
+            "type": "integer",
+            "description": "Number of business days before the settlement is processed.",
+            "format": "int32",
+            "example": 0
           },
-          "riskSegment": {
-            "type": "string",
-            "description": "Risk segment associated with the customer for evaluation purposes.",
-            "example": "low"
+          "minimumPayoutAmount": {
+            "description": "The minimum payout amount required for the settlement.",
+            "$ref": "#/components/schemas/MinimumPayoutAmount"
           }
         },
-        "description": "Schema containing information about the customer."
-      },
-      "Order": {
-        "title": "Order",
-        "type": "object",
-        "properties": {
-          "merchantOrderId": {
-            "type": "string",
-            "description": "The identifier for the order issued by the merchant.",
-            "example": "ORD123456"
-          },
-          "description": {
-            "type": "string",
-            "description": "A description of the order.",
-            "example": "Purchase of electronic goods"
-          },
-          "items": {
-            "type": "array",
-            "description": "List of items included in the order.",
-            "items": {
-              "$ref": "#/components/schemas/OrderItem"
-            }
-          }
-        },
-        "description": "Schema containing details about the order tied to the payment."
-      },
-      "OrderItem": {
-        "title": "Order Item",
-        "type": "object",
-        "properties": {
-          "itemId": {
-            "type": "string",
-            "description": "The unique identifier for the item.",
-            "example": "ITEM12345"
-          },
-          "name": {
-            "type": "string",
-            "description": "The name of the item.",
-            "example": "Laptop"
-          },
-          "description": {
-            "type": "string",
-            "description": "A description of the item.",
-            "example": "High-performance laptop with 16GB RAM."
-          },
-          "quantity": {
-            "type": "string",
-            "description": "The number of units of the item.",
-            "example": "1"
-          },
-          "unitPrice": {
-            "description": "The price per unit of the item.",
-            "$ref": "#/components/schemas/Amount"
-          }
-        },
-        "description": "Schema representing an item within an order."
+        "description": "Schema representing the settlement schedule details."
       },
       "RequestContext": {
-        "title": "Request Context",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
-            "description": "The unique identifier for the request.",
-            "example": "REQ123456"
+            "description": "Identifier for the request.",
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "An identifier used to correlate related requests.",
-            "example": "CORR123456"
+            "description": "Correlation identifier to trace related requests.",
+            "example": "string"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "A unique key used to identify an idempotent request.",
-            "example": "IDEMP123456"
+            "description": "Key to ensure idempotency of the request.",
+            "example": "string"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp when the request was made.",
-            "example": "2023-10-10T10:00:00Z"
+            "description": "Timestamp of when the request was made.",
+            "example": "string"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "The system that initiated the request.",
-            "example": "System A"
+            "description": "System from which the request originated.",
+            "example": "string"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application that initiated the request.",
-            "example": "App A"
+            "description": "Application from which the request was initiated.",
+            "example": "string"
           },
           "channel": {
-            "description": "Details about the channel used for the request.",
+            "description": "Information about the channel through which the request was made.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Schema containing contextual information about the request."
+        "description": "Contextual information about the request."
+      },
+      "MinimumPayoutAmount": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "The currency of the minimum payout amount.",
+            "example": "string"
+          },
+          "value": {
+            "type": "string",
+            "description": "The minimum amount value required for payouts.",
+            "example": "string"
+          }
+        },
+        "description": "Represents the minimum payout amount and its currency."
       },
       "Channel": {
-        "title": "Channel",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "The unique identifier for the channel.",
-            "example": "CH12345"
+            "description": "Identifier for the channel.",
+            "example": "string"
           },
           "channelType": {
             "type": "string",
-            "description": "The type of the channel (e.g., web, mobile).",
-            "example": "mobile"
+            "description": "Type of the channel (e.g., web, mobile).",
+            "example": "string"
           },
           "deviceId": {
             "type": "string",
-            "description": "The identifier for the device through which the payment is made.",
-            "example": "DEVICE123"
+            "description": "Identifier of the device used for the request.",
+            "example": "string"
           }
         },
-        "description": "Schema representing the channel details for a request."
+        "description": "Schema representing details about the channel used in the request."
       },
       "ReplaceP2mByParam1Response_200": {
         "type": "object",
         "properties": {
-          "paymentIntentId": {
+          "settlementAccountId": {
             "type": "string",
-            "description": "Unique identifier for the payment intent.",
-            "example": "STANDARD"
+            "description": "The unique identifier of the settlement account.",
+            "example": "ACC-841950"
           },
           "merchantId": {
             "type": "string",
-            "description": "Unique identifier for the merchant initiating the payment.",
-            "example": "MER-918902"
+            "description": "The unique identifier of the merchant associated with the account.",
+            "example": "MER-310557"
           },
-          "outletId": {
+          "account": {
+            "description": "Details of the bank account associated with the settlement account.",
+            "$ref": "#/components/schemas/SettlementAccountDetails"
+          },
+          "schedule": {
+            "description": "Information about the schedule for settlements.",
+            "$ref": "#/components/schemas/SettlementSchedule"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Indicates whether this is the default settlement account.",
+            "example": true
+          },
+          "verificationStatus": {
             "type": "string",
-            "description": "Unique identifier for the outlet where the transaction is occurring.",
-            "example": "STANDARD"
+            "description": "The status of the verification for the settlement account.",
+            "example": "VERIFIED"
           },
-          "terminalId": {
+          "status": {
             "type": "string",
-            "description": "Unique identifier for the terminal used for the transaction.",
-            "example": "STANDARD"
+            "description": "The current status of the settlement account.",
+            "example": "ACTIVE"
           },
-          "amount": {
-            "description": "The total amount for the payment.",
-            "$ref": "#/components/schemas/AmountDetails"
-          },
-          "amountAuthorized": {
-            "description": "The amount that has been authorized for capture.",
-            "$ref": "#/components/schemas/AmountDetails"
-          },
-          "amountCaptured": {
-            "description": "The amount that has been captured from the authorized payment.",
-            "$ref": "#/components/schemas/AmountDetails"
-          },
-          "amountRefunded": {
-            "description": "The total amount that has been refunded to the customer.",
-            "$ref": "#/components/schemas/AmountDetails"
-          },
-          "captureMethod": {
-            "type": "string",
-            "description": "Indicates how the funds will be captured (e.g., manual, automatic).",
-            "example": "STANDARD"
-          },
-          "channel": {
-            "type": "string",
-            "description": "The channel through which the payment is processed (e.g., online, in-store).",
-            "example": "STANDARD"
-          },
-          "allowedPaymentMethods": {
-            "type": "array",
-            "description": "List of payment methods allowed for this transaction.",
-            "example": [
-              "STANDARD"
-            ],
-            "items": {
-              "type": "string",
-              "example": "credit_card"
-            }
-          },
-          "selectedPaymentMethod": {
-            "description": "Details of the payment method selected by the customer.",
-            "$ref": "#/components/schemas/PaymentMethodDetails"
-          },
-          "customer": {
-            "description": "Information about the customer making the payment.",
-            "$ref": "#/components/schemas/CustomerDetails"
-          },
-          "order": {
-            "description": "Details about the order associated with this payment intent.",
-            "$ref": "#/components/schemas/OrderDetails"
+          "audit": {
+            "description": "Audit information concerning the creation and update of the settlement account.",
+            "$ref": "#/components/schemas/AuditDetails"
           },
           "metadata": {
-            "description": "Additional information related to the payment process.",
-            "$ref": "#/components/schemas/MetadataDetails"
+            "description": "Additional metadata related to the response.",
+            "$ref": "#/components/schemas/ResponseMetadata"
           }
         },
-        "description": "Response schema for payment intent operations, containing details about the payment intent and associated entities.",
+        "description": "Response schema for settlement account operations.",
         "example": {
-          "paymentIntentId": "STANDARD",
-          "merchantId": "MER-918902",
-          "outletId": "STANDARD",
-          "terminalId": "STANDARD",
-          "amount": {
-            "currency": "USD",
-            "value": "STANDARD"
-          },
-          "amountAuthorized": {
-            "currency": "USD",
-            "value": "STANDARD"
-          },
-          "amountCaptured": {
-            "currency": "USD",
-            "value": "STANDARD"
-          },
-          "amountRefunded": {
-            "currency": "USD",
-            "value": "STANDARD"
-          },
-          "captureMethod": "STANDARD",
-          "channel": "STANDARD",
-          "allowedPaymentMethods": [
-            "STANDARD"
-          ],
-          "selectedPaymentMethod": {
-            "type": "STANDARD",
-            "token": "STANDARD",
-            "issuerBankCode": "CODE-817",
-            "maskedIdentifier": "STANDARD",
-            "walletProvider": "STANDARD"
-          },
-          "customer": {
-            "id": "STANDARD",
+          "settlementAccountId": "ACC-841950",
+          "merchantId": "MER-310557",
+          "account": {
+            "bankCode": "CODE-201",
+            "branchCode": "CODE-526",
+            "numberMasked": "STANDARD",
             "name": "Northstar Banking Service",
-            "email": "olivia.bennett@northstar.example",
-            "phone": "+1-212-555-0147",
-            "riskSegment": "STANDARD"
+            "type": "STANDARD",
+            "currency": "USD"
           },
-          "order": {
-            "merchantOrderId": "ORD-993142",
-            "description": "Customer banking request processed successfully",
-            "items": [
-              {
-                "itemId": "STANDARD",
-                "name": "Northstar Banking Service",
-                "description": "Customer banking request processed successfully",
-                "quantity": "STANDARD",
-                "unitPrice": {
-                  "currency": "USD",
-                  "value": "STANDARD"
-                },
-                "totalAmount": {
-                  "currency": "USD",
-                  "value": "STANDARD"
-                }
-              }
-            ]
+          "schedule": {
+            "frequency": "STANDARD",
+            "cutoffTime": "STANDARD",
+            "timezone": "America/New_York",
+            "settlementDelayBusinessDays": 1,
+            "minimumPayoutAmount": {
+              "currency": "USD",
+              "value": "STANDARD"
+            }
+          },
+          "isDefault": true,
+          "verificationStatus": "VERIFIED",
+          "status": "ACTIVE",
+          "audit": {
+            "createdAt": "2026-09-15T14:30:00Z",
+            "createdBy": "STANDARD",
+            "updatedAt": "2026-09-15T14:30:00Z",
+            "updatedBy": "2026-09-15",
+            "version": 1
           },
           "metadata": {
-            "responseId": "128a9d9e-9f15-558d-9ae3-85774f8134c8",
-            "correlationId": "16c24419-5501-5bec-9d86-e588701993bc",
+            "responseId": "c3d4404a-2646-5d44-a69f-80d5184bcaf0",
+            "correlationId": "c803fa1f-0e5a-5fe6-a889-73c8342099aa",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "AmountDetails": {
+      "SettlementAccountDetails": {
         "type": "object",
         "properties": {
-          "currency": {
+          "bankCode": {
             "type": "string",
-            "description": "The currency code (e.g., USD, EUR).",
-            "example": "USD"
+            "description": "The code of the bank associated with the account.",
+            "example": "string"
           },
-          "value": {
+          "branchCode": {
             "type": "string",
-            "description": "The value of the amount, typically in the smallest currency unit.",
-            "example": "100.00"
-          }
-        },
-        "description": "Details of an amount including currency and value."
-      },
-      "PaymentMethodDetails": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "description": "The type of payment method (e.g., card, wallet).",
-            "example": "credit_card"
+            "description": "The branch code for the bank.",
+            "example": "string"
           },
-          "token": {
+          "numberMasked": {
             "type": "string",
-            "description": "Token representing the payment method.",
-            "example": "tok_12345"
-          },
-          "issuerBankCode": {
-            "type": "string",
-            "description": "The bank code of the card issuer.",
-            "example": "issuer_123"
-          },
-          "maskedIdentifier": {
-            "type": "string",
-            "description": "Masked identifier for the payment method (e.g., last four digits of a card).",
-            "example": "**** **** **** 1234"
-          },
-          "walletProvider": {
-            "type": "string",
-            "description": "The provider of the wallet, if applicable.",
-            "example": "PayPal"
-          }
-        },
-        "description": "Details of the payment method selected for the transaction."
-      },
-      "CustomerDetails": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique identifier for the customer.",
-            "example": "customer_123"
+            "description": "The masked account number for security purposes.",
+            "example": "string"
           },
           "name": {
             "type": "string",
-            "description": "The name of the customer.",
-            "example": "John Doe"
+            "description": "The name of the account holder.",
+            "example": "string"
           },
-          "email": {
+          "type": {
             "type": "string",
-            "description": "Email address of the customer.",
-            "example": "john.doe@example.com"
+            "description": "The type of the bank account.",
+            "example": "string"
           },
-          "phone": {
+          "currency": {
             "type": "string",
-            "description": "Phone number of the customer.",
-            "example": "+123456789"
-          },
-          "riskSegment": {
-            "type": "string",
-            "description": "Risk segment assigned to the customer based on analysis.",
-            "example": "low"
+            "description": "The currency of the account.",
+            "example": "string"
           }
         },
-        "description": "Information about the customer involved in the payment."
+        "description": "Contains details about the bank account linked to the settlement account."
       },
-      "OrderDetails": {
+      "SettlementSchedule": {
         "type": "object",
         "properties": {
-          "merchantOrderId": {
+          "frequency": {
             "type": "string",
-            "description": "Unique identifier for the order in the merchant's system.",
-            "example": "order_123"
+            "description": "The frequency of the settlement transactions.",
+            "example": "string"
           },
-          "description": {
+          "cutoffTime": {
             "type": "string",
-            "description": "Description of the order.",
-            "example": "Purchase of electronics"
+            "description": "The cutoff time for settlement processing.",
+            "example": "string"
           },
-          "items": {
-            "type": "array",
-            "description": "List of items included in the order.",
-            "items": {
-              "type": "object",
-              "properties": {
-                "itemId": {
-                  "type": "string",
-                  "description": "Unique identifier for each item.",
-                  "example": "item_123"
-                },
-                "name": {
-                  "type": "string",
-                  "description": "Name of the product.",
-                  "example": "Smartphone"
-                },
-                "description": {
-                  "type": "string",
-                  "description": "Description of the product.",
-                  "example": "Latest model smartphone with 128GB storage."
-                },
-                "quantity": {
-                  "type": "string",
-                  "description": "Quantity of the item ordered.",
-                  "example": "2"
-                },
-                "unitPrice": {
-                  "$ref": "#/components/schemas/AmountDetails"
-                },
-                "totalAmount": {
-                  "$ref": "#/components/schemas/AmountDetails"
-                }
-              },
-              "example": {
-                "itemId": "item_123",
-                "name": "Smartphone",
-                "description": "Latest model smartphone with 128GB storage.",
-                "quantity": "2",
-                "unitPrice": {
-                  "currency": "USD",
-                  "value": "500.00"
-                },
-                "totalAmount": {
-                  "currency": "USD",
-                  "value": "1000.00"
-                }
-              }
-            }
+          "timezone": {
+            "type": "string",
+            "description": "The timezone in which the settlement processing occurs.",
+            "example": "string"
+          },
+          "settlementDelayBusinessDays": {
+            "type": "integer",
+            "description": "The number of business days for settlement delays.",
+            "format": "int32",
+            "example": 0
+          },
+          "minimumPayoutAmount": {
+            "description": "The minimum payout amount required for processing.",
+            "$ref": "#/components/schemas/MinimumPayoutAmount"
           }
         },
-        "description": "Details of the order linked to the payment."
+        "description": "Details about the settlement frequency, cutoff time, and payout requirements."
       },
-      "MetadataDetails": {
+      "AuditDetails": {
+        "type": "object",
+        "properties": {
+          "createdAt": {
+            "type": "string",
+            "description": "Timestamp when the settlement account was created.",
+            "example": "string"
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "Identifier of the user who created the settlement account.",
+            "example": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp when the settlement account was last updated.",
+            "example": "string"
+          },
+          "updatedBy": {
+            "type": "string",
+            "description": "Identifier of the user who last updated the settlement account.",
+            "example": "string"
+          },
+          "version": {
+            "type": "integer",
+            "description": "Version number of the settlement account record.",
+            "format": "int32",
+            "example": 0
+          }
+        },
+        "description": "Contains audit details for tracking creation and updates of the settlement account."
+      },
+      "ResponseMetadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
             "description": "Unique identifier for the response.",
-            "example": "response_123"
+            "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation identifier for tracking requests.",
-            "example": "correlation_123"
+            "description": "Identifier used to correlate requests and responses.",
+            "example": "string"
           },
           "generatedAt": {
             "type": "string",
             "description": "Timestamp when the response was generated.",
-            "example": "2023-10-01T12:00:00Z"
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the payment was processed.",
-            "example": "US"
+            "description": "Region where the processing occurred.",
+            "example": "string"
           }
         },
-        "description": "Metadata related to the payment process."
+        "description": "Contains metadata information related to the response."
       }
     },
     "parameters": {
@@ -709,15 +541,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "An identifier for the specific endpoint that was called, useful for tracking and monitoring.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "banking-p2m-openapi-replace-payment-intent"
+          "example": "banking-p2m-openapi-replace-settlement-account"
         },
-        "example": "banking-p2m-openapi-replace-payment-intent"
+        "example": "banking-p2m-openapi-replace-settlement-account"
       },
       "X-Runtime-App": {
+        "description": "The name of the application that processed the request. This can help in identifying the source of the response from different applications.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -730,7 +564,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the Bearer authentication method. Clients must present a valid JWT (JSON Web Token) as part of the Authorization header in their requests to access protected resources.",
+        "description": "This security scheme uses Bearer Authentication with JSON Web Tokens (JWT) to authenticate users. It expects a valid JWT token to be provided in the request for accessing secured endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
