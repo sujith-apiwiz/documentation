@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Get Channel Specific By Param1-spec",
-    "description": "The Channel Specific Management API provides endpoints to access detailed information related to specific banking channels, such as e-branch management. It allows users to retrieve channel-specific data based on a unique parameter, enabling tailored customer experiences and operational insights. This API is primarily used by banking institutions and developers looking to integrate channel management functionalities into their applications or services. Typical use cases include fetching channel analytics or managing channel operations efficiently.",
+    "description": "The Channel-Specific Product Inventory API enables users to retrieve detailed product inventory information tailored to specific channels. By providing a unique parameter, this endpoint allows for efficient querying of inventory items based on channel requirements. Typical consumers of this API include retail systems, e-commerce platforms, and inventory management applications seeking to optimize product availability and streamline operations. Developers can leverage this API to enhance user experiences and ensure accurate inventory representation across different sales channels.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/channel-specific/e-branch-management/{param1}": {
+    "/v5/banking/channel-specific/product-inventory-item-management/{param1}": {
       "get": {
         "tags": [
-          "E-Branch Management"
+          "Product Management"
         ],
-        "summary": "Retrieve E-Branch Management Resource",
-        "description": "Fetches details of the specified E-Branch Management resource identified by RES-100045. This operation allows users to access up-to-date information relevant to the specific E-Branch.",
+        "summary": "Retrieve product inventory item details.",
+        "description": "This endpoint allows you to fetch detailed information about a specific product inventory item associated with a given channel, identified by its unique ID. It provides insights into the item's availability, specifications, and current stock status.",
         "operationId": "getChannelSpecificByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "Request body for retrieving details on a specific Resource in the e-branch management system. The body must adhere to the specified schema and include all necessary fields to ensure a valid request.",
+          "description": "This request body is utilized to retrieve information pertaining to the product inventory item identified by the specific product code 'PROD-700045'. It outlines the required structure for the request to ensure proper processing and response from the API.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved the requested resource.",
+            "description": "Successfully retrieved the requested product inventory item details.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -92,135 +92,113 @@
     "schemas": {
       "GetChannelSpecificByParam1Request": {
         "type": "string",
-        "description": "This schema represents the request body for the specific application in channel-specific branch management operations.",
+        "description": "A sample string representation of the request body for the Product Inventory Item Management operation.",
         "example": "{}"
       },
       "GetChannelSpecificByParam1Response_200": {
-        "title": "Channel Specific Branch Management Response",
+        "title": "Product Inventory Item Management Response",
         "type": "object",
         "properties": {
-          "channelId": {
+          "inventoryItemId": {
             "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "MOBILE-US"
+            "description": "Unique identifier for the inventory item.",
+            "example": "STANDARD"
           },
-          "regionCode": {
+          "sku": {
             "type": "string",
-            "description": "Code representing the region.",
-            "example": "US-EAST-1"
-          },
-          "serviceWindow": {
-            "description": "Operating hours for the branch.",
-            "$ref": "#/components/schemas/ServiceWindow"
-          },
-          "dailyCapacity": {
-            "type": "integer",
-            "description": "The maximum number of customers the branch can handle daily.",
-            "format": "int32",
-            "example": 1
+            "description": "Stock Keeping Unit identifier for the product.",
+            "example": "STANDARD"
           },
           "branchId": {
             "type": "string",
-            "description": "Unique identifier for the branch.",
+            "description": "Identifier for the branch where the inventory item is located.",
             "example": "STANDARD"
           },
-          "branchType": {
-            "type": "string",
-            "description": "Type of the branch, e.g., retail, franchise.",
-            "example": "FULL_SERVICE"
+          "quantityOnHand": {
+            "type": "integer",
+            "description": "The current quantity of the inventory item available in stock.",
+            "format": "int32",
+            "example": 1
           },
-          "timeZone": {
-            "type": "string",
-            "description": "Time zone in which the branch operates.",
-            "example": "America/New_York"
+          "reorderPoint": {
+            "type": "integer",
+            "description": "The minimum quantity of the inventory item before a reorder is triggered.",
+            "format": "int32",
+            "example": 1
+          },
+          "distributionQuantity": {
+            "type": "integer",
+            "description": "The quantity of the item that should be distributed from the stock.",
+            "format": "int32",
+            "example": 1
           },
           "recordStatus": {
             "type": "string",
-            "description": "Current status of the record (e.g., active, inactive).",
+            "description": "The status of the inventory record, indicating its current state.",
             "example": "ACTIVE"
           },
           "version": {
             "type": "integer",
-            "description": "Version number of the branch record.",
+            "description": "Version number of the inventory item record, used for optimistic concurrency control.",
             "format": "int32",
             "example": 1
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp when the branch record was last updated.",
+            "description": "Timestamp indicating when the inventory item record was last updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Metadata related to the response.",
-            "$ref": "#/components/schemas/Metadata"
+            "type": "object",
+            "properties": {
+              "responseId": {
+                "type": "string",
+                "description": "Unique identifier for the response.",
+                "example": "response-98765"
+              },
+              "correlationId": {
+                "type": "string",
+                "description": "Identifier used for correlating requests and responses within the system.",
+                "example": "corr-54321"
+              },
+              "generatedAt": {
+                "type": "string",
+                "description": "Timestamp indicating when the response was generated.",
+                "example": "2023-10-01T12:00:00Z"
+              },
+              "processingRegion": {
+                "type": "string",
+                "description": "Geographical region where the inventory item processing occurred.",
+                "example": "us-east-1"
+              }
+            },
+            "description": "Additional metadata related to the inventory item response.",
+            "example": {
+              "responseId": "af4b7d60-215f-567c-a976-ef9222318b69",
+              "correlationId": "001313fe-de57-581b-956c-7491fc44ff54",
+              "generatedAt": "2026-09-15T14:30:00Z",
+              "processingRegion": "us-east-1"
+            }
           }
         },
-        "description": "Response schema for channel-specific branch management operations.",
+        "description": "This schema represents the response structure for managing product inventory items, including details such as item ID, SKU, branch information, quantities, record status, and metadata.",
         "example": {
-          "channelId": "MOBILE-US",
-          "regionCode": "US-EAST-1",
-          "serviceWindow": {
-            "opensAt": "STANDARD",
-            "closesAt": "STANDARD"
-          },
-          "dailyCapacity": 1,
+          "inventoryItemId": "STANDARD",
+          "sku": "STANDARD",
           "branchId": "STANDARD",
-          "branchType": "FULL_SERVICE",
-          "timeZone": "America/New_York",
+          "quantityOnHand": 1,
+          "reorderPoint": 1,
+          "distributionQuantity": 1,
           "recordStatus": "ACTIVE",
           "version": 1,
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "588c6925-2902-578c-ad59-97ec1f876f45",
-            "correlationId": "fa7cc9e9-4fe4-5ab6-b548-11ffcdfaea1e",
+            "responseId": "af4b7d60-215f-567c-a976-ef9222318b69",
+            "correlationId": "001313fe-de57-581b-956c-7491fc44ff54",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
-      },
-      "ServiceWindow": {
-        "title": "Service Window",
-        "type": "object",
-        "properties": {
-          "opensAt": {
-            "type": "string",
-            "description": "Opening time of the branch.",
-            "example": "08:00 AM"
-          },
-          "closesAt": {
-            "type": "string",
-            "description": "Closing time of the branch.",
-            "example": "05:00 PM"
-          }
-        },
-        "description": "Hours during which the branch is operational."
-      },
-      "Metadata": {
-        "title": "Response Metadata",
-        "type": "object",
-        "properties": {
-          "responseId": {
-            "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "string"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Correlation ID for tracking the request.",
-            "example": "string"
-          },
-          "generatedAt": {
-            "type": "string",
-            "description": "Timestamp indicating when the response was generated.",
-            "example": "string"
-          },
-          "processingRegion": {
-            "type": "string",
-            "description": "Region where the processing of the request took place.",
-            "example": "string"
-          }
-        },
-        "description": "Metadata containing additional information about the response."
       }
     },
     "parameters": {
@@ -251,17 +229,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the specific endpoint that was called, used for tracking and logging purposes.",
+        "description": "This header indicates the unique identifier for the endpoint that processed the request. It helps in tracing the request through the system and ensuring proper logging.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "e-branch-management-get-e-branch-management"
+          "example": "product-inventory-item-management-get-product-inventory-item-management"
         },
-        "example": "e-branch-management-get-e-branch-management"
+        "example": "product-inventory-item-management-get-product-inventory-item-management"
       },
       "X-Runtime-App": {
-        "description": "The name of the runtime application that processed the request, useful for identifying the source of the response.",
+        "description": "This header specifies the name of the application that handled the request, providing context for debugging and application monitoring.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -274,7 +252,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a Bearer authentication scheme that requires a JSON Web Token (JWT) to be included in the Authorization header of requests. The JWT must be valid and not expired for the request to be authorized.",
+        "description": "This security scheme uses the Bearer authentication method. It requires a JSON Web Token (JWT) to be included in the Authorization header of requests. Use this to secure API endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
