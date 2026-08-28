@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Replace Banking By Param1-spec",
-    "description": "The Update Legal Entity API allows authorized users to modify information related to specific legal entities in the banking system. This API endpoint serves as a vital tool for financial institutions and businesses managing their compliance and operational requirements. By specifying a unique identifier (param1), users can update various attributes of the legal entity. Typical consumers include financial institutions, regulatory bodies, and compliance teams that require accurate data management. This ensures that all entities meet the latest legal and regulatory standards.",
+    "description": "The Trade Finance Update API facilitates the modification of trade finance records in our banking system. By targeting specific parameters, this API allows authorized users to update existing trade finance agreements efficiently. Use cases typically involve financial institutions and businesses that require real-time adjustments to their trade finance documentation. This API is essential for maintaining accurate records and ensuring compliance within constantly changing financial landscapes.",
     "version": "1.0"
   },
   "servers": [
@@ -18,7 +18,7 @@
       "x-basePath": "/"
     },
     {
-      "url": "https://35.162.152.203:9007",
+      "url": "https://35.162.152.203:9004",
       "description": "PROD",
       "variables": {},
       "x-schema": "https://",
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/legal-entities/{param1}": {
+    "/v5/banking/trade-finance/{param1}": {
       "put": {
         "tags": [
-          "Legal Entities"
+          "Trade Finance"
         ],
-        "summary": "Update Legal Entity",
-        "description": "This endpoint allows you to update the details of a specific legal entity identified by its unique resource ID, RES-100045. Ensure that the request body contains the necessary fields to modify the existing data.",
+        "summary": "Update trade finance resource.",
+        "description": "This endpoint allows you to update the details of a specific trade finance resource identified by its unique ID (RES-100045). Provide the necessary data in the request body to modify the resource's attributes as needed.",
         "operationId": "replaceBankingByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "Request body for updating the legal entity with the identifier RES-100045. This body should contain all necessary data for the update operation including fields specific to the legal entity being modified.",
+          "description": "The request body for updating the trade finance resource with ID 'RES-100045'. This should include all necessary attributes for the update operation, structured in accordance with the specified schema.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful update of the resource.",
+            "description": "Request processed successfully; resource updated.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -103,103 +103,129 @@
   "components": {
     "schemas": {
       "ReplaceBankingByParam1Request": {
+        "title": "Trade Finance Operations Request Body",
         "type": "object",
         "properties": {
-          "validationScope": {
-            "type": "array",
-            "description": "List of validation scopes related to the operation.",
-            "example": [
-              "STANDARD"
-            ],
-            "items": {
-              "type": "string",
-              "example": "validationScopeExample"
-            }
+          "changes": {
+            "description": "A set of changes to be applied to the trade finance operation.",
+            "$ref": "#/components/schemas/Changes"
           },
-          "asOfDate": {
+          "changeReason": {
             "type": "string",
-            "description": "The date as of which the request is made.",
-            "example": "2026-09-15"
+            "description": "The reason for the change request.",
+            "example": "STANDARD"
+          },
+          "effectiveAt": {
+            "type": "string",
+            "description": "The date and time at which the changes become effective.",
+            "example": "2026-09-15T14:30:00Z"
           },
           "requestedBy": {
             "type": "string",
-            "description": "The identifier of the user requesting the operation.",
+            "description": "The identifier of the user requesting the change.",
             "example": "STANDARD"
           },
           "requestContext": {
-            "description": "Contextual information about the request.",
+            "description": "Contextual information related to the request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "Schema representing the request body for updating legal entities operations.",
+        "description": "Schema representing the request body for updating trade finance operations.",
         "example": {
-          "validationScope": [
-            "STANDARD"
-          ],
-          "asOfDate": "2026-09-15",
+          "changes": {
+            "corporateCustomerId": "CUST-120435",
+            "facilityId": "STANDARD",
+            "counterpartyId": "PARTY-285417"
+          },
+          "changeReason": "STANDARD",
+          "effectiveAt": "2026-09-15T14:30:00Z",
           "requestedBy": "STANDARD",
           "requestContext": {
-            "requestId": "0233f704-e197-5bac-97a5-c60ea86eb7c3",
-            "correlationId": "9cc9fefa-7287-5895-9070-052e0776bfa3",
-            "idempotencyKey": "02d1cfbe-1521-54fe-91c1-1a11e2de0401",
+            "requestId": "ef39eb9d-2993-5ab2-b5de-47773a1dcbd8",
+            "correlationId": "c0232285-6640-5e36-a82e-1aa6550dd132",
+            "idempotencyKey": "9633295a-8d97-5b34-8927-b3a1968735a0",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-256753"
+              "deviceId": "DEV-523578"
             }
           }
         }
       },
+      "Changes": {
+        "title": "Changes",
+        "type": "object",
+        "properties": {
+          "corporateCustomerId": {
+            "type": "string",
+            "description": "The identifier of the corporate customer affected by the changes.",
+            "example": "CC123456"
+          },
+          "facilityId": {
+            "type": "string",
+            "description": "The identifier of the facility impacted by the changes.",
+            "example": "F123456"
+          },
+          "counterpartyId": {
+            "type": "string",
+            "description": "The identifier of the counterparty involved in the transaction.",
+            "example": "CP654321"
+          }
+        },
+        "description": "Represents the details of the changes being requested."
+      },
       "RequestContext": {
+        "title": "Request Context",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
             "description": "Unique identifier for the request.",
-            "example": "req-456"
+            "example": "request-123"
           },
           "correlationId": {
             "type": "string",
-            "description": "ID to correlate related requests.",
-            "example": "correlation-789"
+            "description": "Identifier used to correlate requests across systems.",
+            "example": "correlation-456"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key used to ensure idempotency of the request.",
-            "example": "idempotent-key-012"
+            "description": "Key to ensure that multiple identical requests do not cause multiple changes.",
+            "example": "idempotency-789"
           },
           "requestedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the request was made.",
-            "example": "2023-10-05T12:00:00Z"
+            "description": "Timestamp when the request was made.",
+            "example": "2023-01-01T10:00:00Z"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "Identifier of the source system making the request.",
-            "example": "sourceSystemA"
+            "description": "The system from which the request originated.",
+            "example": "TradeManagementSystem"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "Identifier of the application making the request.",
-            "example": "sourceAppB"
+            "description": "The application from which the request originated.",
+            "example": "FinanceApp"
           },
           "channel": {
-            "description": "Details about the channel from which the request originated.",
+            "description": "Details of the channel through which the request was made.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "Schema representing the context of the request."
+        "description": "Contains metadata about the request context."
       },
       "Channel": {
+        "title": "Channel",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
             "description": "Unique identifier for the channel.",
-            "example": "channel-123"
+            "example": "channel-001"
           },
           "channelType": {
             "type": "string",
@@ -208,81 +234,75 @@
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier for the device used.",
-            "example": "device-456"
+            "description": "Identifier for the device being used.",
+            "example": "device-123"
           }
         },
-        "description": "Schema representing the channel information."
+        "description": "Information regarding the channel used for the request."
       },
       "ReplaceBankingByParam1Response_200": {
-        "title": "Legal Entity Operation Response",
+        "title": "Trade Finance Operation Response",
         "type": "object",
         "properties": {
-          "actionReference": {
-            "type": "string",
-            "description": "A reference identifier for the action performed.",
-            "example": "STANDARD"
-          },
-          "actionType": {
-            "type": "string",
-            "description": "The type of action that was performed.",
-            "example": "STANDARD"
+          "version": {
+            "type": "integer",
+            "description": "The version number of the response.",
+            "format": "int32",
+            "example": 1
           },
           "status": {
             "type": "string",
-            "description": "The status of the operation executed.",
+            "description": "The status of the operation.",
             "example": "ACTIVE"
           },
-          "processedAt": {
+          "updatedAt": {
             "type": "string",
-            "description": "The timestamp indicating when the operation was processed.",
-            "example": "2026-08-11T12:00:00Z"
+            "description": "The timestamp of when the response was updated.",
+            "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Metadata related to the operation response.",
-            "$ref": "#/components/schemas/Metadata"
+            "$ref": "#/components/schemas/ResponseMetadata"
           }
         },
-        "description": "A response schema representing the outcome of a legal entity operation.",
+        "description": "This schema represents the response structure for the Trade Finance operations.",
         "example": {
-          "actionReference": "STANDARD",
-          "actionType": "STANDARD",
+          "version": 1,
           "status": "ACTIVE",
-          "processedAt": "2026-08-11T12:00:00Z",
+          "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "095a509d-7192-57c9-a655-9a462a13b523",
-            "correlationId": "9cc9fefa-7287-5895-9070-052e0776bfa3",
+            "responseId": "cf42564b-0eb9-5362-a626-34e336037a74",
+            "correlationId": "c0232285-6640-5e36-a82e-1aa6550dd132",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "Metadata": {
-        "title": "Operation Metadata",
+      "ResponseMetadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "response-98765"
+            "description": "A unique identifier for the response.",
+            "example": "abc123"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate multiple requests and responses.",
-            "example": "correlation-abcde"
+            "description": "An identifier used to correlate requests and responses.",
+            "example": "def456"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp when the metadata was generated.",
-            "example": "2023-01-01T12:00:01Z"
+            "description": "The timestamp when the response was generated.",
+            "example": "2023-10-01T00:00:00Z"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The geographical region where the processing occurred.",
-            "example": "us-west-1"
+            "description": "The region where the processing took place.",
+            "example": "us-east-1"
           }
         },
-        "description": "Metadata information associated with the operation response."
+        "description": "This schema contains metadata information for the response."
       }
     },
     "parameters": {
@@ -313,44 +333,45 @@
     },
     "headers": {
       "X-Endpoint-Id": {
+        "description": "The unique identifier for the API endpoint being accessed.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "legal-entity-directory-validate-legal-entity-directory"
+          "example": "project-finance-update-project-finance"
         },
-        "example": "legal-entity-directory-validate-legal-entity-directory"
+        "example": "project-finance-update-project-finance"
       },
       "X-Runtime-App": {
+        "description": "The name of the application handling the runtime operations.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "reference-product"
+          "example": "lending-credit"
         },
-        "example": "reference-product"
+        "example": "lending-credit"
       },
       "X-Workflow-Id": {
+        "description": "The unique identifier for the workflow process initiated by this request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "WF-093"
+          "example": "WF-063"
         },
-        "example": "WF-093"
+        "example": "WF-063"
       },
       "X-Workflow-Name": {
-        "description": "The name of the workflow that is currently being processed.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Legal Entity and Party Reference Data Maintenance"
+          "example": "Trade Finance Documentary Collection"
         },
-        "example": "Legal Entity and Party Reference Data Maintenance"
+        "example": "Trade Finance Documentary Collection"
       },
       "X-Workflow-State": {
-        "description": "The current state of the workflow, indicating its progress.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -360,20 +381,19 @@
         "example": "IN_PROGRESS"
       },
       "X-Workflow-Execution-Id": {
-        "description": "A unique identifier for the execution of the workflow.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "924f4d38-38c5-45ff-982f-30152a7debf1"
+          "example": "0fd34e58-1114-4185-ac46-80b0f1cefeaa"
         },
-        "example": "924f4d38-38c5-45ff-982f-30152a7debf1"
+        "example": "0fd34e58-1114-4185-ac46-80b0f1cefeaa"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses Bearer Authentication as defined in RFC 6750. Users must provide a valid JSON Web Token (JWT) in the Authorization header to access secure endpoints.",
+        "description": "This security scheme uses Bearer Tokens for authentication, specifically formatted as JSON Web Tokens (JWT). Clients must include the token in the Authorization header.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
