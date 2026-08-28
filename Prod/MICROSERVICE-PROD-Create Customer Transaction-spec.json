@@ -1,0 +1,658 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MICROSERVICE-PROD-Create Customer Transaction-spec",
+    "description": "This API facilitates the management of customer transactions within the decisioning system. It allows clients to initiate new transactions for specific customers, identified by their unique customer ID. Businesses can leverage this API to streamline financial transactions, improve customer experience, and enable better decision-making processes. Typical consumers include financial services, ecommerce platforms, and customer relationship management systems. This API is essential for organizations aiming to enhance transaction handling capabilities and maintain an accurate transaction history.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://prod-workspace-pwmw.apiwiz.io",
+      "description": "Sandbox server",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "Sandbox server",
+      "x-environmentName": "Sandbox",
+      "x-hide": false,
+      "x-environmentId": "6a7f52236ae9a15654cd5721",
+      "x-basePath": "/"
+    },
+    {
+      "url": "https://35.162.152.203:9004",
+      "description": "PROD",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "PROD",
+      "x-environmentName": "PROD",
+      "x-hide": false,
+      "x-environmentId": "6a784eac1d7e36108cc3cb0c",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/v5/decisioning/customers/{customerId}/transactions": {
+      "post": {
+        "tags": [
+          "Customer Transactions"
+        ],
+        "summary": "Create a new transaction for a specific customer.",
+        "description": "This endpoint allows you to create a new transaction associated with a customer identified by their unique ID. You will need to provide the necessary transaction details in the request body.",
+        "operationId": "createCustomerTransaction",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/customerId"
+          }
+        ],
+        "requestBody": {
+          "description": "This request body allows the creation of a new transaction for the specified customer (CUST-100045). Provide the necessary transaction details in the JSON format as specified in the schema.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerTransactionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "The request has been accepted for processing but is not yet complete.",
+            "headers": {
+              "X-Endpoint-Id": {
+                "$ref": "#/components/headers/X-Endpoint-Id"
+              },
+              "X-Runtime-App": {
+                "$ref": "#/components/headers/X-Runtime-App"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCustomerTransactionResponse_202"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateCustomerTransactionRequest": {
+        "title": "Transaction Request Body",
+        "type": "object",
+        "properties": {
+          "accountIds": {
+            "type": "string",
+            "description": "String containing account IDs.",
+            "example": "ACC-770594"
+          },
+          "fromDate": {
+            "type": "integer",
+            "description": "The start date for the transaction search as an integer timestamp.",
+            "format": "int32",
+            "example": 1
+          },
+          "toDate": {
+            "type": "integer",
+            "description": "The end date for the transaction search as an integer timestamp.",
+            "format": "int32",
+            "example": 1
+          },
+          "reportCustomFields": {
+            "type": "array",
+            "description": "An array of custom fields for reporting.",
+            "example": [
+              {
+                "label": "STANDARD",
+                "value": "STANDARD",
+                "shown": true
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CustomField"
+            }
+          },
+          "findTransaction": {
+            "type": "object",
+            "properties": {
+              "descriptionMemo": {
+                "type": "string",
+                "description": "A memo or description for the transaction search.",
+                "example": "string"
+              },
+              "amountFrom": {
+                "type": "number",
+                "description": "Minimum amount for the transaction search.",
+                "example": 0.0
+              },
+              "amountTo": {
+                "type": "number",
+                "description": "Maximum amount for the transaction search.",
+                "example": 0.0
+              },
+              "category": {
+                "type": "array",
+                "description": "Array of categories for filtering transactions.",
+                "items": {
+                  "type": "string",
+                  "description": "A category name.",
+                  "example": "string"
+                }
+              }
+            },
+            "description": "Criteria for finding transactions.",
+            "example": {
+              "descriptionMemo": "STANDARD",
+              "amountFrom": 100.0,
+              "amountTo": 100.0,
+              "category": [
+                "STANDARD"
+              ]
+            }
+          },
+          "requestContext": {
+            "type": "object",
+            "properties": {
+              "requestId": {
+                "type": "string",
+                "description": "Unique identifier for the request.",
+                "example": "string"
+              },
+              "correlationId": {
+                "type": "string",
+                "description": "ID used to correlate multiple related requests.",
+                "example": "string"
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "description": "Key to ensure the request is idempotent.",
+                "example": "string"
+              },
+              "requestedAt": {
+                "type": "string",
+                "description": "Timestamp indicating when the request was made.",
+                "example": "string"
+              },
+              "sourceSystem": {
+                "type": "string",
+                "description": "Identifier for the source system of the request.",
+                "example": "string"
+              },
+              "sourceApplication": {
+                "type": "string",
+                "description": "Identifier for the source application of the request.",
+                "example": "string"
+              },
+              "channel": {
+                "$ref": "#/components/schemas/Channel"
+              }
+            },
+            "description": "Context information associated with the request.",
+            "example": {
+              "requestId": "e6ef94b1-967b-5717-9418-7a6b20dfbca6",
+              "correlationId": "520300e5-038a-5b79-9571-249af4a0fc82",
+              "idempotencyKey": "ca6a4525-22cc-5b12-9817-da34df51d182",
+              "requestedAt": "2026-09-15T14:30:00Z",
+              "sourceSystem": "DIGITAL_BANKING",
+              "sourceApplication": "MOBILE_APP",
+              "channel": {
+                "channelId": "MOBILE-US",
+                "channelType": "MOBILE",
+                "deviceId": "DEV-905166"
+              }
+            }
+          }
+        },
+        "description": "Schema representing the request body structure for transaction operations.",
+        "example": {
+          "accountIds": "ACC-770594",
+          "fromDate": 1,
+          "toDate": 1,
+          "reportCustomFields": [
+            {
+              "label": "STANDARD",
+              "value": "STANDARD",
+              "shown": true
+            }
+          ],
+          "findTransaction": {
+            "descriptionMemo": "STANDARD",
+            "amountFrom": 100.0,
+            "amountTo": 100.0,
+            "category": [
+              "STANDARD"
+            ]
+          },
+          "requestContext": {
+            "requestId": "e6ef94b1-967b-5717-9418-7a6b20dfbca6",
+            "correlationId": "520300e5-038a-5b79-9571-249af4a0fc82",
+            "idempotencyKey": "ca6a4525-22cc-5b12-9817-da34df51d182",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-905166"
+            }
+          }
+        }
+      },
+      "CustomField": {
+        "title": "Custom Field",
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "The label or name of the custom field.",
+            "example": "string"
+          },
+          "value": {
+            "type": "string",
+            "description": "The value assigned to the custom field.",
+            "example": "string"
+          },
+          "shown": {
+            "type": "boolean",
+            "description": "Indicates if the custom field should be shown.",
+            "example": false
+          }
+        },
+        "description": "Schema representing a custom field in the report."
+      },
+      "Channel": {
+        "title": "Channel Information",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Unique identifier for the channel.",
+            "example": "string"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "Type of the channel (e.g., web, mobile).",
+            "example": "string"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Identifier for the device used to make the request.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing details about the channel from which the request was sent."
+      },
+      "CreateCustomerTransactionResponse_202": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the transaction.",
+            "example": "STANDARD"
+          },
+          "customerType": {
+            "type": "string",
+            "description": "Type of the customer (e.g., individual, business).",
+            "example": "STANDARD"
+          },
+          "customerId": {
+            "type": "integer",
+            "description": "Identifier for the customer.",
+            "format": "int32",
+            "example": 1
+          },
+          "requestId": {
+            "type": "string",
+            "description": "Identifier for the transaction request.",
+            "example": "37e51670-b782-5bbb-a66a-eb5bbb1a47aa"
+          },
+          "requesterName": {
+            "type": "string",
+            "description": "Name of the person making the request.",
+            "example": "Northstar Banking Service"
+          },
+          "endUser": {
+            "description": "Information about the end user involved in the transaction.",
+            "$ref": "#/components/schemas/EndUser"
+          },
+          "createdDate": {
+            "type": "integer",
+            "description": "Date when the transaction was created, represented as a timestamp.",
+            "format": "int32",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "The title or description of the transaction.",
+            "example": "Banking operation completed"
+          },
+          "consumerId": {
+            "type": "string",
+            "description": "Identifier for the consumer associated with the transaction.",
+            "example": "STANDARD"
+          },
+          "consumerSsn": {
+            "type": "string",
+            "description": "Social Security Number of the consumer.",
+            "example": "STANDARD"
+          },
+          "consumerDetails": {
+            "description": "Details of the consumer involved in the transaction.",
+            "$ref": "#/components/schemas/ConsumerDetails"
+          },
+          "disputeStatement": {
+            "type": "string",
+            "description": "Statement describing any disputes related to the transaction.",
+            "example": "STANDARD"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of transaction.",
+            "example": "STANDARD"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the transaction (e.g., pending, completed).",
+            "example": "ACTIVE"
+          },
+          "constraints": {
+            "description": "Constraints related to the transaction.",
+            "$ref": "#/components/schemas/TransactionConstraints"
+          },
+          "metadata": {
+            "description": "Metadata information related to the transaction.",
+            "$ref": "#/components/schemas/TransactionMetadata"
+          }
+        },
+        "description": "Response schema for the transaction operation for customer CUST-100045.",
+        "example": {
+          "id": "STANDARD",
+          "customerType": "STANDARD",
+          "customerId": 1,
+          "requestId": "37e51670-b782-5bbb-a66a-eb5bbb1a47aa",
+          "requesterName": "Northstar Banking Service",
+          "endUser": {
+            "name": "Northstar Banking Service",
+            "address": "STANDARD",
+            "city": "New York",
+            "state": "STANDARD",
+            "zip": "STANDARD",
+            "phone": "+1-212-555-0147",
+            "email": "olivia.bennett@northstar.example",
+            "url": "https://banking.northstar.example/callbacks/status"
+          },
+          "createdDate": 1,
+          "title": "Banking operation completed",
+          "consumerId": "STANDARD",
+          "consumerSsn": "STANDARD",
+          "consumerDetails": {
+            "id": "STANDARD",
+            "firstName": "Northstar Banking Service",
+            "middleName": "Northstar Banking Service",
+            "lastName": "Northstar Banking Service",
+            "address": "STANDARD",
+            "city": "New York",
+            "state": "STANDARD",
+            "zip": "STANDARD",
+            "phone": "+1-212-555-0147",
+            "ssn": "STANDARD",
+            "email": "olivia.bennett@northstar.example"
+          },
+          "disputeStatement": "STANDARD",
+          "type": "STANDARD",
+          "status": "ACTIVE",
+          "constraints": {
+            "accountIds": [
+              "ACC-931972"
+            ],
+            "fromDate": 1,
+            "toDate": 1,
+            "includePending": true
+          },
+          "metadata": {
+            "responseId": "e148112e-1a1f-5c26-abac-25eebcf65e93",
+            "correlationId": "520300e5-038a-5b79-9571-249af4a0fc82",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
+      },
+      "EndUser": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the end user.",
+            "example": "string"
+          },
+          "address": {
+            "type": "string",
+            "description": "Street address of the end user.",
+            "example": "string"
+          },
+          "city": {
+            "type": "string",
+            "description": "City where the end user resides.",
+            "example": "string"
+          },
+          "state": {
+            "type": "string",
+            "description": "State where the end user resides.",
+            "example": "string"
+          },
+          "zip": {
+            "type": "string",
+            "description": "ZIP code for the end user's address.",
+            "example": "string"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number of the end user.",
+            "example": "string"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the end user.",
+            "example": "string"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL associated with the end user.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing the end user information."
+      },
+      "ConsumerDetails": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the consumer.",
+            "example": "string"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First name of the consumer.",
+            "example": "string"
+          },
+          "middleName": {
+            "type": "string",
+            "description": "Middle name of the consumer, if applicable.",
+            "example": "string"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name of the consumer.",
+            "example": "string"
+          },
+          "address": {
+            "type": "string",
+            "description": "Street address of the consumer.",
+            "example": "string"
+          },
+          "city": {
+            "type": "string",
+            "description": "City where the consumer resides.",
+            "example": "string"
+          },
+          "state": {
+            "type": "string",
+            "description": "State where the consumer resides.",
+            "example": "string"
+          },
+          "zip": {
+            "type": "string",
+            "description": "ZIP code for the consumer's address.",
+            "example": "string"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number of the consumer.",
+            "example": "string"
+          },
+          "ssn": {
+            "type": "string",
+            "description": "Social Security Number of the consumer.",
+            "example": "string"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the consumer.",
+            "example": "string"
+          }
+        },
+        "description": "Schema containing details about the consumer."
+      },
+      "TransactionConstraints": {
+        "type": "object",
+        "properties": {
+          "accountIds": {
+            "type": "array",
+            "description": "List of account IDs associated with the transaction.",
+            "example": [
+              "string"
+            ],
+            "items": {
+              "type": "string",
+              "description": "An account ID."
+            }
+          },
+          "fromDate": {
+            "type": "integer",
+            "description": "Start date for the transaction constraints, represented as a timestamp.",
+            "format": "int32",
+            "example": 0
+          },
+          "toDate": {
+            "type": "integer",
+            "description": "End date for the transaction constraints, represented as a timestamp.",
+            "format": "int32",
+            "example": 0
+          },
+          "includePending": {
+            "type": "boolean",
+            "description": "Flag indicating whether to include pending transactions.",
+            "example": false
+          }
+        },
+        "description": "Schema representing the constraints related to the transaction."
+      },
+      "TransactionMetadata": {
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "Unique identifier for the response associated with the transaction.",
+            "example": "string"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier to correlate requests and responses.",
+            "example": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the transaction metadata was generated.",
+            "example": "string"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "Region where the transaction is being processed.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing metadata information related to the transaction."
+      }
+    },
+    "parameters": {
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "MICROSERVICE_PROD_202"
+          ]
+        }
+      },
+      "customerId": {
+        "name": "customerId",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "headers": {
+      "X-Endpoint-Id": {
+        "description": "This header represents the unique identifier for the endpoint being accessed. It is used for tracking and monitoring API usage.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "open-finance-api-generate-transactions-report"
+        },
+        "example": "open-finance-api-generate-transactions-report"
+      },
+      "X-Runtime-App": {
+        "description": "This header indicates the name of the application currently running the transaction. It helps to identify the application context for the API request.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "lending-credit"
+        },
+        "example": "lending-credit"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "This security scheme uses the Bearer authentication method with JSON Web Tokens (JWT). Clients must provide a valid JWT in the Authorization header when making requests to access secured endpoints.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
