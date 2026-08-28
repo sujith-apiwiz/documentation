@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Update P2m By Param1-spec",
-    "description": "This API allows for the modification of P2M reconciliation runs based on a specified parameter. It provides functionality to update existing reconciliation records, ensuring that the data remains accurate and reflective of current business states. Typically, financial analysts and operations teams will utilize this API to fine-tune reconciliation processes and address discrepancies. By accepting specific parameters, this operation streamlines adjustments while enhancing reporting and compliance measures.",
+    "description": "The Update Payment Request API allows businesses to modify existing payment requests identified by a unique parameter. This operation is essential for adjusting payment details to reflect changes or corrections. Common consumers of this API include financial applications and payment processors who need to manage transaction statuses or update request parameters in real time. By facilitating edits to payment requests, this API enhances the accuracy and efficiency of financial workflows.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/p2m/reconciliation-runs/{param1}": {
+    "/v5/p2m/qr-payment-requests/{param1}": {
       "patch": {
         "tags": [
-          "Reconciliation"
+          "QR Payment Management"
         ],
-        "summary": "Update a specific reconciliation run",
-        "description": "This operation allows you to update the details of a specific reconciliation run identified by its unique resource ID. You can modify attributes related to the reconciliation process, improving accuracy and efficiency in handling reconciliation runs.",
+        "summary": "Update a QR payment request.",
+        "description": "This endpoint allows you to update the details of a specific QR payment request identified by its unique ID. Ensure to provide the necessary data for the updates you wish to apply.",
         "operationId": "updateP2mByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "Updates the reconciliation run with the specified ID. Provide necessary information in the request body to modify the existing reconciliation run. Ensure that the provided data conforms to the expected schema.",
+          "description": "This request body is used to update an existing QR payment request identified by the provided identifier. It should contain the necessary fields to modify attributes of the payment request, such as amount, expiration, or other relevant details.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "The request was successfully completed, and the resource has been updated.",
+            "description": "The request was successfully processed and the resource has been updated.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -91,200 +91,322 @@
   "components": {
     "schemas": {
       "UpdateP2mByParam1Request": {
-        "title": "Patch Reconciliation Run Request Body",
         "type": "object",
         "properties": {
-          "status": {
+          "amount": {
+            "description": "The amount to be processed for the payment.",
+            "$ref": "#/components/schemas/Amount"
+          },
+          "description": {
             "type": "string",
-            "description": "The updated status of the reconciliation run.",
-            "example": "ACTIVE"
+            "description": "A description of the payment request.",
+            "example": "Customer banking request processed successfully"
+          },
+          "tipOptions": {
+            "description": "Options for providing a tip with the payment.",
+            "$ref": "#/components/schemas/TipOptions"
+          },
+          "expiresAt": {
+            "type": "string",
+            "description": "The timestamp at which the payment request expires.",
+            "example": "2026-08-11T12:00:00Z"
           },
           "requestContext": {
-            "description": "Contextual information about the request made.",
+            "description": "Contextual information regarding the payment request.",
             "$ref": "#/components/schemas/RequestContext"
           }
         },
-        "description": "This schema represents the request body for patching a reconciliation run, including status updates and request context.",
+        "description": "Schema representing the request body for QR payment operations, specifically for patching payment requests.",
         "example": {
-          "status": "ACTIVE",
+          "amount": {
+            "currency": "USD",
+            "value": "STANDARD"
+          },
+          "description": "Customer banking request processed successfully",
+          "tipOptions": {
+            "mode": "STANDARD",
+            "fixedAmounts": [
+              {
+                "currency": "USD",
+                "value": "STANDARD"
+              }
+            ],
+            "percentages": [
+              "STANDARD"
+            ],
+            "maximumTip": {
+              "currency": "USD",
+              "value": "STANDARD"
+            }
+          },
+          "expiresAt": "2026-08-11T12:00:00Z",
           "requestContext": {
-            "requestId": "1df93188-614a-5a56-aace-1b8f2dacb19f",
-            "correlationId": "42f363c9-553d-5644-8362-5385f2f195b1",
-            "idempotencyKey": "f7d0d9e6-238c-5efd-b983-b3dbf70cbb23",
+            "requestId": "febe0d64-688b-525c-8760-df4b6508d866",
+            "correlationId": "b55bb90e-e0f5-5395-833e-98ede86cb16b",
+            "idempotencyKey": "c2a9ec1b-70cf-57be-831e-49e5e9d513ea",
             "requestedAt": "2026-09-15T14:30:00Z",
             "sourceSystem": "DIGITAL_BANKING",
             "sourceApplication": "MOBILE_APP",
             "channel": {
               "channelId": "MOBILE-US",
               "channelType": "MOBILE",
-              "deviceId": "DEV-733711"
+              "deviceId": "DEV-223091"
             }
           }
         }
       },
+      "Amount": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "Currency code of the amount (e.g., USD, EUR).",
+            "example": "string"
+          },
+          "value": {
+            "type": "string",
+            "description": "The actual amount in the specified currency.",
+            "example": "string"
+          }
+        },
+        "description": "Schema representing the amount in a payment request, including its currency and value."
+      },
+      "TipOptions": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "description": "Tip mode (e.g., optional, mandatory).",
+            "example": "string"
+          },
+          "fixedAmounts": {
+            "type": "array",
+            "description": "List of fixed tip amounts.",
+            "example": [
+              {
+                "currency": "USD",
+                "value": "5"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Amount"
+            }
+          },
+          "percentages": {
+            "type": "array",
+            "description": "List of percentage values for tips.",
+            "example": [
+              "5%",
+              "10%"
+            ],
+            "items": {
+              "type": "string",
+              "description": "Percentage value representing tip percentage.",
+              "example": "10%"
+            }
+          },
+          "maximumTip": {
+            "description": "The maximum allowable tip amount.",
+            "$ref": "#/components/schemas/Amount"
+          }
+        },
+        "description": "Schema detailing available tip options for payment requests."
+      },
       "RequestContext": {
-        "title": "Request Context",
         "type": "object",
         "properties": {
           "requestId": {
             "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req-12345"
+            "description": "Unique identifier for the payment request.",
+            "example": "REQ123456"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used to correlate logs for this request.",
-            "example": "corr-67890"
+            "description": "Identifier used to correlate requests across systems.",
+            "example": "CORR654321"
           },
           "idempotencyKey": {
             "type": "string",
-            "description": "Key used to ensure idempotency of the request.",
-            "example": "idempotent-abc"
+            "description": "Key used to prevent duplicate processing of requests.",
+            "example": "IDEMP123456"
           },
           "requestedAt": {
             "type": "string",
             "description": "Timestamp when the request was made.",
-            "example": "2023-10-01T12:00:00Z"
+            "example": "2023-10-15T09:30:00Z"
           },
           "sourceSystem": {
             "type": "string",
-            "description": "The system that initiated the request.",
-            "example": "System A"
+            "description": "Name of the system from which the request originated.",
+            "example": "PaymentsSystem"
           },
           "sourceApplication": {
             "type": "string",
-            "description": "The application from which the request originated.",
-            "example": "App B"
+            "description": "Name of the application from which the request originated.",
+            "example": "MobileApp"
           },
           "channel": {
-            "description": "Information about the channel used for the request.",
+            "description": "Information about the channel through which the payment request was made.",
             "$ref": "#/components/schemas/Channel"
           }
         },
-        "description": "A structure containing metadata about the request."
+        "description": "Schema representing the context of a payment request."
       },
       "Channel": {
-        "title": "Channel Information",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
             "description": "Unique identifier for the channel.",
-            "example": "chan-001"
+            "example": "CH12345"
           },
           "channelType": {
             "type": "string",
-            "description": "Type of channel (e.g., API, Web, etc.).",
-            "example": "API"
+            "description": "Type of the channel (e.g., web, mobile).",
+            "example": "mobile"
           },
           "deviceId": {
             "type": "string",
-            "description": "Identifier of the device used for the request.",
-            "example": "device-xyz"
+            "description": "Identifier for the device used to make the request.",
+            "example": "DEVICE123"
           }
         },
-        "description": "Details about the communication channel used for the request."
+        "description": "Schema representing the channel used for the payment request."
       },
       "UpdateP2mByParam1Response_200": {
-        "title": "Reconciliation Run Response",
         "type": "object",
         "properties": {
-          "reconciliationRunId": {
+          "qrPaymentRequestId": {
             "type": "string",
-            "description": "Unique identifier for the reconciliation run.",
-            "example": "STANDARD"
-          },
-          "sourceA": {
-            "type": "string",
-            "description": "Name or identifier for source A.",
-            "example": "STANDARD"
-          },
-          "sourceB": {
-            "type": "string",
-            "description": "Name or identifier for source B.",
-            "example": "STANDARD"
-          },
-          "businessDate": {
-            "type": "string",
-            "description": "Date when the business reconciliation takes place.",
-            "example": "2026-09-15"
+            "description": "Unique identifier for the QR payment request.",
+            "example": "649f7fa2-92ab-5c1d-9a5f-e25a0529dcba"
           },
           "merchantId": {
             "type": "string",
-            "description": "Unique identifier for the merchant involved in the reconciliation.",
-            "example": "MER-478392"
+            "description": "Identifier for the merchant who owns the payment request.",
+            "example": "MER-831543"
           },
-          "currency": {
+          "outletId": {
             "type": "string",
-            "description": "Currency used in the reconciliation.",
-            "example": "USD"
-          },
-          "matchingStrategy": {
-            "type": "string",
-            "description": "The strategy used for matching records during reconciliation.",
+            "description": "Identifier for the outlet where the transaction is taking place.",
             "example": "STANDARD"
+          },
+          "terminalId": {
+            "type": "string",
+            "description": "Identifier for the terminal being used for the transaction.",
+            "example": "STANDARD"
+          },
+          "mode": {
+            "type": "string",
+            "description": "Mode of the payment request (e.g., online, offline).",
+            "example": "STANDARD"
+          },
+          "standard": {
+            "type": "string",
+            "description": "Standard applicable for the payment request.",
+            "example": "STANDARD"
+          },
+          "amount": {
+            "description": "The amount requested for the payment including currency and value.",
+            "$ref": "#/components/schemas/Amount"
+          },
+          "merchantOrderId": {
+            "type": "string",
+            "description": "Identifier for the order associated with the payment.",
+            "example": "ORD-474975"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the payment request.",
+            "example": "Customer banking request processed successfully"
+          },
+          "tipOptions": {
+            "description": "Options available for tips on the payment request.",
+            "$ref": "#/components/schemas/TipOptions"
+          },
+          "qrPayload": {
+            "type": "string",
+            "description": "Payload of the QR code generated for the payment request.",
+            "example": "STANDARD"
+          },
+          "qrImageUrl": {
+            "type": "string",
+            "description": "URL of the QR code image.",
+            "example": "https://example.com/resource"
           },
           "status": {
             "type": "string",
-            "description": "Current status of the reconciliation run.",
+            "description": "Current status of the payment request.",
             "example": "ACTIVE"
           },
-          "summary": {
-            "description": "Summary details related to the reconciliation run.",
-            "$ref": "#/components/schemas/ReconciliationSummary"
+          "singleUse": {
+            "type": "boolean",
+            "description": "Indicates if the payment request is single-use.",
+            "example": true
           },
-          "startedAt": {
-            "type": "string",
-            "description": "Timestamp when the reconciliation process started.",
-            "example": "2026-09-15T14:30:00Z"
+          "paidAmount": {
+            "description": "The amount that has been paid, including currency and value.",
+            "$ref": "#/components/schemas/Amount"
           },
-          "completedAt": {
+          "paymentId": {
             "type": "string",
-            "description": "Timestamp when the reconciliation process was completed.",
-            "example": "2026-09-15T14:30:00Z"
+            "description": "Unique identifier for the payment transaction.",
+            "example": "PAY-139427"
+          },
+          "expiresAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the payment request expires.",
+            "example": "2026-08-11T12:00:00Z"
           },
           "audit": {
-            "description": "Audit information regarding the reconciliation run.",
-            "$ref": "#/components/schemas/AuditInfo"
+            "description": "Audit information regarding the payment request.",
+            "$ref": "#/components/schemas/Audit"
           },
           "metadata": {
-            "description": "Additional metadata related to the reconciliation run.",
-            "$ref": "#/components/schemas/MetadataInfo"
+            "description": "Additional metadata associated with the payment request.",
+            "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Represents the response structure for reconciliation run operations.",
+        "description": "Schema for the response of PATCH operation on QR payment requests. Contains detailed information regarding the payment request.",
         "example": {
-          "reconciliationRunId": "STANDARD",
-          "sourceA": "STANDARD",
-          "sourceB": "STANDARD",
-          "businessDate": "2026-09-15",
-          "merchantId": "MER-478392",
-          "currency": "USD",
-          "matchingStrategy": "STANDARD",
-          "status": "ACTIVE",
-          "summary": {
-            "sourceACount": 1,
-            "sourceBCount": 1,
-            "matchedCount": 1,
-            "unmatchedSourceACount": 1,
-            "unmatchedSourceBCount": 1,
-            "amountMismatchCount": 1,
-            "duplicateCount": 1,
-            "totalSourceA": {
-              "currency": "USD",
-              "value": "STANDARD"
-            },
-            "totalSourceB": {
-              "currency": "USD",
-              "value": "STANDARD"
-            },
-            "netDifference": {
+          "qrPaymentRequestId": "649f7fa2-92ab-5c1d-9a5f-e25a0529dcba",
+          "merchantId": "MER-831543",
+          "outletId": "STANDARD",
+          "terminalId": "STANDARD",
+          "mode": "STANDARD",
+          "standard": "STANDARD",
+          "amount": {
+            "currency": "USD",
+            "value": "STANDARD"
+          },
+          "merchantOrderId": "ORD-474975",
+          "description": "Customer banking request processed successfully",
+          "tipOptions": {
+            "mode": "STANDARD",
+            "fixedAmounts": [
+              {
+                "currency": "USD",
+                "value": "STANDARD"
+              }
+            ],
+            "percentages": [
+              "STANDARD"
+            ],
+            "maximumTip": {
               "currency": "USD",
               "value": "STANDARD"
             }
           },
-          "startedAt": "2026-09-15T14:30:00Z",
-          "completedAt": "2026-09-15T14:30:00Z",
+          "qrPayload": "STANDARD",
+          "qrImageUrl": "https://example.com/resource",
+          "status": "ACTIVE",
+          "singleUse": true,
+          "paidAmount": {
+            "currency": "USD",
+            "value": "STANDARD"
+          },
+          "paymentId": "PAY-139427",
+          "expiresAt": "2026-08-11T12:00:00Z",
           "audit": {
             "createdAt": "2026-09-15T14:30:00Z",
             "createdBy": "STANDARD",
@@ -293,151 +415,70 @@
             "version": 1
           },
           "metadata": {
-            "responseId": "d361d683-83fd-539c-aa94-cad8fea43ae8",
-            "correlationId": "42f363c9-553d-5644-8362-5385f2f195b1",
+            "responseId": "c264bc0e-bfb4-51ba-96f3-8b98d86440e4",
+            "correlationId": "b55bb90e-e0f5-5395-833e-98ede86cb16b",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "ReconciliationSummary": {
-        "title": "Reconciliation Summary",
-        "type": "object",
-        "properties": {
-          "sourceACount": {
-            "type": "integer",
-            "description": "Total count of records from source A.",
-            "format": "int32",
-            "example": 0
-          },
-          "sourceBCount": {
-            "type": "integer",
-            "description": "Total count of records from source B.",
-            "format": "int32",
-            "example": 0
-          },
-          "matchedCount": {
-            "type": "integer",
-            "description": "Total count of matched records between source A and source B.",
-            "format": "int32",
-            "example": 0
-          },
-          "unmatchedSourceACount": {
-            "type": "integer",
-            "description": "Count of records in source A that did not have a match.",
-            "format": "int32",
-            "example": 0
-          },
-          "unmatchedSourceBCount": {
-            "type": "integer",
-            "description": "Count of records in source B that did not have a match.",
-            "format": "int32",
-            "example": 0
-          },
-          "amountMismatchCount": {
-            "type": "integer",
-            "description": "Count of records where amounts do not match between source A and source B.",
-            "format": "int32",
-            "example": 0
-          },
-          "duplicateCount": {
-            "type": "integer",
-            "description": "Count of duplicate records found during reconciliation.",
-            "format": "int32",
-            "example": 0
-          },
-          "totalSourceA": {
-            "description": "Total amount for reconciled records from source A.",
-            "$ref": "#/components/schemas/TotalAmount"
-          },
-          "totalSourceB": {
-            "description": "Total amount for reconciled records from source B.",
-            "$ref": "#/components/schemas/TotalAmount"
-          },
-          "netDifference": {
-            "description": "Net difference in amounts between source A and source B.",
-            "$ref": "#/components/schemas/TotalAmount"
-          }
-        },
-        "description": "Summary statistics for the reconciliation process.",
-        "example": "string"
-      },
-      "TotalAmount": {
-        "title": "Total Amount",
-        "type": "object",
-        "properties": {
-          "currency": {
-            "type": "string",
-            "description": "Currency in which the amount is denominated.",
-            "example": "string"
-          },
-          "value": {
-            "type": "string",
-            "description": "The total amount value.",
-            "example": "string"
-          }
-        },
-        "description": "Represents a total amount and its currency."
-      },
-      "AuditInfo": {
-        "title": "Audit Information",
+      "Audit": {
         "type": "object",
         "properties": {
           "createdAt": {
             "type": "string",
-            "description": "Timestamp when the reconciliation run was created.",
+            "description": "Timestamp of when the payment request was created.",
             "example": "string"
           },
           "createdBy": {
             "type": "string",
-            "description": "Identifier of the user who created the reconciliation run.",
+            "description": "Identifier of the user who created the payment request.",
             "example": "string"
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp when the reconciliation run was last updated.",
+            "description": "Timestamp of the last update to the payment request.",
             "example": "string"
           },
           "updatedBy": {
             "type": "string",
-            "description": "Identifier of the user who last updated the reconciliation run.",
+            "description": "Identifier of the user who last updated the payment request.",
             "example": "string"
           },
           "version": {
             "type": "integer",
-            "description": "Version number of the reconciliation run record.",
+            "description": "Version number of the payment request.",
             "format": "int32",
             "example": 0
           }
         },
-        "description": "Contains details about the creation and update history of the reconciliation run."
+        "description": "Schema providing audit information for the payment request, including creation and update details."
       },
-      "MetadataInfo": {
-        "title": "Metadata Information",
+      "Metadata": {
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Identifier for the response of the reconciliation process.",
+            "description": "Unique identifier for the response associated with the payment request.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation identifier to trace requests.",
+            "description": "Identifier used to correlate multiple requests and responses.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the metadata was generated.",
+            "description": "Timestamp of when the metadata was generated.",
             "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Geographic region where the processing occurred.",
+            "description": "Region where the payment is being processed.",
             "example": "string"
           }
         },
-        "description": "Contains additional metadata related to the reconciliation run."
+        "description": "Schema for additional metadata related to the payment request."
       }
     },
     "parameters": {
@@ -468,17 +509,15 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "banking-p2m-openapi-update-reconciliation-run"
+          "example": "banking-p2m-openapi-update-qr-payment-request"
         },
-        "example": "banking-p2m-openapi-update-reconciliation-run"
+        "example": "banking-p2m-openapi-update-qr-payment-request"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -491,7 +530,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme utilizes a Bearer Token for authentication. JWT (JSON Web Tokens) are used as the format for the token, enabling secure transmission of information between parties as a JSON object.",
+        "description": "This security scheme utilizes the Bearer authentication scheme with JSON Web Tokens (JWT). Clients must include a valid JWT in the Authorization header of the request to access secured endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
