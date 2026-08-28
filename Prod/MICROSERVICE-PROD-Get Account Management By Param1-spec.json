@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Get Account Management By Param1-spec",
-    "description": "The Account Management Retrieval API allows users to access detailed account information based on specific parameters. This endpoint is particularly useful for financial institutions and businesses that require insights into customer account positions. By providing a unique identifier as a parameter, users can retrieve the status and related data for any account. Typical consumers include banking applications, financial analysts, and customer support teams aiming to enhance their service quality.",
+    "description": "The Account Fraud Evaluation API enables businesses to assess the fraud risk associated with specific accounts based on unique parameters. This endpoint allows users to retrieve detailed fraud evaluation insights by providing a specific identifier. Typical consumers of this API include financial institutions and risk management teams that aim to enhance security measures and protect against fraudulent activities. Use cases may involve real-time assessments during account transactions or periodic reviews of account statuses.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/account-management/position-management/{param1}": {
+    "/v5/banking/account-management/fraud-evaluation/{param1}": {
       "get": {
         "tags": [
-          "Position Management"
+          "Fraud Evaluation"
         ],
-        "summary": "Retrieve position details",
-        "description": "Fetch the detailed information about a specific position identified by its resource ID. This endpoint allows users to get relevant data including status, assignments, and history associated with the position.",
+        "summary": "Retrieve Fraud Evaluation Details",
+        "description": "Fetches the detailed assessment of potential fraud for the specified resource ID, helping businesses make informed decisions based on the evaluation results.",
         "operationId": "getAccountManagementByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to retrieve details of a specific position management operation identified by RES-100045. Ensure that all required parameters are included for a successful response.",
+          "description": "This request body is used to initiate a fraud evaluation for the specified account. It should include all necessary parameters required to identify the account and the evaluation criteria.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, and the resource details are returned.",
+            "description": "Successfully retrieved the fraud evaluation details.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -92,104 +92,126 @@
     "schemas": {
       "GetAccountManagementByParam1Request": {
         "type": "string",
-        "description": "This schema represents the request body for the Operations GET request in the Position Management API.",
+        "description": "This schema represents the request body for an operation related to fraud evaluation in the account management system.",
         "example": "{}"
       },
       "GetAccountManagementByParam1Response_200": {
-        "title": "Account Position Management Response",
+        "title": "Fraud Evaluation Response",
         "type": "object",
         "properties": {
           "accountId": {
             "type": "string",
-            "description": "Unique identifier for the account.",
-            "example": "ACC-999560"
+            "description": "The unique identifier for the account.",
+            "example": "ACC-432933"
           },
           "customerId": {
             "type": "string",
-            "description": "Identifier for the customer associated with the account.",
-            "example": "CUST-245210"
+            "description": "The unique identifier for the customer.",
+            "example": "CUST-508407"
           },
           "ledgerDate": {
             "type": "string",
-            "description": "Date for which the ledger balance is retrieved.",
+            "description": "The date associated with the ledger.",
             "example": "2026-09-15"
           },
           "currency": {
             "type": "string",
-            "description": "Currency code (ISO 4217) for the account balance.",
+            "description": "The currency code for the account balance.",
             "example": "USD"
           },
           "ledgerBalance": {
             "type": "number",
-            "description": "Current balance of the account in the specified currency.",
+            "description": "The current balance of the ledger.",
             "example": 100.0
+          },
+          "transactionId": {
+            "type": "string",
+            "description": "The identifier for the transaction.",
+            "example": "TXN-470463"
+          },
+          "riskScore": {
+            "type": "number",
+            "description": "The calculated risk score associated with the account.",
+            "example": 100.0
+          },
+          "decisionThreshold": {
+            "type": "number",
+            "description": "The threshold for making a decision based on risk score.",
+            "example": 100.0
+          },
+          "deviceTrustLevel": {
+            "type": "string",
+            "description": "The trust level of the device used in transactions.",
+            "example": "STANDARD"
           },
           "recordStatus": {
             "type": "string",
-            "description": "Current status of the account record.",
+            "description": "The status of the record in the system.",
             "example": "ACTIVE"
           },
           "version": {
             "type": "integer",
-            "description": "Version number of the account record.",
+            "description": "The version of the response schema.",
             "format": "int32",
             "example": 1
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the account record was last updated.",
+            "description": "The timestamp of when the record was last updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "type": "object",
-            "properties": {
-              "responseId": {
-                "type": "string",
-                "description": "Unique identifier for the service response.",
-                "example": "response789"
-              },
-              "correlationId": {
-                "type": "string",
-                "description": "Identifier for tracking the correlation of multiple requests.",
-                "example": "correlation123"
-              },
-              "generatedAt": {
-                "type": "string",
-                "description": "Timestamp when the response was generated.",
-                "example": "2023-10-01T12:00:00Z"
-              },
-              "processingRegion": {
-                "type": "string",
-                "description": "Region where the processing of the request occurred.",
-                "example": "us-east-1"
-              }
-            },
-            "description": "Additional metadata related to the response.",
-            "example": {
-              "responseId": "c93e1a75-d610-534b-ba54-cf2ef0fa8055",
-              "correlationId": "a758ba44-07f7-5d35-95bb-8ee8814c2eba",
-              "generatedAt": "2026-09-15T14:30:00Z",
-              "processingRegion": "us-east-1"
-            }
+            "$ref": "#/components/schemas/FraudEvaluationMetadata"
           }
         },
-        "description": "This schema represents the response structure for retrieving account position management details.",
+        "description": "Response schema for evaluating fraud in account management operations.",
         "example": {
-          "accountId": "ACC-999560",
-          "customerId": "CUST-245210",
+          "accountId": "ACC-432933",
+          "customerId": "CUST-508407",
           "ledgerDate": "2026-09-15",
           "currency": "USD",
           "ledgerBalance": 100.0,
+          "transactionId": "TXN-470463",
+          "riskScore": 100.0,
+          "decisionThreshold": 100.0,
+          "deviceTrustLevel": "STANDARD",
           "recordStatus": "ACTIVE",
           "version": 1,
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "c93e1a75-d610-534b-ba54-cf2ef0fa8055",
-            "correlationId": "a758ba44-07f7-5d35-95bb-8ee8814c2eba",
+            "responseId": "4f596751-c2b4-5a6a-86dc-7fb20fef5758",
+            "correlationId": "12fd4ab1-95a2-5936-907d-698fbde7a8bc",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
+      },
+      "FraudEvaluationMetadata": {
+        "title": "Fraud Evaluation Metadata",
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "The unique identifier for the response.",
+            "example": "response123"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "The identifier used to track the request and response correlation.",
+            "example": "correlation456"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "The timestamp indicating when the metadata was generated.",
+            "example": "2023-10-01T10:00:00Z"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "The region where the processing took place.",
+            "example": "us-west-1"
+          }
+        },
+        "description": "Metadata related to the fraud evaluation response."
       }
     },
     "parameters": {
@@ -220,17 +242,15 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint that processed the request. This helps in tracking the origin of the response.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "position-management-get-position-management"
+          "example": "fraud-evaluation-get-fraud-evaluation"
         },
-        "example": "position-management-get-position-management"
+        "example": "fraud-evaluation-get-fraud-evaluation"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that handled the request. This can be used for logging or debugging purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -243,7 +263,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication scheme that uses a bearer token to grant access. This specific implementation expects the token to be a JSON Web Token (JWT), which contains encoded claims and is used to verify the identity of the user making the request.",
+        "description": "This security scheme uses a Bearer token for authentication. The token format is JWT (JSON Web Token), which is a compact, URL-safe means of representing claims to be transferred between two parties.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
