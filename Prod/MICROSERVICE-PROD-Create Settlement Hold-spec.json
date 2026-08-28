@@ -1,0 +1,505 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MICROSERVICE-PROD-Create Settlement Hold-spec",
+    "description": "The Settlement Hold Management API enables businesses to place a hold on specific settlements identified by their unique settlement ID. This functionality is essential for managing cash flows and ensuring compliance with financial regulations by temporarily restricting access to certain funds. Typical consumers include financial institutions and payment processors that need to manage settlement processes. By utilizing this endpoint, users can efficiently maintain control over their financial operations while handling various settlement scenarios.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://prod-workspace-pwmw.apiwiz.io",
+      "description": "Sandbox server",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "Sandbox server",
+      "x-environmentName": "Sandbox",
+      "x-hide": false,
+      "x-environmentId": "6a7f52236ae9a15654cd5721",
+      "x-basePath": "/"
+    },
+    {
+      "url": "https://35.162.152.203:9002",
+      "description": "PROD",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "PROD",
+      "x-environmentName": "PROD",
+      "x-hide": false,
+      "x-environmentId": "6a784eac1d7e36108cc3cb0c",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/v5/p2m/settlements/{settlementId}/hold": {
+      "post": {
+        "tags": [
+          "Settlement Management"
+        ],
+        "summary": "Hold a specific settlement.",
+        "description": "This endpoint allows you to place a hold on a settlement identified by its unique ID, ensuring that it cannot be processed until the hold is removed. This is useful for managing settlement states and preventing further actions on them until resolved.",
+        "operationId": "createSettlementHold",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/settlementId"
+          }
+        ],
+        "requestBody": {
+          "description": "This request body is used to hold the settlement identified by RES-100045. Ensure that the necessary details are provided in accordance with the defined schema.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSettlementHoldRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request completed successfully and hold applied.",
+            "headers": {
+              "X-Endpoint-Id": {
+                "$ref": "#/components/headers/X-Endpoint-Id"
+              },
+              "X-Runtime-App": {
+                "$ref": "#/components/headers/X-Runtime-App"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateSettlementHoldResponse_200"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateSettlementHoldRequest": {
+        "title": "Request Body for Hold Operations",
+        "type": "object",
+        "properties": {
+          "reasonCode": {
+            "type": "string",
+            "description": "The code representing the reason for the hold operation.",
+            "example": "CODE-998"
+          },
+          "reason": {
+            "type": "string",
+            "description": "A detailed description of the reason for the hold.",
+            "example": "STANDARD"
+          },
+          "requestContext": {
+            "description": "The context of the request including identifiers and metadata.",
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "This schema represents the request body for performing hold operations.",
+        "example": {
+          "reasonCode": "CODE-998",
+          "reason": "STANDARD",
+          "requestContext": {
+            "requestId": "a11425b6-396a-5deb-b976-95f006d2ff6a",
+            "correlationId": "1f726129-bcd2-5fca-bb9f-77587af854de",
+            "idempotencyKey": "f62b3d59-1b9a-5a26-8866-673c4d431d7f",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-270643"
+            }
+          }
+        }
+      },
+      "RequestContext": {
+        "title": "Request Context",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "A unique identifier for the request.",
+            "example": "req-12345"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "An identifier used to correlate multiple requests.",
+            "example": "corr-67890"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "A key used to ensure that repeated requests are handled idempotently.",
+            "example": "key-11111"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "The timestamp indicating when the request was made.",
+            "example": "2023-10-10T10:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The system from which the request originates.",
+            "example": "Payment Gateway"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application from which the request originates.",
+            "example": "Mobile App"
+          },
+          "channel": {
+            "description": "The channel through which the request was made.",
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "This schema encapsulates the metadata related to the request."
+      },
+      "Channel": {
+        "title": "Channel Information",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "A unique identifier for the channel.",
+            "example": "channel-123"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "The type of channel used for the request (e.g., web, mobile).",
+            "example": "mobile"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "A unique identifier for the device used in the channel.",
+            "example": "device-xyz"
+          }
+        },
+        "description": "This schema represents the information related to the channel used for the request."
+      },
+      "CreateSettlementHoldResponse_200": {
+        "type": "object",
+        "properties": {
+          "settlementId": {
+            "type": "string",
+            "description": "Unique identifier for the settlement.",
+            "example": "STANDARD"
+          },
+          "merchantId": {
+            "type": "string",
+            "description": "Unique identifier for the merchant associated with the settlement.",
+            "example": "MER-641128"
+          },
+          "settlementAccountId": {
+            "type": "string",
+            "description": "Account ID where the settlement amount is credited or debited.",
+            "example": "ACC-818590"
+          },
+          "periodStart": {
+            "type": "string",
+            "description": "Start date and time of the settlement period in ISO 8601 format.",
+            "example": "2026-08-11T12:00:00Z"
+          },
+          "periodEnd": {
+            "type": "string",
+            "description": "End date and time of the settlement period in ISO 8601 format.",
+            "example": "2026-08-11T12:00:00Z"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code for the settlement, following ISO 4217 standards.",
+            "example": "USD"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the settlement.",
+            "example": "ACTIVE"
+          },
+          "summary": {
+            "description": "Summary of settlement transactions related to gross payments, refunds, and various adjustments.",
+            "$ref": "#/components/schemas/Summary"
+          },
+          "lineCount": {
+            "type": "integer",
+            "description": "Number of transaction lines included in the settlement.",
+            "format": "int32",
+            "example": 1
+          },
+          "bankPayoutReference": {
+            "type": "string",
+            "description": "Reference ID for the bank payout related to this settlement.",
+            "example": "STANDARD"
+          },
+          "expectedPayoutAt": {
+            "type": "string",
+            "description": "Expected date and time for the payout in ISO 8601 format.",
+            "example": "2026-08-11T12:00:00Z"
+          },
+          "paidAt": {
+            "type": "string",
+            "description": "Date and time the payment was made in ISO 8601 format.",
+            "example": "2026-08-11T12:00:00Z"
+          },
+          "audit": {
+            "description": "Audit details for tracking the creation and updating of settlement records.",
+            "$ref": "#/components/schemas/Audit"
+          },
+          "metadata": {
+            "description": "Metadata associated with the settlement response for tracing and correlation.",
+            "$ref": "#/components/schemas/Metadata"
+          }
+        },
+        "description": "Response schema for the settlement operation POST request, containing details about the transaction settlement.",
+        "example": {
+          "settlementId": "STANDARD",
+          "merchantId": "MER-641128",
+          "settlementAccountId": "ACC-818590",
+          "periodStart": "2026-08-11T12:00:00Z",
+          "periodEnd": "2026-08-11T12:00:00Z",
+          "currency": "USD",
+          "status": "ACTIVE",
+          "summary": {
+            "grossPayments": {
+              "currency": "USD",
+              "value": "STANDARD"
+            },
+            "refunds": {
+              "currency": "USD",
+              "value": "STANDARD"
+            },
+            "reversals": {
+              "currency": "USD",
+              "value": "STANDARD"
+            },
+            "disputes": {
+              "currency": "USD",
+              "value": "STANDARD"
+            },
+            "fees": {
+              "currency": "USD",
+              "value": "STANDARD"
+            },
+            "taxes": {
+              "currency": "USD",
+              "value": "STANDARD"
+            },
+            "reserveHeld": {
+              "currency": "USD",
+              "value": "STANDARD"
+            },
+            "reserveReleased": {
+              "currency": "USD",
+              "value": "STANDARD"
+            },
+            "adjustments": {
+              "currency": "USD",
+              "value": "STANDARD"
+            },
+            "netSettlement": {
+              "currency": "USD",
+              "value": "STANDARD"
+            }
+          },
+          "lineCount": 1,
+          "bankPayoutReference": "STANDARD",
+          "expectedPayoutAt": "2026-08-11T12:00:00Z",
+          "paidAt": "2026-08-11T12:00:00Z",
+          "audit": {
+            "createdAt": "2026-09-15T14:30:00Z",
+            "createdBy": "STANDARD",
+            "updatedAt": "2026-09-15T14:30:00Z",
+            "updatedBy": "2026-09-15"
+          },
+          "metadata": {
+            "responseId": "3484fb8c-cd67-56bd-b989-4182298dab53",
+            "correlationId": "1f726129-bcd2-5fca-bb9f-77587af854de",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
+      },
+      "Summary": {
+        "type": "object",
+        "properties": {
+          "grossPayments": {
+            "description": "Total gross payments made during the settlement period.",
+            "$ref": "#/components/schemas/TransactionDetail"
+          },
+          "refunds": {
+            "description": "Total refunds processed during the settlement period.",
+            "$ref": "#/components/schemas/TransactionDetail"
+          },
+          "reversals": {
+            "description": "Total reversals processed during the settlement period.",
+            "$ref": "#/components/schemas/TransactionDetail"
+          },
+          "disputes": {
+            "description": "Total disputes initiated during the settlement period.",
+            "$ref": "#/components/schemas/TransactionDetail"
+          },
+          "fees": {
+            "description": "Total fees deducted from the settlement.",
+            "$ref": "#/components/schemas/TransactionDetail"
+          },
+          "taxes": {
+            "description": "Total taxes applied to the settlement.",
+            "$ref": "#/components/schemas/TransactionDetail"
+          },
+          "reserveHeld": {
+            "description": "Total reserve amounts that were held during the settlement.",
+            "$ref": "#/components/schemas/TransactionDetail"
+          },
+          "reserveReleased": {
+            "description": "Total reserve amounts that were released during the settlement.",
+            "$ref": "#/components/schemas/TransactionDetail"
+          },
+          "adjustments": {
+            "description": "Total adjustments applied to the settlement.",
+            "$ref": "#/components/schemas/TransactionDetail"
+          },
+          "netSettlement": {
+            "description": "Net amount settled after all transactions and adjustments.",
+            "$ref": "#/components/schemas/TransactionDetail"
+          }
+        },
+        "description": "Summary of the financial transactions involved in the settlement."
+      },
+      "TransactionDetail": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "Currency code for the transaction, following ISO 4217 standards.",
+            "example": "USD"
+          },
+          "value": {
+            "type": "string",
+            "description": "Monetary value of the transaction.",
+            "example": "100.00"
+          }
+        },
+        "description": "Detailed information about a financial transaction in terms of value and currency."
+      },
+      "Audit": {
+        "type": "object",
+        "properties": {
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time the settlement record was created in ISO 8601 format.",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "Identifier for the user who created the settlement record.",
+            "example": "user_12345"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Date and time the settlement record was last updated in ISO 8601 format.",
+            "example": "2023-01-15T12:30:00Z"
+          },
+          "updatedBy": {
+            "type": "string",
+            "description": "Identifier for the user who last updated the settlement record.",
+            "example": "user_67890"
+          }
+        },
+        "description": "Audit trail for the settlement record, including creation and update information."
+      },
+      "Metadata": {
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "Unique identifier for the response.",
+            "example": "response_98765"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Correlation ID for linking related transactions.",
+            "example": "correlation_54321"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "Timestamp when the response was generated in ISO 8601 format.",
+            "example": "2023-01-31T10:00:01Z"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "Region where the transaction was processed.",
+            "example": "US-East"
+          }
+        },
+        "description": "Metadata information for tracking and correlation of settlement responses."
+      }
+    },
+    "parameters": {
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "MICROSERVICE_PROD_200"
+          ]
+        }
+      },
+      "settlementId": {
+        "name": "settlementId",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "headers": {
+      "X-Endpoint-Id": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "banking-p2m-openapi-hold-settlement"
+        },
+        "example": "banking-p2m-openapi-hold-settlement"
+      },
+      "X-Runtime-App": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "payments"
+        },
+        "example": "payments"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "This security scheme uses the Bearer authentication method, where the client must provide a valid JWT (JSON Web Token) in the Authorization header of the HTTP request to access protected resources.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
