@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Get Card By Param1-spec",
-    "description": "The Retrieve Card Details API allows consumers to obtain specific card information by providing a unique parameter. This endpoint is designed for banking applications that require access to card capture data for processing transactions or customer inquiries. Typical users include financial institutions, transaction processing systems, and mobile banking applications that need to display card details efficiently. By utilizing this API, developers can enhance user experience and operational efficiency in financial services.",
+    "description": "The Card Authorization Retrieval API allows users to fetch card authorization details by a specified parameter. This endpoint is designed for financial institutions and developers who need to verify card transactions against particular criteria. By providing 'param1', consumers can gain insightful information regarding card usage and authorization status. Typical use cases include transaction monitoring, fraud detection, and compliance reporting. This API ensures secure and efficient retrieval of important financial data.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/cards/card-capture/{param1}": {
+    "/v5/banking/cards/card-authorization/{param1}": {
       "get": {
         "tags": [
-          "Card Operations"
+          "Card Authorization"
         ],
-        "summary": "Retrieve card capture details",
-        "description": "Fetches the detailed information for a specific card capture identified by its unique ID, allowing developers to view attributes and status associated with that capture transaction.",
+        "summary": "Retrieve card authorization details.",
+        "description": "This endpoint allows you to fetch the authorization details for a specific card identified by its unique ID. Use this to check the current status and other related information pertaining to the authorization of the card.",
         "operationId": "getCardByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "The request body for retrieving card capture information for the specified card ID (CARD-400045). It should contain any necessary details needed to process the request.",
+          "description": "This request body is used to retrieve the authorization details for the specified card. Ensure that you provide the necessary parameters as outlined in the schema.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved the card capture details.",
+            "description": "The request was successful and the response contains the requested card authorization details.",
             "headers": {
               "x-endpoint-id": {
                 "$ref": "#/components/headers/x-endpoint-id"
@@ -92,79 +92,99 @@
     "schemas": {
       "GetCardByParam1Request": {
         "type": "string",
-        "description": "This schema represents the request body for the GET operation of the card capture, specifically for the card with ID 400045.",
+        "description": "A string type representing the request body for the GET operation related to card authorization.",
         "example": "{}"
       },
       "GetCardByParam1Response_200": {
+        "title": "Card Authorization Response",
         "type": "object",
         "properties": {
           "cardToken": {
             "type": "string",
-            "description": "The unique token associated with the card.",
-            "example": "TOK-472177"
+            "description": "The unique token representing the card.",
+            "example": "TOK-957699"
           },
           "cardholderId": {
             "type": "string",
-            "description": "The identifier for the cardholder.",
+            "description": "The unique identifier for the cardholder.",
             "example": "STANDARD"
           },
           "merchantId": {
             "type": "string",
-            "description": "The identifier for the merchant processing the transaction.",
-            "example": "MER-617062"
+            "description": "The unique identifier for the merchant.",
+            "example": "MER-674373"
           },
           "transactionAmount": {
-            "description": "Details about the transaction amount including currency.",
+            "description": "The amount and currency involved in the transaction.",
             "$ref": "#/components/schemas/TransactionAmount"
           },
           "merchantCategoryCode": {
             "type": "string",
-            "description": "The merchant's category code indicating the type of business.",
+            "description": "The category code of the merchant.",
             "example": "5411"
+          },
+          "authorizationType": {
+            "type": "string",
+            "description": "The type of authorization performed.",
+            "example": "STANDARD"
+          },
+          "terminalEntryMode": {
+            "type": "string",
+            "description": "The mode of entry at the terminal used for the transaction.",
+            "example": "STANDARD"
+          },
+          "threeDSecureResult": {
+            "type": "string",
+            "description": "The result of the 3D Secure authentication.",
+            "example": "STANDARD"
           },
           "recordStatus": {
             "type": "string",
-            "description": "The status of the record (e.g., active, inactive).",
+            "description": "The status of the record regarding the transaction.",
             "example": "ACTIVE"
           },
           "version": {
             "type": "integer",
-            "description": "Version of the record.",
+            "description": "The version of the response schema.",
             "format": "int32",
             "example": 1
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the record was last updated.",
+            "description": "The timestamp of when the record was last updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Additional metadata related to the transaction.",
+            "description": "Additional metadata related to the transaction response.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for the GET operation regarding card capture details.",
+        "description": "This schema represents the response structure for a card authorization operation.",
         "example": {
-          "cardToken": "TOK-472177",
+          "cardToken": "TOK-957699",
           "cardholderId": "STANDARD",
-          "merchantId": "MER-617062",
+          "merchantId": "MER-674373",
           "transactionAmount": {
             "amount": 100,
             "currency": "USD"
           },
           "merchantCategoryCode": "5411",
+          "authorizationType": "STANDARD",
+          "terminalEntryMode": "STANDARD",
+          "threeDSecureResult": "STANDARD",
           "recordStatus": "ACTIVE",
           "version": 1,
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "475ca7c5-c8a1-51c8-9700-5c9eb4588d82",
-            "correlationId": "e90e0136-57c4-5384-a404-0ed02b7b58d2",
+            "responseId": "f104849d-59db-55cd-9879-25656970815b",
+            "correlationId": "0ddd5dd1-a8eb-54eb-a1c8-d78cbcf5ad4c",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
       "TransactionAmount": {
+        "title": "Transaction Amount",
         "type": "object",
         "properties": {
           "amount": {
@@ -175,37 +195,38 @@
           },
           "currency": {
             "type": "string",
-            "description": "The currency in which the transaction is conducted.",
+            "description": "The currency of the transaction amount.",
             "example": "string"
           }
         },
-        "description": "Schema representing the amount and currency of a transaction."
+        "description": "This schema represents the amount and currency for a transaction."
       },
       "Metadata": {
+        "title": "Transaction Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "A unique identifier for the response.",
+            "description": "The unique identifier for the response.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "Identifier used for correlating requests and responses.",
+            "description": "The identifier for correlating requests and responses.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp indicating when the metadata was generated.",
+            "description": "The timestamp when the response was generated.",
             "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the processing took place.",
+            "description": "The region where the processing occurred.",
             "example": "string"
           }
         },
-        "description": "Schema for additional metadata regarding transactions."
+        "description": "This schema contains additional metadata related to the transaction."
       }
     },
     "parameters": {
@@ -236,17 +257,17 @@
     },
     "headers": {
       "x-endpoint-id": {
-        "description": "A unique identifier for the specific endpoint being accessed. This ID can be used for tracing requests and responses within the service.",
+        "description": "A unique identifier for the endpoint being accessed. This value can be used for tracing requests or debugging.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "card-capture-get-card-capture"
+          "example": "card-authorization-get-card-authorization"
         },
-        "example": "card-capture-get-card-capture"
+        "example": "card-authorization-get-card-authorization"
       },
       "x-runtime-app": {
-        "description": "The name or identifier of the application executing this request. This header helps in identifying the source of the request during logging or troubleshooting.",
+        "description": "The version of the runtime application processing the request. This helps in identifying the software version and environment.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -259,7 +280,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication scheme using a Bearer token. This token is typically a JSON Web Token (JWT) that encapsulates user credentials and claims.",
+        "description": "This security scheme uses JSON Web Tokens (JWT) to authenticate users. The client must include the JWT in the Authorization header of the request to access secured endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
