@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Get Customer Management By Param1-spec",
-    "description": "The Customer Eligibility Inquiry API provides access to specific customer management data based on given parameters. This API enables businesses to evaluate product eligibility for customers, helping them offer tailored financial services effectively. Typical consumers include financial institutions and customer service teams looking to enhance user experience and decision-making through personalized offerings. The endpoint allows users to retrieve information using a specified parameter, facilitating efficient access to critical customer data.",
+    "description": "The Customer Event History Retrieval API allows users to access a comprehensive history of customer events based on specified parameters. This endpoint is vital for businesses aiming to track customer interactions and behaviors effectively. Typical consumers include customer support teams and business analysts who utilize the data for insights and decision-making. By fetching historical data, organizations can enhance their customer service and improve overall customer experience.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/banking/customer-management/product-eligibilities/{param1}": {
+    "/v5/banking/customer-management/customer-event-history/{param1}": {
       "get": {
         "tags": [
           "Customer Management"
         ],
-        "summary": "Retrieve product eligibility for a specific customer",
-        "description": "This endpoint allows you to fetch the product eligibility details for a customer identified by their unique ID. Use this to determine which products a customer qualifies for based on their profile and preferences.",
+        "summary": "Retrieve Event History for a Customer",
+        "description": "This endpoint allows you to fetch the event history associated with a specific customer, identified by their unique customer ID (CUST-100045). It provides detailed insights into interactions or activities related to the customer, helping in effective customer management.",
         "operationId": "getCustomerManagementByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to query the eligibility of a product for a specified customer, identified by the unique customer ID CUST-100045. It allows the client to request detailed information regarding the product suitability and availability for the customer in question.",
+          "description": "This request body is used to retrieve the event history for a specific customer identified by ID 'CUST-100045'. It requires the necessary parameters in JSON format, adhering to the defined schema.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful retrieval of product eligibility details.",
+            "description": "Request completed successfully, returning the customer event history.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -91,63 +91,92 @@
   "components": {
     "schemas": {
       "GetCustomerManagementByParam1Request": {
+        "title": "Customer Event History Request Body",
         "type": "string",
-        "description": "A JSON string that represents the request body for fetching product eligibility for a specific customer operation.",
+        "description": "Schema representing the request body for fetching customer event history with a specific identifier.",
         "example": "{}"
       },
       "GetCustomerManagementByParam1Response_200": {
-        "title": "Product Eligibility Response",
         "type": "object",
         "properties": {
           "customerId": {
             "type": "string",
-            "description": "Unique identifier for the customer.",
-            "example": "CUST-489005"
+            "description": "The unique identifier for the customer.",
+            "example": "CUST-773576"
           },
           "partyId": {
             "type": "string",
-            "description": "Identifier for the party related to the customer.",
-            "example": "PARTY-390962"
+            "description": "The unique identifier for the party associated with the customer.",
+            "example": "PARTY-756607"
           },
           "productCode": {
             "type": "string",
-            "description": "Code representing the product being queried.",
+            "description": "The code associated with the product linked to the customer.",
             "example": "CHK-PREMIUM-US"
           },
           "effectiveDate": {
             "type": "string",
-            "description": "Date from which the product eligibility is effective.",
+            "description": "The date when the customer's record became effective.",
             "example": "2026-09-15"
           },
           "relationshipTier": {
             "type": "string",
-            "description": "Tier of the relationship associated with the customer.",
+            "description": "The tier of the relationship the customer has with the organization.",
             "example": "GOLD"
           },
           "recordStatus": {
             "type": "string",
-            "description": "Current status of the record.",
+            "description": "The status of the customer record.",
             "example": "ACTIVE"
           },
           "version": {
             "type": "integer",
-            "description": "Version of the record.",
+            "description": "The version number of the customer record.",
             "format": "int32",
             "example": 1
           },
           "updatedAt": {
             "type": "string",
-            "description": "Timestamp of when the record was last updated.",
+            "description": "The timestamp when the record was last updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "$ref": "#/components/schemas/ResponseMetadata"
+            "type": "object",
+            "properties": {
+              "responseId": {
+                "type": "string",
+                "description": "The unique identifier for the response.",
+                "example": "RESP-1001"
+              },
+              "correlationId": {
+                "type": "string",
+                "description": "The correlation ID for tracking the request.",
+                "example": "CORR-5678"
+              },
+              "generatedAt": {
+                "type": "string",
+                "description": "Timestamp indicating when the response was generated.",
+                "example": "2023-10-15T10:05:00Z"
+              },
+              "processingRegion": {
+                "type": "string",
+                "description": "The region where the processing of the request took place.",
+                "example": "us-west-1"
+              }
+            },
+            "description": "Additional metadata related to the response.",
+            "example": {
+              "responseId": "f82ab04f-22c6-5bfb-bda6-fc481d7f8971",
+              "correlationId": "591a7c8d-7a97-55bb-8735-e22adf85b7fa",
+              "generatedAt": "2026-09-15T14:30:00Z",
+              "processingRegion": "us-east-1"
+            }
           }
         },
-        "description": "Schema representing the response for product eligibility queries.",
+        "description": "Schema representing the event history response for a customer.",
         "example": {
-          "customerId": "CUST-489005",
-          "partyId": "PARTY-390962",
+          "customerId": "CUST-773576",
+          "partyId": "PARTY-756607",
           "productCode": "CHK-PREMIUM-US",
           "effectiveDate": "2026-09-15",
           "relationshipTier": "GOLD",
@@ -155,39 +184,12 @@
           "version": 1,
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "3a6db4f8-854a-517a-a285-21e29bd863d7",
-            "correlationId": "ab742853-60c1-5761-bb9c-e959f298d5f2",
+            "responseId": "f82ab04f-22c6-5bfb-bda6-fc481d7f8971",
+            "correlationId": "591a7c8d-7a97-55bb-8735-e22adf85b7fa",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
-      },
-      "ResponseMetadata": {
-        "title": "Response Metadata",
-        "type": "object",
-        "properties": {
-          "responseId": {
-            "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "RES-100045"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "ID used to trace the request through the system.",
-            "example": "CORR-100045"
-          },
-          "generatedAt": {
-            "type": "string",
-            "description": "Timestamp indicating when the response was generated.",
-            "example": "2023-10-12T12:00:00Z"
-          },
-          "processingRegion": {
-            "type": "string",
-            "description": "Region from where the processing was done.",
-            "example": "US-East"
-          }
-        },
-        "description": "Metadata associated with the response, including identifiers and timestamps."
       }
     },
     "parameters": {
@@ -218,17 +220,17 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "The unique identifier for the endpoint that is being called, allowing tracking and analytics.",
+        "description": "A unique identifier for the endpoint that was called. This helps in tracing the specific endpoint used during the API request.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "customer-product-and-service-eligibility-get-customer-product-and-service-eligibility"
+          "example": "customer-event-history-get-customer-event-history"
         },
-        "example": "customer-product-and-service-eligibility-get-customer-product-and-service-eligibility"
+        "example": "customer-event-history-get-customer-event-history"
       },
       "X-Runtime-App": {
-        "description": "The name of the application that processed the request, useful for identifying the source of the response.",
+        "description": "The name or identifier of the application that executed the request. This aids in understanding which application instance was responsible for handling the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -241,7 +243,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the Bearer authentication protocol which requires a valid JSON Web Token (JWT) to be included in the request headers to authorize access to the API.",
+        "description": "This security scheme utilizes bearer tokens for authentication. A valid JSON Web Token (JWT) must be included in the 'Authorization' header as a bearer token to access secured endpoints.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
