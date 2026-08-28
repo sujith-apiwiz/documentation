@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Get P2m By Param1-spec",
-    "description": "The Webhook Endpoint Retrieval API enables users to fetch specific webhook configurations by providing a parameterized identifier. This operation allows developers to access details about webhook endpoints, facilitating integration with other services or systems. Typical consumers include application developers and system integrators who need to manage webhook subscriptions dynamically. The API streamlines data retrieval processes necessary for seamless operational workflows.",
+    "description": "This API allows users to access reconciliation runs for P2M based on a specified parameter. It is designed to provide essential details regarding financial reconciliations, which can be leveraged by financial analysts, auditors, and back-office operations to monitor and verify transactions. Users can retrieve specific reconciliation runs by providing the appropriate parameter value. This enables streamlined financial workflows and enhances operational efficiency by offering timely access to critical reconciliation data.",
     "version": "1.0"
   },
   "servers": [
@@ -30,13 +30,13 @@
     }
   ],
   "paths": {
-    "/v5/p2m/webhook-endpoints/{param1}": {
+    "/v5/p2m/reconciliation-runs/{param1}": {
       "get": {
         "tags": [
-          "Webhook Management"
+          "Reconciliation Management"
         ],
-        "summary": "Retrieve a specific webhook endpoint.",
-        "description": "This endpoint allows developers to retrieve detailed information about a specific webhook endpoint identified by its unique resource ID (RES-100045). Use this to understand the configuration and status of the webhook.",
+        "summary": "Retrieve a specific reconciliation run by ID.",
+        "description": "This operation allows the user to fetch detailed information about a specific reconciliation run identified by its unique ID. It provides all relevant data pertaining to the reconciliation process.",
         "operationId": "getP2mByParam1",
         "parameters": [
           {
@@ -47,7 +47,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body expects a JSON payload containing the necessary parameters for the webhook endpoint with ID RES-100045. Ensure that the payload adheres to the defined schema to ensure successful processing.",
+          "description": "This request body is used to retrieve the reconciliation run details for the specified run ID (RES-100045). It must include the necessary parameters in the JSON format as defined in the schema.",
           "content": {
             "application/json": {
               "schema": {
@@ -58,7 +58,7 @@
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, returning the webhook endpoint details.",
+            "description": "Successfully retrieved the reconciliation run details.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -92,87 +92,109 @@
     "schemas": {
       "GetP2mByParam1Request": {
         "type": "string",
-        "description": "This schema represents the request body for the GET operation on the webhook endpoints.",
+        "description": "The request body for the reconciliation runs operation, typically containing a string representation of the request data.",
         "example": "{}"
       },
       "GetP2mByParam1Response_200": {
-        "title": "Webhook Endpoint Response",
+        "title": "Reconciliation Run Response",
         "type": "object",
         "properties": {
-          "webhookEndpointId": {
+          "reconciliationRunId": {
             "type": "string",
-            "description": "The unique identifier for the webhook endpoint.",
+            "description": "Unique identifier for the reconciliation run.",
             "example": "STANDARD"
+          },
+          "sourceA": {
+            "type": "string",
+            "description": "Identifier for source A.",
+            "example": "STANDARD"
+          },
+          "sourceB": {
+            "type": "string",
+            "description": "Identifier for source B.",
+            "example": "STANDARD"
+          },
+          "businessDate": {
+            "type": "string",
+            "description": "The business date for the reconciliation.",
+            "example": "2026-09-15"
           },
           "merchantId": {
             "type": "string",
-            "description": "The unique identifier for the merchant associated with the webhook endpoint.",
-            "example": "MER-139702"
+            "description": "Identifier for the merchant.",
+            "example": "MER-441087"
           },
-          "url": {
+          "currency": {
             "type": "string",
-            "description": "The URL to which the webhook will send events.",
-            "example": "https://example.com/resource"
+            "description": "Currency used in the reconciliation.",
+            "example": "USD"
           },
-          "description": {
+          "matchingStrategy": {
             "type": "string",
-            "description": "A brief description of the webhook endpoint.",
-            "example": "Customer banking request processed successfully"
-          },
-          "events": {
-            "type": "array",
-            "description": "A list of events that the webhook is subscribed to.",
-            "example": [
-              "STANDARD"
-            ],
-            "items": {
-              "type": "string",
-              "description": "An event type that triggers the webhook.",
-              "example": "string"
-            }
+            "description": "The strategy used for matching the records.",
+            "example": "STANDARD"
           },
           "status": {
             "type": "string",
-            "description": "The current status of the webhook endpoint.",
+            "description": "Status of the reconciliation run.",
             "example": "ACTIVE"
           },
-          "secretLastRotatedAt": {
-            "type": "string",
-            "description": "The timestamp of when the secret was last rotated.",
-            "example": "2026-08-11T12:00:00Z"
+          "summary": {
+            "description": "Summary of the reconciliation run.",
+            "$ref": "#/components/schemas/ReconciliationSummary"
           },
-          "lastDeliveryAt": {
+          "startedAt": {
             "type": "string",
-            "description": "The timestamp of the last delivery to the webhook URL.",
-            "example": "2026-08-11T12:00:00Z"
+            "description": "Timestamp when the reconciliation started.",
+            "example": "2026-09-15T14:30:00Z"
           },
-          "lastDeliveryStatus": {
+          "completedAt": {
             "type": "string",
-            "description": "The status of the last delivery attempt.",
-            "example": "ACTIVE"
+            "description": "Timestamp when the reconciliation completed.",
+            "example": "2026-09-15T14:30:00Z"
           },
           "audit": {
-            "description": "Information regarding the creation and updates of the webhook endpoint.",
-            "$ref": "#/components/schemas/AuditInfo"
+            "description": "Audit information related to the reconciliation run.",
+            "$ref": "#/components/schemas/AuditDetails"
           },
           "metadata": {
-            "description": "Metadata associated with the webhook endpoint response.",
-            "$ref": "#/components/schemas/MetadataInfo"
+            "description": "Metadata associated with the reconciliation run.",
+            "$ref": "#/components/schemas/ReconciliationMetadata"
           }
         },
-        "description": "This schema represents the response structure for a webhook endpoint operation.",
+        "description": "Schema representing the details of a reconciliation run.",
         "example": {
-          "webhookEndpointId": "STANDARD",
-          "merchantId": "MER-139702",
-          "url": "https://example.com/resource",
-          "description": "Customer banking request processed successfully",
-          "events": [
-            "STANDARD"
-          ],
+          "reconciliationRunId": "STANDARD",
+          "sourceA": "STANDARD",
+          "sourceB": "STANDARD",
+          "businessDate": "2026-09-15",
+          "merchantId": "MER-441087",
+          "currency": "USD",
+          "matchingStrategy": "STANDARD",
           "status": "ACTIVE",
-          "secretLastRotatedAt": "2026-08-11T12:00:00Z",
-          "lastDeliveryAt": "2026-08-11T12:00:00Z",
-          "lastDeliveryStatus": "ACTIVE",
+          "summary": {
+            "sourceACount": 1,
+            "sourceBCount": 1,
+            "matchedCount": 1,
+            "unmatchedSourceACount": 1,
+            "unmatchedSourceBCount": 1,
+            "amountMismatchCount": 1,
+            "duplicateCount": 1,
+            "totalSourceA": {
+              "currency": "USD",
+              "value": "STANDARD"
+            },
+            "totalSourceB": {
+              "currency": "USD",
+              "value": "STANDARD"
+            },
+            "netDifference": {
+              "currency": "USD",
+              "value": "STANDARD"
+            }
+          },
+          "startedAt": "2026-09-15T14:30:00Z",
+          "completedAt": "2026-09-15T14:30:00Z",
           "audit": {
             "createdAt": "2026-09-15T14:30:00Z",
             "createdBy": "STANDARD",
@@ -181,72 +203,151 @@
             "version": 1
           },
           "metadata": {
-            "responseId": "f29681d5-85d4-5dce-be89-304387cb68a2",
-            "correlationId": "831fcbf5-f12d-502d-b20b-f24df8d9394c",
+            "responseId": "906cde87-a18c-50d7-b31e-b9de46621744",
+            "correlationId": "4332a2b7-85da-54b5-8503-a5bd697380cc",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
-      "AuditInfo": {
-        "title": "Audit Information",
+      "ReconciliationSummary": {
+        "title": "Reconciliation Summary",
+        "type": "object",
+        "properties": {
+          "sourceACount": {
+            "type": "integer",
+            "description": "Total count of records from source A.",
+            "format": "int32",
+            "example": 0
+          },
+          "sourceBCount": {
+            "type": "integer",
+            "description": "Total count of records from source B.",
+            "format": "int32",
+            "example": 0
+          },
+          "matchedCount": {
+            "type": "integer",
+            "description": "Count of matched records.",
+            "format": "int32",
+            "example": 0
+          },
+          "unmatchedSourceACount": {
+            "type": "integer",
+            "description": "Count of unmatched records from source A.",
+            "format": "int32",
+            "example": 0
+          },
+          "unmatchedSourceBCount": {
+            "type": "integer",
+            "description": "Count of unmatched records from source B.",
+            "format": "int32",
+            "example": 0
+          },
+          "amountMismatchCount": {
+            "type": "integer",
+            "description": "Count of mismatched amounts.",
+            "format": "int32",
+            "example": 0
+          },
+          "duplicateCount": {
+            "type": "integer",
+            "description": "Count of duplicate records.",
+            "format": "int32",
+            "example": 0
+          },
+          "totalSourceA": {
+            "description": "Total amount from source A.",
+            "$ref": "#/components/schemas/TotalAmount"
+          },
+          "totalSourceB": {
+            "description": "Total amount from source B.",
+            "$ref": "#/components/schemas/TotalAmount"
+          },
+          "netDifference": {
+            "description": "Net difference between total amounts.",
+            "$ref": "#/components/schemas/TotalAmount"
+          }
+        },
+        "description": "Summary details of the reconciliation run.",
+        "example": "string"
+      },
+      "TotalAmount": {
+        "title": "Total Amount",
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "Currency code for the amount.",
+            "example": "string"
+          },
+          "value": {
+            "type": "string",
+            "description": "Amount value.",
+            "example": "string"
+          }
+        },
+        "description": "Representation of a total amount with currency."
+      },
+      "AuditDetails": {
+        "title": "Audit Details",
         "type": "object",
         "properties": {
           "createdAt": {
             "type": "string",
-            "description": "The timestamp when the webhook endpoint was created.",
+            "description": "Timestamp when the reconciliation was created.",
             "example": "string"
           },
           "createdBy": {
             "type": "string",
-            "description": "The identifier of the user who created the webhook endpoint.",
+            "description": "Identifier of the user who created the reconciliation.",
             "example": "string"
           },
           "updatedAt": {
             "type": "string",
-            "description": "The timestamp when the webhook endpoint was last updated.",
+            "description": "Timestamp when the reconciliation was last updated.",
             "example": "string"
           },
           "updatedBy": {
             "type": "string",
-            "description": "The identifier of the user who last updated the webhook endpoint.",
+            "description": "Identifier of the user who last updated the reconciliation.",
             "example": "string"
           },
           "version": {
             "type": "integer",
-            "description": "The version number of the webhook endpoint.",
+            "description": "Version number of the reconciliation record.",
             "format": "int32",
             "example": 0
           }
         },
-        "description": "This schema contains audit information about the webhook endpoint."
+        "description": "Audit details for the reconciliation process."
       },
-      "MetadataInfo": {
-        "title": "Metadata Information",
+      "ReconciliationMetadata": {
+        "title": "Reconciliation Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "The unique identifier for the response.",
+            "description": "Unique identifier for the response.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "The correlation identifier for tracking requests.",
+            "description": "Correlation identifier for tracking.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp when the response was generated.",
+            "description": "Timestamp when the response was generated.",
             "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the webhook processing occurred.",
+            "description": "Region where the processing occurred.",
             "example": "string"
           }
         },
-        "description": "This schema contains metadata information about the webhook endpoint response."
+        "description": "Metadata related to the reconciliation process."
       }
     },
     "parameters": {
@@ -281,9 +382,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "banking-p2m-openapi-get-webhook-endpoint"
+          "example": "banking-p2m-openapi-get-reconciliation-run"
         },
-        "example": "banking-p2m-openapi-get-webhook-endpoint"
+        "example": "banking-p2m-openapi-get-reconciliation-run"
       },
       "X-Runtime-App": {
         "style": "simple",
@@ -298,7 +399,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses Bearer authentication format, typically a JSON Web Token (JWT), to provide authorization in API requests.",
+        "description": "This security scheme uses a Bearer Authentication method utilizing JSON Web Tokens (JWT). Clients must include a valid token in the Authorization header as 'Bearer {token}' to access protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
