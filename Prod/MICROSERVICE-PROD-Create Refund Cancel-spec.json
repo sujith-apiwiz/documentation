@@ -1,0 +1,493 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MICROSERVICE-PROD-Create Refund Cancel-spec",
+    "description": "This API allows users to initiate the cancellation of a previously issued refund. By providing the unique refund ID, clients can manage and halt refund processes, ensuring accurate financial transactions. This operation is particularly useful for businesses that need to rectify customer transactions or respond to disputes. Typical consumers include finance teams and customer service representatives who handle payment adjustments and customer inquiries.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://prod-workspace-pwmw.apiwiz.io",
+      "description": "Sandbox server",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "Sandbox server",
+      "x-environmentName": "Sandbox",
+      "x-hide": false,
+      "x-environmentId": "6a7f52236ae9a15654cd5721",
+      "x-basePath": "/"
+    },
+    {
+      "url": "https://35.162.152.203:9002",
+      "description": "PROD",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "PROD",
+      "x-environmentName": "PROD",
+      "x-hide": false,
+      "x-environmentId": "6a784eac1d7e36108cc3cb0c",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/v5/p2m/refunds/{refundId}/cancel": {
+      "post": {
+        "tags": [
+          "Refund Management"
+        ],
+        "summary": "Cancel a specific refund request.",
+        "description": "This operation allows you to cancel a refund request associated with a specific reservation ID. Depending on the current state of the refund, it may or may not be possible to cancel the request. Ensure to verify the status of the refund before attempting to cancel.",
+        "operationId": "createRefundCancel",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          },
+          {
+            "$ref": "#/components/parameters/refundId"
+          }
+        ],
+        "requestBody": {
+          "description": "Contains the necessary information to process the cancellation of a specific refund identified by RES-100045. Please ensure all required fields are provided to facilitate a successful cancellation.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRefundCancelRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cancellation request completed successfully.",
+            "headers": {
+              "X-Endpoint-Id": {
+                "$ref": "#/components/headers/X-Endpoint-Id"
+              },
+              "X-Runtime-App": {
+                "$ref": "#/components/headers/X-Runtime-App"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateRefundCancelResponse_200"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateRefundCancelRequest": {
+        "title": "Refund Request Body",
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "The reason for the refund cancellation.",
+            "example": "STANDARD"
+          },
+          "requestContext": {
+            "description": "Contextual information about the request.",
+            "$ref": "#/components/schemas/RequestContext"
+          }
+        },
+        "description": "Schema representing the request body for a refund cancellation operation.",
+        "example": {
+          "reason": "STANDARD",
+          "requestContext": {
+            "requestId": "57a7f60d-d841-5887-b6a7-7a282d5cfb19",
+            "correlationId": "d181e97f-997f-51be-8691-1184036dcdec",
+            "idempotencyKey": "f9feb8fc-7833-5578-826b-ece83c32c2fc",
+            "requestedAt": "2026-09-15T14:30:00Z",
+            "sourceSystem": "DIGITAL_BANKING",
+            "sourceApplication": "MOBILE_APP",
+            "channel": {
+              "channelId": "MOBILE-US",
+              "channelType": "MOBILE",
+              "deviceId": "DEV-914424"
+            }
+          }
+        }
+      },
+      "RequestContext": {
+        "title": "Request Context",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique identifier for the request.",
+            "example": "req-12345"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier for correlating requests across systems.",
+            "example": "corr-abcde"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Key used to ensure that an operation is performed only once.",
+            "example": "idemp-xyz-789"
+          },
+          "requestedAt": {
+            "type": "string",
+            "description": "Timestamp when the request was made.",
+            "example": "2023-10-01T12:00:00Z"
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "The source system that initiated the request.",
+            "example": "PaymentGateway"
+          },
+          "sourceApplication": {
+            "type": "string",
+            "description": "The application that made the request.",
+            "example": "MobileApp"
+          },
+          "channel": {
+            "description": "Information about the channel through which the request was made.",
+            "$ref": "#/components/schemas/Channel"
+          }
+        },
+        "description": "Schema containing contextual information related to the request."
+      },
+      "Channel": {
+        "title": "Channel Information",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Unique identifier for the channel.",
+            "example": "channel-56789"
+          },
+          "channelType": {
+            "type": "string",
+            "description": "Type of the channel (e.g., web, mobile).",
+            "example": "mobile"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Unique identifier for the device used.",
+            "example": "device-12345"
+          }
+        },
+        "description": "Schema representing the channel through which the request was made."
+      },
+      "CreateRefundCancelResponse_200": {
+        "title": "Refund Response",
+        "type": "object",
+        "properties": {
+          "refundId": {
+            "type": "string",
+            "description": "Unique identifier for the refund.",
+            "example": "STANDARD"
+          },
+          "paymentId": {
+            "type": "string",
+            "description": "Unique identifier for the associated payment.",
+            "example": "PAY-848273"
+          },
+          "merchantId": {
+            "type": "string",
+            "description": "Unique identifier for the merchant.",
+            "example": "MER-686201"
+          },
+          "amount": {
+            "description": "The amount to be refunded.",
+            "$ref": "#/components/schemas/Amount"
+          },
+          "reasonCode": {
+            "type": "string",
+            "description": "Code representing the reason for the refund.",
+            "example": "CODE-223"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Detailed reason for the refund.",
+            "example": "STANDARD"
+          },
+          "merchantRefundReference": {
+            "type": "string",
+            "description": "Merchant's reference for the refund request.",
+            "example": "STANDARD"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the refund.",
+            "example": "ACTIVE"
+          },
+          "failure": {
+            "description": "Details of any failure related to the refund.",
+            "$ref": "#/components/schemas/Failure"
+          },
+          "processorReference": {
+            "description": "References to the processor involved in the transaction.",
+            "$ref": "#/components/schemas/ProcessorReference"
+          },
+          "audit": {
+            "description": "Audit information related to the refund process.",
+            "$ref": "#/components/schemas/Audit"
+          },
+          "metadata": {
+            "description": "Additional metadata related to the refund.",
+            "$ref": "#/components/schemas/Metadata"
+          }
+        },
+        "description": "Schema representing the response structure for a refund operation.",
+        "example": {
+          "refundId": "STANDARD",
+          "paymentId": "PAY-848273",
+          "merchantId": "MER-686201",
+          "amount": {
+            "currency": "USD",
+            "value": "STANDARD"
+          },
+          "reasonCode": "CODE-223",
+          "reason": "STANDARD",
+          "merchantRefundReference": "STANDARD",
+          "status": "ACTIVE",
+          "failure": {
+            "category": "STANDARD",
+            "code": "SUCCESS",
+            "message": "STANDARD",
+            "declineCode": "CODE-342",
+            "retryable": true
+          },
+          "processorReference": {
+            "network": "STANDARD",
+            "schemeTransactionId": "TXN-593271",
+            "acquirerReferenceNumber": "STANDARD",
+            "issuerReference": "STANDARD",
+            "retrievalReferenceNumber": "STANDARD",
+            "approvalCode": "CODE-862"
+          },
+          "audit": {
+            "createdAt": "2026-09-15T14:30:00Z",
+            "createdBy": "STANDARD",
+            "updatedAt": "2026-09-15T14:30:00Z",
+            "updatedBy": "2026-09-15",
+            "version": 1
+          },
+          "metadata": {
+            "responseId": "e703f34b-e107-50e9-8430-ba900ac14b87",
+            "correlationId": "d181e97f-997f-51be-8691-1184036dcdec",
+            "generatedAt": "2026-09-15T14:30:00Z",
+            "processingRegion": "us-east-1"
+          }
+        }
+      },
+      "Amount": {
+        "title": "Amount",
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "The currency in which the amount is expressed.",
+            "example": "USD"
+          },
+          "value": {
+            "type": "string",
+            "description": "The amount to be refunded.",
+            "example": "100.00"
+          }
+        },
+        "description": "Schema representing the monetary value and currency for a transaction."
+      },
+      "Failure": {
+        "title": "Failure Details",
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Category of the failure.",
+            "example": "PROCESSING_ERROR"
+          },
+          "code": {
+            "type": "string",
+            "description": "Specific code indicating the failure.",
+            "example": "ERR-123"
+          },
+          "message": {
+            "type": "string",
+            "description": "Descriptive message about the failure.",
+            "example": "Transaction could not be completed."
+          },
+          "declineCode": {
+            "type": "string",
+            "description": "Code that indicates the reason for the decline, if applicable.",
+            "example": "DECLINE-001"
+          },
+          "retryable": {
+            "type": "boolean",
+            "description": "Indicates whether the failure is retryable.",
+            "example": false
+          }
+        },
+        "description": "Schema representing details about a failure that occurred during the refund process."
+      },
+      "ProcessorReference": {
+        "title": "Processor Reference",
+        "type": "object",
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "Payment network involved in the transaction.",
+            "example": "Visa"
+          },
+          "schemeTransactionId": {
+            "type": "string",
+            "description": "Transaction ID assigned by the payment scheme.",
+            "example": "transaction-001"
+          },
+          "acquirerReferenceNumber": {
+            "type": "string",
+            "description": "Reference number assigned by the acquirer.",
+            "example": "acquirer-ref-001"
+          },
+          "issuerReference": {
+            "type": "string",
+            "description": "Reference number provided by the issuer.",
+            "example": "issuer-ref-001"
+          },
+          "retrievalReferenceNumber": {
+            "type": "string",
+            "description": "Reference number for retrieval purposes.",
+            "example": "retrieval-ref-001"
+          },
+          "approvalCode": {
+            "type": "string",
+            "description": "Approval code provided by the payment processor.",
+            "example": "approve-001"
+          }
+        },
+        "description": "Schema containing references to the processor involved in the transaction."
+      },
+      "Audit": {
+        "title": "Audit Information",
+        "type": "object",
+        "properties": {
+          "createdAt": {
+            "type": "string",
+            "description": "Timestamp of when the refund was created.",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "Identifier for the user or system that created the refund.",
+            "example": "user-001"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp of when the refund was last updated.",
+            "example": "2023-01-02T00:00:00Z"
+          },
+          "updatedBy": {
+            "type": "string",
+            "description": "Identifier for the user or system that last updated the refund.",
+            "example": "user-002"
+          },
+          "version": {
+            "type": "integer",
+            "description": "Version number of the refund record.",
+            "format": "int32",
+            "example": 1
+          }
+        },
+        "description": "Schema representing audit information related to the refund process."
+      },
+      "Metadata": {
+        "title": "Metadata Information",
+        "type": "object",
+        "properties": {
+          "responseId": {
+            "type": "string",
+            "description": "Unique identifier for the response.",
+            "example": "response-001"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Identifier used for correlating multiple requests.",
+            "example": "correlation-001"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "Timestamp of when the response was generated.",
+            "example": "2023-01-01T12:00:00Z"
+          },
+          "processingRegion": {
+            "type": "string",
+            "description": "Region where the processing took place.",
+            "example": "US-East"
+          }
+        },
+        "description": "Schema containing additional metadata related to the refund."
+      }
+    },
+    "parameters": {
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "MICROSERVICE_PROD_200"
+          ]
+        }
+      },
+      "refundId": {
+        "name": "refundId",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "headers": {
+      "X-Endpoint-Id": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "banking-p2m-openapi-cancel-refund"
+        },
+        "example": "banking-p2m-openapi-cancel-refund"
+      },
+      "X-Runtime-App": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "payments"
+        },
+        "example": "payments"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "This security scheme uses a Bearer Authentication mechanism with JSON Web Tokens (JWT). Clients must include a bearer token in the Authorization header of their requests.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
