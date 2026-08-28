@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MICROSERVICE-PROD-Get Channel Specific By Param1-spec",
-    "description": "The Channel Specific Information Retrieval API allows users to acquire detailed information about card terminal administrations based on a specific parameter (param1). This API is especially useful for banking and financial services, enabling stakeholders to inquire about channel-specific configurations and settings. Typical consumers include application developers who integrate banking solutions, analysts needing insights on terminal management, and operations teams overseeing card transactions. The API facilitates streamlined access to essential data, supporting better decision-making and operational efficiency.",
+    "title": "MICROSERVICE-PROD-List Card Terminal Operation Status-spec",
+    "description": "The Card Terminal Operation Status API allows consumers to retrieve the operational status of card terminals across various banking channels. This endpoint provides critical insights into the performance and availability of card terminals, enabling businesses to quickly identify any issues or outages. Typical consumers include bank operations teams and system administrators who need to monitor terminal functionality for better customer service. By leveraging this API, organizations can enhance their transaction processing reliability and improve overall user experience.",
     "version": "1.0"
   },
   "servers": [
@@ -30,35 +30,32 @@
     }
   ],
   "paths": {
-    "/v5/banking/channel-specific/card-terminal-administration/{param1}": {
+    "/v5/banking/channel-specific/card-terminal-operation/status": {
       "get": {
         "tags": [
-          "Card Terminal Administration"
+          "Card Terminal Operations"
         ],
-        "summary": "Retrieve specific card terminal administration details.",
-        "description": "This endpoint allows you to fetch the detailed information regarding a specific card terminal administration using its ID. The response will include all relevant attributes that define the card terminal configuration.",
-        "operationId": "getChannelSpecificByParam1",
+        "summary": "Retrieve the status of a card terminal operation.",
+        "description": "This endpoint allows you to fetch the current status of a card terminal operation associated with a specific channel. Use this operation to check if the operation is in progress, completed, or if there were any issues during processing.",
+        "operationId": "listCardTerminalOperationStatus",
         "parameters": [
           {
             "$ref": "#/components/parameters/x-mock-response"
-          },
-          {
-            "$ref": "#/components/parameters/param1"
           }
         ],
         "requestBody": {
-          "description": "The request body for retrieving the specific configuration and operational data associated with the card terminal identified by CARD-400045. This request may include parameters or filters to specify the type of data required.",
+          "description": "Request to retrieve the status of a specific card terminal operation within a given channel. The payload should conform to the expected schema for accurate processing.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetChannelSpecificByParam1Request"
+                "$ref": "#/components/schemas/ListCardTerminalOperationStatusRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The request was successful, and the requested data is returned.",
+            "description": "The request was successfully processed and the current status is returned.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -70,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetChannelSpecificByParam1Response_200"
+                  "$ref": "#/components/schemas/ListCardTerminalOperationStatusResponse_200"
                 }
               }
             }
@@ -90,71 +87,72 @@
   },
   "components": {
     "schemas": {
-      "GetChannelSpecificByParam1Request": {
+      "ListCardTerminalOperationStatusRequest": {
         "type": "string",
-        "description": "Request body for the GET operation related to card terminal administration for CARD-400045.",
+        "description": "Represents the status of card terminal operations in the context of a specific channel.",
         "example": "{}"
       },
-      "GetChannelSpecificByParam1Response_200": {
+      "ListCardTerminalOperationStatusResponse_200": {
+        "title": "Card Terminal Operation Status Response",
         "type": "object",
         "properties": {
           "channelId": {
             "type": "string",
-            "description": "The unique identifier for the channel.",
+            "description": "Identifier for the channel.",
             "example": "MOBILE-US"
           },
           "regionCode": {
             "type": "string",
-            "description": "The code representing the region associated with this terminal.",
+            "description": "Code of the region where the terminal is located.",
             "example": "US-EAST-1"
           },
           "serviceWindow": {
-            "description": "The operating hours for the terminal.",
+            "description": "Defines the operational time window for the terminal.",
             "$ref": "#/components/schemas/ServiceWindow"
           },
           "dailyCapacity": {
             "type": "integer",
-            "description": "The maximum number of transactions the terminal can handle daily.",
+            "description": "The total number of operations the terminal can handle in a day.",
             "format": "int32",
             "example": 1
           },
           "terminalId": {
             "type": "string",
-            "description": "The unique identifier for the terminal.",
+            "description": "Unique identifier for the terminal.",
             "example": "STANDARD"
           },
           "merchantId": {
             "type": "string",
-            "description": "The unique identifier for the merchant.",
-            "example": "MER-591852"
+            "description": "Identifier of the merchant associated with the terminal.",
+            "example": "MER-486955"
           },
           "terminalStatus": {
             "type": "string",
-            "description": "The current status of the terminal.",
+            "description": "Current status of the terminal.",
             "example": "ACTIVE"
           },
           "recordStatus": {
             "type": "string",
-            "description": "The status of the record indicating whether it's active or inactive.",
+            "description": "Status indicating whether the terminal record is active or inactive.",
             "example": "ACTIVE"
           },
           "version": {
             "type": "integer",
-            "description": "The version number of the terminal record.",
+            "description": "Version number of the terminal's configuration.",
             "format": "int32",
             "example": 1
           },
           "updatedAt": {
             "type": "string",
-            "description": "The date and time when the terminal information was last updated.",
+            "description": "Timestamp when the terminal status was last updated.",
             "example": "2026-09-15T14:30:00Z"
           },
           "metadata": {
-            "description": "Additional metadata associated with the response.",
+            "description": "Additional metadata related to the terminal operation.",
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Response schema for retrieving terminal information in the card terminal administration service.",
+        "description": "Response schema for the card terminal operation status request.",
         "example": {
           "channelId": "MOBILE-US",
           "regionCode": "US-EAST-1",
@@ -164,60 +162,62 @@
           },
           "dailyCapacity": 1,
           "terminalId": "STANDARD",
-          "merchantId": "MER-591852",
+          "merchantId": "MER-486955",
           "terminalStatus": "ACTIVE",
           "recordStatus": "ACTIVE",
           "version": 1,
           "updatedAt": "2026-09-15T14:30:00Z",
           "metadata": {
-            "responseId": "060896d7-a8c4-505a-89c7-07c215a4b4e8",
-            "correlationId": "1afbb061-0a22-58b3-b627-f89589e63137",
+            "responseId": "e6ea5f16-272a-5245-bdf8-934e4b47d1d7",
+            "correlationId": "61b27736-c841-5c66-816c-6b061875f463",
             "generatedAt": "2026-09-15T14:30:00Z",
             "processingRegion": "us-east-1"
           }
         }
       },
       "ServiceWindow": {
+        "title": "Service Window",
         "type": "object",
         "properties": {
           "opensAt": {
             "type": "string",
-            "description": "The time when the terminal opens.",
-            "example": "09:00"
+            "description": "The time the service window opens.",
+            "example": "string"
           },
           "closesAt": {
             "type": "string",
-            "description": "The time when the terminal closes.",
-            "example": "17:00"
+            "description": "The time the service window closes.",
+            "example": "string"
           }
         },
-        "description": "Schema representing the operational hours of a terminal."
+        "description": "Schema defining the opening and closing times of a service window."
       },
       "Metadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "The unique identifier for the response.",
+            "description": "Unique identifier for the response.",
             "example": "string"
           },
           "correlationId": {
             "type": "string",
-            "description": "A unique identifier to correlate requests and responses.",
+            "description": "Identifier used to correlate requests and responses.",
             "example": "string"
           },
           "generatedAt": {
             "type": "string",
-            "description": "The timestamp when the response was generated.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "Timestamp indicating when the metadata was generated.",
+            "example": "string"
           },
           "processingRegion": {
             "type": "string",
-            "description": "The region where the request was processed.",
+            "description": "Region where the processing of the request took place.",
             "example": "string"
           }
         },
-        "description": "Schema representing additional metadata related to the API response."
+        "description": "Schema containing metadata for the response."
       }
     },
     "parameters": {
@@ -234,31 +234,19 @@
             "MICROSERVICE_PROD_200"
           ]
         }
-      },
-      "param1": {
-        "name": "param1",
-        "in": "path",
-        "required": true,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string"
-        }
       }
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "A unique identifier for the endpoint that was called, used for logging and tracking purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "card-terminal-administration-get-card-terminal-administration"
+          "example": "card-terminal-operation-get-card-terminal-operation"
         },
-        "example": "card-terminal-administration-get-card-terminal-administration"
+        "example": "card-terminal-operation-get-card-terminal-operation"
       },
       "X-Runtime-App": {
-        "description": "The name of the runtime application that processed the request, providing context for the response.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -271,7 +259,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "A security scheme that uses Bearer authentication. This approach requires a Bearer token, typically a JSON Web Token (JWT), to be passed along with the request for authentication and authorization purposes.",
+        "description": "This authentication scheme utilizes JSON Web Tokens (JWT) as a bearer token, providing a secure way to transmit information between parties and ensuring that the requesting client is authenticated.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
