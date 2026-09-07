@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-Create Banking Merchant Settlement-v5-spec",
-    "description": "The Banking Merchant Settlement API facilitates the streamlined creation of settlement transactions for banking merchants. This endpoint allows authorized users to initiate settlement requests associated with specific merchants, identified by their unique merchant IDs. Typical consumers include banking institutions and merchant service providers seeking efficient reconciliation processes. By leveraging this API, businesses can enhance their financial operations, ensuring timely and accurate settlements for their merchant partners.",
+    "description": "MICROSERVICE-PROD-Create Banking Merchant Settlement-v5-spec",
     "version": "1.0"
   },
   "servers": [
@@ -18,10 +18,10 @@
       "x-basePath": "/"
     },
     {
-      "url": "https://payments-app:9002",
+      "url": "http://payments-app:9002",
       "description": "PROD",
       "variables": {},
-      "x-schema": "https://",
+      "x-schema": "http://",
       "x-name": "PROD",
       "x-environmentName": "PROD",
       "x-hide": false,
@@ -32,9 +32,6 @@
   "paths": {
     "/v5/banking/merchants/{merchantId}/settlements": {
       "post": {
-        "tags": [],
-        "summary": "Create a settlement for a specific merchant.",
-        "description": "This endpoint allows you to create a new settlement for the merchant identified by the provided ID. Ensure that all required information is included in the request body for a successful operation.",
         "operationId": "createBankingMerchantSettlement",
         "parameters": [
           {
@@ -66,7 +63,6 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to create settlements for a specific merchant identified by the provided merchant ID (MER-800045). The body must adhere to the predefined schema to ensure valid data submission.",
           "content": {
             "application/json": {
               "schema": {
@@ -77,7 +73,7 @@
         },
         "responses": {
           "202": {
-            "description": "The request has been accepted and is being processed.",
+            "description": "202Description",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -122,44 +118,106 @@
   "components": {
     "schemas": {
       "CreateBankingMerchantSettlementRequest": {
-        "title": "Settlement Request Body",
         "type": "object",
         "properties": {
           "paymentId": {
             "type": "string",
-            "description": "Unique identifier for the payment.",
             "example": "PAY-513407"
           },
           "debtorAccountId": {
             "type": "string",
-            "description": "Identifier of the debtor's account.",
             "example": "ACC-341923"
           },
           "creditorAccountId": {
             "type": "string",
-            "description": "Identifier of the creditor's account.",
             "example": "ACC-484304"
           },
           "instructedAmount": {
-            "description": "The amount and currency instructed for the transaction.",
-            "$ref": "#/components/schemas/InstructedAmount"
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "example": 0.0
+              },
+              "currency": {
+                "type": "string",
+                "example": "string"
+              }
+            },
+            "example": {
+              "amount": 100.0,
+              "currency": "USD"
+            }
           },
           "requestedExecutionDate": {
             "type": "string",
-            "description": "The date on which the transaction is requested to be executed.",
             "example": "2026-09-15"
           },
           "remittanceInformation": {
             "type": "string",
-            "description": "Information related to the remittance.",
             "example": "STANDARD"
           },
           "requestContext": {
-            "description": "Contextual information regarding the request.",
-            "$ref": "#/components/schemas/RequestContext"
+            "type": "object",
+            "properties": {
+              "requestId": {
+                "type": "string",
+                "example": "string"
+              },
+              "correlationId": {
+                "type": "string",
+                "example": "string"
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "example": "string"
+              },
+              "requestedAt": {
+                "type": "string",
+                "example": "string"
+              },
+              "sourceSystem": {
+                "type": "string",
+                "example": "string"
+              },
+              "sourceApplication": {
+                "type": "string",
+                "example": "string"
+              },
+              "channel": {
+                "type": "object",
+                "properties": {
+                  "channelId": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "channelType": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "deviceId": {
+                    "type": "string",
+                    "example": "string"
+                  }
+                },
+                "example": "string"
+              }
+            },
+            "example": {
+              "requestId": "c376b39a-bc4a-5236-9eb9-4c18b52d112b",
+              "correlationId": "2f816a83-5643-5cb8-a773-f0fdcd0a4d5b",
+              "idempotencyKey": "d43effac-ba12-53f9-b545-b30fc612ef21",
+              "requestedAt": "2026-09-15T14:30:00Z",
+              "sourceSystem": "DIGITAL_BANKING",
+              "sourceApplication": "MOBILE_APP",
+              "channel": {
+                "channelId": "MOBILE-US",
+                "channelType": "MOBILE",
+                "deviceId": "DEV-697798"
+              }
+            }
           }
         },
-        "description": "Schema representing a request to settle transactions between accounts.",
         "example": {
           "paymentId": "PAY-513407",
           "debtorAccountId": "ACC-341923",
@@ -185,118 +243,31 @@
           }
         }
       },
-      "InstructedAmount": {
-        "title": "Instructed Amount",
-        "type": "object",
-        "properties": {
-          "amount": {
-            "type": "number",
-            "description": "The amount of money to be transacted.",
-            "example": 0.0
-          },
-          "currency": {
-            "type": "string",
-            "description": "The currency in which the amount is specified.",
-            "example": "string"
-          }
-        },
-        "description": "Details about the instructed amount including amount and currency."
-      },
-      "RequestContext": {
-        "title": "Request Context",
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "string"
-          },
-          "correlationId": {
-            "type": "string",
-            "description": "Identifier to trace the correlation of different requests.",
-            "example": "string"
-          },
-          "idempotencyKey": {
-            "type": "string",
-            "description": "Key to ensure the request is processed only once.",
-            "example": "string"
-          },
-          "requestedAt": {
-            "type": "string",
-            "description": "Timestamp when the request was made.",
-            "example": "string"
-          },
-          "sourceSystem": {
-            "type": "string",
-            "description": "System from which the request originated.",
-            "example": "string"
-          },
-          "sourceApplication": {
-            "type": "string",
-            "description": "Application from which the request was made.",
-            "example": "string"
-          },
-          "channel": {
-            "description": "Information about the channel through which the request was made.",
-            "$ref": "#/components/schemas/Channel"
-          }
-        },
-        "description": "Details about the context in which the request was made."
-      },
-      "Channel": {
-        "title": "Channel Information",
-        "type": "object",
-        "properties": {
-          "channelId": {
-            "type": "string",
-            "description": "Unique identifier for the channel.",
-            "example": "string"
-          },
-          "channelType": {
-            "type": "string",
-            "description": "Type of channel used (e.g., web, mobile).",
-            "example": "string"
-          },
-          "deviceId": {
-            "type": "string",
-            "description": "Unique identifier for the device used for the request.",
-            "example": "string"
-          }
-        },
-        "description": "Details about the channel used for the transaction request."
-      },
       "CreateBankingMerchantSettlementResponse_202": {
-        "title": "Settlement Response",
         "type": "object",
         "properties": {
           "paymentId": {
             "type": "string",
-            "description": "Unique identifier for the payment.",
             "example": "PAY-800684"
           },
           "debtorAccountId": {
             "type": "string",
-            "description": "Identifier for the account of the debtor.",
             "example": "ACC-359269"
           },
           "creditorAccountId": {
             "type": "string",
-            "description": "Identifier for the account of the creditor.",
             "example": "ACC-762112"
           },
           "processingReference": {
             "type": "string",
-            "description": "Reference for processing the payment.",
             "example": "STANDARD"
           },
           "status": {
             "type": "string",
-            "description": "Current status of the settlement.",
             "example": "ACTIVE"
           },
           "acceptedAt": {
             "type": "string",
-            "description": "Timestamp when the settlement was accepted.",
             "example": "2026-08-11T12:00:00Z"
           },
           "metadata": {
@@ -304,26 +275,21 @@
             "properties": {
               "responseId": {
                 "type": "string",
-                "description": "Unique identifier for the response.",
-                "example": "resp_987654"
+                "example": "string"
               },
               "correlationId": {
                 "type": "string",
-                "description": "Identifier for correlating requests and responses.",
-                "example": "corr_123"
+                "example": "string"
               },
               "generatedAt": {
                 "type": "string",
-                "description": "Timestamp when the metadata was generated.",
-                "example": "2023-10-01T12:00:00Z"
+                "example": "string"
               },
               "processingRegion": {
                 "type": "string",
-                "description": "Region where the processing took place.",
-                "example": "EU"
+                "example": "string"
               }
             },
-            "description": "Additional metadata regarding the payment settlement.",
             "example": {
               "responseId": "d6fbd588-4f27-57f3-99ce-7a865f819754",
               "correlationId": "2f816a83-5643-5cb8-a773-f0fdcd0a4d5b",
@@ -332,7 +298,6 @@
             }
           }
         },
-        "description": "Response schema for settlement operations indicating details of a payment settlement.",
         "example": {
           "paymentId": "PAY-800684",
           "debtorAccountId": "ACC-359269",
@@ -370,9 +335,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "d74e9ee5-ef1c-4ed2-9738-09825dc31973"
+          "example": "bd857e29-a166-4c31-8b4f-5c18270d37fc"
         },
-        "example": "d74e9ee5-ef1c-4ed2-9738-09825dc31973"
+        "example": "bd857e29-a166-4c31-8b4f-5c18270d37fc"
       },
       "x-workflow-step": {
         "name": "x-workflow-step",
@@ -430,9 +395,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "40731f81-d886-4620-912d-22a212372729"
+          "example": "14a79c80-a85e-4f6b-b62a-8b21a4519eb5"
         },
-        "example": "40731f81-d886-4620-912d-22a212372729"
+        "example": "14a79c80-a85e-4f6b-b62a-8b21a4519eb5"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -461,7 +426,6 @@
     },
     "headers": {
       "X-Endpoint-Id": {
-        "description": "Unique identifier for the endpoint handling this request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -471,7 +435,6 @@
         "example": "card-financial-settlement-process-card-financial-settlement"
       },
       "X-Runtime-App": {
-        "description": "Indicates the application that processed the request, helpful for tracing and debugging.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -481,7 +444,6 @@
         "example": "payments"
       },
       "X-Workflow-Id": {
-        "description": "Identifies the workflow instance associated with this transaction, useful for tracking process flow.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -491,7 +453,6 @@
         "example": "WF-021"
       },
       "X-Workflow-Name": {
-        "description": "The name of the workflow that is associated with the operation. This helps in identifying the specific process being executed.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -501,7 +462,6 @@
         "example": "Debit Card Issuance and Activation"
       },
       "X-Workflow-State": {
-        "description": "The current state of the workflow execution. This could be 'pending', 'in-progress', or 'completed', providing insight into the operation's status.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -511,20 +471,18 @@
         "example": "IN_PROGRESS"
       },
       "X-Workflow-Execution-Id": {
-        "description": "A unique identifier for the workflow execution. This ID can be used to track and reference the specific execution of the workflow.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "40731f81-d886-4620-912d-22a212372729"
+          "example": "14a79c80-a85e-4f6b-b62a-8b21a4519eb5"
         },
-        "example": "40731f81-d886-4620-912d-22a212372729"
+        "example": "14a79c80-a85e-4f6b-b62a-8b21a4519eb5"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a Bearer token, which is a type of access token issued by an authorization server. The token format specified is JWT (JSON Web Token), which is widely used for securely transmitting information and verifying identity between parties.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
