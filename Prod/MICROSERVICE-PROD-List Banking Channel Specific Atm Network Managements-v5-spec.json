@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-PROD-List Banking Channel Specific Atm Network Managements-v5-spec",
-    "description": "The Banking Channel-Specific ATM Network Management API provides access to information related to the management of ATM networks tailored for specific banking channels. It allows consumers, such as financial institutions and developers, to retrieve detailed data about ATM networks, facilitating decision-making and operational oversight. This API enhances the visibility of ATM resource availability and performance metrics, ensuring optimal service delivery to end users. Typical use cases include monitoring network status and analyzing ATM distribution and usage patterns.",
+    "description": "The Banking Channel ATM Network Management API allows users to retrieve detailed information regarding specific ATM networks managed under various banking channels. This endpoint facilitates access to key resources such as ATM locations, operational statuses, and channel-specific configurations. It is essential for financial institutions, developers, and third-party service providers who require insights into ATM network management to improve service delivery and enhance customer experiences. Utilize this API to monitor and manage ATM networks efficiently, ensuring optimal performance and availability for users.",
     "version": "1.0"
   },
   "servers": [
@@ -35,8 +35,8 @@
         "tags": [
           "ATM Network Management"
         ],
-        "summary": "Retrieve ATM network management details.",
-        "description": "This endpoint allows clients to fetch detailed information about the ATM network management, including its current status and configuration. It is designed to help network administrators monitor and manage their ATM networks effectively.",
+        "summary": "Retrieve ATM network management details",
+        "description": "This endpoint allows you to fetch details about the ATM network management specific to channels, providing insights into network performance, availability, and configuration.",
         "operationId": "listBankingChannelSpecificAtmNetworkManagements",
         "parameters": [
           {
@@ -44,7 +44,7 @@
           }
         ],
         "requestBody": {
-          "description": "Request body for retrieving channel-specific ATM network management information via a GET operation.",
+          "description": "Request body for obtaining ATM network management information specific to a particular channel. This request is critical for retrieving the operational status and configurations within the ATM network, allowing the client to tailor its interactions based on the channel's parameters.",
           "content": {
             "application/json": {
               "schema": {
@@ -55,7 +55,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful retrieval of ATM network management data.",
+            "description": "Request completed successfully.",
             "headers": {
               "X-Endpoint-Id": {
                 "$ref": "#/components/headers/X-Endpoint-Id"
@@ -89,15 +89,16 @@
     "schemas": {
       "ListBankingChannelSpecificAtmNetworkManagementsRequest": {
         "type": "string",
-        "description": "This schema represents the request body expected for the GET operation specific to ATM network management operations for a particular channel.",
+        "description": "This schema represents the request body for the GET operation specific to ATM network management in a channel-specific context.",
         "example": "{}"
       },
       "ListBankingChannelSpecificAtmNetworkManagementsResponse_200": {
+        "title": "ATM Network Management Response",
         "type": "object",
         "properties": {
           "items": {
             "type": "array",
-            "description": "An array of ATM network management items.",
+            "description": "Array of ATM channel information.",
             "example": [
               {
                 "channelId": "MOBILE-US",
@@ -115,77 +116,16 @@
               }
             ],
             "items": {
-              "type": "object",
-              "properties": {
-                "channelId": {
-                  "type": "string",
-                  "description": "The unique identifier for the channel.",
-                  "example": "string"
-                },
-                "regionCode": {
-                  "type": "string",
-                  "description": "The region code where the ATM is located.",
-                  "example": "string"
-                },
-                "serviceWindow": {
-                  "$ref": "#/components/schemas/ServiceWindow"
-                },
-                "dailyCapacity": {
-                  "type": "integer",
-                  "description": "The daily transaction capacity of the ATM.",
-                  "format": "int32",
-                  "example": 0
-                },
-                "atmId": {
-                  "type": "string",
-                  "description": "The unique identifier for the ATM.",
-                  "example": "string"
-                },
-                "cashStatus": {
-                  "type": "string",
-                  "description": "Current cash status of the ATM.",
-                  "example": "string"
-                },
-                "terminalHealth": {
-                  "type": "string",
-                  "description": "Health status of the ATM terminal.",
-                  "example": "string"
-                },
-                "recordStatus": {
-                  "type": "string",
-                  "description": "The record status of the ATM management data.",
-                  "example": "string"
-                },
-                "updatedAt": {
-                  "type": "string",
-                  "description": "Timestamp of the last update made to the ATM details.",
-                  "example": "string"
-                }
-              },
-              "description": "An individual ATM network management item containing specific details.",
-              "example": {
-                "channelId": "string",
-                "regionCode": "string",
-                "serviceWindow": {
-                  "opensAt": "string",
-                  "closesAt": "string"
-                },
-                "dailyCapacity": 0,
-                "atmId": "string",
-                "cashStatus": "string",
-                "terminalHealth": "string",
-                "recordStatus": "string",
-                "updatedAt": "string"
-              }
+              "$ref": "#/components/schemas/ATMChannel"
             }
           },
           "pagination": {
-            "description": "Pagination information for the response.",
+            "description": "Details about pagination for the response.",
             "$ref": "#/components/schemas/Pagination"
           },
           "sort": {
             "type": "string",
-            "description": "Sorting information for the items.",
+            "description": "Sorting criteria applied to the items.",
             "example": "STANDARD"
           },
           "metadata": {
@@ -193,7 +133,7 @@
             "$ref": "#/components/schemas/Metadata"
           }
         },
-        "description": "Schema representing the response structure for the ATM network management operation GET request.",
+        "description": "Response schema for the ATM Network Management GET operation, containing a list of items, pagination details, sorting information, and metadata.",
         "example": {
           "items": [
             {
@@ -225,71 +165,109 @@
           }
         }
       },
+      "ATMChannel": {
+        "title": "ATM Channel",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "description": "Unique identifier for the ATM channel."
+          },
+          "regionCode": {
+            "type": "string",
+            "description": "Code representing the geographical region of the ATM."
+          },
+          "serviceWindow": {
+            "description": "The operating hours of the ATM service.",
+            "$ref": "#/components/schemas/ServiceWindow"
+          },
+          "dailyCapacity": {
+            "type": "integer",
+            "description": "The maximum number of transactions the ATM can handle in a day.",
+            "format": "int32"
+          },
+          "atmId": {
+            "type": "string",
+            "description": "Unique identifier for the ATM."
+          },
+          "cashStatus": {
+            "type": "string",
+            "description": "Current cash availability status of the ATM."
+          },
+          "terminalHealth": {
+            "type": "string",
+            "description": "Status indicating the health of the ATM terminal."
+          },
+          "recordStatus": {
+            "type": "string",
+            "description": "Record status of the ATM information."
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp indicating the last update time of the ATM information."
+          }
+        },
+        "description": "Details about a specific ATM channel."
+      },
       "ServiceWindow": {
+        "title": "Service Window",
         "type": "object",
         "properties": {
           "opensAt": {
             "type": "string",
-            "description": "Opening time of the ATM service window.",
-            "example": "08:00 AM"
+            "description": "Time at which the ATM service opens."
           },
           "closesAt": {
             "type": "string",
-            "description": "Closing time of the ATM service window.",
-            "example": "10:00 PM"
+            "description": "Time at which the ATM service closes."
           }
         },
-        "description": "The service window timings for an ATM."
+        "description": "Operating hours for the ATM service."
       },
       "Pagination": {
+        "title": "Pagination",
         "type": "object",
         "properties": {
           "page": {
             "type": "integer",
-            "description": "The current page number of the results.",
-            "format": "int32",
-            "example": 1
+            "description": "Current page number of the response.",
+            "format": "int32"
           },
           "pageSize": {
             "type": "integer",
-            "description": "The number of items per page.",
-            "format": "int32",
-            "example": 10
+            "description": "Number of items per page.",
+            "format": "int32"
           },
           "totalItems": {
             "type": "integer",
             "description": "Total number of items available across all pages.",
-            "format": "int32",
-            "example": 100
+            "format": "int32"
           }
         },
-        "description": "Pagination information for API responses."
+        "description": "Pagination details for the response."
       },
       "Metadata": {
+        "title": "Response Metadata",
         "type": "object",
         "properties": {
           "responseId": {
             "type": "string",
-            "description": "Unique identifier for the response.",
-            "example": "string"
+            "description": "Unique identifier for the response."
           },
           "correlationId": {
             "type": "string",
-            "description": "Correlation ID for tracking the request in logs.",
-            "example": "string"
+            "description": "Identifier for tracking the request across systems."
           },
           "generatedAt": {
             "type": "string",
-            "description": "Timestamp when the response was generated.",
-            "example": "string"
+            "description": "Timestamp indicating when the response was generated."
           },
           "processingRegion": {
             "type": "string",
-            "description": "Region where the response was processed.",
-            "example": "string"
+            "description": "Region where the processing of this response occurred."
           }
         },
-        "description": "Metadata related to the API response."
+        "description": "Metadata related to the response of the operation."
       }
     },
     "parameters": {
@@ -331,7 +309,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme utilizes a Bearer authentication method that employs JSON Web Tokens (JWT) to securely transmit claims about the user to the server.",
+        "description": "This security scheme utilizes a Bearer authentication method, specifically designed for use with JSON Web Tokens (JWT). Clients must include an access token in the 'Authorization' header to access protected resources.",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
