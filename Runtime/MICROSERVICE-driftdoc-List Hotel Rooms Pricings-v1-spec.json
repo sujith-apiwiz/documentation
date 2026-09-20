@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-driftdoc-List Hotel Rooms Pricings-v1-spec",
-    "description": "The Hotel Room Pricing API provides real-time access to pricing information for hotel rooms. It enables users to retrieve detailed pricing data, including rates and availability across various dates and room types. This API is essential for travel agencies, online booking platforms, and hotel management systems that need to display accurate and up-to-date pricing to customers. By leveraging this API, businesses can improve their booking processes and enhance the user experience through personalized pricing insights.",
+    "description": "The Hotel Room Pricing API provides access to the pricing information for available hotel rooms. This API allows users to retrieve the current pricing details for rooms across various hotels, enabling consumers such as travel agencies and booking platforms to make informed decisions. Typical use cases include displaying room rates on booking websites or comparing hotel prices for users. By leveraging this API, developers can enhance their applications with up-to-date hotel pricing information.",
     "version": "1.0"
   },
   "servers": [
@@ -31,38 +31,41 @@
     "/hotel/v1/rooms/pricing": {
       "get": {
         "tags": [
-          "Room Pricing"
+          "Room Management"
         ],
-        "summary": "Retrieve pricing information for rooms.",
-        "description": "This endpoint allows users to access the current pricing details for various rooms available. It includes information on rates, discounts, and any other relevant pricing parameters.",
+        "summary": "Retrieve pricing details for rooms.",
+        "description": "This endpoint allows you to fetch the current pricing information for available rooms. It provides insights into the rates, including any discounts or special offers. Ideal for users looking to book accommodations at the best price.",
         "operationId": "listHotelRoomsPricings",
         "parameters": [
           {
-            "$ref": "#/components/parameters/locale"
+            "$ref": "#/components/parameters/expand"
           },
           {
-            "$ref": "#/components/parameters/region"
+            "$ref": "#/components/parameters/fields"
           },
           {
-            "$ref": "#/components/parameters/traceLevel"
+            "$ref": "#/components/parameters/currency"
           },
           {
-            "$ref": "#/components/parameters/includeDeleted"
+            "$ref": "#/components/parameters/timezone"
           },
           {
-            "$ref": "#/components/parameters/x-tenant-id"
+            "$ref": "#/components/parameters/x-app-build"
           },
           {
-            "$ref": "#/components/parameters/x-debug-mode"
+            "$ref": "#/components/parameters/x-client-region"
           },
           {
-            "$ref": "#/components/parameters/x-feature-flag"
+            "$ref": "#/components/parameters/x-experiment-id"
           },
           {
             "$ref": "#/components/parameters/x-client-version"
           },
           {
             "$ref": "#/components/parameters/x-correlation-id"
+          },
+          {
+            "$ref": "#/components/parameters/x-request-source"
           },
           {
             "$ref": "#/components/parameters/x-request-priority"
@@ -72,7 +75,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to retrieve the pricing information for rooms. The data should be formatted as a JSON object containing relevant parameters to filter or specify the pricing details required.",
+          "description": "Request body for retrieving pricing information for rooms. This should include relevant room parameters to fetch accurate pricing details.",
           "content": {
             "application/json": {
               "schema": {
@@ -85,20 +88,14 @@
           "200": {
             "description": "Successfully retrieved room pricing information.",
             "headers": {
-              "etag": {
-                "$ref": "#/components/headers/etag"
-              },
-              "x-served-by": {
-                "$ref": "#/components/headers/x-served-by"
-              },
-              "x-cache-status": {
-                "$ref": "#/components/headers/x-cache-status"
-              },
               "x-processing-time": {
                 "$ref": "#/components/headers/x-processing-time"
               },
-              "x-ratelimit-remaining": {
-                "$ref": "#/components/headers/x-ratelimit-remaining"
+              "x-content-type-options": {
+                "$ref": "#/components/headers/x-content-type-options"
+              },
+              "strict-transport-security": {
+                "$ref": "#/components/headers/strict-transport-security"
               }
             },
             "content": {
@@ -126,27 +123,27 @@
     "schemas": {
       "ListHotelRoomsPricingsRequest": {
         "type": "string",
-        "description": "This schema represents the request body expected for the GET operation related to room pricing.",
+        "description": "A string representation of the request body for fetching room pricing information.",
         "example": "{}"
       },
       "ListHotelRoomsPricingsResponse_200": {
-        "title": "Pricing Operation Response",
+        "title": "Pricing Response",
         "type": "object",
         "properties": {
           "status": {
-            "type": "boolean",
-            "description": "Indicates whether the operation was successful.",
-            "example": true
+            "type": "string",
+            "description": "The status of the operation.",
+            "example": "OK"
           },
           "referenceNumber": {
             "type": "string",
-            "description": "A unique reference number for tracking the request.",
+            "description": "A unique reference number for the request.",
             "example": "HOTEL-10003"
           },
           "resultId": {
             "type": "string",
-            "description": "The ID of the result returned from the operation.",
-            "example": "b660b5a2-de05-4188-9854-3374e8f14945"
+            "description": "The unique identifier for the result.",
+            "example": "5e2e357f-7340-4ed7-a9f4-4e52cdacd3a9"
           },
           "state": {
             "type": "string",
@@ -154,186 +151,174 @@
             "example": "FAILED"
           },
           "processingTimeMs": {
-            "type": "integer",
-            "description": "The time taken to process the request, in milliseconds.",
-            "format": "int32",
-            "example": 856
+            "type": "number",
+            "description": "The time taken to process the request in milliseconds.",
+            "example": 856.5
           },
           "message": {
             "type": "string",
-            "description": "Additional message associated with the operation.",
+            "description": "A message providing additional information about the operation.",
             "example": "Request processed successfully"
           },
           "audit": {
-            "$ref": "#/components/schemas/AuditInfo"
+            "description": "Information about the audit details related to the operation.",
+            "$ref": "#/components/schemas/Audit"
           },
-          "warnings": {
-            "type": "array",
-            "description": "A list of warnings associated with the operation.",
-            "example": [
-              "deprecated-field-used"
-            ],
-            "items": {
-              "type": "string",
-              "description": "A warning message."
-            }
+          "requestId": {
+            "type": "string",
+            "description": "The unique identifier for the request.",
+            "example": "2b019136-dbf9-475a-a647-a9846db99795"
           },
-          "meta": {
-            "$ref": "#/components/schemas/MetaInfo"
+          "links": {
+            "description": "Related links for further information.",
+            "$ref": "#/components/schemas/Links"
           }
         },
-        "description": "This schema represents the response structure for the Pricing Operations GET request.",
+        "description": "Represents the response structure for the pricing operation.",
         "example": {
-          "status": true,
+          "status": "OK",
           "referenceNumber": "HOTEL-10003",
-          "resultId": "b660b5a2-de05-4188-9854-3374e8f14945",
+          "resultId": "5e2e357f-7340-4ed7-a9f4-4e52cdacd3a9",
           "state": "FAILED",
-          "processingTimeMs": 856,
+          "processingTimeMs": 856.5,
           "message": "Request processed successfully",
           "audit": {
             "createdBy": "SYSTEM",
-            "createdAt": "2026-09-20T16:53:46+00:00",
+            "createdAt": "2026-09-21T08:53:46+00:00",
             "automated": true,
-            "source": "batch"
+            "revision": 3
           },
-          "warnings": [
-            "deprecated-field-used"
-          ],
-          "meta": {
-            "region": "EU",
-            "cacheHit": false
+          "requestId": "2b019136-dbf9-475a-a647-a9846db99795",
+          "links": {
+            "self": "/hotel/v1/rooms"
           }
         }
       },
-      "AuditInfo": {
+      "Audit": {
         "title": "Audit Information",
         "type": "object",
         "properties": {
           "createdBy": {
             "type": "string",
-            "description": "The identifier of the user or system that created the entry.",
-            "example": "user123"
+            "description": "The user who created the record.",
+            "example": "admin"
           },
           "createdAt": {
             "type": "string",
-            "description": "The date and time when the entry was created.",
-            "example": "2023-10-01T12:30:00Z"
+            "description": "The timestamp of when the record was created.",
+            "example": "2023-10-01T12:00:00Z"
           },
           "automated": {
             "type": "boolean",
-            "description": "Indicates whether the operation was performed automatically.",
+            "description": "Indicates whether the operation was automated.",
             "example": false
           },
-          "source": {
-            "type": "string",
-            "description": "The source from which the operation was triggered.",
-            "example": "API"
+          "revision": {
+            "type": "integer",
+            "description": "The revision number of the record.",
+            "format": "int32",
+            "example": 1
           }
         },
-        "description": "Contains information about the audit of the operation."
+        "description": "Contains audit details for the operation."
       },
-      "MetaInfo": {
-        "title": "Meta Information",
+      "Links": {
+        "title": "Links Information",
         "type": "object",
         "properties": {
-          "region": {
+          "self": {
             "type": "string",
-            "description": "The region in which the operation was executed.",
-            "example": "US-East"
-          },
-          "cacheHit": {
-            "type": "boolean",
-            "description": "Indicates whether the response was served from cache.",
-            "example": true
+            "description": "A self-referential link to the current resource.",
+            "example": "https://api.example.com/v1/pricing"
           }
         },
-        "description": "Meta data related to the operation."
+        "description": "Contains related links information for the response."
       }
     },
     "parameters": {
-      "locale": {
-        "name": "locale",
+      "expand": {
+        "name": "expand",
         "in": "query",
         "required": false,
         "style": "form",
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "en-GB"
+          "example": "pricing,photos"
         },
-        "example": "en-GB"
+        "example": "pricing,photos"
       },
-      "region": {
-        "name": "region",
+      "fields": {
+        "name": "fields",
         "in": "query",
         "required": false,
         "style": "form",
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "EU"
+          "example": "id,state"
         },
-        "example": "EU"
+        "example": "id,state"
       },
-      "traceLevel": {
-        "name": "traceLevel",
+      "currency": {
+        "name": "currency",
         "in": "query",
         "required": false,
         "style": "form",
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "debug"
+          "example": "EUR"
         },
-        "example": "debug"
+        "example": "EUR"
       },
-      "includeDeleted": {
-        "name": "includeDeleted",
+      "timezone": {
+        "name": "timezone",
         "in": "query",
         "required": false,
         "style": "form",
         "explode": true,
         "schema": {
-          "type": "boolean",
-          "example": true
+          "type": "string",
+          "example": "Europe/London"
         },
-        "example": true
+        "example": "Europe/London"
       },
-      "x-tenant-id": {
-        "name": "x-tenant-id",
+      "x-app-build": {
+        "name": "x-app-build",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "qa-dev"
+          "example": "4312"
         },
-        "example": "qa-dev"
+        "example": "4312"
       },
-      "x-debug-mode": {
-        "name": "x-debug-mode",
+      "x-client-region": {
+        "name": "x-client-region",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "true"
+          "example": "eu-west-1"
         },
-        "example": "true"
+        "example": "eu-west-1"
       },
-      "x-feature-flag": {
-        "name": "x-feature-flag",
+      "x-experiment-id": {
+        "name": "x-experiment-id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "drift-test"
+          "example": "exp-77"
         },
-        "example": "drift-test"
+        "example": "exp-77"
       },
       "x-client-version": {
         "name": "x-client-version",
@@ -342,10 +327,10 @@
         "style": "simple",
         "explode": false,
         "schema": {
-          "type": "integer",
-          "example": 4
+          "type": "string",
+          "example": "4"
         },
-        "example": 4
+        "example": "4"
       },
       "x-correlation-id": {
         "name": "x-correlation-id",
@@ -355,9 +340,21 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "c522a890-cb90-4bfb-b053-803e6ccf82b0"
+          "example": "26f0f718-7ace-4bb9-96a2-820b1899f193"
         },
-        "example": "c522a890-cb90-4bfb-b053-803e6ccf82b0"
+        "example": "26f0f718-7ace-4bb9-96a2-820b1899f193"
+      },
+      "x-request-source": {
+        "name": "x-request-source",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "mobile-ios"
+        },
+        "example": "mobile-ios"
       },
       "x-request-priority": {
         "name": "x-request-priority",
@@ -387,38 +384,8 @@
       }
     },
     "headers": {
-      "etag": {
-        "description": "A unique identifier for the version of the resource, allowing clients to check for changes.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "W/\"abc123\""
-        },
-        "example": "W/\"abc123\""
-      },
-      "x-served-by": {
-        "description": "Indicates the server that handled the request, useful for tracking and debugging.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "node-7"
-        },
-        "example": "node-7"
-      },
-      "x-cache-status": {
-        "description": "Shows the cache status of the response, indicating whether the resource was retrieved from the cache or fetched from the origin.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "MISS"
-        },
-        "example": "MISS"
-      },
       "x-processing-time": {
-        "description": "Indicates the time taken to process the request in milliseconds.",
+        "description": "The time taken to process the request, measured in milliseconds.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -427,21 +394,31 @@
         },
         "example": 76
       },
-      "x-ratelimit-remaining": {
-        "description": "The number of requests remaining in the current rate limit window.",
+      "x-content-type-options": {
+        "description": "Indicates the content type options for the response, which can prevent content type sniffing by browsers.",
         "style": "simple",
         "explode": false,
         "schema": {
-          "type": "integer",
-          "example": 99
+          "type": "string",
+          "example": "nosniff"
         },
-        "example": 99
+        "example": "nosniff"
+      },
+      "strict-transport-security": {
+        "description": "Specifies the duration for which web browsers should enforce secure (HTTP over SSL/TLS) connections to the server.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "max-age=31536000"
+        },
+        "example": "max-age=31536000"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses a bearer authentication mechanism. Clients must include an HTTP Authorization header with a 'Bearer' token to access protected resources.",
+        "description": "This security scheme uses Bearer authentication. Clients must include a Bearer token in the Authorization header when making requests to protected endpoints.",
         "scheme": "bearer"
       }
     }
