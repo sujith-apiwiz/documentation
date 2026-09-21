@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-driftdoc-List Hotel Rooms Searchs-v1-spec",
-    "description": "The Hotel Room Search API allows consumers to query available hotel rooms based on specific search criteria, such as location, dates, and amenities. This API facilitates seamless integration for travel agencies, booking platforms, and hotels looking to enhance their room inventory visibility. Users can retrieve detailed information about various accommodation options to make informed decisions. Ideal for developers creating applications in travel and hospitality sectors, it streamlines the process of searching and comparing hotel rooms efficiently.",
+    "description": "The Hotel Room Search API enables users to efficiently find available hotel rooms based on specified criteria. It serves as a resource for hotel aggregators, travel agencies, and booking platforms seeking to offer room availability to their customers. By utilizing this API, developers can access real-time search functionalities to enhance user experiences during travel planning. Typical use cases include integrating room search into mobile applications, websites, and other digital platforms.",
     "version": "1.0"
   },
   "servers": [
@@ -31,10 +31,10 @@
     "/hotel/v1/rooms/search": {
       "get": {
         "tags": [
-          "Room Management"
+          "Rooms"
         ],
         "summary": "Search for available rooms.",
-        "description": "This endpoint allows users to search for available rooms based on specified criteria. Utilize this functionality to find suitable rooms that match the user's preferences and availability.",
+        "description": "This endpoint allows users to search for rooms based on specified criteria such as date, location, and type. It retrieves a list of rooms that are available for booking.",
         "operationId": "listHotelRoomsSearchs",
         "parameters": [
           {
@@ -47,10 +47,10 @@
             "$ref": "#/components/parameters/dateTo"
           },
           {
-            "$ref": "#/components/parameters/expand"
+            "$ref": "#/components/parameters/region"
           },
           {
-            "$ref": "#/components/parameters/fields"
+            "$ref": "#/components/parameters/search"
           },
           {
             "$ref": "#/components/parameters/sortBy"
@@ -59,34 +59,25 @@
             "$ref": "#/components/parameters/status"
           },
           {
-            "$ref": "#/components/parameters/currency"
-          },
-          {
             "$ref": "#/components/parameters/dateFrom"
-          },
-          {
-            "$ref": "#/components/parameters/timezone"
           },
           {
             "$ref": "#/components/parameters/sortOrder"
           },
           {
-            "$ref": "#/components/parameters/x-app-build"
+            "$ref": "#/components/parameters/includeDeleted"
           },
           {
-            "$ref": "#/components/parameters/x-client-region"
+            "$ref": "#/components/parameters/x-tenant-id"
           },
           {
-            "$ref": "#/components/parameters/x-experiment-id"
+            "$ref": "#/components/parameters/x-feature-flag"
           },
           {
             "$ref": "#/components/parameters/x-client-version"
           },
           {
             "$ref": "#/components/parameters/x-correlation-id"
-          },
-          {
-            "$ref": "#/components/parameters/x-request-source"
           },
           {
             "$ref": "#/components/parameters/x-request-priority"
@@ -96,7 +87,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to specify search criteria for retrieving room information. Clients can provide various parameters to narrow down the search results based on attributes such as room type, price range, availability, and more.",
+          "description": "The request body for searching rooms. It should contain the search criteria in JSON format, allowing for precise filtering of room data based on specified parameters.",
           "content": {
             "application/json": {
               "schema": {
@@ -107,16 +98,22 @@
         },
         "responses": {
           "200": {
-            "description": "Search request completed successfully, returning the requested room data.",
+            "description": "Successful retrieval of available rooms based on search criteria.",
             "headers": {
+              "etag": {
+                "$ref": "#/components/headers/etag"
+              },
+              "x-served-by": {
+                "$ref": "#/components/headers/x-served-by"
+              },
+              "x-cache-status": {
+                "$ref": "#/components/headers/x-cache-status"
+              },
               "x-processing-time": {
                 "$ref": "#/components/headers/x-processing-time"
               },
-              "x-content-type-options": {
-                "$ref": "#/components/headers/x-content-type-options"
-              },
-              "strict-transport-security": {
-                "$ref": "#/components/headers/strict-transport-security"
+              "x-ratelimit-remaining": {
+                "$ref": "#/components/headers/x-ratelimit-remaining"
               }
             },
             "content": {
@@ -144,84 +141,83 @@
     "schemas": {
       "ListHotelRoomsSearchsRequest": {
         "type": "string",
-        "description": "This schema represents the request body for searching rooms in the GET operation. The body is expected to be a string containing the search query.",
+        "description": "The request body for the GET operation for searching rooms. This schema is expected to be a string representation of the search criteria.",
         "example": "{}"
       },
       "ListHotelRoomsSearchsResponse_200": {
-        "title": "Rooms Search Response",
         "type": "object",
         "properties": {
           "status": {
-            "type": "string",
-            "description": "The status of the response.",
-            "example": "OK"
+            "type": "boolean",
+            "description": "Indicates whether the operation was successful.",
+            "example": true
           },
           "items": {
             "type": "array",
-            "description": "A list of room items returned by the search.",
+            "description": "A list of room objects returned from the search.",
             "example": [
               {
                 "id": "*************",
-                "state": "CONFIRMED",
-                "updatedAt": "2026-09-21T09:00:00+00:00",
-                "rating": "4",
-                "tags": {
-                  "tier": "premium"
-                }
+                "state": "PENDING",
+                "updatedAt": "2026-01-10T22:24:48+00:00",
+                "priorityScore": 1.5,
+                "flags": [
+                  "new"
+                ]
               },
               {
                 "id": "*************",
-                "state": "CONFIRMED",
-                "updatedAt": "2026-09-21T09:00:00+00:00",
-                "rating": "5",
-                "tags": {
-                  "tier": "premium"
-                }
+                "state": "COMPLETED",
+                "updatedAt": "2025-12-16T20:33:46+00:00",
+                "priorityScore": 1.5,
+                "flags": [
+                  "new"
+                ]
               },
               {
                 "id": "*************",
-                "state": "CONFIRMED",
-                "updatedAt": "2026-09-21T09:00:00+00:00",
-                "rating": "4",
-                "tags": {
-                  "tier": "premium"
-                }
+                "state": "PENDING",
+                "updatedAt": "2025-12-22T19:48:54+00:00",
+                "priorityScore": 1.5,
+                "flags": [
+                  "new"
+                ]
               },
               {
                 "id": "*************",
-                "state": "CONFIRMED",
-                "updatedAt": "2026-09-21T09:00:00+00:00",
-                "rating": "5",
-                "tags": {
-                  "tier": "premium"
-                }
+                "state": "COMPLETED",
+                "updatedAt": "2025-12-25T20:23:10+00:00",
+                "priorityScore": 1.5,
+                "flags": [
+                  "new"
+                ]
               },
               {
                 "id": "*************",
-                "state": "CONFIRMED",
-                "updatedAt": "2026-09-21T09:00:00+00:00",
-                "rating": "4",
-                "tags": {
-                  "tier": "premium"
-                }
+                "state": "COMPLETED",
+                "updatedAt": "2025-12-20T05:44:38+00:00",
+                "priorityScore": 1.5,
+                "flags": [
+                  "new"
+                ]
               },
               {
                 "id": "*************",
-                "state": "CONFIRMED",
-                "updatedAt": "2026-09-21T09:00:00+00:00",
-                "rating": "5",
-                "tags": {
-                  "tier": "premium"
-                }
+                "state": "PENDING",
+                "updatedAt": "2026-01-01T08:07:22+00:00",
+                "priorityScore": 1.5,
+                "flags": [
+                  "new"
+                ]
               },
               {
                 "id": "*************",
-                "state": "CONFIRMED",
-                "updatedAt": "2026-09-21T09:00:00+00:00",
-                "rating": "4",
-                "tags": {
-                  "tier": "premium"
-                }
+                "state": "COMPLETED",
+                "updatedAt": "2025-12-31T04:05:46+00:00",
+                "priorityScore": 1.5,
+                "flags": [
+                  "new"
+                ]
               }
             ],
             "items": {
@@ -229,191 +225,143 @@
             }
           },
           "totalCount": {
-            "type": "string",
-            "description": "The total number of items available in the search.",
-            "example": "7"
+            "type": "integer",
+            "description": "Total number of room items available.",
+            "format": "int32",
+            "example": 7
           },
           "page": {
             "type": "integer",
-            "description": "The current page number of the results.",
+            "description": "Current page number of the results.",
             "format": "int32",
             "example": 5
           },
           "pageSize": {
             "type": "integer",
-            "description": "The number of items per page.",
+            "description": "Number of items per page.",
             "format": "int32",
             "example": 25
           },
-          "pagination": {
-            "$ref": "#/components/schemas/Pagination"
-          },
-          "links": {
-            "$ref": "#/components/schemas/Links"
-          },
-          "requestId": {
+          "nextCursor": {
             "type": "string",
-            "description": "A unique identifier for the request.",
-            "example": "7a2a0904-a4ad-4e77-9610-47d8ed33b6e0"
+            "description": "Cursor for pagination, to fetch the next set of results.",
+            "example": "abc"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "Timestamp when the response was generated.",
+            "example": "2026-09-22T10:00:00+00:00"
           }
         },
-        "description": "A response object containing the results of a rooms search operation.",
+        "description": "Schema representing the response of the GET operations for room searches.",
         "example": {
-          "status": "OK",
+          "status": true,
           "items": [
             {
               "id": "*************",
-              "state": "CONFIRMED",
-              "updatedAt": "2026-09-21T09:00:00+00:00",
-              "rating": "4",
-              "tags": {
-                "tier": "premium"
-              }
+              "state": "PENDING",
+              "updatedAt": "2026-01-10T22:24:48+00:00",
+              "priorityScore": 1.5,
+              "flags": [
+                "new"
+              ]
             },
             {
               "id": "*************",
-              "state": "CONFIRMED",
-              "updatedAt": "2026-09-21T09:00:00+00:00",
-              "rating": "5",
-              "tags": {
-                "tier": "premium"
-              }
+              "state": "COMPLETED",
+              "updatedAt": "2025-12-16T20:33:46+00:00",
+              "priorityScore": 1.5,
+              "flags": [
+                "new"
+              ]
             },
             {
               "id": "*************",
-              "state": "CONFIRMED",
-              "updatedAt": "2026-09-21T09:00:00+00:00",
-              "rating": "4",
-              "tags": {
-                "tier": "premium"
-              }
+              "state": "PENDING",
+              "updatedAt": "2025-12-22T19:48:54+00:00",
+              "priorityScore": 1.5,
+              "flags": [
+                "new"
+              ]
             },
             {
               "id": "*************",
-              "state": "CONFIRMED",
-              "updatedAt": "2026-09-21T09:00:00+00:00",
-              "rating": "5",
-              "tags": {
-                "tier": "premium"
-              }
+              "state": "COMPLETED",
+              "updatedAt": "2025-12-25T20:23:10+00:00",
+              "priorityScore": 1.5,
+              "flags": [
+                "new"
+              ]
             },
             {
               "id": "*************",
-              "state": "CONFIRMED",
-              "updatedAt": "2026-09-21T09:00:00+00:00",
-              "rating": "4",
-              "tags": {
-                "tier": "premium"
-              }
+              "state": "COMPLETED",
+              "updatedAt": "2025-12-20T05:44:38+00:00",
+              "priorityScore": 1.5,
+              "flags": [
+                "new"
+              ]
             },
             {
               "id": "*************",
-              "state": "CONFIRMED",
-              "updatedAt": "2026-09-21T09:00:00+00:00",
-              "rating": "5",
-              "tags": {
-                "tier": "premium"
-              }
+              "state": "PENDING",
+              "updatedAt": "2026-01-01T08:07:22+00:00",
+              "priorityScore": 1.5,
+              "flags": [
+                "new"
+              ]
             },
             {
               "id": "*************",
-              "state": "CONFIRMED",
-              "updatedAt": "2026-09-21T09:00:00+00:00",
-              "rating": "4",
-              "tags": {
-                "tier": "premium"
-              }
+              "state": "COMPLETED",
+              "updatedAt": "2025-12-31T04:05:46+00:00",
+              "priorityScore": 1.5,
+              "flags": [
+                "new"
+              ]
             }
           ],
-          "totalCount": "7",
+          "totalCount": 7,
           "page": 5,
           "pageSize": 25,
-          "pagination": {
-            "hasNext": true,
-            "cursor": "xyz"
-          },
-          "links": {
-            "self": "/hotel/v1/rooms",
-            "next": "/hotel/v1/rooms?page=2"
-          },
-          "requestId": "7a2a0904-a4ad-4e77-9610-47d8ed33b6e0"
+          "nextCursor": "abc",
+          "generatedAt": "2026-09-22T10:00:00+00:00"
         }
       },
       "RoomItem": {
-        "title": "Room Item",
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
-            "description": "The unique identifier for the room.",
-            "example": "room-abc"
+            "description": "Unique identifier for the room.",
+            "example": "string"
           },
           "state": {
             "type": "string",
-            "description": "The current state or availability of the room.",
-            "example": "available"
+            "description": "Current state of the room.",
+            "example": "string"
           },
           "updatedAt": {
             "type": "string",
-            "description": "The timestamp indicating when the room was last updated.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "Timestamp when the room information was last updated.",
+            "example": "string"
           },
-          "rating": {
-            "type": "string",
-            "description": "The rating of the room.",
-            "example": "4.5"
+          "priorityScore": {
+            "type": "number",
+            "description": "Priority score for the room, indicating its importance.",
+            "example": 0.0
           },
-          "tags": {
-            "$ref": "#/components/schemas/RoomTags"
+          "flags": {
+            "type": "array",
+            "description": "List of flags associated with the room.",
+            "items": {
+              "type": "string",
+              "description": "Flag indicating certain characteristics of the room.",
+              "example": "string"
+            }
           }
         },
-        "description": "An individual room item returned from the rooms search."
-      },
-      "RoomTags": {
-        "title": "Room Tags",
-        "type": "object",
-        "properties": {
-          "tier": {
-            "type": "string",
-            "description": "The tier category of the room.",
-            "example": "premium"
-          }
-        },
-        "description": "Tags associated with a room."
-      },
-      "Pagination": {
-        "title": "Pagination Information",
-        "type": "object",
-        "properties": {
-          "hasNext": {
-            "type": "boolean",
-            "description": "Indicates if there is a next page of results.",
-            "example": false
-          },
-          "cursor": {
-            "type": "string",
-            "description": "The cursor to use for fetching the next page of results.",
-            "example": "cursor-xyz"
-          }
-        },
-        "description": "Pagination details for navigating through the results."
-      },
-      "Links": {
-        "title": "Links Information",
-        "type": "object",
-        "properties": {
-          "self": {
-            "type": "string",
-            "description": "The URL to the current page of results.",
-            "example": "https://api.example.com/rooms?page=1"
-          },
-          "next": {
-            "type": "string",
-            "description": "The URL to the next page of results, if available.",
-            "example": "https://api.example.com/rooms?page=2"
-          }
-        },
-        "description": "Links to navigate through the pagination."
+        "description": "Schema representing a room item in the response."
       }
     },
     "parameters": {
@@ -436,10 +384,10 @@
         "style": "form",
         "explode": true,
         "schema": {
-          "type": "string",
-          "example": "10"
+          "type": "integer",
+          "example": 10
         },
-        "example": "10"
+        "example": 10
       },
       "dateTo": {
         "name": "dateTo",
@@ -453,29 +401,29 @@
         },
         "example": "2026-01-11"
       },
-      "expand": {
-        "name": "expand",
+      "region": {
+        "name": "region",
         "in": "query",
         "required": false,
         "style": "form",
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "pricing,photos"
+          "example": "EU"
         },
-        "example": "pricing,photos"
+        "example": "EU"
       },
-      "fields": {
-        "name": "fields",
+      "search": {
+        "name": "search",
         "in": "query",
         "required": false,
         "style": "form",
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "id,state"
+          "example": "Johnson"
         },
-        "example": "id,state"
+        "example": "Johnson"
       },
       "sortBy": {
         "name": "sortBy",
@@ -501,18 +449,6 @@
         },
         "example": "ACTIVE"
       },
-      "currency": {
-        "name": "currency",
-        "in": "query",
-        "required": false,
-        "style": "form",
-        "explode": true,
-        "schema": {
-          "type": "string",
-          "example": "EUR"
-        },
-        "example": "EUR"
-      },
       "dateFrom": {
         "name": "dateFrom",
         "in": "query",
@@ -524,18 +460,6 @@
           "example": "2025-12-15"
         },
         "example": "2025-12-15"
-      },
-      "timezone": {
-        "name": "timezone",
-        "in": "query",
-        "required": false,
-        "style": "form",
-        "explode": true,
-        "schema": {
-          "type": "string",
-          "example": "Europe/London"
-        },
-        "example": "Europe/London"
       },
       "sortOrder": {
         "name": "sortOrder",
@@ -549,41 +473,41 @@
         },
         "example": "asc"
       },
-      "x-app-build": {
-        "name": "x-app-build",
-        "in": "header",
+      "includeDeleted": {
+        "name": "includeDeleted",
+        "in": "query",
         "required": false,
-        "style": "simple",
-        "explode": false,
+        "style": "form",
+        "explode": true,
         "schema": {
-          "type": "string",
-          "example": "4312"
+          "type": "boolean",
+          "example": true
         },
-        "example": "4312"
+        "example": true
       },
-      "x-client-region": {
-        "name": "x-client-region",
+      "x-tenant-id": {
+        "name": "x-tenant-id",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "eu-west-1"
+          "example": "qa-dev"
         },
-        "example": "eu-west-1"
+        "example": "qa-dev"
       },
-      "x-experiment-id": {
-        "name": "x-experiment-id",
+      "x-feature-flag": {
+        "name": "x-feature-flag",
         "in": "header",
         "required": false,
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "exp-77"
+          "example": "drift-test"
         },
-        "example": "exp-77"
+        "example": "drift-test"
       },
       "x-client-version": {
         "name": "x-client-version",
@@ -592,10 +516,10 @@
         "style": "simple",
         "explode": false,
         "schema": {
-          "type": "string",
-          "example": "1"
+          "type": "integer",
+          "example": 1
         },
-        "example": "1"
+        "example": 1
       },
       "x-correlation-id": {
         "name": "x-correlation-id",
@@ -605,21 +529,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "eef98374-98ac-4f27-a4cc-6612d80d51a9"
+          "example": "549ed4c3-2003-44ef-8d32-074ecb0505f4"
         },
-        "example": "eef98374-98ac-4f27-a4cc-6612d80d51a9"
-      },
-      "x-request-source": {
-        "name": "x-request-source",
-        "in": "header",
-        "required": false,
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "mobile-ios"
-        },
-        "example": "mobile-ios"
+        "example": "549ed4c3-2003-44ef-8d32-074ecb0505f4"
       },
       "x-request-priority": {
         "name": "x-request-priority",
@@ -649,8 +561,35 @@
       }
     },
     "headers": {
+      "etag": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "W/\"abc123\""
+        },
+        "example": "W/\"abc123\""
+      },
+      "x-served-by": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "node-7"
+        },
+        "example": "node-7"
+      },
+      "x-cache-status": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "MISS"
+        },
+        "example": "MISS"
+      },
       "x-processing-time": {
-        "description": "Indicates the time taken to process the request, measured in milliseconds.",
+        "description": "Indicates the time taken to process the request, in milliseconds. A value of 0 means the request was processed instantaneously.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -659,31 +598,21 @@
         },
         "example": 172
       },
-      "x-content-type-options": {
-        "description": "This header tells browsers not to mime-sniff the content type, ensuring that the content is only interpreted as the specified type.",
+      "x-ratelimit-remaining": {
+        "description": "Represents the number of API calls remaining in the current rate limit window. A value of 0 means that the rate limit has been reached.",
         "style": "simple",
         "explode": false,
         "schema": {
-          "type": "string",
-          "example": "nosniff"
+          "type": "integer",
+          "example": 99
         },
-        "example": "nosniff"
-      },
-      "strict-transport-security": {
-        "description": "Specifies the time, in seconds, that browsers should only connect to the server using HTTPS to enhance security.",
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "max-age=31536000"
-        },
-        "example": "max-age=31536000"
+        "example": 99
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This authentication scheme requires a valid bearer token in the request header. Users must include their bearer token to access secured endpoints, ensuring secure and authorized access to the API.",
+        "description": "This security scheme uses bearer tokens for authentication. Clients must include a valid bearer token in the Authorization header of their requests to gain access to secured endpoints.",
         "scheme": "bearer"
       }
     }
