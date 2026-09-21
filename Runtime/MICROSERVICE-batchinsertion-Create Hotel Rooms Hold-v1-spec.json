@@ -2,13 +2,12 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-batchinsertion-Create Hotel Rooms Hold-v1-spec",
-    "description": "The Hotel Room Hold API allows users to reserve a block of hotel rooms for specific dates, ensuring availability for guests. This endpoint facilitates bulk room holds, catering to event planners, corporations, and travel agencies that require a large number of accommodations. By utilizing this API, clients can manage reservations efficiently and streamline the booking process for group travel. The operation supports various parameters to customize the room type, dates, and guest details, making it an essential tool for hospitality management.",
+    "description": "The Hotel Room Hold API enables businesses to reserve multiple hotel rooms for customers efficiently. This operation allows clients to place holds on specified rooms, ensuring availability for guests before confirmation of their stay. Typical consumers include hotel management systems, travel agencies, and event coordinators who need to manage group bookings seamlessly. By utilizing this API, users can enhance their booking processes and improve customer satisfaction.",
     "version": "1.0"
   },
   "servers": [
     {
       "url": "https://qa-dev-ieia.apiwiz.io",
-      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
@@ -19,7 +18,6 @@
     },
     {
       "url": "https://qa-data-gujl.apiwiz.io",
-      "description": "batchinsertion",
       "variables": {},
       "x-schema": "https://",
       "x-name": "batchinsertion",
@@ -35,15 +33,42 @@
         "tags": [
           "Room Management"
         ],
-        "summary": "Hold a room for reservation.",
-        "description": "This endpoint allows you to hold a room for a specified period, ensuring that it is reserved for a user until the final booking is completed. The operation is essential for managing reservations and avoiding overbooking.",
+        "summary": "Holds a room for a specified period.",
+        "description": "This endpoint allows you to reserve a room by holding it for a specified duration. Users can specify the room details and the period for which it needs to be held. If successful, the system will confirm the reservation.",
         "operationId": "createHotelRoomsHold",
         "parameters": [
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/traceLevel"
+          },
           {
             "$ref": "#/components/parameters/validateOnly"
           },
           {
+            "$ref": "#/components/parameters/includeDeleted"
+          },
+          {
+            "$ref": "#/components/parameters/x-tenant-id"
+          },
+          {
+            "$ref": "#/components/parameters/x-debug-mode"
+          },
+          {
+            "$ref": "#/components/parameters/x-feature-flag"
+          },
+          {
             "$ref": "#/components/parameters/x-client-version"
+          },
+          {
+            "$ref": "#/components/parameters/x-correlation-id"
+          },
+          {
+            "$ref": "#/components/parameters/x-idempotency-key"
           },
           {
             "$ref": "#/components/parameters/x-request-priority"
@@ -53,7 +78,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to hold a room. Ensure all required fields are provided to successfully create a hold.",
+          "description": "Holds a room based on the provided details in the request body. Ensure all necessary parameters are included to successfully hold the room.",
           "content": {
             "application/json": {
               "schema": {
@@ -64,10 +89,22 @@
         },
         "responses": {
           "200": {
-            "description": "The request was completed successfully, and the room has been held.",
+            "description": "The room hold request was processed successfully.",
             "headers": {
+              "etag": {
+                "$ref": "#/components/headers/etag"
+              },
+              "x-served-by": {
+                "$ref": "#/components/headers/x-served-by"
+              },
+              "x-cache-status": {
+                "$ref": "#/components/headers/x-cache-status"
+              },
               "x-processing-time": {
                 "$ref": "#/components/headers/x-processing-time"
+              },
+              "x-ratelimit-remaining": {
+                "$ref": "#/components/headers/x-ratelimit-remaining"
               }
             },
             "content": {
@@ -80,7 +117,11 @@
           }
         },
         "callbacks": {},
-        "security": [],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "servers": []
       },
       "servers": [],
@@ -94,21 +135,21 @@
         "properties": {
           "requestId": {
             "type": "string",
-            "description": "A unique identifier for the request.",
-            "example": "472159ec-fe57-4952-aa21-bead3c04f3de"
+            "description": "The unique identifier for the request.",
+            "example": "b3933cef-e168-4d69-b9b2-e94d3f8a1aac"
           },
           "referenceNumber": {
             "type": "string",
-            "description": "A reference number associated with the request.",
+            "description": "A reference number for tracking purposes.",
             "example": "HOTEL-10004"
           },
           "customer": {
-            "description": "Details of the customer making the request.",
+            "description": "Information about the customer making the request.",
             "$ref": "#/components/schemas/Customer"
           },
           "resource": {
             "type": "string",
-            "description": "The resource that is being requested to be held.",
+            "description": "The resource associated with the request.",
             "example": "rooms/hold"
           },
           "priority": {
@@ -124,50 +165,82 @@
           },
           "currency": {
             "type": "string",
-            "description": "The currency in which the amount is specified.",
+            "description": "The currency of the amount.",
             "example": "EUR"
           },
           "notificationRequired": {
             "type": "boolean",
-            "description": "Indicates whether notifications are required for the request.",
+            "description": "Indicates if notifications are required for this request.",
             "example": false
           },
           "requestedAt": {
             "type": "string",
-            "description": "The timestamp when the request was made.",
-            "example": "2025-12-22T20:20:39+00:00"
+            "description": "Timestamp when the request was made.",
+            "example": "2026-09-20T20:20:39+00:00"
           },
           "channel": {
             "type": "string",
-            "description": "The communication channel used for the request.",
+            "description": "The communication channel for the request.",
             "example": "MOBILE_APP"
           },
           "recordIndex": {
             "type": "integer",
-            "description": "An index or identifier for the record associated with the request.",
+            "description": "Index for the record related to the request.",
             "format": "int32",
             "example": 4
+          },
+          "promoCode": {
+            "type": "string",
+            "description": "Promotional code applied to the request.",
+            "example": "AUTUMN26"
+          },
+          "guests": {
+            "description": "Details about the guests included in the request.",
+            "$ref": "#/components/schemas/Guests"
+          },
+          "specialRequests": {
+            "type": "array",
+            "description": "List of special requests made by the customer.",
+            "example": [
+              "late-checkin",
+              "high-floor"
+            ],
+            "items": {
+              "type": "string",
+              "description": "A special request."
+            }
           }
         },
-        "description": "Schema for the request body of the POST operation to hold a resource. It includes customer details, request metadata, and resource information.",
+        "description": "Schema for holding room request operations.",
         "example": {
-          "requestId": "472159ec-fe57-4952-aa21-bead3c04f3de",
+          "requestId": "b3933cef-e168-4d69-b9b2-e94d3f8a1aac",
           "referenceNumber": "HOTEL-10004",
           "customer": {
             "firstName": "Paul",
             "lastName": "Smith",
             "email": "paul.smith700@example.com",
             "vipCustomer": false,
-            "customerAge": 65
+            "customerAge": 65,
+            "loyaltyTier": "GOLD",
+            "phone": "+44 20 7946 0000"
           },
           "resource": "rooms/hold",
           "priority": 1,
           "amount": 344.45,
           "currency": "EUR",
           "notificationRequired": false,
-          "requestedAt": "2025-12-22T20:20:39+00:00",
+          "requestedAt": "2026-09-20T20:20:39+00:00",
           "channel": "MOBILE_APP",
-          "recordIndex": 4
+          "recordIndex": 4,
+          "promoCode": "AUTUMN26",
+          "guests": {
+            "adults": 2,
+            "children": 1
+          },
+          "specialRequests": [
+            "late-checkin",
+            "high-floor"
+          ]
         }
       },
       "Customer": {
@@ -176,34 +249,61 @@
           "firstName": {
             "type": "string",
             "description": "The first name of the customer.",
-            "example": "string"
+            "example": "John"
           },
           "lastName": {
             "type": "string",
             "description": "The last name of the customer.",
-            "example": "string"
+            "example": "Doe"
           },
           "email": {
             "type": "string",
             "description": "The email address of the customer.",
-            "example": "string"
+            "example": "john.doe@example.com"
           },
           "vipCustomer": {
             "type": "boolean",
-            "description": "Indicates whether the customer is a VIP.",
+            "description": "Indicates if the customer is a VIP.",
             "example": false
           },
           "customerAge": {
             "type": "integer",
             "description": "The age of the customer.",
             "format": "int32",
-            "example": 0
+            "example": 30
+          },
+          "loyaltyTier": {
+            "type": "string",
+            "description": "The loyalty tier of the customer.",
+            "example": "Gold"
+          },
+          "phone": {
+            "type": "string",
+            "description": "The phone number of the customer.",
+            "example": "+123456789"
           }
         },
         "description": "Schema representing customer details."
       },
+      "Guests": {
+        "type": "object",
+        "properties": {
+          "adults": {
+            "type": "integer",
+            "description": "The number of adults.",
+            "format": "int32",
+            "example": 2
+          },
+          "children": {
+            "type": "integer",
+            "description": "The number of children.",
+            "format": "int32",
+            "example": 1
+          }
+        },
+        "description": "Schema representing the number of guests in the request."
+      },
       "CreateHotelRoomsHoldResponse_200": {
-        "title": "Hold Operation Response",
         "type": "object",
         "properties": {
           "status": {
@@ -213,13 +313,13 @@
           },
           "referenceNumber": {
             "type": "string",
-            "description": "A unique identifier for the operation request.",
+            "description": "A unique reference number for the request.",
             "example": "HOTEL-10004"
           },
           "resultId": {
             "type": "string",
-            "description": "The identifier of the result produced by the operation.",
-            "example": "72138cef-f3e1-4e02-b402-4c96c723f8b5"
+            "description": "An identifier for the result of the operation.",
+            "example": "a5820e02-349d-4063-bf51-30b5f970574c"
           },
           "state": {
             "type": "string",
@@ -228,9 +328,9 @@
           },
           "processingTimeMs": {
             "type": "integer",
-            "description": "Time taken to process the operation in milliseconds.",
+            "description": "The time taken to process the request in milliseconds.",
             "format": "int32",
-            "example": 768
+            "example": 856
           },
           "message": {
             "type": "string",
@@ -238,48 +338,124 @@
             "example": "Request processed successfully"
           },
           "audit": {
+            "description": "Details about the audit of the operation.",
             "$ref": "#/components/schemas/AuditInfo"
+          },
+          "warnings": {
+            "type": "array",
+            "description": "A list of warnings associated with the operation.",
+            "example": [
+              "deprecated-field-used"
+            ],
+            "items": {
+              "type": "string",
+              "example": "Warning message."
+            }
+          },
+          "meta": {
+            "description": "Meta information related to the operation.",
+            "$ref": "#/components/schemas/MetaInfo"
           }
         },
-        "description": "Response schema for the Hold operation indicating the success status and additional information.",
+        "description": "Response schema for the POST operation to hold rooms.",
         "example": {
           "status": true,
           "referenceNumber": "HOTEL-10004",
-          "resultId": "72138cef-f3e1-4e02-b402-4c96c723f8b5",
+          "resultId": "a5820e02-349d-4063-bf51-30b5f970574c",
           "state": "FAILED",
-          "processingTimeMs": 768,
+          "processingTimeMs": 856,
           "message": "Request processed successfully",
           "audit": {
             "createdBy": "SYSTEM",
-            "createdAt": "2025-12-17T16:51:38+00:00",
-            "automated": true
+            "createdAt": "2026-09-20T16:53:46+00:00",
+            "automated": true,
+            "source": "batch"
+          },
+          "warnings": [
+            "deprecated-field-used"
+          ],
+          "meta": {
+            "region": "EU",
+            "cacheHit": false
           }
         }
       },
       "AuditInfo": {
-        "title": "Audit Information",
         "type": "object",
         "properties": {
           "createdBy": {
             "type": "string",
-            "description": "Identifier of the user or system that created the record.",
-            "example": "string"
+            "description": "The user who created the operation."
           },
           "createdAt": {
             "type": "string",
-            "description": "Timestamp indicating when the record was created.",
-            "example": "string"
+            "description": "The timestamp when the operation was created."
           },
           "automated": {
             "type": "boolean",
-            "description": "Indicates whether the operation was carried out automatically by the system.",
+            "description": "Indicates whether the operation was automated.",
+            "example": false
+          },
+          "source": {
+            "type": "string",
+            "description": "The source of the operation's initiation."
+          }
+        },
+        "description": "Information about the audit trail for the operation."
+      },
+      "MetaInfo": {
+        "type": "object",
+        "properties": {
+          "region": {
+            "type": "string",
+            "description": "The geographical region where the operation was processed."
+          },
+          "cacheHit": {
+            "type": "boolean",
+            "description": "Indicates whether the operation result was retrieved from cache.",
             "example": false
           }
         },
-        "description": "Information regarding the audit trail of the operation."
+        "description": "Metadata associated with the operation."
       }
     },
     "parameters": {
+      "locale": {
+        "name": "locale",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "en-GB"
+        },
+        "example": "en-GB"
+      },
+      "region": {
+        "name": "region",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "EU"
+        },
+        "example": "EU"
+      },
+      "traceLevel": {
+        "name": "traceLevel",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "debug"
+        },
+        "example": "debug"
+      },
       "validateOnly": {
         "name": "validateOnly",
         "in": "query",
@@ -292,6 +468,54 @@
         },
         "example": false
       },
+      "includeDeleted": {
+        "name": "includeDeleted",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "boolean",
+          "example": true
+        },
+        "example": true
+      },
+      "x-tenant-id": {
+        "name": "x-tenant-id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "qa-dev"
+        },
+        "example": "qa-dev"
+      },
+      "x-debug-mode": {
+        "name": "x-debug-mode",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "true"
+        },
+        "example": "true"
+      },
+      "x-feature-flag": {
+        "name": "x-feature-flag",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "drift-test"
+        },
+        "example": "drift-test"
+      },
       "x-client-version": {
         "name": "x-client-version",
         "in": "header",
@@ -303,6 +527,30 @@
           "example": 2
         },
         "example": 2
+      },
+      "x-correlation-id": {
+        "name": "x-correlation-id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "70ed440e-ebe8-41a9-bbd5-bac0868e4402"
+        },
+        "example": "70ed440e-ebe8-41a9-bbd5-bac0868e4402"
+      },
+      "x-idempotency-key": {
+        "name": "x-idempotency-key",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "2ae76ca5-4857-4e31-a669-18f7238f817f"
+        },
+        "example": "2ae76ca5-4857-4e31-a669-18f7238f817f"
       },
       "x-request-priority": {
         "name": "x-request-priority",
@@ -332,8 +580,35 @@
       }
     },
     "headers": {
+      "etag": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "W/\"abc123\""
+        },
+        "example": "W/\"abc123\""
+      },
+      "x-served-by": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "node-7"
+        },
+        "example": "node-7"
+      },
+      "x-cache-status": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "MISS"
+        },
+        "example": "MISS"
+      },
       "x-processing-time": {
-        "description": "Indicates the amount of time (in milliseconds) that the server spent processing the request.",
+        "description": "The time taken to process the request, measured in milliseconds. A lower value indicates a more efficient processing time.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -341,6 +616,23 @@
           "example": 378
         },
         "example": 378
+      },
+      "x-ratelimit-remaining": {
+        "description": "The number of remaining requests allowed for the current time window. This limit resets after a certain period.",
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "integer",
+          "example": 99
+        },
+        "example": 99
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "This security scheme uses Bearer authentication. A bearer token is a type of access token that is issued by an authorization server. It is sent in the 'Authorization' header in HTTP requests to access protected resources.",
+        "scheme": "bearer"
       }
     }
   }
