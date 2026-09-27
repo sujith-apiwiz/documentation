@@ -2,28 +2,30 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-driftdoc-List Hotel Rooms Pricings-v1-spec",
-    "description": "The Hotel Rooms Pricing API provides accurate pricing information for various hotel room types. This endpoint allows users to retrieve the latest pricing data, enabling travel agencies, booking platforms, and end-users to make informed decisions. It supports integration with systems that require up-to-date hotel pricing for displaying options to potential guests. Use cases include price comparison, budget planning for travelers, and dynamic pricing strategies for hotel operators.",
+    "description": "The Hotel Room Pricing Retrieval API provides a straightforward way for users to access current pricing information for hotel rooms. This API allows businesses, travel agencies, and developers to fetch detailed pricing data for various hotel rooms, enabling them to offer accurate booking information to customers. It supports efficient integration with applications that require live pricing updates, enhancing users' ability to compare and choose accommodations. Typical consumers include travel planners and booking platforms looking to streamline their reservation processes.",
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "https://qa-dev-ieia.apiwiz.io",
+      "url": "https://engineering-nktb.apiwiz.io",
+      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
       "x-environmentName": "Sandbox",
       "x-hide": false,
-      "x-environmentId": "69899e4fe153d37369bdeb5f",
+      "x-environmentId": "6ab9989ebe83af04b1781334",
       "x-basePath": "/"
     },
     {
       "url": "https://qa-data-gujl.apiwiz.io",
+      "description": "driftdoc",
       "variables": {},
       "x-schema": "https://",
       "x-name": "driftdoc",
       "x-environmentName": "driftdoc",
       "x-hide": false,
-      "x-environmentId": "6ab00d338322a278332fd968",
+      "x-environmentId": "6ab998adbe83af04b1781335",
       "x-basePath": "/"
     }
   ],
@@ -33,15 +35,30 @@
         "tags": [
           "Room Management"
         ],
-        "summary": "Retrieve pricing information for rooms",
-        "description": "This endpoint allows users to fetch the current pricing details for available rooms. It provides data about prices, discounts, and any special offers that may apply, enabling users to make informed booking decisions.",
+        "summary": "Retrieve the pricing details for rooms.",
+        "description": "This endpoint allows you to fetch the current pricing information for available rooms, including any applicable discounts or surcharges. Use this resource to make informed pricing decisions.",
         "operationId": "listHotelRoomsPricings",
         "parameters": [
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/region"
+          },
+          {
+            "$ref": "#/components/parameters/traceLevel"
+          },
           {
             "$ref": "#/components/parameters/includeDeleted"
           },
           {
             "$ref": "#/components/parameters/x-tenant-id"
+          },
+          {
+            "$ref": "#/components/parameters/x-debug-mode"
+          },
+          {
+            "$ref": "#/components/parameters/x-feature-flag"
           },
           {
             "$ref": "#/components/parameters/x-client-version"
@@ -57,7 +74,7 @@
           }
         ],
         "requestBody": {
-          "description": "Request body for retrieving room pricing information. This body should comply with the defined schema and contain any necessary parameters to query the pricing effectively.",
+          "description": "This request body is used to retrieve the pricing information for rooms. Ensure that the JSON payload adheres to the defined schema to provide the necessary data for the request.",
           "content": {
             "application/json": {
               "schema": {
@@ -70,8 +87,14 @@
           "200": {
             "description": "Successfully retrieved room pricing information.",
             "headers": {
+              "etag": {
+                "$ref": "#/components/headers/etag"
+              },
               "x-served-by": {
                 "$ref": "#/components/headers/x-served-by"
+              },
+              "x-cache-status": {
+                "$ref": "#/components/headers/x-cache-status"
               },
               "x-processing-time": {
                 "$ref": "#/components/headers/x-processing-time"
@@ -105,16 +128,16 @@
     "schemas": {
       "ListHotelRoomsPricingsRequest": {
         "type": "string",
-        "description": "This schema represents the request body for the GET operations related to room pricing.",
+        "description": "The request body for the GET operation on room pricing. This schema specifies the format of the input data.",
         "example": "{}"
       },
       "ListHotelRoomsPricingsResponse_200": {
-        "title": "Get Room Pricing Response",
+        "title": "Room Pricing API Response",
         "type": "object",
         "properties": {
           "status": {
             "type": "boolean",
-            "description": "Indicates if the operation was successful.",
+            "description": "Indicates the success status of the operation.",
             "example": true
           },
           "referenceNumber": {
@@ -124,8 +147,8 @@
           },
           "resultId": {
             "type": "string",
-            "description": "The identifier for the result of the operation.",
-            "example": "1405d099-ae4c-4bf5-91cc-5b6255b8b816"
+            "description": "An identifier for the result of the operation.",
+            "example": "b660b5a2-de05-4188-9854-3374e8f14945"
           },
           "state": {
             "type": "string",
@@ -134,56 +157,48 @@
           },
           "processingTimeMs": {
             "type": "integer",
-            "description": "The processing time in milliseconds.",
+            "description": "The time taken to process the request, in milliseconds.",
             "format": "int32",
             "example": 856
           },
           "message": {
             "type": "string",
-            "description": "A message providing additional information about the response.",
+            "description": "A message providing further details about the operation's outcome.",
             "example": "Request processed successfully"
           },
           "audit": {
-            "description": "Audit information related to the operation.",
-            "$ref": "#/components/schemas/Audit"
+            "description": "Information regarding the audit of the operation.",
+            "$ref": "#/components/schemas/AuditInfo"
           },
           "warnings": {
             "type": "array",
-            "description": "A list of warnings related to the operation.",
+            "description": "A list of warnings encountered during the operation.",
             "example": [
               "deprecated-field-used"
             ],
             "items": {
               "type": "string",
-              "description": "A warning message."
+              "description": "A single warning message."
             }
           },
           "meta": {
-            "description": "Metadata related to the operation.",
-            "$ref": "#/components/schemas/Meta"
-          },
-          "requestId": {
-            "type": "string",
-            "description": "A unique identifier for the request.",
-            "example": "2bd7f769-492f-4e0e-b120-a8c9277f73d9"
-          },
-          "links": {
-            "description": "Hyperlinks related to the operation.",
-            "$ref": "#/components/schemas/Links"
+            "description": "Metadata associated with the operation.",
+            "$ref": "#/components/schemas/MetaInfo"
           }
         },
-        "description": "Response schema for the room pricing GET operation.",
+        "description": "Schema representing the response structure for the Room Pricing API.",
         "example": {
           "status": true,
           "referenceNumber": "HOTEL-10003",
-          "resultId": "1405d099-ae4c-4bf5-91cc-5b6255b8b816",
+          "resultId": "b660b5a2-de05-4188-9854-3374e8f14945",
           "state": "FAILED",
           "processingTimeMs": 856,
           "message": "Request processed successfully",
           "audit": {
             "createdBy": "SYSTEM",
-            "createdAt": "2025-12-17T16:53:46+00:00",
-            "automated": true
+            "createdAt": "2026-09-20T16:53:46+00:00",
+            "automated": true,
+            "source": "batch"
           },
           "warnings": [
             "deprecated-field-used"
@@ -191,66 +206,89 @@
           "meta": {
             "region": "EU",
             "cacheHit": false
-          },
-          "requestId": "2bd7f769-492f-4e0e-b120-a8c9277f73d9",
-          "links": {
-            "self": "/hotel/v1/rooms"
           }
         }
       },
-      "Audit": {
-        "title": "Audit Information",
+      "AuditInfo": {
         "type": "object",
         "properties": {
           "createdBy": {
             "type": "string",
-            "description": "Identifier of the user who created the entry.",
-            "example": "user123"
+            "description": "Identifier of the user or system that created the entry.",
+            "example": "string"
           },
           "createdAt": {
             "type": "string",
-            "description": "Timestamp of when the entry was created.",
-            "example": "2023-10-01T00:00:00Z"
+            "description": "Timestamp when the entry was created.",
+            "example": "string"
           },
           "automated": {
             "type": "boolean",
-            "description": "Indicates whether the operation was automated.",
+            "description": "Indicates if the operation was automated.",
             "example": false
+          },
+          "source": {
+            "type": "string",
+            "description": "The source from which the operation was initiated.",
+            "example": "string"
           }
         },
-        "description": "Details regarding the audit of the operation."
+        "description": "Audit information related to the operation."
       },
-      "Meta": {
-        "title": "Metadata Information",
+      "MetaInfo": {
         "type": "object",
         "properties": {
           "region": {
             "type": "string",
-            "description": "The region related to the request.",
-            "example": "US-East"
+            "description": "The region associated with the operation.",
+            "example": "string"
           },
           "cacheHit": {
             "type": "boolean",
-            "description": "Indicates if the response was served from cache.",
+            "description": "Indicates whether the data was retrieved from cache.",
             "example": false
           }
         },
-        "description": "Metadata associated with the operation response."
-      },
-      "Links": {
-        "title": "Related Links",
-        "type": "object",
-        "properties": {
-          "self": {
-            "type": "string",
-            "description": "The URL to access this specific operation.",
-            "example": "https://api.example.com/rooms/pricing"
-          }
-        },
-        "description": "Links related to the current operation."
+        "description": "Metadata information related to the operation."
       }
     },
     "parameters": {
+      "locale": {
+        "name": "locale",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "en-GB"
+        },
+        "example": "en-GB"
+      },
+      "region": {
+        "name": "region",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "EU"
+        },
+        "example": "EU"
+      },
+      "traceLevel": {
+        "name": "traceLevel",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "string",
+          "example": "debug"
+        },
+        "example": "debug"
+      },
       "includeDeleted": {
         "name": "includeDeleted",
         "in": "query",
@@ -275,6 +313,30 @@
         },
         "example": "qa-dev"
       },
+      "x-debug-mode": {
+        "name": "x-debug-mode",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "true"
+        },
+        "example": "true"
+      },
+      "x-feature-flag": {
+        "name": "x-feature-flag",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "drift-test"
+        },
+        "example": "drift-test"
+      },
       "x-client-version": {
         "name": "x-client-version",
         "in": "header",
@@ -295,9 +357,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "824c43d9-dce9-4e04-94d6-b2b4dd850f20"
+          "example": "c522a890-cb90-4bfb-b053-803e6ccf82b0"
         },
-        "example": "824c43d9-dce9-4e04-94d6-b2b4dd850f20"
+        "example": "c522a890-cb90-4bfb-b053-803e6ccf82b0"
       },
       "x-request-priority": {
         "name": "x-request-priority",
@@ -327,8 +389,16 @@
       }
     },
     "headers": {
+      "etag": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "W/\"abc123\""
+        },
+        "example": "W/\"abc123\""
+      },
       "x-served-by": {
-        "description": "Indicates the server that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -337,8 +407,17 @@
         },
         "example": "node-7"
       },
+      "x-cache-status": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "MISS"
+        },
+        "example": "MISS"
+      },
       "x-processing-time": {
-        "description": "The time taken to process the request, in milliseconds.",
+        "description": "The time, in milliseconds, that the processing of the request took.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -348,7 +427,7 @@
         "example": 76
       },
       "x-ratelimit-remaining": {
-        "description": "The number of remaining requests allowed in the current rate limit window.",
+        "description": "The number of requests remaining in the current rate limit window.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -361,7 +440,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication scheme using bearer tokens. Clients must include a valid token in the authorization header to authenticate requests.",
+        "description": "This security scheme utilizes the Bearer authentication mechanism, allowing users to access protected resources by including a valid bearer token in the Authorization header of their requests.",
         "scheme": "bearer"
       }
     }
