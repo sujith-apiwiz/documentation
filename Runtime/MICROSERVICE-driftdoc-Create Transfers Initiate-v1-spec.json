@@ -1,0 +1,287 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MICROSERVICE-driftdoc-Create Transfers Initiate-v1-spec",
+    "description": "The Transfer Initiation API allows businesses to seamlessly initiate transfers between accounts or financial entities. This endpoint supports the creation of new transfer requests, enabling users to specify the source and destination accounts, transfer amounts, and any relevant metadata. Typical consumers of this API include financial institutions, payment processors, and third-party applications that require automated transfer functionality. By facilitating smooth and efficient transfers, this API aids in enhancing financial workflows and improving transaction management.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://ecc-services:8080",
+      "description": "driftdoc",
+      "variables": {},
+      "x-schema": "http://",
+      "x-name": "driftdoc",
+      "x-environmentName": "driftdoc",
+      "x-hide": false,
+      "x-environmentId": "6acc6c18ef0fb2397fa1d6f1",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/v1/transfers/initiate": {
+      "post": {
+        "tags": [
+          "Transaction Management"
+        ],
+        "summary": "Initiate a new transaction",
+        "description": "This endpoint allows the user to initiate a new transaction, triggering the necessary processes to start the transaction lifecycle. It is essential for facilitating financial operations and ensuring the correct flow of data for further processing.",
+        "operationId": "createTransfersInitiate",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/x-channel-id"
+          },
+          {
+            "$ref": "#/components/parameters/host"
+          },
+          {
+            "$ref": "#/components/parameters/accept"
+          },
+          {
+            "$ref": "#/components/parameters/content-type"
+          },
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          }
+        ],
+        "requestBody": {
+          "description": "Initiates a new operation by sending the necessary data in the request body. The data should adhere to the specified schema to ensure proper processing.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTransfersInitiateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Request has been accepted for processing and will be completed in the background.",
+            "headers": {
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateTransfersInitiateResponse_202"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Request completed successfully, and the response contains the desired resource.",
+            "headers": {
+              "content-type": {
+                "$ref": "#/components/headers/content-type"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateTransfersInitiateResponse_200"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateTransfersInitiateResponse_202": {
+        "title": "Initiate Operations Response",
+        "type": "object",
+        "properties": {
+          "accepted": {
+            "type": "boolean",
+            "description": "Indicates whether the operation request was accepted.",
+            "example": true
+          },
+          "reference": {
+            "type": "string",
+            "description": "A reference identifier associated with the operation request.",
+            "example": "ECC-9001"
+          },
+          "queuePosition": {
+            "type": "integer",
+            "description": "The position of the request in the queue indicating how many requests are ahead in the processing order.",
+            "format": "int32",
+            "example": 3
+          }
+        },
+        "description": "Response schema for the initiation of operations, providing information on whether the request was accepted and where it stands in the processing queue.",
+        "example": {
+          "accepted": true,
+          "reference": "ECC-9001",
+          "queuePosition": 3
+        }
+      },
+      "CreateTransfersInitiateRequest": {
+        "title": "Initiate Operation Request Body",
+        "type": "object",
+        "properties": {
+          "transferId": {
+            "type": "string",
+            "description": "Unique identifier for the transfer operation.",
+            "example": "TRF-1001"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount of money to be transferred.",
+            "example": 250.75
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code for the transaction, e.g. 'USD'.",
+            "example": "USD"
+          },
+          "fromAccount": {
+            "type": "string",
+            "description": "Account identifier from which the amount is debited.",
+            "example": "ACC-111"
+          },
+          "toAccount": {
+            "type": "string",
+            "description": "Account identifier to which the amount is credited.",
+            "example": "****222"
+          }
+        },
+        "description": "Schema representing the request body for initiating an operation.",
+        "example": {
+          "transferId": "TRF-1001",
+          "amount": 250.75,
+          "currency": "USD",
+          "fromAccount": "ACC-111",
+          "toAccount": "****222"
+        }
+      },
+      "CreateTransfersInitiateResponse_200": {
+        "title": "Initiate Operations Response",
+        "required": [
+          "processedAt",
+          "status",
+          "transferId"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "The current status of the operation initiatio0n.",
+            "example": "INITIATED"
+          },
+          "transferId": {
+            "type": "string",
+            "description": "A unique identifier for the transfer initiated.",
+            "example": "TRF-1001"
+          },
+          "processedAt": {
+            "type": "string",
+            "description": "The timestamp indicating when the operation was processed.",
+            "example": "2026-10-13T10:00:00Z"
+          }
+        },
+        "description": "Response object for the Initiate Operations POST request, which includes the status of the operation, a unique transfer ID, and the timestamp of when the operation was processed.",
+        "example": {
+          "status": "INITIATED",
+          "transferId": "TRF-1001",
+          "processedAt": "2026-10-13T10:00:00Z"
+        }
+      }
+    },
+    "parameters": {
+      "x-channel-id": {
+        "name": "x-channel-id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "MOBILE"
+        },
+        "example": "MOBILE"
+      },
+      "host": {
+        "name": "host",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "forxfer-call-service:8080"
+        },
+        "example": "forxfer-call-service:8080"
+      },
+      "accept": {
+        "name": "accept",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      },
+      "content-type": {
+        "name": "content-type",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      },
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "MICROSERVICE_driftdoc_202",
+            "MICROSERVICE_driftdoc_200"
+          ]
+        }
+      }
+    },
+    "headers": {
+      "content-type": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "This security scheme uses bearer authentication, requiring the user to provide a valid token for access. Clients must include a bearer token in the Authorization header of requests to be authenticated successfully.",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
