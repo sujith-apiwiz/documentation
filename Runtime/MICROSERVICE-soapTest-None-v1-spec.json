@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-soapTest-None-v1-spec",
-    "description": "The Guest Profile Management API allows users to efficiently create and manage guest profiles within the hotel system. This service provides essential operations such as submitting guest information and updating personal details, which are crucial for enhancing customer service and streamlining check-in processes. Typically utilized by hotel staff and management systems, this API ensures that accurate guest data is readily available, thereby promoting a personalized guest experience. Additionally, it supports integration with third-party applications to facilitate seamless hotel operations.",
+    "description": "The Hotel Pricing Service API facilitates the dynamic retrieval and management of pricing information for hotel offerings. This endpoint allows consumers, such as travel agencies and booking platforms, to interact with the pricing models of different hotels, enabling real-time quotes and availability checks. With this service, users can submit pricing requests and receive detailed responses on rates and potential discounts. It is designed to enhance user experience by providing relevant pricing data for informed decision-making in the hospitality sector.",
     "version": "1.0"
   },
   "servers": [
@@ -19,20 +19,23 @@
     }
   ],
   "paths": {
-    "/hotel/soap/GuestProfileService": {
+    "/hotel/soap/PricingService": {
       "post": {
         "tags": [
-          "Guest Management"
+          "Pricing Management"
         ],
-        "summary": "Create a new guest profile.",
-        "description": "This endpoint allows you to create a new guest profile by providing the necessary details. Ensure all required fields are filled to successfully create the profile.",
-        "operationId": "createGuestProfile",
+        "summary": "Create a pricing service entry.",
+        "description": "This operation allows clients to create a new entry in the pricing service, enabling them to manage pricing effectively based on their requirements.",
+        "operationId": "createPricingService",
         "parameters": [
           {
             "$ref": "#/components/parameters/host"
           },
           {
             "$ref": "#/components/parameters/accept"
+          },
+          {
+            "$ref": "#/components/parameters/soapaction"
           },
           {
             "$ref": "#/components/parameters/user-agent"
@@ -54,18 +57,18 @@
           }
         ],
         "requestBody": {
-          "description": "This request body contains the necessary parameters for creating or updating a guest profile. It expects a JSON payload that adheres to the defined schema for guest profiles.",
+          "description": "This request body is used to provide the necessary information required to process pricing operations through the Pricing Service. The payload should adhere to the specified XML schema.",
           "content": {
-            "application/json": {
+            "application/xml": {
               "schema": {
-                "$ref": "#/components/schemas/CreateGuestProfileRequest"
+                "$ref": "#/components/schemas/CreatePricingServiceRequest"
               }
             }
           }
         },
         "responses": {
-          "401": {
-            "description": "Authentication is required to access this resource.",
+          "400": {
+            "description": "400Description",
             "headers": {
               "x-served-by": {
                 "$ref": "#/components/headers/x-served-by"
@@ -76,9 +79,6 @@
               "cache-control": {
                 "$ref": "#/components/headers/cache-control"
               },
-              "www-authenticate": {
-                "$ref": "#/components/headers/www-authenticate"
-              },
               "x-processing-time": {
                 "$ref": "#/components/headers/x-processing-time"
               },
@@ -87,9 +87,9 @@
               }
             },
             "content": {
-              "application/json": {
+              "application/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateGuestProfileResponse_401"
+                  "$ref": "#/components/schemas/CreatePricingServiceResponse_400"
                 }
               }
             }
@@ -109,17 +109,140 @@
   },
   "components": {
     "schemas": {
-      "CreateGuestProfileRequest": {
+      "CreatePricingServiceRequest": {
         "type": "object",
-        "properties": {},
-        "description": "Schema representing the request body for guest profile service operations to create a new guest profile.",
-        "example": {}
+        "properties": {
+          "Header": {
+            "type": "string",
+            "description": "The header of the SOAP envelope.",
+            "example": "string",
+            "xml": {
+              "name": "Header"
+            }
+          },
+          "Body": {
+            "description": "The body of the SOAP request containing the GetRoomRatesRequest.",
+            "$ref": "#/components/schemas/GetRoomRatesRequestBody"
+          }
+        },
+        "description": "Request body for the Pricing Service operations in XML format.",
+        "xml": {
+          "name": "soapenv:Envelope"
+        }
       },
-      "CreateGuestProfileResponse_401": {
-        "title": "Unauthorized Response",
+      "GetRoomRatesRequestBody": {
         "type": "object",
-        "description": "Schema representing the response returned when a request to the Guest Profile Service fails due to unauthorized access (HTTP 401).",
-        "example": {}
+        "properties": {
+          "GetRoomRatesRequest": {
+            "description": "Contains details for the room rates request.",
+            "$ref": "#/components/schemas/GetRoomRatesRequest"
+          }
+        },
+        "description": "The body structure for the GetRoomRates SOAP request.",
+        "xml": {
+          "name": "Body"
+        }
+      },
+      "GetRoomRatesRequest": {
+        "type": "object",
+        "properties": {
+          "hotelId": {
+            "type": "string",
+            "description": "Unique identifier of the hotel.",
+            "example": "string",
+            "xml": {
+              "name": "hotelId"
+            }
+          },
+          "checkIn": {
+            "type": "string",
+            "description": "Check-in date for the room booking.",
+            "example": "string",
+            "xml": {
+              "name": "checkIn"
+            }
+          },
+          "checkOut": {
+            "type": "string",
+            "description": "Check-out date for the room booking.",
+            "example": "string",
+            "xml": {
+              "name": "checkOut"
+            }
+          }
+        },
+        "description": "Request parameters needed to obtain room rates for a specified hotel and dates."
+      },
+      "CreatePricingServiceResponse_400": {
+        "type": "object",
+        "properties": {
+          "Header": {
+            "type": "string",
+            "description": "The header information of the SOAP envelope.",
+            "example": "string",
+            "xml": {
+              "name": "Header"
+            }
+          },
+          "Body": {
+            "type": "object",
+            "properties": {
+              "Fault": {
+                "type": "object",
+                "properties": {
+                  "faultcode": {
+                    "type": "string",
+                    "description": "The error code representing the type of fault.",
+                    "example": "string",
+                    "xml": {
+                      "name": "faultcode"
+                    }
+                  },
+                  "faultstring": {
+                    "type": "string",
+                    "description": "A human-readable description of the fault.",
+                    "example": "string",
+                    "xml": {
+                      "name": "faultstring"
+                    }
+                  },
+                  "detail": {
+                    "$ref": "#/components/schemas/FaultDetail"
+                  }
+                },
+                "description": "Detailed information about the fault that occurred.",
+                "example": "string",
+                "xml": {
+                  "name": "Fault"
+                }
+              }
+            },
+            "description": "The body of the SOAP response containing the fault information.",
+            "example": "string",
+            "xml": {
+              "name": "Body"
+            }
+          }
+        },
+        "description": "A schema representing the response structure for a 400 error in the Pricing Service API.",
+        "example": "string",
+        "xml": {
+          "name": "soapenv:Envelope"
+        }
+      },
+      "FaultDetail": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "The name of the field that has an error.",
+            "example": "string",
+            "xml": {
+              "name": "field"
+            }
+          }
+        },
+        "description": "Details about the specific field that caused the error."
       }
     },
     "parameters": {
@@ -146,6 +269,18 @@
           "example": "text/xml"
         },
         "example": "text/xml"
+      },
+      "soapaction": {
+        "name": "soapaction",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "http://hotel.example.com/GetRoomRates"
+        },
+        "example": "http://hotel.example.com/GetRoomRates"
       },
       "user-agent": {
         "name": "user-agent",
@@ -179,9 +314,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "application/soap+xml; charset=utf-8; action=\"http://hotel.example.com/GetGuestProfile\""
+          "example": "text/xml"
         },
-        "example": "application/soap+xml; charset=utf-8; action=\"http://hotel.example.com/GetGuestProfile\""
+        "example": "text/xml"
       },
       "x-client-version": {
         "name": "x-client-version",
@@ -217,14 +352,14 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_soapTest_401"
+            "MICROSERVICE_soapTest_400"
           ]
         }
       }
     },
     "headers": {
       "x-served-by": {
-        "description": "Indicates the server that handled the request, useful for tracing and load balancing.",
+        "description": "Indicates the server that handled the request, often useful for tracing and logging purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -234,17 +369,17 @@
         "example": "node-7"
       },
       "content-type": {
-        "description": "Specifies the media type of the response body, indicating the format of the returned data.",
+        "description": "Specifies the media type of the resource returned, which helps the client understand how to interpret the response body.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "application/soap+xml"
+          "example": "text/xml"
         },
-        "example": "application/soap+xml"
+        "example": "text/xml"
       },
       "cache-control": {
-        "description": "Controls the caching behavior of the response, guiding whether the response can be stored and reused.",
+        "description": "Provides directives for caching mechanisms in both requests and responses to control the caching behavior.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -253,38 +388,31 @@
         },
         "example": "no-cache"
       },
-      "www-authenticate": {
-        "style": "simple",
-        "explode": false,
-        "schema": {
-          "type": "string",
-          "example": "Bearer error=\"invalid_token\""
-        },
-        "example": "Bearer error=\"invalid_token\""
-      },
       "x-processing-time": {
+        "description": "The time taken to process the request, represented in milliseconds.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "integer",
-          "example": 12
+          "example": 35
         },
-        "example": 12
+        "example": 35
       },
       "x-ratelimit-remaining": {
+        "description": "The number of requests remaining in the current rate limit window.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "integer",
-          "example": 94
+          "example": 95
         },
-        "example": 94
+        "example": 95
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "Authentication scheme using a bearer token. This involves the client sending a token in the `Authorization` header of requests to authenticate and authorize access to the protected resources.",
+        "description": "This security scheme allows the use of Bearer authentication. Bearer tokens are typically used to authenticate API requests by providing a token that grants access to the API. Ensure to include the token in the Authorization header of your requests.",
         "scheme": "bearer"
       }
     }
