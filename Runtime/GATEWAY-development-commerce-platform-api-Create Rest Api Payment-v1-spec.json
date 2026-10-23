@@ -1,0 +1,505 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "GATEWAY-development-commerce-platform-api-Create Rest Api Payment-v1-spec",
+    "description": "The Payment Processing API facilitates seamless transactions within the commerce platform, enabling businesses to accept and manage payments efficiently. This endpoint allows for the initiation of various payment methods, ensuring a smooth checkout experience for customers. Typically consumed by e-commerce applications and payment gateways, it supports operations that enhance transaction security and streamline payment management. Integration with this API is essential for businesses seeking to optimize their payment processes and improve customer satisfaction.",
+    "version": "1.0",
+    "extensions": {
+      "x-serviceName": "commerce-platform-api"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://observability-stage-raju.apiwiz.io",
+      "description": "Sandbox server",
+      "variables": {},
+      "x-schema": "https://",
+      "x-name": "Sandbox server",
+      "x-environmentName": "Sandbox",
+      "x-hide": false,
+      "x-environmentId": "6adb856df5d6d86071da8af3",
+      "x-basePath": "/"
+    },
+    {
+      "url": "http://host.docker.internal:5331",
+      "description": "development",
+      "variables": {},
+      "x-schema": "http://",
+      "x-name": "development",
+      "x-environmentName": "development",
+      "x-hide": false,
+      "x-environmentId": "6ada2fae52ccc607c5ff6208",
+      "x-basePath": "/"
+    }
+  ],
+  "paths": {
+    "/rest/api/v1/payments": {
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "Initiates a payment transaction.",
+        "description": "This endpoint allows clients to initiate a payment transaction by providing the necessary payment details. Once the payment is successfully processed, a confirmation will be returned.",
+        "operationId": "createRestApiPayment",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/via"
+          },
+          {
+            "$ref": "#/components/parameters/host"
+          },
+          {
+            "$ref": "#/components/parameters/accept"
+          },
+          {
+            "$ref": "#/components/parameters/x-real-ip"
+          },
+          {
+            "$ref": "#/components/parameters/connection"
+          },
+          {
+            "$ref": "#/components/parameters/user-agent"
+          },
+          {
+            "$ref": "#/components/parameters/content-type"
+          },
+          {
+            "$ref": "#/components/parameters/x-request-id"
+          },
+          {
+            "$ref": "#/components/parameters/content-length"
+          },
+          {
+            "$ref": "#/components/parameters/x-forwarded-for"
+          },
+          {
+            "$ref": "#/components/parameters/x-forwarded-host"
+          },
+          {
+            "$ref": "#/components/parameters/x-forwarded-path"
+          },
+          {
+            "$ref": "#/components/parameters/x-forwarded-port"
+          },
+          {
+            "$ref": "#/components/parameters/x-forwarded-proto"
+          },
+          {
+            "$ref": "#/components/parameters/x-kong-request-id"
+          },
+          {
+            "$ref": "#/components/parameters/x-mock-response"
+          }
+        ],
+        "requestBody": {
+          "description": "Request body for creating a new payment. This should include all necessary payment information and details required for processing the transaction.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRestApiPaymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The payment request was processed successfully.",
+            "headers": {
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              },
+              "Connection": {
+                "$ref": "#/components/headers/Connection"
+              },
+              "Keep-Alive": {
+                "$ref": "#/components/headers/Keep-Alive"
+              },
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Content-Length": {
+                "$ref": "#/components/headers/Content-Length"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateRestApiPaymentResponse_200"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "security": [],
+        "servers": []
+      },
+      "servers": [],
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateRestApiPaymentRequest": {
+        "title": "Payment Request",
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "description": "Unique identifier for the order associated with this payment.",
+            "example": "ORD-70791"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "The amount of money to be paid in the specified currency.",
+            "format": "int32",
+            "example": 649
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency in which the payment is made, using ISO 4217 format.",
+            "example": "INR"
+          }
+        },
+        "description": "Schema representing the request body for processing a payment.",
+        "example": {
+          "orderId": "ORD-70791",
+          "amount": 649,
+          "currency": "INR"
+        }
+      },
+      "CreateRestApiPaymentResponse_200": {
+        "title": "Payment Response",
+        "type": "object",
+        "properties": {
+          "paymentId": {
+            "type": "string",
+            "description": "Unique identifier for the payment.",
+            "example": "pay_qrtwj4w4karv7d"
+          },
+          "orderId": {
+            "type": "string",
+            "description": "Identifier for the order associated with the payment.",
+            "example": "ORD-70791"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "Total amount paid in the transaction.",
+            "format": "int32",
+            "example": 649
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code for the transaction, e.g., 'USD'.",
+            "example": "INR"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the payment (e.g., 'completed', 'pending').",
+            "example": "CAPTURED"
+          },
+          "method": {
+            "description": "Details of the payment method used.",
+            "$ref": "#/components/schemas/PaymentMethod"
+          },
+          "authCode": {
+            "type": "string",
+            "description": "Authorization code provided by the payment gateway.",
+            "example": "995422"
+          },
+          "gatewayRef": {
+            "type": "string",
+            "description": "Reference ID returned by the payment gateway.",
+            "example": "gw_xc40gpnnyu"
+          },
+          "processedAt": {
+            "type": "string",
+            "description": "Timestamp indicating when the payment was processed.",
+            "example": "2026-10-23T07:37:58.618433Z"
+          }
+        },
+        "description": "Represents the response structure for a successful payment operation.",
+        "example": {
+          "paymentId": "pay_qrtwj4w4karv7d",
+          "orderId": "ORD-70791",
+          "amount": 649,
+          "currency": "INR",
+          "status": "CAPTURED",
+          "method": {
+            "type": "CARD",
+            "brand": "VISA",
+            "last4": "3784"
+          },
+          "authCode": "995422",
+          "gatewayRef": "gw_xc40gpnnyu",
+          "processedAt": "2026-10-23T07:37:58.618433Z"
+        }
+      },
+      "PaymentMethod": {
+        "title": "Payment Method",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of payment method (e.g., 'credit_card', 'paypal').",
+            "example": "string"
+          },
+          "brand": {
+            "type": "string",
+            "description": "Brand of the payment method (e.g., 'Visa', 'MasterCard').",
+            "example": "string"
+          },
+          "last4": {
+            "type": "string",
+            "description": "Last four digits of the card number used in the transaction.",
+            "example": "string"
+          }
+        },
+        "description": "Details about the payment method used in the transaction."
+      }
+    },
+    "parameters": {
+      "via": {
+        "name": "via",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "1.1 kong/3.8.0"
+        },
+        "example": "1.1 kong/3.8.0"
+      },
+      "host": {
+        "name": "host",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "host.docker.internal:5331"
+        },
+        "example": "host.docker.internal:5331"
+      },
+      "accept": {
+        "name": "accept",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "*/*"
+        },
+        "example": "*/*"
+      },
+      "x-real-ip": {
+        "name": "x-real-ip",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "192.168.65.1"
+        },
+        "example": "192.168.65.1"
+      },
+      "connection": {
+        "name": "connection",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "keep-alive"
+        },
+        "example": "keep-alive"
+      },
+      "user-agent": {
+        "name": "user-agent",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "curl/8.7.1"
+        },
+        "example": "curl/8.7.1"
+      },
+      "content-type": {
+        "name": "content-type",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      },
+      "x-request-id": {
+        "name": "x-request-id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "9CE4DF73-F550-4F36-8FFB-E0ACC7A9C926"
+        },
+        "example": "9CE4DF73-F550-4F36-8FFB-E0ACC7A9C926"
+      },
+      "content-length": {
+        "name": "content-length",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "58"
+        },
+        "example": "58"
+      },
+      "x-forwarded-for": {
+        "name": "x-forwarded-for",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "192.168.65.1"
+        },
+        "example": "192.168.65.1"
+      },
+      "x-forwarded-host": {
+        "name": "x-forwarded-host",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "localhost"
+        },
+        "example": "localhost"
+      },
+      "x-forwarded-path": {
+        "name": "x-forwarded-path",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "/rest/api/v1/payments"
+        },
+        "example": "/rest/api/v1/payments"
+      },
+      "x-forwarded-port": {
+        "name": "x-forwarded-port",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "8000"
+        },
+        "example": "8000"
+      },
+      "x-forwarded-proto": {
+        "name": "x-forwarded-proto",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "http"
+        },
+        "example": "http"
+      },
+      "x-kong-request-id": {
+        "name": "x-kong-request-id",
+        "in": "header",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "ae6e630e1586f70fdb5b357486122a44"
+        },
+        "example": "ae6e630e1586f70fdb5b357486122a44"
+      },
+      "x-mock-response": {
+        "name": "x-mock-response",
+        "in": "header",
+        "description": "Controls x-mock-response response status",
+        "required": false,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "GATEWAY_development_200"
+          ]
+        }
+      }
+    },
+    "headers": {
+      "Date": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "Fri, 23 Oct 2026 07:37:58 GMT"
+        },
+        "example": "Fri, 23 Oct 2026 07:37:58 GMT"
+      },
+      "Connection": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "keep-alive"
+        },
+        "example": "keep-alive"
+      },
+      "Keep-Alive": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "timeout=60"
+        },
+        "example": "timeout=60"
+      },
+      "Content-Type": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "application/json"
+        },
+        "example": "application/json"
+      },
+      "Content-Length": {
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "example": "254"
+        },
+        "example": "254"
+      }
+    }
+  }
+}
