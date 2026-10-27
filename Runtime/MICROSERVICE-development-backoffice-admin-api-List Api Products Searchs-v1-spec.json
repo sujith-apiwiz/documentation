@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-development-backoffice-admin-api-List Api Products Searchs-v1-spec",
-    "description": "The Product Search API allows users to efficiently find products within the inventory by executing search queries based on various attributes. This endpoint provides a means for developers to integrate robust search functionalities into their applications, enabling end-users to discover products easily. Typical consumers include e-commerce platforms and inventory management systems that require quick and precise product retrieval. This API streamlines product discovery, enhancing user experience and operational efficiency.",
+    "description": "The Product Search API enables efficient retrieval of product listings based on specific search criteria. Users can query the available products within the system, allowing for dynamic filtering by attributes such as category, price, and availability. This functionality is essential for e-commerce platforms, inventory management systems, and any applications requiring comprehensive product information. Developers can integrate this API to enhance user experiences by providing easy access to product data and improving decision-making processes related to purchasing and inventory.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "backoffice-admin-api"
@@ -17,7 +17,7 @@
       "x-name": "Sandbox server",
       "x-environmentName": "Sandbox",
       "x-hide": false,
-      "x-environmentId": "6adb856df5d6d86071da8af3",
+      "x-environmentId": "6ae0dc350d4c405cc4ccb613",
       "x-basePath": "/"
     },
     {
@@ -28,7 +28,7 @@
       "x-name": "development",
       "x-environmentName": "development",
       "x-hide": false,
-      "x-environmentId": "6ada2fae52ccc607c5ff6208",
+      "x-environmentId": "6ae0dc440d4c405cc4ccb61c",
       "x-basePath": "/"
     }
   ],
@@ -38,8 +38,8 @@
         "tags": [
           "Product Management"
         ],
-        "summary": "Search for products based on criteria.",
-        "description": "This endpoint allows users to search for products using various criteria such as name, category, or price range. Use the query parameters to tailor the search results to meet your needs.",
+        "summary": "Search for products based on query parameters.",
+        "description": "This endpoint allows users to search for products using various query parameters. It returns a list of products that match the search criteria, providing details such as product names, descriptions, prices, and availability.",
         "operationId": "listApiProductsSearchs",
         "parameters": [
           {
@@ -65,7 +65,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to provide the search parameters for retrieving products based on specific criteria. The criteria include various filters that can be applied to narrow down the search results.",
+          "description": "This request body is used to specify the parameters for searching products. Ensure that the search criteria conform to the schema outlined in the reference.",
           "content": {
             "application/json": {
               "schema": {
@@ -76,7 +76,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved product search results.",
+            "description": "Successful retrieval of product search results.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -122,7 +122,7 @@
     "schemas": {
       "ListApiProductsSearchsRequest": {
         "type": "string",
-        "description": "The request body expected for the GET operation related to product search.",
+        "description": "This schema represents the request body for the GET operation on the products search endpoint.",
         "example": "{}"
       },
       "ListApiProductsSearchsResponse_200": {
@@ -133,39 +133,86 @@
             "properties": {
               "Api": {
                 "type": "string",
-                "description": "The name of the API that returned the response.",
-                "example": "string"
+                "description": "The API version or identifier.",
+                "example": "v1"
               },
               "Region": {
                 "type": "string",
-                "description": "The geographical region from which the request originated.",
-                "example": "string"
+                "description": "The geographical region for the API request.",
+                "example": "US"
               },
               "RequestId": {
                 "type": "string",
-                "description": "A unique identifier for the API request.",
-                "example": "string"
+                "description": "Unique identifier for the request made.",
+                "example": "12345-abcde"
               },
               "Body": {
-                "$ref": "#/components/schemas/ResponseBody"
+                "type": "object",
+                "properties": {
+                  "Query": {
+                    "type": "string",
+                    "description": "The search query that was executed.",
+                    "example": "laptop"
+                  },
+                  "Results": {
+                    "type": "array",
+                    "description": "List of product results matching the query.",
+                    "example": [
+                      {
+                        "Sku": "SKU12345",
+                        "Name": "Laptop Model X",
+                        "Category": "Laptops",
+                        "Price": 999,
+                        "Currency": "USD",
+                        "InStock": true,
+                        "Stock": 15
+                      }
+                    ],
+                    "items": {
+                      "$ref": "#/components/schemas/Product"
+                    }
+                  },
+                  "Total": {
+                    "type": "integer",
+                    "description": "Total number of products found for the query.",
+                    "format": "int32",
+                    "example": 1
+                  }
+                },
+                "description": "The body of the response containing the query and results.",
+                "example": {
+                  "Query": "laptop",
+                  "Results": [
+                    {
+                      "Sku": "SKU12345",
+                      "Name": "Laptop Model X",
+                      "Category": "Laptops",
+                      "Price": 999,
+                      "Currency": "USD",
+                      "InStock": true,
+                      "Stock": 15
+                    }
+                  ],
+                  "Total": 1
+                }
               }
             },
-            "description": "The response object containing metadata and the body of the API response.",
+            "description": "The main response object containing API response details.",
             "example": {
               "Api": "searchProducts",
               "Region": "ap-south-1",
-              "RequestId": "req_49urqttf0qbl",
+              "RequestId": "req_e27kceuybdy1",
               "Body": {
-                "Query": "shoes",
+                "Query": "coffee",
                 "Results": [
                   {
-                    "Sku": "SHO-3307",
-                    "Name": "Nike Revolution 7 Running Shoes",
-                    "Category": "Footwear",
-                    "Price": 3995,
+                    "Sku": "COF-4120",
+                    "Name": "Blue Tokai Cold Brew Coffee 500g",
+                    "Category": "Grocery",
+                    "Price": 649,
                     "Currency": "INR",
                     "InStock": true,
-                    "Stock": 540
+                    "Stock": 1280
                   }
                 ],
                 "Total": 1
@@ -173,22 +220,23 @@
             }
           }
         },
+        "description": "Response schema for the GET operation to search products.",
         "example": {
           "Response": {
             "Api": "searchProducts",
             "Region": "ap-south-1",
-            "RequestId": "req_49urqttf0qbl",
+            "RequestId": "req_e27kceuybdy1",
             "Body": {
-              "Query": "shoes",
+              "Query": "coffee",
               "Results": [
                 {
-                  "Sku": "SHO-3307",
-                  "Name": "Nike Revolution 7 Running Shoes",
-                  "Category": "Footwear",
-                  "Price": 3995,
+                  "Sku": "COF-4120",
+                  "Name": "Blue Tokai Cold Brew Coffee 500g",
+                  "Category": "Grocery",
+                  "Price": 649,
                   "Currency": "INR",
                   "InStock": true,
-                  "Stock": 540
+                  "Stock": 1280
                 }
               ],
               "Total": 1
@@ -196,83 +244,48 @@
           }
         }
       },
-      "ResponseBody": {
-        "type": "object",
-        "properties": {
-          "Query": {
-            "type": "string",
-            "description": "The search query made by the user.",
-            "example": "string"
-          },
-          "Results": {
-            "type": "array",
-            "description": "The list of products that match the search query.",
-            "example": [
-              {
-                "Sku": "string",
-                "Name": "string",
-                "Category": "string",
-                "Price": 0,
-                "Currency": "string",
-                "InStock": false,
-                "Stock": 0
-              }
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Product"
-            }
-          },
-          "Total": {
-            "type": "integer",
-            "description": "The total number of products that match the search query.",
-            "format": "int32",
-            "example": 0
-          }
-        },
-        "description": "The body content of the API response, including query details and the results."
-      },
       "Product": {
         "type": "object",
         "properties": {
           "Sku": {
             "type": "string",
-            "description": "The stock keeping unit of the product.",
-            "example": "string"
+            "description": "The stock keeping unit identifier for the product.",
+            "example": "SKU12345"
           },
           "Name": {
             "type": "string",
             "description": "The name of the product.",
-            "example": "string"
+            "example": "Laptop Model X"
           },
           "Category": {
             "type": "string",
-            "description": "The category to which the product belongs.",
-            "example": "string"
+            "description": "The category under which the product falls.",
+            "example": "Laptops"
           },
           "Price": {
             "type": "integer",
-            "description": "The price of the product.",
+            "description": "The price of the product in the specified currency.",
             "format": "int32",
-            "example": 0
+            "example": 999
           },
           "Currency": {
             "type": "string",
-            "description": "The currency in which the product price is denoted.",
-            "example": "string"
+            "description": "The currency of the product price.",
+            "example": "USD"
           },
           "InStock": {
             "type": "boolean",
-            "description": "Indicates whether the product is currently in stock.",
-            "example": false
+            "description": "Indicates if the product is currently in stock.",
+            "example": true
           },
           "Stock": {
             "type": "integer",
-            "description": "The current stock level of the product.",
+            "description": "The number of items available in stock.",
             "format": "int32",
-            "example": 0
+            "example": 15
           }
         },
-        "description": "Details of a single product returned by the search."
+        "description": "Schema representing a product in the search results."
       }
     },
     "parameters": {
@@ -284,9 +297,9 @@
         "explode": true,
         "schema": {
           "type": "string",
-          "example": "shoes"
+          "example": "coffee"
         },
-        "example": "shoes"
+        "example": "coffee"
       },
       "host": {
         "name": "host",
@@ -344,9 +357,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "4BD1BC53-B548-440B-A2C7-7320AF560379"
+          "example": "7D6A1080-A422-465F-A0AB-208CA09B7E4E"
         },
-        "example": "4BD1BC53-B548-440B-A2C7-7320AF560379"
+        "example": "7D6A1080-A422-465F-A0AB-208CA09B7E4E"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -359,23 +372,22 @@
           "type": "string",
           "enum": [
             "MICROSERVICE_development_200"
-          ]
+          ],
+          "default": "MICROSERVICE_development_200"
         }
       }
     },
     "headers": {
       "Date": {
-        "description": "The date and time at which the response was generated, formatted in ISO 8601.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Fri, 23 Oct 2026 07:37:55 GMT"
+          "example": "Tue, 27 Oct 2026 16:20:19 GMT"
         },
-        "example": "Fri, 23 Oct 2026 07:37:55 GMT"
+        "example": "Tue, 27 Oct 2026 16:20:19 GMT"
       },
       "X-Api-Name": {
-        "description": "The name of the API that generated the response. This helps in identifying which API endpoint the data is coming from.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -385,7 +397,6 @@
         "example": "searchProducts"
       },
       "X-Served-By": {
-        "description": "The server that handled the request, allowing clients to understand the infrastructure behind the API.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -395,7 +406,6 @@
         "example": "backoffice-admin-api"
       },
       "Content-Type": {
-        "description": "Indicates the media type of the resource being returned in the response.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -405,30 +415,28 @@
         "example": "application/json"
       },
       "X-Request-Id": {
-        "description": "A unique identifier for the request, facilitating tracking and debugging.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "b32a4497-3d88-4137-a253-ec37c5e52780"
+          "example": "205fd11e-daa5-4909-8c6d-11b39a9ffcfd"
         },
-        "example": "b32a4497-3d88-4137-a253-ec37c5e52780"
+        "example": "205fd11e-daa5-4909-8c6d-11b39a9ffcfd"
       },
       "Content-Length": {
-        "description": "The length of the response body in bytes.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "276"
+          "example": "277"
         },
-        "example": "276"
+        "example": "277"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the Bearer authentication method. Clients must include a bearer token in the Authorization header of their requests to access secured resources.",
+        "description": "This security scheme uses a bearer token for authentication, where the client must include the token in the Authorization header of HTTP requests.",
         "scheme": "bearer"
       }
     }
