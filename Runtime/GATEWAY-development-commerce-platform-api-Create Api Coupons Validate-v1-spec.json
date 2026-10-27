@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "GATEWAY-development-commerce-platform-api-Create Api Coupons Validate-v1-spec",
-    "description": "GATEWAY-development-commerce-platform-api-Create Api Coupons Validate-v1-spec",
+    "description": "The Coupon Validation API is designed to enable businesses to verify the validity of discount coupons in real-time. By providing a seamless method for checking coupon codes, this API enhances customer experience and boosts sales effectiveness. Typical consumers include e-commerce platforms and retail applications looking to validate offers at checkout. This endpoint ensures that only applicable and active promotions are accepted, preventing potential revenue loss due to fraudulent or expired coupons.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "commerce-platform-api"
@@ -17,7 +17,7 @@
       "x-name": "Sandbox server",
       "x-environmentName": "Sandbox",
       "x-hide": false,
-      "x-environmentId": "6adb856df5d6d86071da8af3",
+      "x-environmentId": "6ae0dc350d4c405cc4ccb613",
       "x-basePath": "/"
     },
     {
@@ -28,13 +28,18 @@
       "x-name": "development",
       "x-environmentName": "development",
       "x-hide": false,
-      "x-environmentId": "6ada2fae52ccc607c5ff6208",
+      "x-environmentId": "6ae0dc440d4c405cc4ccb61c",
       "x-basePath": "/"
     }
   ],
   "paths": {
     "/api/v1/coupons/validate": {
       "post": {
+        "tags": [
+          "Coupons"
+        ],
+        "summary": "Validate a coupon code.",
+        "description": "This endpoint allows users to validate a coupon code, ensuring it is applicable and can be redeemed. The response will indicate whether the coupon is valid and provide additional details if necessary.",
         "operationId": "createApiCouponsValidate",
         "parameters": [
           {
@@ -93,6 +98,7 @@
           }
         ],
         "requestBody": {
+          "description": "This operation is used to validate a coupon. The request should include the coupon details in JSON format for processing.",
           "content": {
             "application/json": {
               "schema": {
@@ -103,7 +109,7 @@
         },
         "responses": {
           "200": {
-            "description": "200Description",
+            "description": "The coupon has been successfully validated.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -150,87 +156,102 @@
   "components": {
     "schemas": {
       "CreateApiCouponsValidateRequest": {
+        "title": "Coupon Validation Request",
+        "required": [
+          "cartTotal",
+          "code"
+        ],
         "type": "object",
         "properties": {
           "code": {
             "type": "string",
-            "example": "PRIME15"
+            "description": "The coupon code to be validated.",
+            "example": "WELCOME10"
           },
           "cartTotal": {
             "type": "integer",
+            "description": "The total value of the cart before applying the coupon.",
             "format": "int32",
-            "example": 6597
+            "example": 65922
           }
         },
+        "description": "Schema representing the request body for validating a coupon.",
         "example": {
-          "code": "PRIME15",
-          "cartTotal": 6597
+          "code": "WELCOME10",
+          "cartTotal": 65922
         }
       },
       "CreateApiCouponsValidateResponse_200": {
+        "title": "Coupon Validation Response",
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
+            "description": "The status of the response indicating success or failure.",
             "example": "success"
           },
           "data": {
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string",
-                "example": "string"
-              },
-              "valid": {
-                "type": "boolean",
-                "example": false
-              },
-              "cartTotal": {
-                "type": "integer",
-                "format": "int32",
-                "example": 0
-              },
-              "discountAmount": {
-                "type": "integer",
-                "format": "int32",
-                "example": 0
-              },
-              "payable": {
-                "type": "integer",
-                "format": "int32",
-                "example": 0
-              },
-              "message": {
-                "type": "string",
-                "example": "string"
-              }
-            },
-            "example": {
-              "code": "PRIME15",
-              "valid": true,
-              "cartTotal": 6597,
-              "discountAmount": 989,
-              "payable": 5608,
-              "message": "Coupon applied"
-            }
+            "$ref": "#/components/schemas/CouponValidationData"
           },
           "requestId": {
             "type": "string",
-            "example": "req_a544kc9uv51b"
+            "description": "A unique identifier for the request.",
+            "example": "req_4d7p3w0253lh"
           }
         },
+        "description": "Response schema for the coupon validation operation.",
         "example": {
           "status": "success",
           "data": {
-            "code": "PRIME15",
+            "code": "WELCOME10",
             "valid": true,
-            "cartTotal": 6597,
-            "discountAmount": 989,
-            "payable": 5608,
+            "cartTotal": 65922,
+            "discountAmount": 6592,
+            "payable": 59330,
             "message": "Coupon applied"
           },
-          "requestId": "req_a544kc9uv51b"
+          "requestId": "req_4d7p3w0253lh"
         }
+      },
+      "CouponValidationData": {
+        "title": "Coupon Validation Data",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "The code of the applied coupon.",
+            "example": "SAVE20"
+          },
+          "valid": {
+            "type": "boolean",
+            "description": "Indicates if the coupon is valid.",
+            "example": false
+          },
+          "cartTotal": {
+            "type": "integer",
+            "description": "The total amount in the cart before applying the coupon.",
+            "format": "int32",
+            "example": 100
+          },
+          "discountAmount": {
+            "type": "integer",
+            "description": "The amount discount provided by the coupon.",
+            "format": "int32",
+            "example": 20
+          },
+          "payable": {
+            "type": "integer",
+            "description": "The final amount payable after applying the coupon.",
+            "format": "int32",
+            "example": 80
+          },
+          "message": {
+            "type": "string",
+            "description": "Message providing additional information about the coupon validation.",
+            "example": "Coupon applied successfully."
+          }
+        },
+        "description": "Data returned after validating the coupon."
       }
     },
     "parameters": {
@@ -338,9 +359,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "D0AE125C-6725-46F6-A491-47C21C1F4FF4"
+          "example": "1FF5AEF8-7B74-448A-8D6A-6E301B75B584"
         },
-        "example": "D0AE125C-6725-46F6-A491-47C21C1F4FF4"
+        "example": "1FF5AEF8-7B74-448A-8D6A-6E301B75B584"
       },
       "content-length": {
         "name": "content-length",
@@ -350,9 +371,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "38"
+          "example": "41"
         },
-        "example": "38"
+        "example": "41"
       },
       "x-forwarded-for": {
         "name": "x-forwarded-for",
@@ -422,9 +443,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "4cb23b5f4934cc7b9b1b8d1a2d9bd97f"
+          "example": "281e665a57667304e34baf115c94ac2a"
         },
-        "example": "4cb23b5f4934cc7b9b1b8d1a2d9bd97f"
+        "example": "281e665a57667304e34baf115c94ac2a"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -460,9 +481,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Tue, 27 Oct 2026 05:31:40 GMT"
+          "example": "Tue, 27 Oct 2026 16:20:23 GMT"
         },
-        "example": "Tue, 27 Oct 2026 05:31:40 GMT"
+        "example": "Tue, 27 Oct 2026 16:20:23 GMT"
       },
       "Connection": {
         "style": "simple",
@@ -483,6 +504,7 @@
         "example": "timeout=60"
       },
       "X-Api-Name": {
+        "description": "The name of the API that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -492,6 +514,7 @@
         "example": "validateCoupon"
       },
       "X-Served-By": {
+        "description": "The name of the server that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -501,6 +524,7 @@
         "example": "commerce-platform-api"
       },
       "Content-Type": {
+        "description": "The media type of the resource being sent in the response.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -510,22 +534,24 @@
         "example": "application/json"
       },
       "X-Request-Id": {
+        "description": "A unique identifier for the request, useful for tracking and debugging purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "96e80cfe-08cb-41fe-8ef8-d734e1c9a05b"
+          "example": "f9944511-db92-4d0d-a50f-af1df474d329"
         },
-        "example": "96e80cfe-08cb-41fe-8ef8-d734e1c9a05b"
+        "example": "f9944511-db92-4d0d-a50f-af1df474d329"
       },
       "Content-Length": {
+        "description": "The size of the response body, in bytes. Helps the client understand the amount of data received.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "170"
+          "example": "175"
         },
-        "example": "170"
+        "example": "175"
       }
     }
   }
