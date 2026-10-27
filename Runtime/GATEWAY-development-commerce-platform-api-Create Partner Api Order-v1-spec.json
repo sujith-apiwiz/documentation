@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "GATEWAY-development-commerce-platform-api-Create Partner Api Order-v1-spec",
-    "description": "The Partner Order Management API facilitates the creation of orders on behalf of partners within the commerce platform. This endpoint is designed for easy and efficient order submission, allowing partners to quickly input and process orders for their customers. Common use cases include e-commerce businesses integrating their order systems or marketplace platforms allowing third-party vendors to manage orders seamlessly. The API provides a streamlined interface for managing partner relationships and enhancing transaction efficiency.",
+    "description": "The Order Management API facilitates the creation of orders within the commerce platform for partners. This endpoint allows authorized users to submit new orders, ensuring that essential order details are captured and processed efficiently. Typical consumers of this API include partner merchants and their integrations, who rely on streamlined ordering processes to enhance customer experiences. Leveraging this API helps businesses automate order handling, reducing manual efforts and improving overall operational efficiency.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "commerce-platform-api"
@@ -11,22 +11,24 @@
   "servers": [
     {
       "url": "https://observability-stage-raju.apiwiz.io",
+      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
       "x-environmentName": "Sandbox",
       "x-hide": false,
-      "x-environmentId": "6adb856df5d6d86071da8af3",
+      "x-environmentId": "6ae0dc350d4c405cc4ccb613",
       "x-basePath": "/"
     },
     {
       "url": "http://host.docker.internal:5331",
+      "description": "development",
       "variables": {},
       "x-schema": "http://",
       "x-name": "development",
       "x-environmentName": "development",
       "x-hide": false,
-      "x-environmentId": "6ada2fae52ccc607c5ff6208",
+      "x-environmentId": "6ae0dc440d4c405cc4ccb61c",
       "x-basePath": "/"
     }
   ],
@@ -36,8 +38,8 @@
         "tags": [
           "Order Management"
         ],
-        "summary": "Create a new order",
-        "description": "This endpoint allows users to create a new order by providing the necessary order details. Ensure all required fields are filled to successfully process the order.",
+        "summary": "Create a new order.",
+        "description": "This endpoint allows you to create a new order in the system. Provide the required order details in the request body to successfully create an order.",
         "operationId": "createPartnerApiOrder",
         "parameters": [
           {
@@ -93,7 +95,7 @@
           }
         ],
         "requestBody": {
-          "description": "Request body for creating a new order. It should contain all necessary details required for the order creation, formatted as JSON.",
+          "description": "This body contains the details required to create a new order. The payload must adhere to the specified schema, ensuring all necessary fields are included to successfully process the order.",
           "content": {
             "application/json": {
               "schema": {
@@ -104,7 +106,7 @@
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, returning the order details.",
+            "description": "Successfully processed the order request.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -158,14 +160,18 @@
         "type": "object",
         "properties": {
           "payload": {
-            "description": "The payload containing the order details.",
-            "$ref": "#/components/schemas/Payload"
+            "$ref": "#/components/schemas/OrderPayload"
           }
         },
+        "description": "The request body schema for creating a new order.",
         "example": {
           "payload": {
-            "userId": 1008,
+            "userId": 1002,
             "items": [
+              {
+                "sku": "COF-4120",
+                "qty": 2
+              },
               {
                 "sku": "BAG-5518",
                 "qty": 2
@@ -175,11 +181,11 @@
                 "qty": 3
               }
             ],
-            "total": 101868
+            "total": 103166
           }
         }
       },
-      "Payload": {
+      "OrderPayload": {
         "type": "object",
         "properties": {
           "userId": {
@@ -197,75 +203,66 @@
           },
           "total": {
             "type": "integer",
-            "description": "The total amount for the order.",
+            "description": "The total amount of the order.",
             "format": "int32",
             "example": 0
           }
         },
-        "description": "The detailed information about the order including user ID, items, and total."
+        "description": "Payload containing user and order details."
       },
       "OrderItem": {
         "type": "object",
         "properties": {
-          "orderId": {
+          "sku": {
             "type": "string",
-            "description": "Unique identifier for the order.",
+            "description": "Stock keeping unit identifier for the item.",
             "example": "string"
           },
-          "userId": {
+          "name": {
+            "type": "string",
+            "description": "Name of the item.",
+            "example": "string"
+          },
+          "qty": {
             "type": "integer",
-            "description": "Unique identifier for the user who placed the order.",
+            "description": "Quantity of the item ordered.",
             "format": "int32",
             "example": 0
           },
-          "status": {
-            "type": "string",
-            "description": "Current status of the order.",
-            "example": "string"
-          },
-          "items": {
-            "type": "array",
-            "description": "A list of items included in the order.",
-            "items": {
-              "$ref": "#/components/schemas/OrderLineItem"
-            }
-          },
-          "total": {
+          "unitPrice": {
             "type": "integer",
-            "description": "Total amount for the order.",
+            "description": "Price per unit of the item.",
             "format": "int32",
             "example": 0
           },
-          "currency": {
-            "type": "string",
-            "description": "Currency in which the order is placed.",
-            "example": "string"
-          },
-          "placedAt": {
-            "type": "string",
-            "description": "Timestamp when the order was placed.",
-            "example": "string"
-          },
-          "estimatedDelivery": {
-            "type": "string",
-            "description": "Estimated delivery date for the order.",
-            "example": "string"
+          "lineTotal": {
+            "type": "integer",
+            "description": "Total price for the line item.",
+            "format": "int32",
+            "example": 0
           }
         },
-        "description": "Schema representing an individual order item."
+        "description": "Schema representing an item in an order."
       },
       "CreatePartnerApiOrderResponse_200": {
         "type": "object",
         "properties": {
           "items": {
             "type": "array",
-            "description": "A list of order items.",
+            "description": "List of order details.",
             "example": [
               {
-                "orderId": "ORD-74893",
-                "userId": 1008,
+                "orderId": "ORD-79601",
+                "userId": 1002,
                 "status": "CONFIRMED",
                 "items": [
+                  {
+                    "sku": "COF-4120",
+                    "name": "Blue Tokai Cold Brew Coffee 500g",
+                    "qty": 2,
+                    "unitPrice": 649,
+                    "lineTotal": 1298
+                  },
                   {
                     "sku": "BAG-5518",
                     "name": "Wildcraft 35L Laptop Backpack",
@@ -281,19 +278,19 @@
                     "lineTotal": 97470
                   }
                 ],
-                "total": 101868,
+                "total": 103166,
                 "currency": "INR",
-                "placedAt": "2026-10-23T20:43:47.498230Z",
-                "estimatedDelivery": "2026-10-28"
+                "placedAt": "2026-10-27T16:20:21.947301Z",
+                "estimatedDelivery": "2026-10-31"
               }
             ],
             "items": {
-              "$ref": "#/components/schemas/OrderItem"
+              "$ref": "#/components/schemas/Order"
             }
           },
           "count": {
             "type": "integer",
-            "description": "The total number of orders in the response.",
+            "description": "Total number of orders returned.",
             "format": "int32",
             "example": 1
           },
@@ -305,17 +302,24 @@
           "traceRef": {
             "type": "string",
             "description": "Reference for tracing the request.",
-            "example": "req_rk8jomkhpptu"
+            "example": "req_yc1rcje0xl36"
           }
         },
-        "description": "Schema representing the response for the creation of orders.",
+        "description": "Response schema for successful order creation operation.",
         "example": {
           "items": [
             {
-              "orderId": "ORD-74893",
-              "userId": 1008,
+              "orderId": "ORD-79601",
+              "userId": 1002,
               "status": "CONFIRMED",
               "items": [
+                {
+                  "sku": "COF-4120",
+                  "name": "Blue Tokai Cold Brew Coffee 500g",
+                  "qty": 2,
+                  "unitPrice": 649,
+                  "lineTotal": 1298
+                },
                 {
                   "sku": "BAG-5518",
                   "name": "Wildcraft 35L Laptop Backpack",
@@ -331,50 +335,66 @@
                   "lineTotal": 97470
                 }
               ],
-              "total": 101868,
+              "total": 103166,
               "currency": "INR",
-              "placedAt": "2026-10-23T20:43:47.498230Z",
-              "estimatedDelivery": "2026-10-28"
+              "placedAt": "2026-10-27T16:20:21.947301Z",
+              "estimatedDelivery": "2026-10-31"
             }
           ],
           "count": 1,
           "client": "partner-flipmart-2291",
-          "traceRef": "req_rk8jomkhpptu"
+          "traceRef": "req_yc1rcje0xl36"
         }
       },
-      "OrderLineItem": {
+      "Order": {
         "type": "object",
         "properties": {
-          "sku": {
+          "orderId": {
             "type": "string",
-            "description": "Stock Keeping Unit identifier for the product.",
+            "description": "Unique identifier for the order.",
             "example": "string"
           },
-          "name": {
+          "userId": {
+            "type": "integer",
+            "description": "Identifier for the user who placed the order.",
+            "format": "int32",
+            "example": 0
+          },
+          "status": {
             "type": "string",
-            "description": "Name of the product.",
+            "description": "Current status of the order.",
             "example": "string"
           },
-          "qty": {
+          "items": {
+            "type": "array",
+            "description": "List of items included in the order.",
+            "items": {
+              "$ref": "#/components/schemas/OrderItem"
+            }
+          },
+          "total": {
             "type": "integer",
-            "description": "Quantity of the product ordered.",
+            "description": "Total cost of the order.",
             "format": "int32",
             "example": 0
           },
-          "unitPrice": {
-            "type": "integer",
-            "description": "Price per unit of the product.",
-            "format": "int32",
-            "example": 0
+          "currency": {
+            "type": "string",
+            "description": "Currency of the order total.",
+            "example": "string"
           },
-          "lineTotal": {
-            "type": "integer",
-            "description": "Total price for this line item (qty * unitPrice).",
-            "format": "int32",
-            "example": 0
+          "placedAt": {
+            "type": "string",
+            "description": "Date and time when the order was placed.",
+            "example": "string"
+          },
+          "estimatedDelivery": {
+            "type": "string",
+            "description": "Estimated delivery date of the order.",
+            "example": "string"
           }
         },
-        "description": "Schema representing a single line item in an order."
+        "description": "Schema representing an individual order."
       }
     },
     "parameters": {
@@ -482,9 +502,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "43788486-0E27-472B-B21B-9E1C191ECF93"
+          "example": "942B7F72-8FC9-45C3-A1C1-5F3434CC5A9A"
         },
-        "example": "43788486-0E27-472B-B21B-9E1C191ECF93"
+        "example": "942B7F72-8FC9-45C3-A1C1-5F3434CC5A9A"
       },
       "content-length": {
         "name": "content-length",
@@ -494,9 +514,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "112"
+          "example": "139"
         },
-        "example": "112"
+        "example": "139"
       },
       "x-forwarded-for": {
         "name": "x-forwarded-for",
@@ -566,9 +586,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "dce69a5e96689161cbcb292fc3296b04"
+          "example": "35dd62412f9bf7247688c354e2e1c136"
         },
-        "example": "dce69a5e96689161cbcb292fc3296b04"
+        "example": "35dd62412f9bf7247688c354e2e1c136"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -581,7 +601,8 @@
           "type": "string",
           "enum": [
             "GATEWAY_development_200"
-          ]
+          ],
+          "default": "GATEWAY_development_200"
         }
       }
     },
@@ -591,9 +612,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Fri, 23 Oct 2026 20:43:47 GMT"
+          "example": "Tue, 27 Oct 2026 16:20:21 GMT"
         },
-        "example": "Fri, 23 Oct 2026 20:43:47 GMT"
+        "example": "Tue, 27 Oct 2026 16:20:21 GMT"
       },
       "Connection": {
         "style": "simple",
@@ -614,7 +635,7 @@
         "example": "timeout=60"
       },
       "X-Api-Name": {
-        "description": "The name of the API that handled the request.",
+        "description": "The name of the API that is handling the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -624,7 +645,7 @@
         "example": "createOrder"
       },
       "X-Served-By": {
-        "description": "Identifies the specific server that processed the request.",
+        "description": "The identifier of the server that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -634,7 +655,7 @@
         "example": "partner-gateway-api"
       },
       "Content-Type": {
-        "description": "The media type of the resource that is returned in the response.",
+        "description": "The media type of the resource returned in the response.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -644,28 +665,30 @@
         "example": "application/json"
       },
       "X-Request-Id": {
+        "description": "A unique identifier for the request, useful for tracking and debugging.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "58ee9a06-35c7-4305-8854-22131d5f4642"
+          "example": "780d60e8-c9db-4df6-8484-2619ad3d5ba3"
         },
-        "example": "58ee9a06-35c7-4305-8854-22131d5f4642"
+        "example": "780d60e8-c9db-4df6-8484-2619ad3d5ba3"
       },
       "Content-Length": {
+        "description": "The length of the response body in bytes, indicating the size of the payload.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "463"
+          "example": "565"
         },
-        "example": "463"
+        "example": "565"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses HTTP Bearer authentication, which requires the client to send a bearer token in the 'Authorization' header. This token is typically generated upon successful login and must be included in subsequent requests to access protected resources.",
+        "description": "Authentication scheme that uses a bearer token. Clients must include a valid token in the Authorization header when making requests to protected resources.",
         "scheme": "bearer"
       }
     }

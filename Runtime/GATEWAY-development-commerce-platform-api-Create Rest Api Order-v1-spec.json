@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "GATEWAY-development-commerce-platform-api-Create Rest Api Order-v1-spec",
-    "description": "The Order Management API enables businesses to efficiently process new orders within the commerce platform. By utilizing this API, developers can seamlessly submit order details, including product selections and customer information. This functionality is essential for e-commerce applications seeking to automate order fulfillment, improve inventory management, and enhance customer experience. Typical consumers of this API include online retailers and developers integrating e-commerce solutions into their applications.",
+    "description": "The Order Management API facilitates the creation of new orders within the e-commerce platform. This API allows businesses to register customer orders, manage product selections, and ensure smooth transaction processing. Typical consumers include e-commerce businesses and third-party applications that integrate with the platform to manage sales and inventory. By utilizing this API, developers can streamline their order submission processes while enhancing the overall customer experience.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "commerce-platform-api"
@@ -17,7 +17,7 @@
       "x-name": "Sandbox server",
       "x-environmentName": "Sandbox",
       "x-hide": false,
-      "x-environmentId": "6adb856df5d6d86071da8af3",
+      "x-environmentId": "6ae0dc350d4c405cc4ccb613",
       "x-basePath": "/"
     },
     {
@@ -28,7 +28,7 @@
       "x-name": "development",
       "x-environmentName": "development",
       "x-hide": false,
-      "x-environmentId": "6ada2fae52ccc607c5ff6208",
+      "x-environmentId": "6ae0dc440d4c405cc4ccb61c",
       "x-basePath": "/"
     }
   ],
@@ -36,10 +36,10 @@
     "/rest/api/v1/orders": {
       "post": {
         "tags": [
-          "Order Management"
+          "Orders"
         ],
         "summary": "Create a new order",
-        "description": "This endpoint allows users to create a new order by providing the necessary order details. Ensure that all required fields are filled correctly to avoid errors during processing.",
+        "description": "This endpoint allows users to create a new order by providing the necessary details. The order will be processed and a confirmation will be returned upon successful creation.",
         "operationId": "createRestApiOrder",
         "parameters": [
           {
@@ -92,7 +92,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to create a new order. It contains all the necessary details that define the order, including information such as the items being ordered, quantities, customer details, and payment information.",
+          "description": "The request body for creating a new order. This payload should include all necessary details for order creation, including product information, quantity, customer details, and any applicable discount codes.",
           "content": {
             "application/json": {
               "schema": {
@@ -103,7 +103,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully processed the order request.",
+            "description": "The request was completed successfully, and the order details are returned.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -141,14 +141,13 @@
   "components": {
     "schemas": {
       "CreateRestApiOrderRequest": {
-        "title": "Create Order Request",
         "type": "object",
         "properties": {
           "userId": {
             "type": "integer",
-            "description": "The unique identifier for the user placing the order.",
+            "description": "The unique identifier of the user placing the order.",
             "format": "int32",
-            "example": 1004
+            "example": 1006
           },
           "items": {
             "type": "array",
@@ -156,15 +155,11 @@
             "example": [
               {
                 "sku": "LAP-1042",
-                "qty": 2
+                "qty": 1
               },
               {
                 "sku": "AUD-2210",
-                "qty": 3
-              },
-              {
-                "sku": "SHO-3307",
-                "qty": 2
+                "qty": 1
               }
             ],
             "items": {
@@ -173,29 +168,25 @@
           },
           "total": {
             "type": "integer",
-            "description": "The total amount for the order.",
+            "description": "The total amount for the order, computed based on the items.",
             "format": "int32",
-            "example": 215940
+            "example": 88980
           }
         },
-        "description": "This schema represents the request body for creating an order.",
+        "description": "Schema representing the request body for creating a new order.",
         "example": {
-          "userId": 1004,
+          "userId": 1006,
           "items": [
             {
               "sku": "LAP-1042",
-              "qty": 2
+              "qty": 1
             },
             {
               "sku": "AUD-2210",
-              "qty": 3
-            },
-            {
-              "sku": "SHO-3307",
-              "qty": 2
+              "qty": 1
             }
           ],
-          "total": 215940
+          "total": 88980
         }
       },
       "OrderItem": {
@@ -203,31 +194,31 @@
         "properties": {
           "sku": {
             "type": "string",
-            "description": "The stock keeping unit identifier for the item.",
-            "example": "ABC123"
+            "description": "Stock keeping unit identifier for the item.",
+            "example": "string"
           },
           "name": {
             "type": "string",
-            "description": "The name of the product.",
-            "example": "Product Name"
+            "description": "The name of the item.",
+            "example": "string"
           },
           "qty": {
             "type": "integer",
             "description": "The quantity of the item ordered.",
             "format": "int32",
-            "example": 1
+            "example": 0
           },
           "unitPrice": {
             "type": "integer",
-            "description": "The price of one unit of the item.",
+            "description": "The price per unit of the item.",
             "format": "int32",
-            "example": 1000
+            "example": 0
           },
           "lineTotal": {
             "type": "integer",
-            "description": "The total price for the quantity of the item ordered.",
+            "description": "The total price for the line item (qty x unitPrice).",
             "format": "int32",
-            "example": 1000
+            "example": 0
           }
         },
         "description": "Schema representing an individual item in an order."
@@ -238,17 +229,17 @@
           "orderId": {
             "type": "string",
             "description": "The unique identifier for the order.",
-            "example": "ORD-77850"
+            "example": "ORD-98727"
           },
           "userId": {
             "type": "integer",
-            "description": "The identifier of the user who placed the order.",
+            "description": "The unique identifier for the user who placed the order.",
             "format": "int32",
-            "example": 1004
+            "example": 1006
           },
           "status": {
             "type": "string",
-            "description": "The status of the order (e.g., 'pending', 'completed').",
+            "description": "The current status of the order.",
             "example": "CONFIRMED"
           },
           "items": {
@@ -258,23 +249,16 @@
               {
                 "sku": "LAP-1042",
                 "name": "Lenovo ThinkPad E14 Gen 5",
-                "qty": 2,
+                "qty": 1,
                 "unitPrice": 58990,
-                "lineTotal": 117980
+                "lineTotal": 58990
               },
               {
                 "sku": "AUD-2210",
                 "name": "Sony WH-1000XM5 Wireless Headphones",
-                "qty": 3,
+                "qty": 1,
                 "unitPrice": 29990,
-                "lineTotal": 89970
-              },
-              {
-                "sku": "SHO-3307",
-                "name": "Nike Revolution 7 Running Shoes",
-                "qty": 2,
-                "unitPrice": 3995,
-                "lineTotal": 7990
+                "lineTotal": 29990
               }
             ],
             "items": {
@@ -285,56 +269,49 @@
             "type": "integer",
             "description": "The total amount for the order.",
             "format": "int32",
-            "example": 215940
+            "example": 88980
           },
           "currency": {
             "type": "string",
-            "description": "The currency used for the order total.",
+            "description": "The currency in which the order total is represented.",
             "example": "INR"
           },
           "placedAt": {
             "type": "string",
             "description": "The timestamp when the order was placed.",
-            "example": "2026-10-23T07:37:58.559556Z"
+            "example": "2026-10-27T16:20:22.660847Z"
           },
           "estimatedDelivery": {
             "type": "string",
             "description": "The estimated delivery date for the order.",
-            "example": "2026-10-27"
+            "example": "2026-10-31"
           }
         },
-        "description": "Response schema for the successful creation of an order.",
+        "description": "Response schema for a successful order creation operation.",
         "example": {
-          "orderId": "ORD-77850",
-          "userId": 1004,
+          "orderId": "ORD-98727",
+          "userId": 1006,
           "status": "CONFIRMED",
           "items": [
             {
               "sku": "LAP-1042",
               "name": "Lenovo ThinkPad E14 Gen 5",
-              "qty": 2,
+              "qty": 1,
               "unitPrice": 58990,
-              "lineTotal": 117980
+              "lineTotal": 58990
             },
             {
               "sku": "AUD-2210",
               "name": "Sony WH-1000XM5 Wireless Headphones",
-              "qty": 3,
+              "qty": 1,
               "unitPrice": 29990,
-              "lineTotal": 89970
-            },
-            {
-              "sku": "SHO-3307",
-              "name": "Nike Revolution 7 Running Shoes",
-              "qty": 2,
-              "unitPrice": 3995,
-              "lineTotal": 7990
+              "lineTotal": 29990
             }
           ],
-          "total": 215940,
+          "total": 88980,
           "currency": "INR",
-          "placedAt": "2026-10-23T07:37:58.559556Z",
-          "estimatedDelivery": "2026-10-27"
+          "placedAt": "2026-10-27T16:20:22.660847Z",
+          "estimatedDelivery": "2026-10-31"
         }
       }
     },
@@ -431,9 +408,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "4B045DBD-1954-4B7A-9CF5-E7D6350B22FD"
+          "example": "8115DF1D-BACF-4CFD-AC86-73A59C64FBA4"
         },
-        "example": "4B045DBD-1954-4B7A-9CF5-E7D6350B22FD"
+        "example": "8115DF1D-BACF-4CFD-AC86-73A59C64FBA4"
       },
       "content-length": {
         "name": "content-length",
@@ -443,9 +420,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "126"
+          "example": "98"
         },
-        "example": "126"
+        "example": "98"
       },
       "x-forwarded-for": {
         "name": "x-forwarded-for",
@@ -515,9 +492,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "4aa20806aa254d006f6d3d3ef49d7065"
+          "example": "33782070ae30c578b83e9f006117d13a"
         },
-        "example": "4aa20806aa254d006f6d3d3ef49d7065"
+        "example": "33782070ae30c578b83e9f006117d13a"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -530,7 +507,8 @@
           "type": "string",
           "enum": [
             "GATEWAY_development_200"
-          ]
+          ],
+          "default": "GATEWAY_development_200"
         }
       }
     },
@@ -540,9 +518,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Fri, 23 Oct 2026 07:37:58 GMT"
+          "example": "Tue, 27 Oct 2026 16:20:22 GMT"
         },
-        "example": "Fri, 23 Oct 2026 07:37:58 GMT"
+        "example": "Tue, 27 Oct 2026 16:20:22 GMT"
       },
       "Connection": {
         "style": "simple",
@@ -576,9 +554,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "483"
+          "example": "379"
         },
-        "example": "483"
+        "example": "379"
       }
     }
   }
