@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-development-billing-dotnet-api-Create Oauth Token-v1-spec",
-    "description": "The OAuth Token Generation API facilitates secure access to resources by providing authentication tokens. This endpoint allows clients to request access tokens through a straightforward POST operation, essential for enabling authorized access to protected APIs. Common consumers of this API include application developers and systems integrating with microservices requiring user authentication. By utilizing this API, developers can streamline user access management and enhance security in their applications.",
+    "description": "The OAuth Token Management API facilitates the issuance of OAuth tokens necessary for authentication and authorization in service-to-service interactions. This API allows applications to securely obtain access tokens through a standard OAuth mechanism. Typical consumers include web and mobile applications that require access to protected resources. By employing this API, developers can enhance their application's security and streamline user authentication processes.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "billing-dotnet-api"
@@ -17,7 +17,7 @@
       "x-name": "Sandbox server",
       "x-environmentName": "Sandbox",
       "x-hide": false,
-      "x-environmentId": "6adb856df5d6d86071da8af3",
+      "x-environmentId": "6ae0dc350d4c405cc4ccb613",
       "x-basePath": "/"
     },
     {
@@ -28,7 +28,7 @@
       "x-name": "development",
       "x-environmentName": "development",
       "x-hide": false,
-      "x-environmentId": "6ada2fae52ccc607c5ff6208",
+      "x-environmentId": "6ae0dc440d4c405cc4ccb61c",
       "x-basePath": "/"
     }
   ],
@@ -38,8 +38,8 @@
         "tags": [
           "Authentication"
         ],
-        "summary": "Generate a new token.",
-        "description": "This endpoint allows clients to request a new token by providing the necessary credentials. Upon successful authentication, a token will be returned for subsequent API requests.",
+        "summary": "Generate a new authentication token.",
+        "description": "This endpoint allows users to generate a new authentication token by providing valid credentials. The token will be used for authenticating subsequent requests to the API.",
         "operationId": "createOauthToken",
         "parameters": [
           {
@@ -62,7 +62,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to obtain a token for authentication purposes. It requires specific credentials or information to generate the token, ensuring secure access to the protected resources.",
+          "description": "This request body is used to obtain an authentication token. The client must include their credentials in the specified format to receive a valid token for subsequent API calls.",
           "content": {
             "application/json": {
               "schema": {
@@ -71,8 +71,8 @@
               "examples": {
                 "example1": {
                   "value": {
-                    "username": "john_doe",
-                    "password": "securePassword123"
+                    "username": "user1",
+                    "password": "pass1"
                   }
                 }
               }
@@ -81,7 +81,7 @@
         },
         "responses": {
           "200": {
-            "description": "Token generated successfully.",
+            "description": "The token has been successfully generated.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -106,33 +106,6 @@
                 }
               }
             }
-          },
-          "401": {
-            "description": "Authentication credentials are missing or invalid.",
-            "headers": {
-              "Date": {
-                "$ref": "#/components/headers/Date"
-              },
-              "Server": {
-                "$ref": "#/components/headers/Server"
-              },
-              "Content-Type": {
-                "$ref": "#/components/headers/Content-Type"
-              },
-              "Content-Length": {
-                "$ref": "#/components/headers/Content-Length"
-              },
-              "X-Failure-Mode": {
-                "$ref": "#/components/headers/X-Failure-Mode"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateOauthTokenResponse_401"
-                }
-              }
-            }
           }
         },
         "callbacks": {},
@@ -151,46 +124,32 @@
         "properties": {
           "access_token": {
             "type": "string",
-            "description": "The access token issued for authentication.",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkZW1vLW9hdXRoIiwic3ViIjoiZGVtbyIsImNsaWVudF9pZCI6ImRlbW8tY2xpZW50IiwiZ3JhbnQiOiJwYXNzd29yZCIsInNjb3BlIjoicmVhZCB3cml0ZSIsInR5cCI6Im9hdXRoMiIsImlhdCI6MTc5Mjc0MTA2NCwiZXhwIjoxNzkyNzQ0NjY0fQ.PaIy34bmCC8izYfP6W3l6xA3k_A03UaOj9UR0Ubsavc"
+            "description": "The access token issued by the authorization server.",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkZW1vLW9hdXRoIiwic3ViIjoiZGVtbyIsImNsaWVudF9pZCI6ImRlbW8tY2xpZW50IiwiZ3JhbnQiOiJwYXNzd29yZCIsInNjb3BlIjoicmVhZCB3cml0ZSIsInR5cCI6Im9hdXRoMiIsImlhdCI6MTc5MzIwNDE4NCwiZXhwIjoxNzkzMjA3Nzg0fQ.I7zAxmfNr2rPYWTi7Jhhc2rKMaDqH4J_lG4yK36-VUc"
           },
           "token_type": {
             "type": "string",
-            "description": "The type of the token issued, typically 'Bearer'.",
+            "description": "The type of the token issued. Typically, it is 'Bearer'.",
             "example": "Bearer"
           },
           "expires_in": {
             "type": "integer",
-            "description": "The duration in seconds for which the access token is valid.",
+            "description": "The lifetime in seconds of the access token.",
             "format": "int32",
             "example": 3600
           },
           "scope": {
             "type": "string",
-            "description": "A space-separated list of scopes that the access token is valid for.",
+            "description": "The scope of the access token, describing the permissions granted.",
             "example": "read write"
           }
         },
-        "description": "Response object that contains the details of the token issued after a successful authentication operation.",
+        "description": "Schema representing the response structure for a successful token acquisition operation.",
         "example": {
-          "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkZW1vLW9hdXRoIiwic3ViIjoiZGVtbyIsImNsaWVudF9pZCI6ImRlbW8tY2xpZW50IiwiZ3JhbnQiOiJwYXNzd29yZCIsInNjb3BlIjoicmVhZCB3cml0ZSIsInR5cCI6Im9hdXRoMiIsImlhdCI6MTc5Mjc0MTA2NCwiZXhwIjoxNzkyNzQ0NjY0fQ.PaIy34bmCC8izYfP6W3l6xA3k_A03UaOj9UR0Ubsavc",
+          "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkZW1vLW9hdXRoIiwic3ViIjoiZGVtbyIsImNsaWVudF9pZCI6ImRlbW8tY2xpZW50IiwiZ3JhbnQiOiJwYXNzd29yZCIsInNjb3BlIjoicmVhZCB3cml0ZSIsInR5cCI6Im9hdXRoMiIsImlhdCI6MTc5MzIwNDE4NCwiZXhwIjoxNzkzMjA3Nzg0fQ.I7zAxmfNr2rPYWTi7Jhhc2rKMaDqH4J_lG4yK36-VUc",
           "token_type": "Bearer",
           "expires_in": 3600,
           "scope": "read write"
-        }
-      },
-      "CreateOauthTokenResponse_401": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "description": "A message indicating the error condition.",
-            "example": "invalid_client"
-          }
-        },
-        "description": "Response schema for a 401 Unauthorized error when accessing the token operations.",
-        "example": {
-          "error": "invalid_client"
         }
       }
     },
@@ -251,9 +210,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "94"
+          "example": "115"
         },
-        "example": "94"
+        "example": "115"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -265,23 +224,25 @@
         "schema": {
           "type": "string",
           "enum": [
-            "MICROSERVICE_development_200",
-            "MICROSERVICE_development_401"
-          ]
+            "MICROSERVICE_development_200"
+          ],
+          "default": "MICROSERVICE_development_200"
         }
       }
     },
     "headers": {
       "Date": {
+        "description": "The date and time at which the response was generated, formatted in ISO 8601.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Fri, 23 Oct 2026 07:27:49 GMT"
+          "example": "Wed, 28 Oct 2026 16:16:24 GMT"
         },
-        "example": "Fri, 23 Oct 2026 07:27:49 GMT"
+        "example": "Wed, 28 Oct 2026 16:16:24 GMT"
       },
       "Server": {
+        "description": "The name and version of the web server that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -291,6 +252,7 @@
         "example": "Kestrel"
       },
       "Content-Type": {
+        "description": "The media type of the resource returned in the response, indicating the format of the content.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -304,12 +266,11 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "26"
+          "example": "359"
         },
-        "example": "26"
+        "example": "359"
       },
       "X-Failure-Mode": {
-        "description": "Indicates the reason for the request failure when the user is unauthorized, providing details on the failure mode such as 'auth_error' or 'session_expired'.",
         "style": "simple",
         "explode": false,
         "schema": {

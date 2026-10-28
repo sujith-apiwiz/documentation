@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "GATEWAY-development-commerce-platform-api-Create Api Product Review-v1-spec",
-    "description": "The Product Review Submission API enables users to share their feedback and experiences regarding specific products. By submitting reviews, customers contribute valuable insights that can help other consumers make informed decisions. This API is designed for e-commerce platforms looking to enhance customer engagement and trust. Typical consumers include developers integrating review functionalities into product pages or mobile applications seeking to provide a more interactive shopping experience.",
+    "description": "The Product Reviews Submission API allows users to submit reviews for specific products within the commerce platform. This endpoint enables customers to share their feedback and ratings, enhancing product visibility and helping other consumers make informed decisions. Common use cases include customers posting reviews after purchase or rating their experiences with products. By leveraging this API, businesses can foster community engagement and improve product offerings based on user insights.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "commerce-platform-api"
@@ -11,7 +11,6 @@
   "servers": [
     {
       "url": "https://observability-stage-raju.apiwiz.io",
-      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
@@ -22,7 +21,6 @@
     },
     {
       "url": "http://host.docker.internal:5331",
-      "description": "development",
       "variables": {},
       "x-schema": "http://",
       "x-name": "development",
@@ -38,8 +36,8 @@
         "tags": [
           "Product Reviews"
         ],
-        "summary": "Create a new review for product AUD-2210.",
-        "description": "This endpoint allows you to submit a new review for the product with the ID AUD-2210. Ensure that you provide all necessary review details in the request body to successfully create the review.",
+        "summary": "Submit a review for a product.",
+        "description": "This endpoint allows users to submit a review for the specified product. Ensure you provide all required fields such as rating and comment to successfully create a review.",
         "operationId": "createApiProductReview",
         "parameters": [
           {
@@ -101,7 +99,7 @@
           }
         ],
         "requestBody": {
-          "description": "The request body for submitting a review for the product with the identifier AUD-2210. This body must conform to the specified JSON schema and contains details about the review, such as the reviewer's name, rating, and comments.",
+          "description": "Request body for creating a new review for the product with ID AUD-2210. This includes details such as the reviewer's name, rating, and comment.",
           "content": {
             "application/json": {
               "schema": {
@@ -112,7 +110,7 @@
         },
         "responses": {
           "200": {
-            "description": "Review submitted successfully.",
+            "description": "Request completed successfully and review has been posted.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -159,103 +157,102 @@
   "components": {
     "schemas": {
       "CreateApiProductReviewRequest": {
+        "title": "Review Request Body",
         "type": "object",
         "properties": {
           "rating": {
             "type": "integer",
-            "description": "The rating given by the author, typically on a scale from 0 to 5.",
+            "description": "The rating given by the reviewer, typically on a scale from 1 to 5.",
+            "format": "int32",
+            "example": 3
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the review, summarizing the reviewer's experience.",
+            "example": "Decent but pricey"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The detailed comment provided by the reviewer.",
+            "example": "Does the job, though I expected slightly better battery life."
+          },
+          "author": {
+            "type": "string",
+            "description": "The name of the person who authored the review.",
+            "example": "Arjun Reddy"
+          }
+        },
+        "description": "Schema for creating a product review.",
+        "example": {
+          "rating": 3,
+          "title": "Decent but pricey",
+          "comment": "Does the job, though I expected slightly better battery life.",
+          "author": "Arjun Reddy"
+        }
+      },
+      "CreateApiProductReviewResponse_200": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "The status of the response indicating the success or failure of the operation.",
+            "example": "success"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ReviewResponseData"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "A unique identifier for the request to aid in tracking and troubleshooting.",
+            "example": "req_sj841vk1owqi"
+          }
+        },
+        "description": "Schema representing the response for creating a review operation.",
+        "example": {
+          "status": "success",
+          "data": {
+            "reviewId": "REV-5595",
+            "sku": "AUD-2210",
+            "rating": 3,
+            "title": "Decent but pricey",
+            "comment": "Does the job, though I expected slightly better battery life.",
+            "author": "Arjun Reddy",
+            "verifiedPurchase": true,
+            "helpfulVotes": 4,
+            "createdAt": "2026-10-24T16:20:10.933424Z",
+            "status": "PENDING_MODERATION"
+          },
+          "requestId": "req_sj841vk1owqi"
+        }
+      },
+      "ReviewResponseData": {
+        "type": "object",
+        "properties": {
+          "reviewId": {
+            "type": "string",
+            "description": "The unique identifier for the review.",
+            "example": "rev-78910"
+          },
+          "sku": {
+            "type": "string",
+            "description": "The stock keeping unit associated with the product being reviewed.",
+            "example": "sku-12345"
+          },
+          "rating": {
+            "type": "integer",
+            "description": "The rating given by the reviewer, typically on a scale from 1 to 5.",
             "format": "int32",
             "example": 5
           },
           "title": {
             "type": "string",
-            "description": "The title of the review (a brief summary of the reviewer's opinion).",
-            "example": "Worth every rupee"
+            "description": "The title of the review provided by the reviewer.",
+            "example": "Excellent Product!"
           },
           "comment": {
             "type": "string",
-            "description": "The detailed comment or feedback provided by the author about the product.",
-            "example": "Bought it as a gift and they loved it."
-          },
-          "author": {
-            "type": "string",
-            "description": "The name or identifier of the individual who authored the review.",
-            "example": "Kenji Watanabe"
-          }
-        },
-        "description": "A schema representing the body of a request to post a review for a product, containing details such as the rating, title, comment, and author information.",
-        "example": {
-          "rating": 5,
-          "title": "Worth every rupee",
-          "comment": "Bought it as a gift and they loved it.",
-          "author": "Kenji Watanabe"
-        }
-      },
-      "CreateApiProductReviewResponse_200": {
-        "title": "Product Review Response Schema",
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "The status of the response indicating success or failure.",
-            "example": "success"
-          },
-          "data": {
-            "$ref": "#/components/schemas/ProductReviewData"
-          },
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req_rqvqjsm91622"
-          }
-        },
-        "description": "Schema representing the response for a post request to add a product review.",
-        "example": {
-          "status": "success",
-          "data": {
-            "reviewId": "REV-6725",
-            "sku": "AUD-2210",
-            "rating": 5,
-            "title": "Worth every rupee",
-            "comment": "Bought it as a gift and they loved it.",
-            "author": "Kenji Watanabe",
-            "verifiedPurchase": true,
-            "helpfulVotes": 30,
-            "createdAt": "2026-10-23T14:02:39.256567Z",
-            "status": "PENDING_MODERATION"
-          },
-          "requestId": "req_rqvqjsm91622"
-        }
-      },
-      "ProductReviewData": {
-        "title": "Product Review Data Schema",
-        "type": "object",
-        "properties": {
-          "reviewId": {
-            "type": "string",
-            "description": "Unique identifier for the review.",
-            "example": "rev-78910"
-          },
-          "sku": {
-            "type": "string",
-            "description": "Stock Keeping Unit identifier for the product being reviewed.",
-            "example": "sku-12345"
-          },
-          "rating": {
-            "type": "integer",
-            "description": "The rating given to the product by the reviewer (typically from 1 to 5).",
-            "format": "int32",
-            "example": 4
-          },
-          "title": {
-            "type": "string",
-            "description": "The title of the review.",
-            "example": "Great Product"
-          },
-          "comment": {
-            "type": "string",
-            "description": "The actual text of the review comment.",
-            "example": "This product worked really well for me."
+            "description": "The detailed review comment provided by the reviewer.",
+            "example": "I am very satisfied with this product."
           },
           "author": {
             "type": "string",
@@ -264,19 +261,19 @@
           },
           "verifiedPurchase": {
             "type": "boolean",
-            "description": "Indicates whether the review is from a verified purchase.",
+            "description": "Indicates whether the reviewer purchased the product through the platform.",
             "example": true
           },
           "helpfulVotes": {
             "type": "integer",
-            "description": "The number of helpful votes the review has received.",
+            "description": "The number of users who found the review helpful.",
             "format": "int32",
             "example": 10
           },
           "createdAt": {
             "type": "string",
-            "description": "The date and time when the review was created.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "The timestamp of when the review was created.",
+            "example": "2023-10-01T12:34:56Z"
           },
           "status": {
             "type": "string",
@@ -284,7 +281,7 @@
             "example": "published"
           }
         },
-        "description": "Schema representing the detailed information of a product review."
+        "description": "Schema representing the detailed data of a review."
       }
     },
     "parameters": {
@@ -392,9 +389,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "C8D2B6D0-D04F-4D32-9E55-DC8A889FC402"
+          "example": "1F591E34-60CA-4EAB-947D-5268C6D46CA6"
         },
-        "example": "C8D2B6D0-D04F-4D32-9E55-DC8A889FC402"
+        "example": "1F591E34-60CA-4EAB-947D-5268C6D46CA6"
       },
       "content-length": {
         "name": "content-length",
@@ -404,9 +401,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "124"
+          "example": "144"
         },
-        "example": "124"
+        "example": "144"
       },
       "x-forwarded-for": {
         "name": "x-forwarded-for",
@@ -476,9 +473,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "fef2dd30c266cd46f9d7bd4c2c247c59"
+          "example": "8eb9fa4e64372358c231ca0ffd1be00c"
         },
-        "example": "fef2dd30c266cd46f9d7bd4c2c247c59"
+        "example": "8eb9fa4e64372358c231ca0ffd1be00c"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -520,17 +517,17 @@
     },
     "headers": {
       "Date": {
-        "description": "The date and time at which the response was generated, in ISO 8601 format.",
+        "description": "The date and time at which the response was generated, formatted in ISO 8601.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Wed, 28 Oct 2026 14:02:39 GMT"
+          "example": "Wed, 28 Oct 2026 16:20:10 GMT"
         },
-        "example": "Wed, 28 Oct 2026 14:02:39 GMT"
+        "example": "Wed, 28 Oct 2026 16:20:10 GMT"
       },
       "Connection": {
-        "description": "This header indicates the type of connection management the server supports for this communication.",
+        "description": "Control directive indicating whether the connection should be kept alive or closed after completion of the response.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -540,7 +537,7 @@
         "example": "keep-alive"
       },
       "Keep-Alive": {
-        "description": "This header specifies parameters for persistent connections, including the timeout and maximum number of requests.",
+        "description": "Specifies parameters for persistent connections, including the timeout duration and maximum number of requests allowed.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -577,24 +574,24 @@
         "example": "application/json"
       },
       "X-Request-Id": {
-        "description": "A unique identifier for the specific request made to the server, useful for tracking and debugging purposes.",
+        "description": "A unique identifier for the request, generated by the server.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "5030d832-cf29-409c-aa6c-ff0eedfb492e"
+          "example": "c525bc4f-23ba-4d6d-8081-96e75ba4112a"
         },
-        "example": "5030d832-cf29-409c-aa6c-ff0eedfb492e"
+        "example": "c525bc4f-23ba-4d6d-8081-96e75ba4112a"
       },
       "Content-Length": {
-        "description": "The length of the response body in bytes. This value indicates the size of the content returned by the server.",
+        "description": "The length of the response body in bytes.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "329"
+          "example": "348"
         },
-        "example": "329"
+        "example": "348"
       }
     }
   }

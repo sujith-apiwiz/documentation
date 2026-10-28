@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "GATEWAY-development-commerce-platform-api-Create Api Shipments Rate-v1-spec",
-    "description": "The Shipment Rate Calculation API enables businesses to calculate shipping rates for their products efficiently. This API allows users to submit shipment details and retrieve estimated costs based on various factors such as weight, dimensions, and destination. Typical consumers include e-commerce platforms, logistics companies, and freight service providers looking to optimize shipping expenses. By integrating this API, businesses can offer transparent and accurate shipping rates, enhancing the overall customer experience.",
+    "description": "The Shipment Rate Calculation API enables businesses to determine shipping rates for their products efficiently. By leveraging this API, users can submit shipment details and receive accurate rate estimates based on destination, package dimensions, and weight. Ideal for e-commerce platforms and logistics providers, it supports dynamic pricing models and enhances customer transparency during the checkout process. This API streamlines the decision-making process for companies looking to optimize shipping costs and improve customer satisfaction.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "commerce-platform-api"
@@ -11,7 +11,6 @@
   "servers": [
     {
       "url": "https://observability-stage-raju.apiwiz.io",
-      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
@@ -22,7 +21,6 @@
     },
     {
       "url": "http://host.docker.internal:5331",
-      "description": "development",
       "variables": {},
       "x-schema": "http://",
       "x-name": "development",
@@ -36,10 +34,10 @@
     "/api/v1/shipments/rates": {
       "post": {
         "tags": [
-          "Shipping"
+          "Shipment Management"
         ],
-        "summary": "Create new shipment rates",
-        "description": "This endpoint allows you to create and obtain the latest shipment rates based on the specified parameters. It is designed to help you estimate the shipping costs for your packages efficiently.",
+        "summary": "Create a new shipment rate",
+        "description": "This endpoint allows you to create a shipment rate based on the provided details. It facilitates the calculation and management of shipping costs, enabling users to get accurate rates for their shipments.",
         "operationId": "createApiShipmentsRate",
         "parameters": [
           {
@@ -98,7 +96,7 @@
           }
         ],
         "requestBody": {
-          "description": "The request body for creating a new shipment rates request. This should include all necessary shipment details for accurate rate calculation.",
+          "description": "Request body containing the necessary information to calculate shipment rates.",
           "content": {
             "application/json": {
               "schema": {
@@ -109,7 +107,7 @@
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully, returning shipment rate details.",
+            "description": "Successfully retrieved shipment rates.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -156,28 +154,29 @@
   "components": {
     "schemas": {
       "CreateApiShipmentsRateRequest": {
+        "title": "Shipment Rate Request Body",
         "type": "object",
         "properties": {
           "weightKg": {
             "type": "integer",
             "description": "The weight of the shipment in kilograms.",
             "format": "int32",
-            "example": 9
+            "example": 3
           },
           "fromPostalCode": {
             "type": "string",
-            "description": "The postal code from which the shipment will be made.",
+            "description": "The postal code from which the shipment originates.",
             "example": "560001"
           },
           "toPostalCode": {
             "type": "string",
-            "description": "The postal code to which the shipment will be sent.",
+            "description": "The postal code to which the shipment is being sent.",
             "example": "560001"
           }
         },
-        "description": "Request body for creating shipment rates based on weight and postal codes.",
+        "description": "This schema represents the request body for creating shipment rate inquiries.",
         "example": {
-          "weightKg": 9,
+          "weightKg": 3,
           "fromPostalCode": "560001",
           "toPostalCode": "560001"
         }
@@ -187,120 +186,161 @@
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status of the shipment rate request.",
+            "description": "The status of the request.",
             "example": "success"
           },
           "data": {
-            "$ref": "#/components/schemas/ShipmentRatesData"
-          },
-          "requestId": {
-            "type": "string",
-            "description": "A unique identifier for the request.",
-            "example": "req_40b7d6m3qduy"
+            "type": "object",
+            "properties": {
+              "fromPostalCode": {
+                "type": "string",
+                "description": "The postal code from which the shipment is made.",
+                "example": "10001"
+              },
+              "toPostalCode": {
+                "type": "string",
+                "description": "The postal code to which the shipment is directed.",
+                "example": "90001"
+              },
+              "weightKg": {
+                "type": "integer",
+                "description": "The weight of the shipment in kilograms.",
+                "format": "int32",
+                "example": 10
+              },
+              "quotes": {
+                "type": "array",
+                "description": "A list of shipping quotes for the shipment.",
+                "example": [
+                  {
+                    "carrier": "Carrier A",
+                    "service": "Standard",
+                    "price": 100,
+                    "currency": "USD",
+                    "etaDays": 5
+                  }
+                ],
+                "items": {
+                  "$ref": "#/components/schemas/ShippingQuote"
+                }
+              },
+              "requestId": {
+                "type": "string",
+                "description": "The unique identifier for the request.",
+                "example": "req_123456"
+              }
+            },
+            "description": "Contains the shipment rate details.",
+            "example": {
+              "fromPostalCode": "560001",
+              "toPostalCode": "560001",
+              "weightKg": 3,
+              "quotes": [
+                {
+                  "carrier": "Delhivery",
+                  "service": "STANDARD",
+                  "price": 102,
+                  "currency": "INR",
+                  "etaDays": 5
+                },
+                {
+                  "carrier": "Blue Dart",
+                  "service": "STANDARD",
+                  "price": 93,
+                  "currency": "INR",
+                  "etaDays": 3
+                },
+                {
+                  "carrier": "DTDC",
+                  "service": "STANDARD",
+                  "price": 108,
+                  "currency": "INR",
+                  "etaDays": 4
+                },
+                {
+                  "carrier": "Ecom Express",
+                  "service": "STANDARD",
+                  "price": 102,
+                  "currency": "INR",
+                  "etaDays": 2
+                }
+              ]
+            }
           }
         },
-        "description": "Response schema for the shipment rates operation.",
+        "description": "Response object for the shipment rates operation.",
         "example": {
           "status": "success",
           "data": {
             "fromPostalCode": "560001",
             "toPostalCode": "560001",
-            "weightKg": 9,
+            "weightKg": 3,
             "quotes": [
               {
                 "carrier": "Delhivery",
                 "service": "STANDARD",
-                "price": 174,
+                "price": 102,
                 "currency": "INR",
-                "etaDays": 4
+                "etaDays": 5
               },
               {
                 "carrier": "Blue Dart",
                 "service": "STANDARD",
-                "price": 201,
+                "price": 93,
                 "currency": "INR",
-                "etaDays": 2
+                "etaDays": 3
               },
               {
                 "carrier": "DTDC",
                 "service": "STANDARD",
-                "price": 192,
+                "price": 108,
                 "currency": "INR",
                 "etaDays": 4
               },
               {
                 "carrier": "Ecom Express",
                 "service": "STANDARD",
-                "price": 228,
+                "price": 102,
                 "currency": "INR",
-                "etaDays": 3
+                "etaDays": 2
               }
             ]
           },
-          "requestId": "req_40b7d6m3qduy"
+          "requestId": "req_ouu40yatelb2"
         }
       },
-      "ShipmentRatesData": {
-        "type": "object",
-        "properties": {
-          "fromPostalCode": {
-            "type": "string",
-            "description": "The postal code from which the shipment is sent.",
-            "example": "10001"
-          },
-          "toPostalCode": {
-            "type": "string",
-            "description": "The postal code to which the shipment is sent.",
-            "example": "90210"
-          },
-          "weightKg": {
-            "type": "integer",
-            "description": "The weight of the shipment in kilograms.",
-            "format": "int32",
-            "example": 5
-          },
-          "quotes": {
-            "type": "array",
-            "description": "A list of available shipment quotes.",
-            "items": {
-              "$ref": "#/components/schemas/ShipmentQuote"
-            }
-          }
-        },
-        "description": "Contains details about shipment rates, including quotes."
-      },
-      "ShipmentQuote": {
+      "ShippingQuote": {
         "type": "object",
         "properties": {
           "carrier": {
             "type": "string",
-            "description": "The name of the carrier providing the shipment service.",
-            "example": "Fast Delivery"
+            "description": "The name of the carrier providing the quote.",
+            "example": "Carrier A"
           },
           "service": {
             "type": "string",
-            "description": "The service type offered by the carrier.",
-            "example": "Express"
+            "description": "The shipping service level offered by the carrier.",
+            "example": "Standard"
           },
           "price": {
             "type": "integer",
-            "description": "The cost of the shipment service.",
+            "description": "The cost of shipping as quoted by the carrier.",
             "format": "int32",
-            "example": 200
+            "example": 100
           },
           "currency": {
             "type": "string",
-            "description": "The currency of the price.",
+            "description": "The currency in which the price is quoted.",
             "example": "USD"
           },
           "etaDays": {
             "type": "integer",
             "description": "Estimated time of arrival in days.",
             "format": "int32",
-            "example": 3
+            "example": 5
           }
         },
-        "description": "Details about a specific shipment quote."
+        "description": "Detailed information about a shipment rate quote."
       }
     },
     "parameters": {
@@ -408,9 +448,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "13CE709E-4E0B-4EA8-80D8-764D5E3B7F2A"
+          "example": "B2B2D46B-7C03-4599-8CC6-C1D33B7EFE78"
         },
-        "example": "13CE709E-4E0B-4EA8-80D8-764D5E3B7F2A"
+        "example": "B2B2D46B-7C03-4599-8CC6-C1D33B7EFE78"
       },
       "content-length": {
         "name": "content-length",
@@ -492,9 +532,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "c3a92f59a75621340731965daba4dd5a"
+          "example": "685b124f62ae1e2249d85c6d20eba245"
         },
-        "example": "c3a92f59a75621340731965daba4dd5a"
+        "example": "685b124f62ae1e2249d85c6d20eba245"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -526,15 +566,17 @@
     },
     "headers": {
       "Date": {
+        "description": "The date and time at which the response was generated, formatted according to RFC 7231.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Wed, 28 Oct 2026 14:02:39 GMT"
+          "example": "Wed, 28 Oct 2026 16:20:10 GMT"
         },
-        "example": "Wed, 28 Oct 2026 14:02:39 GMT"
+        "example": "Wed, 28 Oct 2026 16:20:10 GMT"
       },
       "Connection": {
+        "description": "The type of connection management the server supports, indicating whether the connection will remain open.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -544,6 +586,7 @@
         "example": "keep-alive"
       },
       "Keep-Alive": {
+        "description": "Directives for persistent connections, describing how long the connection should be kept alive.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -553,6 +596,7 @@
         "example": "timeout=60"
       },
       "X-Api-Name": {
+        "description": "The name of the API that is being called in the request. This header helps to identify which API endpoint is in use.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -562,6 +606,7 @@
         "example": "rateQuote"
       },
       "X-Served-By": {
+        "description": "Identifies the server that processed the request. This can be useful for tracking server performance and load balancing.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -571,6 +616,7 @@
         "example": "commerce-platform-api"
       },
       "Content-Type": {
+        "description": "Specifies the media type of the resource. This header indicates the type of content returned by the API response.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -584,18 +630,18 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "3f7559e1-2f14-4181-8af5-029e847bd84e"
+          "example": "c7f8d705-675e-4952-bf4e-809fdde33112"
         },
-        "example": "3f7559e1-2f14-4181-8af5-029e847bd84e"
+        "example": "c7f8d705-675e-4952-bf4e-809fdde33112"
       },
       "Content-Length": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "476"
+          "example": "475"
         },
-        "example": "476"
+        "example": "475"
       }
     }
   }
