@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "GATEWAY-development-commerce-platform-api-Create Storefront Api Payment-v1-spec",
-    "description": "The Payment Processing API facilitates seamless transactions and payment management for storefronts within the commerce platform. This endpoint allows businesses to initiate payment processes securely, ensuring a smooth customer experience during checkout. Typical consumers of this API include e-commerce platforms and retail applications that require efficient payment integrations. By supporting a range of payment methods, the API enhances transaction flexibility and supports sales growth across different market segments.",
+    "description": "The Storefront Payment Processing API enables seamless payment transactions for storefronts within the commerce platform. This API facilitates the initiation of payment processes for new storefronts, ensuring a smooth checkout experience for customers. Typical consumers of this API include e-commerce developers and platform integrators looking to enhance their storefront capabilities. By providing reliable payment solutions, businesses can effectively manage customer transactions and improve overall sales performance.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "commerce-platform-api"
@@ -38,8 +38,8 @@
         "tags": [
           "Payments"
         ],
-        "summary": "Process a payment transaction.",
-        "description": "Initiate a payment transaction by submitting the required payment details. This endpoint allows clients to create a new payment record, which will be processed and stored in the system.",
+        "summary": "Initiates a new payment transaction.",
+        "description": "This endpoint allows users to create a new payment transaction by providing the necessary payment details. Ensure that all required fields are accurately filled out to process the payment successfully.",
         "operationId": "createStorefrontApiPayment",
         "parameters": [
           {
@@ -95,7 +95,7 @@
           }
         ],
         "requestBody": {
-          "description": "The request body for initiating a payment operation. This should contain the necessary information for processing the payment, including the amount, currency, and payment method details.",
+          "description": "The request body for creating a new payment. It should contain the necessary details to process the payment, including amount, currency, and payment method.",
           "content": {
             "application/json": {
               "schema": {
@@ -106,7 +106,7 @@
         },
         "responses": {
           "200": {
-            "description": "The payment has been processed successfully and the details are returned.",
+            "description": "The payment request was processed successfully, and the results are returned.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -157,30 +157,29 @@
   "components": {
     "schemas": {
       "CreateStorefrontApiPaymentRequest": {
-        "title": "Payment Request",
         "type": "object",
         "properties": {
           "orderId": {
             "type": "string",
             "description": "The unique identifier for the order associated with the payment.",
-            "example": "ORD-70695"
+            "example": "ORD-89975"
           },
           "amount": {
             "type": "integer",
-            "description": "The amount of money to be charged for the payment.",
+            "description": "The amount of money to be paid, represented as an integer value in the smallest currency unit.",
             "format": "int32",
-            "example": 4398
+            "example": 6345
           },
           "currency": {
             "type": "string",
-            "description": "The currency in which the payment is to be made, represented by its ISO 4217 code.",
+            "description": "The currency in which the payment is made, represented in ISO 4217 format.",
             "example": "INR"
           }
         },
-        "description": "Schema representing the request body for initiating a payment operation.",
+        "description": "Schema representing the request body for creating a payment operation.",
         "example": {
-          "orderId": "ORD-70695",
-          "amount": 4398,
+          "orderId": "ORD-89975",
+          "amount": 6345,
           "currency": "INR"
         }
       },
@@ -188,140 +187,155 @@
         "type": "object",
         "properties": {
           "data": {
-            "$ref": "#/components/schemas/PaymentData"
+            "type": "object",
+            "properties": {
+              "paymentId": {
+                "type": "string",
+                "description": "Unique identifier for the payment.",
+                "example": "string"
+              },
+              "orderId": {
+                "type": "string",
+                "description": "Identifier for the order associated with this payment.",
+                "example": "string"
+              },
+              "amount": {
+                "type": "integer",
+                "description": "Amount of money processed in the payment.",
+                "format": "int32",
+                "example": 0
+              },
+              "currency": {
+                "type": "string",
+                "description": "Currency in which the payment was made.",
+                "example": "string"
+              },
+              "status": {
+                "type": "string",
+                "description": "Current status of the payment (e.g., pending, completed).",
+                "example": "string"
+              },
+              "method": {
+                "$ref": "#/components/schemas/PaymentMethod"
+              },
+              "authCode": {
+                "type": "string",
+                "description": "Authorization code for the payment transaction.",
+                "example": "string"
+              },
+              "gatewayRef": {
+                "type": "string",
+                "description": "Reference identifier from the payment gateway.",
+                "example": "string"
+              },
+              "processedAt": {
+                "type": "string",
+                "description": "Timestamp indicating when the payment was processed.",
+                "example": "string"
+              }
+            },
+            "description": "Contains payment details.",
+            "example": {
+              "paymentId": "pay_7j84azmppy401s",
+              "orderId": "ORD-89975",
+              "amount": 6345,
+              "currency": "INR",
+              "status": "CAPTURED",
+              "method": {
+                "type": "CARD",
+                "brand": "RUPAY",
+                "last4": "9768"
+              },
+              "authCode": "736812",
+              "gatewayRef": "gw_8gsuapuasz",
+              "processedAt": "2026-10-28T14:00:35.013466Z"
+            }
           },
           "meta": {
-            "$ref": "#/components/schemas/MetaInfo"
+            "type": "object",
+            "properties": {
+              "requestId": {
+                "type": "string",
+                "description": "Unique identifier for the request.",
+                "example": "string"
+              },
+              "tenant": {
+                "type": "string",
+                "description": "Identifier for the tenant making the request.",
+                "example": "string"
+              },
+              "api": {
+                "type": "string",
+                "description": "Identifier for the API that processed the request.",
+                "example": "string"
+              },
+              "service": {
+                "type": "string",
+                "description": "Service involved in processing the request.",
+                "example": "string"
+              },
+              "generatedAt": {
+                "type": "string",
+                "description": "Timestamp indicating when the response was generated.",
+                "example": "string"
+              }
+            },
+            "description": "Metadata related to the API response.",
+            "example": {
+              "requestId": "req_nujar42q9llj",
+              "tenant": "acme-retail",
+              "api": "makePayment",
+              "service": "storefront-web-api",
+              "generatedAt": "2026-10-28T14:00:35.013648Z"
+            }
           }
         },
-        "description": "Response schema for successful payment operations.",
+        "description": "Response schema for a successful payment operation.",
         "example": {
           "data": {
-            "paymentId": "pay_cll9sn0n3sekkt",
-            "orderId": "ORD-70695",
-            "amount": 4398,
+            "paymentId": "pay_7j84azmppy401s",
+            "orderId": "ORD-89975",
+            "amount": 6345,
             "currency": "INR",
             "status": "CAPTURED",
             "method": {
               "type": "CARD",
-              "brand": "VISA",
-              "last4": "6613"
+              "brand": "RUPAY",
+              "last4": "9768"
             },
-            "authCode": "558037",
-            "gatewayRef": "gw_wer5c5jql2",
-            "processedAt": "2026-10-27T16:20:21.207342Z"
+            "authCode": "736812",
+            "gatewayRef": "gw_8gsuapuasz",
+            "processedAt": "2026-10-28T14:00:35.013466Z"
           },
           "meta": {
-            "requestId": "req_s3x9wqcr459b",
+            "requestId": "req_nujar42q9llj",
             "tenant": "acme-retail",
             "api": "makePayment",
             "service": "storefront-web-api",
-            "generatedAt": "2026-10-27T16:20:21.207963Z"
+            "generatedAt": "2026-10-28T14:00:35.013648Z"
           }
         }
-      },
-      "PaymentData": {
-        "type": "object",
-        "properties": {
-          "paymentId": {
-            "type": "string",
-            "description": "The unique identifier for the payment.",
-            "example": "123456"
-          },
-          "orderId": {
-            "type": "string",
-            "description": "The unique identifier for the associated order.",
-            "example": "987654"
-          },
-          "amount": {
-            "type": "integer",
-            "description": "The amount of money involved in the payment.",
-            "format": "int32",
-            "example": 100
-          },
-          "currency": {
-            "type": "string",
-            "description": "The currency in which the payment was made.",
-            "example": "USD"
-          },
-          "status": {
-            "type": "string",
-            "description": "The current status of the payment.",
-            "example": "Completed"
-          },
-          "method": {
-            "description": "Details about the payment method used.",
-            "$ref": "#/components/schemas/PaymentMethod"
-          },
-          "authCode": {
-            "type": "string",
-            "description": "Authorization code for the payment.",
-            "example": "AUTH123"
-          },
-          "gatewayRef": {
-            "type": "string",
-            "description": "Reference identifier from the payment gateway.",
-            "example": "GATEWAY123"
-          },
-          "processedAt": {
-            "type": "string",
-            "description": "Timestamp when the payment was processed.",
-            "example": "2023-10-01T12:00:00Z"
-          }
-        },
-        "description": "Information about the payment."
       },
       "PaymentMethod": {
         "type": "object",
         "properties": {
           "type": {
             "type": "string",
-            "description": "Type of the payment method (e.g., credit card, PayPal).",
-            "example": "Credit Card"
+            "description": "Type of payment method (e.g., credit card, bank transfer).",
+            "example": "string"
           },
           "brand": {
             "type": "string",
             "description": "Brand of the payment method (e.g., Visa, MasterCard).",
-            "example": "Visa"
+            "example": "string"
           },
           "last4": {
             "type": "string",
-            "description": "Last 4 digits of the card number.",
-            "example": "1234"
+            "description": "Last four digits of the card number used for the payment.",
+            "example": "string"
           }
         },
-        "description": "Details about the payment method used for the transaction."
-      },
-      "MetaInfo": {
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "request-123"
-          },
-          "tenant": {
-            "type": "string",
-            "description": "Identifier for the tenant associated with the request.",
-            "example": "tenant-1"
-          },
-          "api": {
-            "type": "string",
-            "description": "The API endpoint that was called.",
-            "example": "payments/create"
-          },
-          "service": {
-            "type": "string",
-            "description": "The service that processed the request.",
-            "example": "payment-processing"
-          },
-          "generatedAt": {
-            "type": "string",
-            "description": "Timestamp when the response was generated.",
-            "example": "2023-10-01T12:01:00Z"
-          }
-        },
-        "description": "Meta information about the response."
+        "description": "Schema representing details about the payment method used."
       }
     },
     "parameters": {
@@ -429,9 +443,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "4FC1E2BA-000F-43EE-98E6-8F7FE3222C29"
+          "example": "88682544-1E75-4DA6-81C2-EC64F932C0CF"
         },
-        "example": "4FC1E2BA-000F-43EE-98E6-8F7FE3222C29"
+        "example": "88682544-1E75-4DA6-81C2-EC64F932C0CF"
       },
       "content-length": {
         "name": "content-length",
@@ -513,9 +527,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "2c8198699f62c85d46328b2b93266a07"
+          "example": "647a0840c94e917237e0a921818c6328"
         },
-        "example": "2c8198699f62c85d46328b2b93266a07"
+        "example": "647a0840c94e917237e0a921818c6328"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -539,9 +553,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Tue, 27 Oct 2026 16:20:21 GMT"
+          "example": "Wed, 28 Oct 2026 14:00:35 GMT"
         },
-        "example": "Tue, 27 Oct 2026 16:20:21 GMT"
+        "example": "Wed, 28 Oct 2026 14:00:35 GMT"
       },
       "Connection": {
         "style": "simple",
@@ -562,7 +576,6 @@
         "example": "timeout=60"
       },
       "X-Api-Name": {
-        "description": "The name of the API that was used to process the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -572,7 +585,6 @@
         "example": "makePayment"
       },
       "X-Served-By": {
-        "description": "The identifier of the service that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -582,7 +594,6 @@
         "example": "storefront-web-api"
       },
       "Content-Type": {
-        "description": "The media type of the resource being returned in the response.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -592,30 +603,30 @@
         "example": "application/json"
       },
       "X-Request-Id": {
-        "description": "A unique identifier for the request. This ID is useful for tracing the request through the system.",
+        "description": "Unique identifier for the request. This value can be used for tracking and troubleshooting purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "7132ff37-f753-44d4-9ed8-767a63212c0f"
+          "example": "2417b1f2-c96e-458d-9fcf-a985db9681ec"
         },
-        "example": "7132ff37-f753-44d4-9ed8-767a63212c0f"
+        "example": "2417b1f2-c96e-458d-9fcf-a985db9681ec"
       },
       "Content-Length": {
-        "description": "The size of the response body in bytes. This value helps clients understand the size of the incoming data.",
+        "description": "Indicates the size of the response body in bytes. This value helps clients understand how much data to expect.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "422"
+          "example": "423"
         },
-        "example": "422"
+        "example": "423"
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the HTTP Bearer authentication scheme, which allows access via a token. Clients must include a valid bearer token in the Authorization header to authenticate requests.",
+        "description": "This security scheme utilizes Bearer authentication, allowing clients to access resources by including a token in the Authorization header of requests.",
         "scheme": "bearer"
       }
     }
