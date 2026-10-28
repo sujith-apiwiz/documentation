@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "GATEWAY-development-commerce-platform-api-Create Api Cart Item-v1-spec",
-    "description": "The Cart Item Management API allows users to add items to their shopping carts within the commerce platform. This endpoint facilitates the process of enhancing customer shopping experiences by enabling them to configure their cart as desired. Typical consumers include e-commerce developers and merchants who aim to customize shopping functionalities. Through this API, users can seamlessly integrate product additions to their carts, fostering a more engaging checkout experience.",
+    "description": "The Shopping Cart Item Management API enables developers to add items to a user's shopping cart in a seamless manner. By using this endpoint, e-commerce platforms can enhance their user experience by allowing customers to easily manage their selected products. The API supports operations for adding specific items to a designated cart, identified by the unique cart ID. This API is particularly beneficial for developers working on online retail solutions, facilitating quick and efficient cart updates for consumers.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "commerce-platform-api"
@@ -36,10 +36,10 @@
     "/api/v1/carts/{cartId}/items": {
       "post": {
         "tags": [
-          "Shopping Cart"
+          "Carts"
         ],
-        "summary": "Add an item to the specified shopping cart.",
-        "description": "This operation allows users to add a new item to a specific shopping cart identified by its cart ID. Ensure that the item details are correctly specified in the request body for successful addition.",
+        "summary": "Add an item to a specific cart.",
+        "description": "This endpoint allows you to add a new item to the specified cart, identified by the cart ID. Ensure that the item's details are correctly provided in the request body to successfully update the cart.",
         "operationId": "createApiCartItem",
         "parameters": [
           {
@@ -101,7 +101,7 @@
           }
         ],
         "requestBody": {
-          "description": "Request to add items to the cart identified by CRT-125354. The request body must conform to the specified schema, which defines the structure and required fields for the item to be added.",
+          "description": "This request body is used to add items to the specified shopping cart identified by CRT-132326. The data provided should specify the items being added, including their details.",
           "content": {
             "application/json": {
               "schema": {
@@ -112,7 +112,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful request; item added to cart.",
+            "description": "The item was successfully added to the cart.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -159,16 +159,13 @@
   "components": {
     "schemas": {
       "CreateApiCartItemRequest": {
-        "required": [
-          "qty",
-          "sku"
-        ],
+        "title": "Cart Item Request",
         "type": "object",
         "properties": {
           "sku": {
             "type": "string",
-            "description": "The Stock Keeping Unit (SKU) identifier for the item.",
-            "example": "MON-6603"
+            "description": "The stock keeping unit identifier for the item.",
+            "example": "SHO-3307"
           },
           "qty": {
             "type": "integer",
@@ -177,14 +174,14 @@
             "example": 4
           }
         },
-        "description": "Schema representing the request body for adding items to a cart.",
+        "description": "Schema representing the request body for adding an item to a cart.",
         "example": {
-          "sku": "MON-6603",
+          "sku": "SHO-3307",
           "qty": 4
         }
       },
       "CreateApiCartItemResponse_200": {
-        "title": "Cart Operation Response",
+        "title": "Add Item to Cart Response",
         "type": "object",
         "properties": {
           "status": {
@@ -193,92 +190,108 @@
             "example": "success"
           },
           "data": {
-            "$ref": "#/components/schemas/CartData"
-          },
-          "requestId": {
-            "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req_ehzkn96r6jl7"
+            "type": "object",
+            "properties": {
+              "cartId": {
+                "type": "string",
+                "description": "Unique identifier for the cart.",
+                "example": "CRT-132326"
+              },
+              "userId": {
+                "type": "integer",
+                "description": "Identifier for the user associated with the cart.",
+                "format": "int32",
+                "example": 123
+              },
+              "items": {
+                "type": "array",
+                "description": "List of items in the cart.",
+                "example": [
+                  {
+                    "sku": "ITEM-001",
+                    "name": "Item 1",
+                    "qty": 2,
+                    "unitPrice": 100,
+                    "lineTotal": 200
+                  }
+                ],
+                "items": {
+                  "$ref": "#/components/schemas/CartItem"
+                }
+              },
+              "subtotal": {
+                "type": "integer",
+                "description": "Total cost of the items in the cart before taxes and discounts.",
+                "format": "int32",
+                "example": 200
+              },
+              "currency": {
+                "type": "string",
+                "description": "Currency code for the transaction.",
+                "example": "USD"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Timestamp of when the cart was last updated.",
+                "example": "2023-10-01T12:00:00Z"
+              },
+              "added": {
+                "$ref": "#/components/schemas/AddedItem"
+              },
+              "requestId": {
+                "type": "string",
+                "description": "Unique identifier for the request.",
+                "example": "REQ-001"
+              }
+            },
+            "description": "Data related to the cart operation.",
+            "example": {
+              "cartId": "CRT-132326",
+              "userId": 1008,
+              "items": [
+                {
+                  "sku": "SHO-3307",
+                  "name": "Nike Revolution 7 Running Shoes",
+                  "qty": 1,
+                  "unitPrice": 3995,
+                  "lineTotal": 3995
+                }
+              ],
+              "subtotal": 3995,
+              "currency": "INR",
+              "updatedAt": "2026-10-28T12:57:39.951012Z",
+              "added": {
+                "sku": "SHO-3307",
+                "qty": 4
+              }
+            }
           }
         },
-        "description": "Response schema for the cart operation, containing the status and data of the cart.",
+        "description": "Response schema for adding items to a cart.",
         "example": {
           "status": "success",
           "data": {
-            "cartId": "CRT-125354",
-            "userId": 1010,
+            "cartId": "CRT-132326",
+            "userId": 1008,
             "items": [
               {
-                "sku": "MON-6603",
-                "name": "Dell S2725QC 27-inch 4K Monitor",
-                "qty": 2,
-                "unitPrice": 32490,
-                "lineTotal": 64980
+                "sku": "SHO-3307",
+                "name": "Nike Revolution 7 Running Shoes",
+                "qty": 1,
+                "unitPrice": 3995,
+                "lineTotal": 3995
               }
             ],
-            "subtotal": 64980,
+            "subtotal": 3995,
             "currency": "INR",
-            "updatedAt": "2026-10-27T16:20:24.035806Z",
+            "updatedAt": "2026-10-28T12:57:39.951012Z",
             "added": {
-              "sku": "MON-6603",
+              "sku": "SHO-3307",
               "qty": 4
             }
           },
-          "requestId": "req_ehzkn96r6jl7"
+          "requestId": "req_bsqud2jkeafr"
         }
-      },
-      "CartData": {
-        "title": "Cart Data",
-        "type": "object",
-        "properties": {
-          "cartId": {
-            "type": "string",
-            "description": "Unique identifier for the cart.",
-            "example": "cart-123456"
-          },
-          "userId": {
-            "type": "integer",
-            "description": "Identifier for the user associated with the cart.",
-            "format": "int32",
-            "example": 1
-          },
-          "items": {
-            "type": "array",
-            "description": "List of items in the cart.",
-            "example": [
-              {
-                "sku": "item-123",
-                "name": "Example Item",
-                "qty": 1,
-                "unitPrice": 100,
-                "lineTotal": 100
-              }
-            ],
-            "items": {
-              "$ref": "#/components/schemas/CartItem"
-            }
-          },
-          "subtotal": {
-            "type": "integer",
-            "description": "Total cost of the items in the cart before taxes and discounts.",
-            "format": "int32",
-            "example": 100
-          },
-          "currency": {
-            "type": "string",
-            "description": "Currency code for the cart total.",
-            "example": "USD"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Timestamp of the last update to the cart.",
-            "example": "2023-10-01T12:00:00Z"
-          },
-          "added": {
-            "$ref": "#/components/schemas/ItemAdded"
-          }
-        },
-        "description": "Details of the cart including cart ID, user ID, list of items, subtotal, currency, and timestamps."
       },
       "CartItem": {
         "title": "Cart Item",
@@ -286,19 +299,19 @@
         "properties": {
           "sku": {
             "type": "string",
-            "description": "Stock keeping unit of the item.",
-            "example": "item-123"
+            "description": "Stock Keeping Unit of the item.",
+            "example": "ITEM-001"
           },
           "name": {
             "type": "string",
             "description": "Name of the item.",
-            "example": "Example Item"
+            "example": "Item 1"
           },
           "qty": {
             "type": "integer",
             "description": "Quantity of the item in the cart.",
             "format": "int32",
-            "example": 1
+            "example": 2
           },
           "unitPrice": {
             "type": "integer",
@@ -308,30 +321,30 @@
           },
           "lineTotal": {
             "type": "integer",
-            "description": "Total price for the quantity of the item.",
+            "description": "Total price for the quantity of this item.",
             "format": "int32",
-            "example": 100
+            "example": 200
           }
         },
-        "description": "An item in the shopping cart, including SKU, name, quantity, unit price, and line total."
+        "description": "Schema representing an item in the cart."
       },
-      "ItemAdded": {
-        "title": "Item Added",
+      "AddedItem": {
+        "title": "Added Item",
         "type": "object",
         "properties": {
           "sku": {
             "type": "string",
-            "description": "Stock keeping unit of the added item.",
-            "example": "item-123"
+            "description": "Stock Keeping Unit of the item added.",
+            "example": "ITEM-001"
           },
           "qty": {
             "type": "integer",
-            "description": "Quantity of the added item.",
+            "description": "Quantity of the item added.",
             "format": "int32",
-            "example": 1
+            "example": 2
           }
         },
-        "description": "Details of the item added to the cart, including SKU and quantity."
+        "description": "Schema representing an item that has been added to the cart."
       }
     },
     "parameters": {
@@ -439,9 +452,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "9C7220BC-23C2-41F8-9101-C286017A8C3F"
+          "example": "B8C56792-F454-4260-8636-4C1016565B69"
         },
-        "example": "9C7220BC-23C2-41F8-9101-C286017A8C3F"
+        "example": "B8C56792-F454-4260-8636-4C1016565B69"
       },
       "content-length": {
         "name": "content-length",
@@ -487,9 +500,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "/api/v1/carts/CRT-125354/items"
+          "example": "/api/v1/carts/CRT-132326/items"
         },
-        "example": "/api/v1/carts/CRT-125354/items"
+        "example": "/api/v1/carts/CRT-132326/items"
       },
       "x-forwarded-port": {
         "name": "x-forwarded-port",
@@ -523,9 +536,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "9f2d9459f88c7b7de33a3662a32b6c4c"
+          "example": "c7b2f00bcedab370dd9bb57cf17e7635"
         },
-        "example": "9f2d9459f88c7b7de33a3662a32b6c4c"
+        "example": "c7b2f00bcedab370dd9bb57cf17e7635"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -567,17 +580,15 @@
     },
     "headers": {
       "Date": {
-        "description": "The date and time when the response was generated, formatted in ISO 8601.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Tue, 27 Oct 2026 16:20:24 GMT"
+          "example": "Wed, 28 Oct 2026 12:57:39 GMT"
         },
-        "example": "Tue, 27 Oct 2026 16:20:24 GMT"
+        "example": "Wed, 28 Oct 2026 12:57:39 GMT"
       },
       "Connection": {
-        "description": "Indicates the control options for the current connection. Typically specifies whether the connection will be kept alive for further requests.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -587,7 +598,6 @@
         "example": "keep-alive"
       },
       "Keep-Alive": {
-        "description": "Specifies the parameters for persistent connections, such as the timeout duration and maximum number of requests that can be sent over the same connection.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -597,6 +607,7 @@
         "example": "timeout=60"
       },
       "X-Api-Name": {
+        "description": "The name of the API that handled the request, helping to identify the source of the response.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -606,6 +617,7 @@
         "example": "addCartItem"
       },
       "X-Served-By": {
+        "description": "Information about the server that processed the request, useful for debugging and tracing.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -615,6 +627,7 @@
         "example": "commerce-platform-api"
       },
       "Content-Type": {
+        "description": "The MIME type of the content returned in the response body, indicating the nature of the data.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -624,22 +637,24 @@
         "example": "application/json"
       },
       "X-Request-Id": {
+        "description": "A unique identifier for the request, useful for tracking and debugging purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "c10e0738-2562-4621-af3a-eaa4ea41f231"
+          "example": "6a2d79f6-f65a-4371-a62e-29089fec2573"
         },
-        "example": "c10e0738-2562-4621-af3a-eaa4ea41f231"
+        "example": "6a2d79f6-f65a-4371-a62e-29089fec2573"
       },
       "Content-Length": {
+        "description": "The length of the response body in bytes, indicating the size of the content being returned.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "321"
+          "example": "318"
         },
-        "example": "321"
+        "example": "318"
       }
     }
   }

@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "GATEWAY-development-commerce-platform-api-Create Api Cart Checkout-v1-spec",
-    "description": "The Cart Checkout API facilitates the seamless processing of shopping cart checkouts within a commerce platform. It allows merchants to finalize purchases by initiating a checkout process associated with a specific cart identified by its unique ID. Typical use cases include completing transactions for customers, integrating payment solutions, and managing order fulfillment. This API is essential for e-commerce applications looking to streamline the checkout experience and increase conversion rates.",
+    "description": "The Cart Checkout API facilitates the seamless processing of customer transactions within a commerce platform. This endpoint enables users to finalize their shopping experience by checking out their selected items from a specific shopping cart. It serves e-commerce developers looking to integrate checkout functionalities, ensuring a smooth transition from cart to payment. Typical consumers include online retailers and digital marketplaces aiming to enhance their checkout processes with secure transaction capabilities.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "commerce-platform-api"
@@ -36,10 +36,10 @@
     "/api/v1/carts/{cartId}/checkout": {
       "post": {
         "tags": [
-          "Cart Management"
+          "Carts"
         ],
-        "summary": "Complete the checkout process for a specific cart.",
-        "description": "This operation allows you to finalize the checkout process for the cart identified by CRT-111187. It processes the items in the cart and initiates the payment and order creation flow.",
+        "summary": "Checkout Cart CRT-111839",
+        "description": "This endpoint allows users to proceed with the checkout process for cart CRT-111839. It finalizes the cart contents and processes the payment for the items contained within.",
         "operationId": "createApiCartCheckout",
         "parameters": [
           {
@@ -101,7 +101,7 @@
           }
         ],
         "requestBody": {
-          "description": "The request body for processing the checkout operation of the specified shopping cart. Ensure that all required fields are populated to successfully complete the transaction.",
+          "description": "This request body is used to initiate the checkout process for the specified cart (CRT-111839). It must include all necessary information to process the order efficiently, including items, payment details, and any applicable shipping information.",
           "content": {
             "application/json": {
               "schema": {
@@ -112,7 +112,7 @@
         },
         "responses": {
           "200": {
-            "description": "Checkout completed successfully, with order details returned.",
+            "description": "Successful checkout process.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -160,26 +160,31 @@
     "schemas": {
       "CreateApiCartCheckoutRequest": {
         "title": "Checkout Request Body",
+        "required": [
+          "paymentMethod",
+          "shippingAddressId"
+        ],
         "type": "object",
         "properties": {
           "paymentMethod": {
             "type": "string",
-            "description": "The method of payment selected for the checkout process.",
-            "example": "CARD"
+            "description": "The method of payment to be used for this checkout.",
+            "example": "NETBANKING"
           },
           "shippingAddressId": {
             "type": "string",
-            "description": "The unique identifier for the shipping address associated with this checkout.",
-            "example": "ADDR-1981"
+            "description": "The unique identifier for the shipping address to be used for this checkout.",
+            "example": "ADDR-6175"
           }
         },
-        "description": "Schema representing the request body for the checkout operation in the cart system.",
+        "description": "Schema representing the request body for the checkout operation. It includes details about the payment method and shipping address.",
         "example": {
-          "paymentMethod": "CARD",
-          "shippingAddressId": "ADDR-1981"
+          "paymentMethod": "NETBANKING",
+          "shippingAddressId": "ADDR-6175"
         }
       },
       "CreateApiCartCheckoutResponse_200": {
+        "title": "Checkout Response Schema",
         "type": "object",
         "properties": {
           "status": {
@@ -188,51 +193,52 @@
             "example": "success"
           },
           "data": {
-            "description": "Contains the details of the checkout response.",
+            "description": "Contains details about the checkout transaction.",
             "$ref": "#/components/schemas/CheckoutData"
           },
           "requestId": {
             "type": "string",
             "description": "Unique identifier for the request.",
-            "example": "req_gyrrgt0l6bxr"
+            "example": "req_t88lmsbb9pke"
           }
         },
-        "description": "Response schema for the checkout operation.",
+        "description": "Schema representing the response for a successful checkout operation.",
         "example": {
           "status": "success",
           "data": {
-            "cartId": "CRT-111187",
-            "orderId": "ORD-83584",
-            "paymentMethod": "CARD",
-            "shippingAddressId": "ADDR-1981",
+            "cartId": "CRT-111839",
+            "orderId": "ORD-71128",
+            "paymentMethod": "NETBANKING",
+            "shippingAddressId": "ADDR-6175",
             "status": "PAYMENT_PENDING",
-            "paymentUrl": "https://pay.acme-shop.example/checkout/twyj9ivs0pfu5tn4"
+            "paymentUrl": "https://pay.acme-shop.example/checkout/or6797vedz9o4rzj"
           },
-          "requestId": "req_gyrrgt0l6bxr"
+          "requestId": "req_t88lmsbb9pke"
         }
       },
       "CheckoutData": {
+        "title": "Checkout Data Schema",
         "type": "object",
         "properties": {
           "cartId": {
             "type": "string",
-            "description": "Identifier for the shopping cart.",
-            "example": "cart-12345"
+            "description": "Unique identifier for the shopping cart.",
+            "example": "cart-abcdef"
           },
           "orderId": {
             "type": "string",
-            "description": "Identifier for the order generated after checkout.",
-            "example": "order-67890"
+            "description": "Unique identifier for the order generated from the checkout.",
+            "example": "order-123456"
           },
           "paymentMethod": {
             "type": "string",
-            "description": "Payment method used for the checkout.",
+            "description": "The payment method used for the checkout.",
             "example": "credit_card"
           },
           "shippingAddressId": {
             "type": "string",
-            "description": "Identifier for the shipping address associated with the order.",
-            "example": "addr-54321"
+            "description": "Unique identifier for the shipping address.",
+            "example": "address-7890"
           },
           "status": {
             "type": "string",
@@ -241,11 +247,11 @@
           },
           "paymentUrl": {
             "type": "string",
-            "description": "URL for payment processing if applicable.",
-            "example": "https://paymentgateway.com/pay?order=67890"
+            "description": "URL for making the payment for the order.",
+            "example": "https://paymentgateway.com/checkout"
           }
         },
-        "description": "Detailed information regarding the checkout process."
+        "description": "Schema containing details about the checkout transaction."
       }
     },
     "parameters": {
@@ -353,9 +359,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "9F4EBAD3-8671-4127-BF00-656E21965889"
+          "example": "4765FCF5-B6D4-4127-943B-0C9CF281E5AA"
         },
-        "example": "9F4EBAD3-8671-4127-BF00-656E21965889"
+        "example": "4765FCF5-B6D4-4127-943B-0C9CF281E5AA"
       },
       "content-length": {
         "name": "content-length",
@@ -365,9 +371,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "59"
+          "example": "65"
         },
-        "example": "59"
+        "example": "65"
       },
       "x-forwarded-for": {
         "name": "x-forwarded-for",
@@ -401,9 +407,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "/api/v1/carts/CRT-111187/checkout"
+          "example": "/api/v1/carts/CRT-111839/checkout"
         },
-        "example": "/api/v1/carts/CRT-111187/checkout"
+        "example": "/api/v1/carts/CRT-111839/checkout"
       },
       "x-forwarded-port": {
         "name": "x-forwarded-port",
@@ -437,9 +443,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "45f4b370b846337ffcea473ca0399526"
+          "example": "94de8c3868ef003477f0dd473af46845"
         },
-        "example": "45f4b370b846337ffcea473ca0399526"
+        "example": "94de8c3868ef003477f0dd473af46845"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -485,9 +491,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Tue, 27 Oct 2026 16:20:24 GMT"
+          "example": "Wed, 28 Oct 2026 12:57:40 GMT"
         },
-        "example": "Tue, 27 Oct 2026 16:20:24 GMT"
+        "example": "Wed, 28 Oct 2026 12:57:40 GMT"
       },
       "Connection": {
         "style": "simple",
@@ -508,7 +514,7 @@
         "example": "timeout=60"
       },
       "X-Api-Name": {
-        "description": "The name of the API that processed the request.",
+        "description": "The name of the API handling the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -518,7 +524,7 @@
         "example": "checkoutCart"
       },
       "X-Served-By": {
-        "description": "Indicates the server that handled the request.",
+        "description": "Identifies the server that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -528,7 +534,7 @@
         "example": "commerce-platform-api"
       },
       "Content-Type": {
-        "description": "The media type of the response content.",
+        "description": "The media type of the resource returned by the server.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -542,18 +548,18 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "20c930e8-76ca-4751-b303-0290f9d72aa7"
+          "example": "3b432c8d-4631-4fad-883b-cbd1407acdd2"
         },
-        "example": "20c930e8-76ca-4751-b303-0290f9d72aa7"
+        "example": "3b432c8d-4631-4fad-883b-cbd1407acdd2"
       },
       "Content-Length": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "257"
+          "example": "263"
         },
-        "example": "257"
+        "example": "263"
       }
     }
   }
