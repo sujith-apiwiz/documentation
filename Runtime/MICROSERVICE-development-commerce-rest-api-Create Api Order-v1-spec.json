@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-development-commerce-rest-api-Create Api Order-v1-spec",
-    "description": "The Order Management API facilitates the creation of new orders within the commerce microservice ecosystem. It allows businesses to efficiently handle customer orders, ensuring swift order processing and fulfillment. Typical consumers of this API include e-commerce platforms, retail applications, and inventory management systems that require seamless order integration. With this API, developers can streamline their order workflows and enhance customer satisfaction through timely order management.",
+    "description": "The Order Management API facilitates the creation of customer orders in the e-commerce platform. This endpoint allows businesses to efficiently manage their order processing by submitting new orders with relevant details such as product IDs, quantities, and customer information. Typical consumers include frontend applications and backend services that handle order placement and transaction processing. This API serves as a critical component for online retailers aiming to streamline their sales operations.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "commerce-rest-api"
@@ -11,7 +11,6 @@
   "servers": [
     {
       "url": "https://observability-stage-raju.apiwiz.io",
-      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
@@ -22,7 +21,6 @@
     },
     {
       "url": "http://localhost:5321",
-      "description": "development",
       "variables": {},
       "x-schema": "http://",
       "x-name": "development",
@@ -39,7 +37,7 @@
           "Order Management"
         ],
         "summary": "Create a new order.",
-        "description": "This endpoint allows users to create a new order in the system, providing necessary order details as part of the request body.",
+        "description": "This endpoint allows you to create a new order in the system by providing the necessary order details in the request body.",
         "operationId": "createApiOrder",
         "parameters": [
           {
@@ -65,7 +63,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to create a new order. It should contain all the necessary details related to the order, such as the items being ordered, customer information, and payment details.",
+          "description": "A request to create a new order. The body should contain all necessary details for processing the order, including item IDs, quantities, and any additional information required by the API.",
           "content": {
             "application/json": {
               "schema": {
@@ -76,7 +74,7 @@
         },
         "responses": {
           "200": {
-            "description": "The order was processed successfully and the response contains the order details.",
+            "description": "Order processed successfully and details returned.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -108,29 +106,31 @@
   "components": {
     "schemas": {
       "CreateApiOrderRequest": {
+        "title": "Create Order Request",
+        "required": [
+          "items",
+          "total",
+          "userId"
+        ],
         "type": "object",
         "properties": {
           "userId": {
             "type": "integer",
-            "description": "Unique identifier for the user placing the order.",
+            "description": "The unique identifier of the user placing the order.",
             "format": "int32",
-            "example": 1011
+            "example": 1003
           },
           "items": {
             "type": "array",
-            "description": "List of items being ordered.",
+            "description": "A list of items included in the order.",
             "example": [
               {
-                "sku": "COF-4120",
-                "qty": 1
-              },
-              {
-                "sku": "BAG-5518",
-                "qty": 3
-              },
-              {
-                "sku": "MON-6603",
+                "sku": "LAP-1042",
                 "qty": 2
+              },
+              {
+                "sku": "AUD-2210",
+                "qty": 1
               }
             ],
             "items": {
@@ -139,29 +139,25 @@
           },
           "total": {
             "type": "integer",
-            "description": "Total amount for the order.",
+            "description": "The total amount for the order.",
             "format": "int32",
-            "example": 72226
+            "example": 147970
           }
         },
-        "description": "Request body for creating a new order.",
+        "description": "Request body schema for creating a new order.",
         "example": {
-          "userId": 1011,
+          "userId": 1003,
           "items": [
             {
-              "sku": "COF-4120",
-              "qty": 1
-            },
-            {
-              "sku": "BAG-5518",
-              "qty": 3
-            },
-            {
-              "sku": "MON-6603",
+              "sku": "LAP-1042",
               "qty": 2
+            },
+            {
+              "sku": "AUD-2210",
+              "qty": 1
             }
           ],
-          "total": 72226
+          "total": 147970
         }
       },
       "OrderItem": {
@@ -171,7 +167,7 @@
           "sku": {
             "type": "string",
             "description": "Stock Keeping Unit identifier for the item.",
-            "example": "sku_001"
+            "example": "SKU123"
           },
           "name": {
             "type": "string",
@@ -188,13 +184,13 @@
             "type": "integer",
             "description": "Price per unit of the item.",
             "format": "int32",
-            "example": 10
+            "example": 100
           },
           "lineTotal": {
             "type": "integer",
-            "description": "Total price for this line item (qty * unitPrice).",
+            "description": "Total price for this line item (quantity * unit price).",
             "format": "int32",
-            "example": 20
+            "example": 200
           }
         },
         "description": "Schema representing an individual item in an order."
@@ -206,17 +202,17 @@
           "orderId": {
             "type": "string",
             "description": "Unique identifier for the order.",
-            "example": "ORD-75400"
+            "example": "ORD-91171"
           },
           "userId": {
             "type": "integer",
-            "description": "Identifier for the user who placed the order.",
+            "description": "Unique identifier for the user who placed the order.",
             "format": "int32",
-            "example": 1011
+            "example": 1003
           },
           "status": {
             "type": "string",
-            "description": "Current status of the order.",
+            "description": "Current status of the order (e.g., 'Pending', 'Shipped', 'Delivered').",
             "example": "CONFIRMED"
           },
           "items": {
@@ -224,25 +220,18 @@
             "description": "List of items included in the order.",
             "example": [
               {
-                "sku": "COF-4120",
-                "name": "Blue Tokai Cold Brew Coffee 500g",
-                "qty": 1,
-                "unitPrice": 649,
-                "lineTotal": 649
-              },
-              {
-                "sku": "BAG-5518",
-                "name": "Wildcraft 35L Laptop Backpack",
-                "qty": 3,
-                "unitPrice": 2199,
-                "lineTotal": 6597
-              },
-              {
-                "sku": "MON-6603",
-                "name": "Dell S2725QC 27-inch 4K Monitor",
+                "sku": "LAP-1042",
+                "name": "Lenovo ThinkPad E14 Gen 5",
                 "qty": 2,
-                "unitPrice": 32490,
-                "lineTotal": 64980
+                "unitPrice": 58990,
+                "lineTotal": 117980
+              },
+              {
+                "sku": "AUD-2210",
+                "name": "Sony WH-1000XM5 Wireless Headphones",
+                "qty": 1,
+                "unitPrice": 29990,
+                "lineTotal": 29990
               }
             ],
             "items": {
@@ -253,17 +242,17 @@
             "type": "integer",
             "description": "Total amount for the order.",
             "format": "int32",
-            "example": 72226
+            "example": 147970
           },
           "currency": {
             "type": "string",
-            "description": "Currency code for the total amount.",
+            "description": "Currency used for the order total (e.g., 'USD', 'EUR').",
             "example": "INR"
           },
           "placedAt": {
             "type": "string",
             "description": "Timestamp indicating when the order was placed.",
-            "example": "2026-10-28T14:07:43.457994Z"
+            "example": "2026-10-28T16:20:06.515428Z"
           },
           "estimatedDelivery": {
             "type": "string",
@@ -271,37 +260,30 @@
             "example": "2026-11-01"
           }
         },
-        "description": "The schema representing the response of an order creation operation.",
+        "description": "Response schema for an order creation operation, containing details about the order including items, total cost, and delivery information.",
         "example": {
-          "orderId": "ORD-75400",
-          "userId": 1011,
+          "orderId": "ORD-91171",
+          "userId": 1003,
           "status": "CONFIRMED",
           "items": [
             {
-              "sku": "COF-4120",
-              "name": "Blue Tokai Cold Brew Coffee 500g",
-              "qty": 1,
-              "unitPrice": 649,
-              "lineTotal": 649
-            },
-            {
-              "sku": "BAG-5518",
-              "name": "Wildcraft 35L Laptop Backpack",
-              "qty": 3,
-              "unitPrice": 2199,
-              "lineTotal": 6597
-            },
-            {
-              "sku": "MON-6603",
-              "name": "Dell S2725QC 27-inch 4K Monitor",
+              "sku": "LAP-1042",
+              "name": "Lenovo ThinkPad E14 Gen 5",
               "qty": 2,
-              "unitPrice": 32490,
-              "lineTotal": 64980
+              "unitPrice": 58990,
+              "lineTotal": 117980
+            },
+            {
+              "sku": "AUD-2210",
+              "name": "Sony WH-1000XM5 Wireless Headphones",
+              "qty": 1,
+              "unitPrice": 29990,
+              "lineTotal": 29990
             }
           ],
-          "total": 72226,
+          "total": 147970,
           "currency": "INR",
-          "placedAt": "2026-10-28T14:07:43.457994Z",
+          "placedAt": "2026-10-28T16:20:06.515428Z",
           "estimatedDelivery": "2026-11-01"
         }
       }
@@ -363,9 +345,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "273E1371-53AD-493A-A7BE-9CE298801A68"
+          "example": "F0ADE00F-8215-4373-B844-1EAAC981D8CE"
         },
-        "example": "273E1371-53AD-493A-A7BE-9CE298801A68"
+        "example": "F0ADE00F-8215-4373-B844-1EAAC981D8CE"
       },
       "content-length": {
         "name": "content-length",
@@ -375,9 +357,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "125"
+          "example": "99"
         },
-        "example": "125"
+        "example": "99"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -397,17 +379,15 @@
     },
     "headers": {
       "Date": {
-        "description": "The timestamp indicating when the response was generated.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Wed, 28 Oct 2026 14:07:43 GMT"
+          "example": "Wed, 28 Oct 2026 16:20:06 GMT"
         },
-        "example": "Wed, 28 Oct 2026 14:07:43 GMT"
+        "example": "Wed, 28 Oct 2026 16:20:06 GMT"
       },
       "Content-Type": {
-        "description": "The media type of the resource, denoting the content type of the response.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -417,14 +397,13 @@
         "example": "application/json"
       },
       "Content-Length": {
-        "description": "The length of the response body in bytes.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "478"
+          "example": "381"
         },
-        "example": "478"
+        "example": "381"
       }
     }
   }
