@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-development-fulfillment-dotnet-api-Create Oauth Token-v1-spec",
-    "description": "The OAuth Token Management API allows clients to securely generate and retrieve authentication tokens essential for accessing various services within the platform. By implementing this API, developers can streamline the authentication process for applications, ensuring only authorized users can perform actions. Typical consumers include application developers needing seamless integration for user authentication or access control layers. This endpoint is crucial for systems that require secure, temporary credentials for user identity verification.",
+    "description": "The OAuth Token Generation API allows clients to obtain authentication tokens for secured resources. By submitting valid credentials, users can receive a token that grants access to various services within the application ecosystem. This API is crucial for enabling secure and authorized interactions between clients and the backend services. Typical consumers include mobile and web applications that require user authentication for accessing protected endpoints.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "fulfillment-dotnet-api"
@@ -17,7 +17,7 @@
       "x-name": "Sandbox server",
       "x-environmentName": "Sandbox",
       "x-hide": false,
-      "x-environmentId": "6adb856df5d6d86071da8af3",
+      "x-environmentId": "6ae0dc350d4c405cc4ccb613",
       "x-basePath": "/"
     },
     {
@@ -28,7 +28,7 @@
       "x-name": "development",
       "x-environmentName": "development",
       "x-hide": false,
-      "x-environmentId": "6ada2fae52ccc607c5ff6208",
+      "x-environmentId": "6ae0dc440d4c405cc4ccb61c",
       "x-basePath": "/"
     }
   ],
@@ -38,8 +38,8 @@
         "tags": [
           "Authentication"
         ],
-        "summary": "Generate a new authentication token.",
-        "description": "This endpoint allows clients to generate a new authentication token. Tokens are required for accessing protected resources and should be kept confidential. Ensure to handle errors effectively to provide a smooth user experience.",
+        "summary": "Generate a new token.",
+        "description": "This endpoint allows users to generate a new authentication token. It is used to initiate a session and access secure resources. Ensure to provide the necessary credentials for a successful token generation.",
         "operationId": "createOauthToken",
         "parameters": [
           {
@@ -61,9 +61,27 @@
             "$ref": "#/components/parameters/x-mock-response"
           }
         ],
+        "requestBody": {
+          "description": "This request body is used to obtain an authentication token. It requires user credentials and specifies parameters necessary for token retrieval.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenRequest"
+              },
+              "examples": {
+                "example1": {
+                  "value": {
+                    "username": "user123",
+                    "password": "pass123"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Successfully generated a token.",
+            "description": "Successful request; token generated.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -101,34 +119,33 @@
   "components": {
     "schemas": {
       "CreateOauthTokenResponse_200": {
-        "title": "Access Token Response",
         "type": "object",
         "properties": {
           "access_token": {
             "type": "string",
-            "description": "The access token issued by the authorization server.",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkZW1vLW9hdXRoIiwic3ViIjoiZGVtbyIsImNsaWVudF9pZCI6ImRlbW8tY2xpZW50IiwiZ3JhbnQiOiJwYXNzd29yZCIsInNjb3BlIjoicmVhZCB3cml0ZSIsInR5cCI6Im9hdXRoMiIsImlhdCI6MTc5MzEwMTA4MCwiZXhwIjoxNzkzMTA0NjgwfQ.v8XJKvaBOSpO_NJeDjqB71t3oz_IALzFqHB6at2WMc8"
+            "description": "The token used for authentication. This token must be included in the authorization header for subsequent requests.",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkZW1vLW9hdXRoIiwic3ViIjoiZGVtbyIsImNsaWVudF9pZCI6ImRlbW8tY2xpZW50IiwiZ3JhbnQiOiJwYXNzd29yZCIsInNjb3BlIjoicmVhZCB3cml0ZSIsInR5cCI6Im9hdXRoMiIsImlhdCI6MTc5MzE5NzAxNiwiZXhwIjoxNzkzMjAwNjE2fQ.kSwga_l1mw4T0dIoj-BEdL80M9Gta2Oud9a8QPHe-bk"
           },
           "token_type": {
             "type": "string",
-            "description": "The type of the token issued. Typically 'Bearer'.",
+            "description": "The type of the token issued. Typically, this will be 'Bearer'.",
             "example": "Bearer"
           },
           "expires_in": {
             "type": "integer",
-            "description": "The lifetime in seconds of the access token.",
+            "description": "The lifespan of the access token in seconds before it expires.",
             "format": "int32",
             "example": 3600
           },
           "scope": {
             "type": "string",
-            "description": "The scope of access granted by the access token.",
+            "description": "The scope of the access, detailing what resources the token grants access to.",
             "example": "read write"
           }
         },
-        "description": "This schema represents the response received after successfully obtaining an access token. It includes details such as the token itself, its type, expiration, and associated scopes.",
+        "description": "Schema representing the response structure for a successful token retrieval operation.",
         "example": {
-          "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkZW1vLW9hdXRoIiwic3ViIjoiZGVtbyIsImNsaWVudF9pZCI6ImRlbW8tY2xpZW50IiwiZ3JhbnQiOiJwYXNzd29yZCIsInNjb3BlIjoicmVhZCB3cml0ZSIsInR5cCI6Im9hdXRoMiIsImlhdCI6MTc5MzEwMTA4MCwiZXhwIjoxNzkzMTA0NjgwfQ.v8XJKvaBOSpO_NJeDjqB71t3oz_IALzFqHB6at2WMc8",
+          "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkZW1vLW9hdXRoIiwic3ViIjoiZGVtbyIsImNsaWVudF9pZCI6ImRlbW8tY2xpZW50IiwiZ3JhbnQiOiJwYXNzd29yZCIsInNjb3BlIjoicmVhZCB3cml0ZSIsInR5cCI6Im9hdXRoMiIsImlhdCI6MTc5MzE5NzAxNiwiZXhwIjoxNzkzMjAwNjE2fQ.kSwga_l1mw4T0dIoj-BEdL80M9Gta2Oud9a8QPHe-bk",
           "token_type": "Bearer",
           "expires_in": 3600,
           "scope": "read write"
@@ -214,17 +231,15 @@
     },
     "headers": {
       "Date": {
-        "description": "The date and time at which the response was generated, formatted in ISO 8601.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Tue, 27 Oct 2026 11:38:00 GMT"
+          "example": "Wed, 28 Oct 2026 14:16:56 GMT"
         },
-        "example": "Tue, 27 Oct 2026 11:38:00 GMT"
+        "example": "Wed, 28 Oct 2026 14:16:56 GMT"
       },
       "Server": {
-        "description": "The name and version of the server software that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -234,7 +249,6 @@
         "example": "Kestrel"
       },
       "Content-Type": {
-        "description": "The media type of the resource returned in the response body, indicating the format of the content.",
         "style": "simple",
         "explode": false,
         "schema": {
