@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "MICROSERVICE-development-partner-gateway-api-List Api Products Searchs-v1-spec",
-    "description": "The Product Search API allows users to efficiently search for products within the catalog by various criteria. This endpoint is designed to facilitate seamless discovery and retrieval of product information, making it suitable for e-commerce platforms, mobile applications, and any client needing to enhance user experience with product data. Typical consumers include developers building shopping interfaces or inventory management systems that require quick access to product details. With this API, businesses can ensure that their customers can find the products they need with ease.",
+    "description": "The Product Search API enables partners to efficiently query and retrieve product listings based on specific criteria. This API supports various search parameters, allowing users to filter products according to availability, categories, or keywords. Typical consumers include third-party applications and e-commerce platforms that integrate product data from the service. By leveraging this API, partners can enhance their offerings and improve product discoverability for end-users.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "partner-gateway-api"
@@ -38,8 +38,8 @@
         "tags": [
           "Product Management"
         ],
-        "summary": "Search for products.",
-        "description": "This endpoint allows users to search for products based on specified criteria, returning relevant results in a structured format.",
+        "summary": "Search for products based on query parameters.",
+        "description": "This endpoint allows users to search for products using various query parameters. It returns a list of products that match the search criteria, helping users find what they need efficiently.",
         "operationId": "listApiProductsSearchs",
         "parameters": [
           {
@@ -65,7 +65,7 @@
           }
         ],
         "requestBody": {
-          "description": "The search criteria for retrieving products. This body should include the necessary parameters to filter and sort the products based on user requirements.",
+          "description": "This request body is used to specify the search criteria for retrieving products from the system. Ensure that the criteria match the expected format as defined in the schema.",
           "content": {
             "application/json": {
               "schema": {
@@ -76,7 +76,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response with the list of matching products.",
+            "description": "Search completed successfully, returning matching product results.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -122,15 +122,16 @@
     "schemas": {
       "ListApiProductsSearchsRequest": {
         "type": "string",
-        "description": "Represents the request body for the search operation in the products API.",
+        "description": "A request body for the search operation on products.",
         "example": "{}"
       },
       "ListApiProductsSearchsResponse_200": {
+        "title": "Product Search Response",
         "type": "object",
         "properties": {
           "items": {
             "type": "array",
-            "description": "List of search results for products.",
+            "description": "List of search queries and their results.",
             "example": [
               {
                 "query": "coffee",
@@ -149,27 +150,27 @@
               }
             ],
             "items": {
-              "$ref": "#/components/schemas/ProductSearchResult"
+              "$ref": "#/components/schemas/SearchItem"
             }
           },
           "count": {
             "type": "integer",
-            "description": "Total number of search results.",
+            "description": "Total number of search queries.",
             "format": "int32",
             "example": 1
           },
           "client": {
             "type": "string",
-            "description": "Identifier for the client making the request.",
+            "description": "Identifier for the client who made the request.",
             "example": "partner-flipmart-2291"
           },
           "traceRef": {
             "type": "string",
-            "description": "Trace reference for tracking the request.",
-            "example": "req_lkvdhd0y0uwh"
+            "description": "Reference trace ID for the request.",
+            "example": "req_y8sfo78qx21v"
           }
         },
-        "description": "Response object for the GET operation to search products.",
+        "description": "Response schema representing the result of a product search operation.",
         "example": {
           "items": [
             {
@@ -190,75 +191,77 @@
           ],
           "count": 1,
           "client": "partner-flipmart-2291",
-          "traceRef": "req_lkvdhd0y0uwh"
+          "traceRef": "req_y8sfo78qx21v"
         }
       },
-      "ProductSearchResult": {
+      "SearchItem": {
+        "title": "Search Item",
         "type": "object",
         "properties": {
           "query": {
             "type": "string",
-            "description": "The search query string used for this result.",
-            "example": "search term"
+            "description": "The search query string.",
+            "example": "string"
           },
           "results": {
             "type": "array",
-            "description": "List of products matching the search query.",
+            "description": "List of products found for the search query.",
             "items": {
               "$ref": "#/components/schemas/Product"
             }
           },
           "total": {
             "type": "integer",
-            "description": "Total number of products found.",
+            "description": "Total number of products found for the search query.",
             "format": "int32",
-            "example": 1
+            "example": 0
           }
         },
-        "description": "Contains details of a product search result."
+        "description": "An item representing a search query and its results."
       },
       "Product": {
+        "title": "Product",
         "type": "object",
         "properties": {
           "sku": {
             "type": "string",
-            "description": "Stock Keeping Unit identifier for the product.",
-            "example": "SKU123"
+            "description": "Stock Keeping Unit of the product.",
+            "example": "string"
           },
           "name": {
             "type": "string",
             "description": "Name of the product.",
-            "example": "Product Name"
+            "example": "string"
           },
           "category": {
             "type": "string",
             "description": "Category to which the product belongs.",
-            "example": "Category Name"
+            "example": "string"
           },
           "price": {
             "type": "integer",
             "description": "Price of the product in the specified currency.",
             "format": "int32",
-            "example": 100
+            "example": 0
           },
           "currency": {
             "type": "string",
             "description": "Currency in which the price is specified.",
-            "example": "USD"
+            "example": "string"
           },
           "inStock": {
             "type": "boolean",
-            "description": "Indicates whether the product is currently in stock.",
-            "example": true
+            "description": "Availability status of the product.",
+            "example": false
           },
           "stock": {
             "type": "integer",
-            "description": "Number of items available in stock.",
+            "description": "Number of items in stock for the product.",
             "format": "int32",
-            "example": 50
+            "example": 0
           }
         },
-        "description": "Details of a product."
+        "description": "Representation of a product found in the search results."
       }
     },
     "parameters": {
@@ -330,9 +333,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "0A3BB9CB-4FBA-4917-87E7-0AF5E5F88855"
+          "example": "9407C094-F503-48FC-B01C-EFCE0F3FCB9C"
         },
-        "example": "0A3BB9CB-4FBA-4917-87E7-0AF5E5F88855"
+        "example": "9407C094-F503-48FC-B01C-EFCE0F3FCB9C"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -352,17 +355,15 @@
     },
     "headers": {
       "Date": {
-        "description": "The date and time at which the response was generated, formatted in ISO 8601.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Wed, 28 Oct 2026 14:00:32 GMT"
+          "example": "Wed, 28 Oct 2026 14:07:42 GMT"
         },
-        "example": "Wed, 28 Oct 2026 14:00:32 GMT"
+        "example": "Wed, 28 Oct 2026 14:07:42 GMT"
       },
       "X-Api-Name": {
-        "description": "The name of the API that generated the response.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -372,7 +373,6 @@
         "example": "searchProducts"
       },
       "X-Served-By": {
-        "description": "The identifier of the server that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -395,9 +395,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "8a22556a-eb5d-4f29-9ec8-743a75ee0f04"
+          "example": "f3420d17-2c6a-4df8-8097-b80a87dd1bb9"
         },
-        "example": "8a22556a-eb5d-4f29-9ec8-743a75ee0f04"
+        "example": "f3420d17-2c6a-4df8-8097-b80a87dd1bb9"
       },
       "Content-Length": {
         "style": "simple",
@@ -412,7 +412,7 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "description": "This security scheme uses the Bearer authentication method. A bearer token is required in the Authorization header to access protected resources. Ensure the token is kept confidential and is sent over secure channels.",
+        "description": "This security scheme uses the Bearer authentication method, allowing clients to authenticate by sending a token in the HTTP authorization header.",
         "scheme": "bearer"
       }
     }
