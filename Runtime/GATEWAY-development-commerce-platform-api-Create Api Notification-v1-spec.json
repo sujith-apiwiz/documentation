@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "GATEWAY-development-commerce-platform-api-Create Api Notification-v1-spec",
-    "description": "The Notification Management API enables businesses to manage notifications within their commerce platform efficiently. This API allows developers to create and send notifications to users, ensuring timely communication of important updates or alerts. Typically, eCommerce platforms and applications can utilize this API for customer engagement, promotional alerts, and operational messages. By integrating this functionality, businesses can enhance user experience and drive engagement through proactive notifications.",
+    "description": "The API Notification Management API enables businesses to create and manage notifications within the commerce platform. This endpoint allows for the programmatic submission of notification details, facilitating efficient communication with users regarding updates, promotions, or critical alerts. Typical consumers include developers and system integrators looking to automate notification processes within their applications. By leveraging this API, organizations can enhance user engagement and streamline communication strategies effectively.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "commerce-platform-api"
@@ -11,7 +11,6 @@
   "servers": [
     {
       "url": "https://observability-stage-raju.apiwiz.io",
-      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
@@ -22,7 +21,6 @@
     },
     {
       "url": "http://host.docker.internal:5331",
-      "description": "development",
       "variables": {},
       "x-schema": "http://",
       "x-name": "development",
@@ -36,10 +34,10 @@
     "/api/v1/notifications": {
       "post": {
         "tags": [
-          "Notification Management"
+          "Notifications"
         ],
         "summary": "Create a new notification.",
-        "description": "This operation allows users to create a new notification in the system. It requires specific details to be provided in the request body, which will be used to generate the notification.",
+        "description": "This endpoint allows users to create a new notification in the system. Provide the required notification details in the request body, and the system will process the creation accordingly.",
         "operationId": "createApiNotification",
         "parameters": [
           {
@@ -98,7 +96,7 @@
           }
         ],
         "requestBody": {
-          "description": "The request body for creating notifications. This payload should contain the necessary information for the notifications you wish to create and may include multiple notification attributes depending on the implementation.",
+          "description": "This request body contains the necessary information to create a new notification. It must include details such as the notification type, recipient information, and the message content.",
           "content": {
             "application/json": {
               "schema": {
@@ -109,7 +107,7 @@
         },
         "responses": {
           "200": {
-            "description": "Request completed successfully and notification sent.",
+            "description": "Notification sent successfully.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -156,107 +154,105 @@
   "components": {
     "schemas": {
       "CreateApiNotificationRequest": {
-        "title": "Notification Request Body",
         "type": "object",
         "properties": {
           "userId": {
             "type": "integer",
-            "description": "The unique identifier of the user to whom the notification is to be sent.",
-            "format": "int32",
-            "example": 1011
-          },
-          "channel": {
-            "type": "string",
-            "description": "The channel through which the notification will be delivered.",
-            "example": "EMAIL"
-          },
-          "template": {
-            "type": "string",
-            "description": "The template to be used for the notification message.",
-            "example": "price-drop"
-          },
-          "data": {
-            "$ref": "#/components/schemas/NotificationData"
-          }
-        },
-        "description": "Schema representing the request body for the Notification POST operation.",
-        "example": {
-          "userId": 1011,
-          "channel": "EMAIL",
-          "template": "price-drop",
-          "data": {
-            "orderId": "ORD-92424"
-          }
-        }
-      },
-      "NotificationData": {
-        "title": "Notification Data",
-        "type": "object",
-        "properties": {
-          "notificationId": {
-            "type": "string",
-            "description": "The unique identifier for the notification.",
-            "example": "notif_001"
-          },
-          "userId": {
-            "type": "integer",
-            "description": "The identifier of the user who will receive the notification.",
+            "description": "The unique identifier of the user to whom the notification will be sent.",
             "format": "int32",
             "example": 1001
           },
           "channel": {
             "type": "string",
-            "description": "The channel through which the notification is sent.",
+            "description": "The communication channel through which the notification will be sent (e.g., email, SMS).",
+            "example": "SMS"
+          },
+          "template": {
+            "type": "string",
+            "description": "The identifier or name of the notification template to be used.",
+            "example": "order-confirmed"
+          },
+          "data": {
+            "$ref": "#/components/schemas/NotificationData"
+          }
+        },
+        "description": "The request body for sending a notification.",
+        "example": {
+          "userId": 1001,
+          "channel": "SMS",
+          "template": "order-confirmed",
+          "data": {
+            "orderId": "ORD-77036"
+          }
+        }
+      },
+      "NotificationData": {
+        "type": "object",
+        "properties": {
+          "notificationId": {
+            "type": "string",
+            "description": "Unique identifier for the notification.",
+            "example": "notif-123"
+          },
+          "userId": {
+            "type": "integer",
+            "description": "Identifier of the user associated with the notification.",
+            "format": "int32",
+            "example": 1
+          },
+          "channel": {
+            "type": "string",
+            "description": "Communication channel used for the notification (e.g., email, SMS).",
             "example": "email"
           },
           "template": {
             "type": "string",
-            "description": "The template used for the notification.",
+            "description": "Template used for crafting the notification content.",
             "example": "welcome_template"
           },
           "status": {
             "type": "string",
-            "description": "The current status of the notification.",
-            "example": "queued"
+            "description": "Current status of the notification (e.g., queued, sent, delivered).",
+            "example": "delivered"
           },
           "queuedAt": {
             "type": "string",
-            "description": "The timestamp when the notification was queued.",
-            "example": "2023-10-01T00:00:00Z"
+            "description": "Timestamp indicating when the notification was queued.",
+            "example": "2023-10-01T10:00:00Z"
           }
         },
-        "description": "Schema representing the detailed information of the notification."
+        "description": "Schema representing the details of a notification."
       },
       "CreateApiNotificationResponse_200": {
-        "title": "Notification Post Response",
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status of the response.",
+            "description": "The status of the notification operation.",
             "example": "success"
           },
           "data": {
+            "description": "Details of the notification generated during the operation.",
             "$ref": "#/components/schemas/NotificationData"
           },
           "requestId": {
             "type": "string",
             "description": "Unique identifier for the request.",
-            "example": "req_2xn0sdgr17x1"
+            "example": "req_dkhqy88e52yj"
           }
         },
-        "description": "Schema representing the response structure for a successful notification post operation.",
+        "description": "Response schema for the POST notifications operation that returns the status and data regarding the notification.",
         "example": {
           "status": "success",
           "data": {
-            "notificationId": "NTF-91395",
-            "userId": 1011,
-            "channel": "EMAIL",
-            "template": "price-drop",
+            "notificationId": "NTF-95973",
+            "userId": 1001,
+            "channel": "SMS",
+            "template": "order-confirmed",
             "status": "QUEUED",
-            "queuedAt": "2026-10-28T14:02:39.973831Z"
+            "queuedAt": "2026-10-28T16:20:11.778923Z"
           },
-          "requestId": "req_2xn0sdgr17x1"
+          "requestId": "req_dkhqy88e52yj"
         }
       }
     },
@@ -365,9 +361,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "E63C5245-8253-441A-87BE-2E981B1C5E11"
+          "example": "B433496B-FEBF-4DED-8156-E8D00E51A32A"
         },
-        "example": "E63C5245-8253-441A-87BE-2E981B1C5E11"
+        "example": "B433496B-FEBF-4DED-8156-E8D00E51A32A"
       },
       "content-length": {
         "name": "content-length",
@@ -377,9 +373,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "96"
+          "example": "99"
         },
-        "example": "96"
+        "example": "99"
       },
       "x-forwarded-for": {
         "name": "x-forwarded-for",
@@ -449,9 +445,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "1d7be71bcc73362fa12ed404bf67e204"
+          "example": "56f21c15c987582e7f7cb24d77604f5c"
         },
-        "example": "1d7be71bcc73362fa12ed404bf67e204"
+        "example": "56f21c15c987582e7f7cb24d77604f5c"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -483,17 +479,15 @@
     },
     "headers": {
       "Date": {
-        "description": "The date and time at which the response was generated, formatted as an RFC 1123 date string.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Wed, 28 Oct 2026 14:02:39 GMT"
+          "example": "Wed, 28 Oct 2026 16:20:11 GMT"
         },
-        "example": "Wed, 28 Oct 2026 14:02:39 GMT"
+        "example": "Wed, 28 Oct 2026 16:20:11 GMT"
       },
       "Connection": {
-        "description": "Indicates whether the connection is persistent or closed after the completion of the request. Possible values are 'keep-alive' or 'close'.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -503,7 +497,6 @@
         "example": "keep-alive"
       },
       "Keep-Alive": {
-        "description": "Provides additional information about the connection persistence, including the timeout and maximum number of requests allowed on the same connection.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -544,18 +537,18 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "a231f3b5-dfb4-49b5-b7e0-996646fa5d01"
+          "example": "80143269-e076-4a98-90d3-502b4efb4fe1"
         },
-        "example": "a231f3b5-dfb4-49b5-b7e0-996646fa5d01"
+        "example": "80143269-e076-4a98-90d3-502b4efb4fe1"
       },
       "Content-Length": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "204"
+          "example": "207"
         },
-        "example": "204"
+        "example": "207"
       }
     }
   }

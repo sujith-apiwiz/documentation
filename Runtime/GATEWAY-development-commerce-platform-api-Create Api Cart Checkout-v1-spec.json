@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "GATEWAY-development-commerce-platform-api-Create Api Cart Checkout-v1-spec",
-    "description": "The Cart Checkout API facilitates the seamless checkout process for users by finalizing their shopping cart transactions. This endpoint allows consumers to process payments, validate items, and generate order summaries for the contents of a shopping cart identified by a unique cart ID. Typical users include e-commerce platforms and application developers looking to enhance the purchasing experience for their customers. By utilizing this API, businesses can simplify the checkout flow while ensuring secure and efficient transactions.",
+    "description": "The Cart Checkout API facilitates the finalization of purchase transactions within a commerce platform. By using this endpoint, merchants can process customer orders associated with specific shopping carts identified by their unique IDs. This operation typically involves validating cart items, calculating totals, and handling payment processing. Typical consumers include e-commerce platforms and application developers looking to seamlessly integrate checkout functionalities into their services. Streamlining the checkout process enhances user experience and drives conversion rates.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "commerce-platform-api"
@@ -11,7 +11,6 @@
   "servers": [
     {
       "url": "https://observability-stage-raju.apiwiz.io",
-      "description": "Sandbox server",
       "variables": {},
       "x-schema": "https://",
       "x-name": "Sandbox server",
@@ -22,7 +21,6 @@
     },
     {
       "url": "http://host.docker.internal:5331",
-      "description": "development",
       "variables": {},
       "x-schema": "http://",
       "x-name": "development",
@@ -36,10 +34,10 @@
     "/api/v1/carts/{cartId}/checkout": {
       "post": {
         "tags": [
-          "Carts"
+          "Cart Management"
         ],
-        "summary": "Checkout a specific cart.",
-        "description": "This operation allows the user to proceed with the checkout process for the cart identified by the provided cart ID (CRT-104814). It typically involves confirming payment and shipping details to complete the purchase.",
+        "summary": "Initiate checkout for the specified cart.",
+        "description": "This endpoint allows the user to initiate the checkout process for the cart identified by the provided cart ID. Ensure that all items in the cart are valid for checkout before calling this API.",
         "operationId": "createApiCartCheckout",
         "parameters": [
           {
@@ -101,7 +99,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body is used to initiate the checkout process for the specified cart. It includes all necessary information required for completing the checkout, such as payment details and shipping address.",
+          "description": "This request body is used to initiate the checkout process for a specific cart identified by the cart ID 'CRT-119205'. It contains all necessary information required to complete the checkout, including payment details, shipping address, and any applied discounts.",
           "content": {
             "application/json": {
               "schema": {
@@ -112,7 +110,7 @@
         },
         "responses": {
           "200": {
-            "description": "Checkout completed successfully, confirming the order.",
+            "description": "Checkout process completed successfully.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -159,93 +157,94 @@
   "components": {
     "schemas": {
       "CreateApiCartCheckoutRequest": {
-        "title": "Checkout Request Body",
         "type": "object",
         "properties": {
           "paymentMethod": {
             "type": "string",
-            "description": "The method of payment chosen by the user for the checkout.",
-            "example": "UPI"
+            "description": "The method of payment selected for the checkout.",
+            "example": "NETBANKING"
           },
           "shippingAddressId": {
             "type": "string",
-            "description": "The identifier for the shipping address selected for the delivery.",
-            "example": "ADDR-3219"
+            "description": "The unique identifier for the shipping address to which the order will be sent.",
+            "example": "ADDR-7233"
           }
         },
-        "description": "This schema represents the request body for the checkout operation in the cart service.",
+        "description": "Request body schema for the checkout operation in the cart service.",
         "example": {
-          "paymentMethod": "UPI",
-          "shippingAddressId": "ADDR-3219"
+          "paymentMethod": "NETBANKING",
+          "shippingAddressId": "ADDR-7233"
         }
       },
       "CreateApiCartCheckoutResponse_200": {
+        "title": "Checkout Response Schema",
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status of the response.",
+            "description": "The status of the checkout operation.",
             "example": "success"
           },
           "data": {
-            "description": "Details of the checkout process.",
+            "description": "The data related to the checkout operation.",
             "$ref": "#/components/schemas/CheckoutData"
           },
           "requestId": {
             "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req_umoi4mtznwc3"
+            "description": "Unique identifier for the checkout request.",
+            "example": "req_ppgd52j6wkxs"
           }
         },
-        "description": "Response schema for the checkout operation in the cart system.",
+        "description": "Schema representing the response structure for the checkout operation.",
         "example": {
           "status": "success",
           "data": {
-            "cartId": "CRT-104814",
-            "orderId": "ORD-83188",
-            "paymentMethod": "UPI",
-            "shippingAddressId": "ADDR-3219",
+            "cartId": "CRT-119205",
+            "orderId": "ORD-72460",
+            "paymentMethod": "NETBANKING",
+            "shippingAddressId": "ADDR-7233",
             "status": "PAYMENT_PENDING",
-            "paymentUrl": "https://pay.acme-shop.example/checkout/vcvf1xi1wgo9zzwo"
+            "paymentUrl": "https://pay.acme-shop.example/checkout/ym3ggmn54hs8te0w"
           },
-          "requestId": "req_umoi4mtznwc3"
+          "requestId": "req_ppgd52j6wkxs"
         }
       },
       "CheckoutData": {
+        "title": "Checkout Data Schema",
         "type": "object",
         "properties": {
           "cartId": {
             "type": "string",
-            "description": "Unique identifier for the cart.",
-            "example": "cart_123"
+            "description": "The unique identifier for the shopping cart.",
+            "example": "cart_123456"
           },
           "orderId": {
             "type": "string",
-            "description": "Unique identifier for the order created.",
-            "example": "order_456"
+            "description": "The unique identifier for the order generated from the checkout.",
+            "example": "order_789012"
           },
           "paymentMethod": {
             "type": "string",
-            "description": "The payment method selected for the transaction.",
+            "description": "The method used for payment during checkout.",
             "example": "credit_card"
           },
           "shippingAddressId": {
             "type": "string",
-            "description": "Unique identifier for the shipping address.",
-            "example": "address_789"
+            "description": "The identifier for the shipping address used in the order.",
+            "example": "address_345678"
           },
           "status": {
             "type": "string",
-            "description": "Current status of the checkout process.",
+            "description": "The current status of the order.",
             "example": "completed"
           },
           "paymentUrl": {
             "type": "string",
-            "description": "URL for payment processing.",
-            "example": "https://paymentgateway.com/pay"
+            "description": "The URL to redirect for payment processing.",
+            "example": "https://payment.url/xyz"
           }
         },
-        "description": "Contains the checkout details including cart and order information."
+        "description": "Schema representing the details of the checkout operation."
       }
     },
     "parameters": {
@@ -353,9 +352,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "339E84C9-7AC7-4055-8CE9-9CE7ED643669"
+          "example": "F7C5F9BF-890E-4203-BDB7-FFA90F3FB353"
         },
-        "example": "339E84C9-7AC7-4055-8CE9-9CE7ED643669"
+        "example": "F7C5F9BF-890E-4203-BDB7-FFA90F3FB353"
       },
       "content-length": {
         "name": "content-length",
@@ -365,9 +364,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "58"
+          "example": "65"
         },
-        "example": "58"
+        "example": "65"
       },
       "x-forwarded-for": {
         "name": "x-forwarded-for",
@@ -401,9 +400,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "/api/v1/carts/CRT-104814/checkout"
+          "example": "/api/v1/carts/CRT-119205/checkout"
         },
-        "example": "/api/v1/carts/CRT-104814/checkout"
+        "example": "/api/v1/carts/CRT-119205/checkout"
       },
       "x-forwarded-port": {
         "name": "x-forwarded-port",
@@ -437,9 +436,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "eab3ea382021b8361cde6b3ed2810629"
+          "example": "12383220933e9e4c6faf1c10e8bcea1f"
         },
-        "example": "eab3ea382021b8361cde6b3ed2810629"
+        "example": "12383220933e9e4c6faf1c10e8bcea1f"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -481,17 +480,15 @@
     },
     "headers": {
       "Date": {
-        "description": "Indicates the date and time at which the response was generated, formatted in ISO 8601.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Wed, 28 Oct 2026 14:02:39 GMT"
+          "example": "Wed, 28 Oct 2026 16:20:11 GMT"
         },
-        "example": "Wed, 28 Oct 2026 14:02:39 GMT"
+        "example": "Wed, 28 Oct 2026 16:20:11 GMT"
       },
       "Connection": {
-        "description": "Specifies the control options for the current connection, indicating how long the connection should remain open.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -501,7 +498,6 @@
         "example": "keep-alive"
       },
       "Keep-Alive": {
-        "description": "This header specifies the parameters for persistent connections, such as the duration to keep the connection alive.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -538,22 +534,24 @@
         "example": "application/json"
       },
       "X-Request-Id": {
+        "description": "A unique identifier for the request, useful for tracing requests through the system.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "b18f01bd-07d3-4a0a-a90d-fdff82d166b6"
+          "example": "ccfbd0a1-81c3-4567-aac0-d36f04bf8c47"
         },
-        "example": "b18f01bd-07d3-4a0a-a90d-fdff82d166b6"
+        "example": "ccfbd0a1-81c3-4567-aac0-d36f04bf8c47"
       },
       "Content-Length": {
+        "description": "The size of the response body in bytes, which is crucial for clients to manage response data effectively.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "256"
+          "example": "263"
         },
-        "example": "256"
+        "example": "263"
       }
     }
   }
