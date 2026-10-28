@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "GATEWAY-development-commerce-platform-api-Create Api Coupons Validate-v1-spec",
-    "description": "The Coupon Validation API enables businesses to verify the legitimacy and applicability of promotional coupons in real-time. This operation ensures that promotional campaigns run smoothly, allowing customers to redeem valid coupons while minimizing fraudulent claims. Typical consumers of this API include e-commerce platforms, mobile applications, and retail systems that require seamless coupon management. By integrating this API, businesses can enhance their customer experience and optimize their promotional strategies.",
+    "description": "The Coupon Validation API is designed to streamline the process of validating promotional coupons within the commerce platform. This endpoint allows merchants to ensure that coupons are valid and applicable for specific transactions, reducing customer dissatisfaction and enhancing sales efficiency. Typical consumers of this API include e-commerce platforms and retail systems that utilize promotional offers to attract customers. By integrating this API, businesses can improve their promotional campaigns and provide customers with a seamless shopping experience.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "commerce-platform-api"
@@ -36,10 +36,10 @@
     "/api/v1/coupons/validate": {
       "post": {
         "tags": [
-          "Coupon Management"
+          "Coupons"
         ],
         "summary": "Validate a coupon code.",
-        "description": "This endpoint allows users to validate a coupon code. Upon successful validation, the system will provide details about the coupon's applicability, including any discounts or conditions that apply. Use this operation to ensure that the coupon is still valid and can be applied to a purchase.",
+        "description": "This operation verifies the validity of a provided coupon code. If the coupon is valid, the operation will return the associated discount details; otherwise, an error will be returned.",
         "operationId": "createApiCouponsValidate",
         "parameters": [
           {
@@ -98,7 +98,7 @@
           }
         ],
         "requestBody": {
-          "description": "This request body contains the necessary information required to validate a coupon. Ensure that all required fields are populated accurately to receive a proper validation response.",
+          "description": "The request body contains coupon details that need to be validated. This includes the necessary information for the validation process to determine if the coupon is valid based on predefined rules.",
           "content": {
             "application/json": {
               "schema": {
@@ -109,7 +109,7 @@
         },
         "responses": {
           "200": {
-            "description": "The coupon validation was successful. You can proceed with the transaction.",
+            "description": "The coupon validation request was successful.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -156,7 +156,11 @@
   "components": {
     "schemas": {
       "CreateApiCouponsValidateRequest": {
-        "title": "Coupon Validation Request",
+        "title": "Validate Coupon Request",
+        "required": [
+          "cartTotal",
+          "code"
+        ],
         "type": "object",
         "properties": {
           "code": {
@@ -168,86 +172,85 @@
             "type": "integer",
             "description": "The total amount of the cart before applying the coupon.",
             "format": "int32",
-            "example": 17681
+            "example": 5942
           }
         },
-        "description": "Schema representing the request body for validating a coupon.",
+        "description": "Request body schema for validating a coupon in the coupon operations POST request.",
         "example": {
           "code": "WELCOME10",
-          "cartTotal": 17681
+          "cartTotal": 5942
         }
       },
       "CreateApiCouponsValidateResponse_200": {
-        "title": "Coupon Validation Response",
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "description": "Indicates the status of the request.",
+            "description": "Indicates the status of the coupon validation request.",
             "example": "success"
           },
           "data": {
+            "description": "Contains the details of the coupon validation result.",
             "$ref": "#/components/schemas/CouponValidationData"
           },
           "requestId": {
             "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req_7vuxxl7g3a3b"
+            "description": "Unique identifier for the validation request.",
+            "example": "req_f8463w38cdai"
           }
         },
-        "description": "Response schema for the coupon validation operation.",
+        "description": "Response schema for a successful coupon validation operation.",
         "example": {
           "status": "success",
           "data": {
             "code": "WELCOME10",
             "valid": true,
-            "cartTotal": 17681,
-            "discountAmount": 1768,
-            "payable": 15913,
+            "cartTotal": 5942,
+            "discountAmount": 594,
+            "payable": 5348,
             "message": "Coupon applied"
           },
-          "requestId": "req_7vuxxl7g3a3b"
+          "requestId": "req_f8463w38cdai"
         }
       },
       "CouponValidationData": {
-        "title": "Coupon Validation Data",
         "type": "object",
         "properties": {
           "code": {
             "type": "string",
             "description": "The coupon code that was validated.",
-            "example": "COUPON123"
+            "example": "SUMMER2023"
           },
           "valid": {
             "type": "boolean",
-            "description": "Indicates whether the coupon code is valid.",
-            "example": true
+            "description": "Indicates whether the coupon is valid.",
+            "example": false
           },
           "cartTotal": {
             "type": "integer",
-            "description": "The total amount of the cart before discount.",
+            "description": "Total amount of the cart before applying the coupon.",
             "format": "int32",
             "example": 100
           },
           "discountAmount": {
             "type": "integer",
-            "description": "The discount amount applied by the coupon.",
+            "description": "The discount amount provided by the coupon.",
             "format": "int32",
-            "example": 20
+            "example": 10
           },
           "payable": {
             "type": "integer",
-            "description": "Total amount payable after applying the discount.",
+            "description": "The amount to be paid after the discount is applied.",
             "format": "int32",
-            "example": 80
+            "example": 90
           },
           "message": {
             "type": "string",
-            "description": "Message providing additional information regarding the coupon validation.",
+            "description": "A message regarding the coupon validation, often used for feedback.",
             "example": "Coupon applied successfully."
           }
         },
-        "description": "Data schema containing the details of the coupon validation."
+        "description": "Detailed information about the result of the coupon validation."
       }
     },
     "parameters": {
@@ -355,9 +358,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "18CF511C-4022-4DCA-AFD1-347CC7322255"
+          "example": "BFF9E651-8B33-4FCF-94FC-0B911EB2CEAB"
         },
-        "example": "18CF511C-4022-4DCA-AFD1-347CC7322255"
+        "example": "BFF9E651-8B33-4FCF-94FC-0B911EB2CEAB"
       },
       "content-length": {
         "name": "content-length",
@@ -367,9 +370,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "41"
+          "example": "40"
         },
-        "example": "41"
+        "example": "40"
       },
       "x-forwarded-for": {
         "name": "x-forwarded-for",
@@ -439,9 +442,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "c230cb032836d11eb7570356005e911c"
+          "example": "bb015b239ef0ee4baab41c20b9f43854"
         },
-        "example": "c230cb032836d11eb7570356005e911c"
+        "example": "bb015b239ef0ee4baab41c20b9f43854"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -477,9 +480,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Wed, 28 Oct 2026 14:00:38 GMT"
+          "example": "Wed, 28 Oct 2026 14:02:39 GMT"
         },
-        "example": "Wed, 28 Oct 2026 14:00:38 GMT"
+        "example": "Wed, 28 Oct 2026 14:02:39 GMT"
       },
       "Connection": {
         "style": "simple",
@@ -500,6 +503,7 @@
         "example": "timeout=60"
       },
       "X-Api-Name": {
+        "description": "The name of the API that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -509,6 +513,7 @@
         "example": "validateCoupon"
       },
       "X-Served-By": {
+        "description": "The server that served the request, usually indicating the server name or instance.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -518,6 +523,7 @@
         "example": "commerce-platform-api"
       },
       "Content-Type": {
+        "description": "The media type of the response content, indicating the format of the returned data.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -527,22 +533,24 @@
         "example": "application/json"
       },
       "X-Request-Id": {
+        "description": "A unique identifier for the request, useful for tracking and debugging purposes.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "33bb6747-e4b6-4f9d-86be-b093cbcf7fcf"
+          "example": "72271d93-8744-4cfb-98e9-c3b1f002a817"
         },
-        "example": "33bb6747-e4b6-4f9d-86be-b093cbcf7fcf"
+        "example": "72271d93-8744-4cfb-98e9-c3b1f002a817"
       },
       "Content-Length": {
+        "description": "The length of the response body in bytes, which indicates the size of the payload that has been returned.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "175"
+          "example": "172"
         },
-        "example": "175"
+        "example": "172"
       }
     }
   }

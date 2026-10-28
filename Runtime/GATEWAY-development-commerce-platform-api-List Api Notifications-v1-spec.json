@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "GATEWAY-development-commerce-platform-api-List Api Notifications-v1-spec",
-    "description": "The API Notifications API enables users to access and manage notification events within the commerce platform. Through this endpoint, clients can retrieve a comprehensive list of notifications that are crucial for staying informed about various activities and updates. Typical consumers include developers and business analysts who need to monitor system events, user interactions, or transactional alerts. This API plays a vital role in ensuring that stakeholders are kept up-to-date with important notifications in a timely manner.",
+    "description": "The API Notifications Retrieval API enables clients to access a list of notifications relevant to their activities on the commerce platform. This endpoint provides insights into various system alerts, announcements, or updates that may impact users and their transactions. Typical consumers include developers and platform administrators who need to monitor and manage notifications efficiently. By retrieving this information, stakeholders can ensure timely responses and enhance user experiences.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "commerce-platform-api"
@@ -36,10 +36,10 @@
     "/api/v1/notifications": {
       "get": {
         "tags": [
-          "Notification Management"
+          "Notifications"
         ],
-        "summary": "Retrieve Notifications",
-        "description": "Fetch a list of notifications for the user, providing insights into alerts, updates, or messages relevant to their activity.",
+        "summary": "Retrieve a list of notifications.",
+        "description": "This endpoint allows you to fetch all notifications for the user. Notifications may include alerts, messages, and updates relevant to the user, providing them with essential information.",
         "operationId": "listApiNotifications",
         "parameters": [
           {
@@ -92,7 +92,7 @@
           }
         ],
         "requestBody": {
-          "description": "Request body for retrieving notifications. This request is used to fetch a collection of notifications based on specified criteria.",
+          "description": "The request body for retrieving notifications. This should include the necessary parameters to specify the type or category of notifications to fetch.",
           "content": {
             "application/json": {
               "schema": {
@@ -103,7 +103,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully retrieved the list of notifications.",
+            "description": "Notifications retrieved successfully.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -151,112 +151,162 @@
     "schemas": {
       "ListApiNotificationsRequest": {
         "type": "string",
-        "description": "Represents the request body for the GET operation on notifications in JSON format.",
+        "description": "This schema represents the request body content for the GET operation on notifications. It is a placeholder for the JSON string expected in the request.",
         "example": "{}"
       },
       "ListApiNotificationsResponse_200": {
+        "title": "Get Notifications Response",
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status of the response.",
+            "description": "The status of the response indicating success or failure.",
             "example": "success"
           },
           "data": {
-            "description": "Data containing the notifications and additional info.",
-            "$ref": "#/components/schemas/NotificationData"
+            "type": "object",
+            "properties": {
+              "notifications": {
+                "type": "array",
+                "description": "A list of notifications.",
+                "example": [
+                  {
+                    "notificationId": "12345",
+                    "userId": 1,
+                    "channel": "email",
+                    "template": "welcome",
+                    "message": "Welcome to our service!",
+                    "read": false,
+                    "sentAt": "2023-01-01T00:00:00Z"
+                  }
+                ],
+                "items": {
+                  "$ref": "#/components/schemas/Notification"
+                }
+              },
+              "unread": {
+                "type": "integer",
+                "description": "The number of unread notifications.",
+                "format": "int32",
+                "example": 5
+              },
+              "total": {
+                "type": "integer",
+                "description": "The total number of notifications.",
+                "format": "int32",
+                "example": 10
+              }
+            },
+            "description": "Contains the data related to notifications.",
+            "example": {
+              "notifications": [
+                {
+                  "notificationId": "NTF-92791",
+                  "userId": 1002,
+                  "channel": "SMS",
+                  "template": "shipment-dispatched",
+                  "message": "Your shipment is on its way with Delhivery.",
+                  "read": false,
+                  "sentAt": "2026-10-26T07:02:39.912309Z"
+                },
+                {
+                  "notificationId": "NTF-99300",
+                  "userId": 1007,
+                  "channel": "EMAIL",
+                  "template": "payment-receipt",
+                  "message": "We received your payment. Thank you for shopping with us!",
+                  "read": false,
+                  "sentAt": "2026-10-27T16:02:39.912348Z"
+                },
+                {
+                  "notificationId": "NTF-97870",
+                  "userId": 1011,
+                  "channel": "SMS",
+                  "template": "payment-receipt",
+                  "message": "We received your payment. Thank you for shopping with us!",
+                  "read": true,
+                  "sentAt": "2026-10-27T12:02:39.912349Z"
+                },
+                {
+                  "notificationId": "NTF-96530",
+                  "userId": 1009,
+                  "channel": "PUSH",
+                  "template": "order-confirmed",
+                  "message": "Your order has been confirmed and will be packed shortly.",
+                  "read": true,
+                  "sentAt": "2026-10-28T11:02:39.912350Z"
+                }
+              ],
+              "unread": 2,
+              "total": 37
+            }
           },
           "requestId": {
             "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req_jpmlv6v61xd0"
+            "description": "A unique identifier for the request.",
+            "example": "req_xvev94k4qkue"
           }
         },
-        "description": "Response object for retrieving notifications.",
+        "description": "The response schema for a successful GET request for notifications.",
         "example": {
           "status": "success",
           "data": {
             "notifications": [
               {
-                "notificationId": "NTF-97211",
-                "userId": 1012,
-                "channel": "PUSH",
-                "template": "price-drop",
-                "message": "An item on your wishlist just dropped in price.",
-                "read": false,
-                "sentAt": "2026-10-26T14:00:38.636183Z"
-              },
-              {
-                "notificationId": "NTF-90370",
-                "userId": 1005,
+                "notificationId": "NTF-92791",
+                "userId": 1002,
                 "channel": "SMS",
-                "template": "order-confirmed",
-                "message": "Your order has been confirmed and will be packed shortly.",
-                "read": false,
-                "sentAt": "2026-10-26T07:00:38.636204Z"
-              },
-              {
-                "notificationId": "NTF-98826",
-                "userId": 1001,
-                "channel": "EMAIL",
-                "template": "order-confirmed",
-                "message": "Your order has been confirmed and will be packed shortly.",
-                "read": true,
-                "sentAt": "2026-10-26T05:00:38.636216Z"
-              },
-              {
-                "notificationId": "NTF-97239",
-                "userId": 1010,
-                "channel": "EMAIL",
                 "template": "shipment-dispatched",
                 "message": "Your shipment is on its way with Delhivery.",
+                "read": false,
+                "sentAt": "2026-10-26T07:02:39.912309Z"
+              },
+              {
+                "notificationId": "NTF-99300",
+                "userId": 1007,
+                "channel": "EMAIL",
+                "template": "payment-receipt",
+                "message": "We received your payment. Thank you for shopping with us!",
+                "read": false,
+                "sentAt": "2026-10-27T16:02:39.912348Z"
+              },
+              {
+                "notificationId": "NTF-97870",
+                "userId": 1011,
+                "channel": "SMS",
+                "template": "payment-receipt",
+                "message": "We received your payment. Thank you for shopping with us!",
                 "read": true,
-                "sentAt": "2026-10-28T03:00:38.636217Z"
+                "sentAt": "2026-10-27T12:02:39.912349Z"
+              },
+              {
+                "notificationId": "NTF-96530",
+                "userId": 1009,
+                "channel": "PUSH",
+                "template": "order-confirmed",
+                "message": "Your order has been confirmed and will be packed shortly.",
+                "read": true,
+                "sentAt": "2026-10-28T11:02:39.912350Z"
               }
             ],
             "unread": 2,
             "total": 37
           },
-          "requestId": "req_jpmlv6v61xd0"
+          "requestId": "req_xvev94k4qkue"
         }
       },
-      "NotificationData": {
-        "type": "object",
-        "properties": {
-          "notifications": {
-            "type": "array",
-            "description": "A list of notifications.",
-            "example": [],
-            "items": {
-              "$ref": "#/components/schemas/Notification"
-            }
-          },
-          "unread": {
-            "type": "integer",
-            "description": "Count of unread notifications.",
-            "format": "int32",
-            "example": 5
-          },
-          "total": {
-            "type": "integer",
-            "description": "Total number of notifications.",
-            "format": "int32",
-            "example": 10
-          }
-        },
-        "description": "Contains notifications and related counts."
-      },
       "Notification": {
+        "title": "Notification",
         "type": "object",
         "properties": {
           "notificationId": {
             "type": "string",
-            "description": "Unique identifier for the notification.",
-            "example": "notif_123"
+            "description": "The unique identifier for the notification.",
+            "example": "12345"
           },
           "userId": {
             "type": "integer",
-            "description": "Identifier for the user associated with the notification.",
+            "description": "The ID of the user the notification is intended for.",
             "format": "int32",
             "example": 1
           },
@@ -268,11 +318,11 @@
           "template": {
             "type": "string",
             "description": "The template used for the notification.",
-            "example": "welcome_template"
+            "example": "welcome"
           },
           "message": {
             "type": "string",
-            "description": "The content of the notification.",
+            "description": "The message content of the notification.",
             "example": "Welcome to our service!"
           },
           "read": {
@@ -282,8 +332,8 @@
           },
           "sentAt": {
             "type": "string",
-            "description": "Timestamp when the notification was sent.",
-            "example": "2023-10-01T12:00:00Z"
+            "description": "The timestamp when the notification was sent.",
+            "example": "2023-01-01T00:00:00Z"
           }
         },
         "description": "Represents a single notification."
@@ -382,9 +432,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "F80962E0-36C1-44F4-827C-085CE654406B"
+          "example": "440ED284-A703-4D38-AD52-723E87E5166B"
         },
-        "example": "F80962E0-36C1-44F4-827C-085CE654406B"
+        "example": "440ED284-A703-4D38-AD52-723E87E5166B"
       },
       "x-forwarded-for": {
         "name": "x-forwarded-for",
@@ -454,9 +504,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "676e195ac8788a363fa6c83f95cd7858"
+          "example": "b644144d98610e3fbcfb12190edff90b"
         },
-        "example": "676e195ac8788a363fa6c83f95cd7858"
+        "example": "b644144d98610e3fbcfb12190edff90b"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -492,9 +542,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Wed, 28 Oct 2026 14:00:38 GMT"
+          "example": "Wed, 28 Oct 2026 14:02:39 GMT"
         },
-        "example": "Wed, 28 Oct 2026 14:00:38 GMT"
+        "example": "Wed, 28 Oct 2026 14:02:39 GMT"
       },
       "Connection": {
         "style": "simple",
@@ -546,18 +596,18 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "a38e50c9-f718-40dc-864a-156a8140bf74"
+          "example": "970db576-f39e-4868-ac1f-eb78cf6839bc"
         },
-        "example": "a38e50c9-f718-40dc-864a-156a8140bf74"
+        "example": "970db576-f39e-4868-ac1f-eb78cf6839bc"
       },
       "Content-Length": {
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "926"
+          "example": "939"
         },
-        "example": "926"
+        "example": "939"
       }
     }
   }
