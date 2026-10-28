@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "GATEWAY-development-commerce-platform-api-Create Api Inventory Adjust-v1-spec",
-    "description": "The Inventory Adjustment API facilitates the modification of inventory levels for specific items within a commerce platform. This endpoint allows authorized users to adjust the stock of a designated inventory item by specifying the inventory ID and the desired adjustment details. Typical consumers of this API include inventory managers and e-commerce systems that need real-time inventory updates to reflect changes due to sales, returns, or restocking. By using this API, businesses can maintain accurate inventory counts and streamline their operations.",
+    "description": "The Inventory Adjustment Management API enables businesses to modify inventory levels for specific products with precision. By utilizing this endpoint, authorized users can initiate adjustments based on stock discrepancies or operational needs. This API is particularly useful for inventory managers and e-commerce platforms that require real-time updates on product availability. It streamlines inventory control processes, ensuring accuracy and efficiency in stock management.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "commerce-platform-api"
@@ -38,8 +38,8 @@
         "tags": [
           "Inventory Management"
         ],
-        "summary": "Adjust inventory for COF-4120.",
-        "description": "This endpoint allows users to adjust the inventory levels for the COF-4120 item. It is used when there is a need to increase or decrease the stock based on various operational needs.",
+        "summary": "Adjust inventory for MON-6603.",
+        "description": "This endpoint allows you to adjust the inventory levels for the item MON-6603. Use this operation when you need to update stock quantities due to various reasons such as inventory corrections, damage, or returns.",
         "operationId": "createApiInventoryAdjust",
         "parameters": [
           {
@@ -101,7 +101,7 @@
           }
         ],
         "requestBody": {
-          "description": "Adjust inventory for the specified item (COF-4120). This request allows you to modify the inventory levels, ensuring accurate stock representation. Ensure that the payload aligns with the expected schema to process the adjustment successfully.",
+          "description": "The request body for adjusting inventory of the item identified by MON-6603. This should contain the necessary information required to complete the adjustment operation.",
           "content": {
             "application/json": {
               "schema": {
@@ -112,7 +112,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful adjustment of the inventory item.",
+            "description": "Request completed successfully with the updated inventory information.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -159,126 +159,138 @@
   "components": {
     "schemas": {
       "CreateApiInventoryAdjustRequest": {
-        "title": "Inventory Adjustment Request Body",
+        "title": "Inventory Adjustment Request",
         "type": "object",
         "properties": {
           "delta": {
             "type": "integer",
-            "description": "The amount by which the inventory is adjusted. This value can be positive or negative.",
+            "description": "The change in inventory amount. Can be positive (addition) or negative (removal).",
             "format": "int32",
-            "example": 7
+            "example": 6
           },
           "reason": {
             "type": "string",
             "description": "The reason for the inventory adjustment.",
-            "example": "damaged-goods"
+            "example": "inbound-grn"
           },
           "warehouse": {
             "type": "string",
-            "description": "The identifier of the warehouse where the adjustment takes place.",
+            "description": "The identifier for the warehouse where the adjustment is made.",
             "example": "WH-DEL-03"
           }
         },
-        "description": "Request body for adjusting inventory operations.",
+        "description": "Schema representing a request body for adjusting inventory operations.",
         "example": {
-          "delta": 7,
-          "reason": "damaged-goods",
+          "delta": 6,
+          "reason": "inbound-grn",
           "warehouse": "WH-DEL-03"
         }
       },
       "CreateApiInventoryAdjustResponse_200": {
+        "title": "Inventory Adjustment Response",
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status of the response.",
+            "description": "The status of the operation.",
             "example": "success"
           },
           "data": {
-            "description": "The inventory data associated with the operation.",
-            "$ref": "#/components/schemas/InventoryData"
-          },
-          "requestId": {
-            "type": "string",
-            "description": "The unique identifier for the request.",
-            "example": "req_pv9uz49gdesj"
+            "type": "object",
+            "properties": {
+              "sku": {
+                "type": "string",
+                "description": "Stock Keeping Unit, a unique identifier for the inventory item.",
+                "example": "SKU12345"
+              },
+              "name": {
+                "type": "string",
+                "description": "The name of the inventory item.",
+                "example": "Widget A"
+              },
+              "warehouse": {
+                "type": "string",
+                "description": "Identifier for the warehouse where the item is located.",
+                "example": "WH1"
+              },
+              "onHand": {
+                "type": "integer",
+                "description": "The current quantity of the item on hand.",
+                "format": "int32",
+                "example": 50
+              },
+              "reserved": {
+                "type": "integer",
+                "description": "The quantity of the item that is currently reserved.",
+                "format": "int32",
+                "example": 10
+              },
+              "available": {
+                "type": "integer",
+                "description": "The available quantity of the item for sale.",
+                "format": "int32",
+                "example": 40
+              },
+              "reorderLevel": {
+                "type": "integer",
+                "description": "The reorder level for the inventory item.",
+                "format": "int32",
+                "example": 20
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Timestamp of the last update to the inventory item.",
+                "example": "2023-10-01T12:00:00Z"
+              },
+              "adjustment": {
+                "$ref": "#/components/schemas/AdjustmentDetails"
+              },
+              "requestId": {
+                "type": "string",
+                "description": "Unique identifier for the request.",
+                "example": "REQ123456"
+              }
+            },
+            "description": "Detailed information about the inventory item being adjusted.",
+            "example": {
+              "sku": "MON-6603",
+              "name": "Dell S2725QC 27-inch 4K Monitor",
+              "warehouse": "WH-DEL-03",
+              "onHand": 35,
+              "reserved": 6,
+              "available": 29,
+              "reorderLevel": 25,
+              "updatedAt": "2026-10-28T05:00:37.396866Z",
+              "adjustment": {
+                "delta": 6,
+                "reason": "inbound-grn",
+                "adjustmentId": "ADJ-495023",
+                "at": "2026-10-28T14:00:37.396852Z"
+              }
+            }
           }
         },
-        "description": "Response schema for the inventory adjustment operation.",
+        "description": "Response schema for inventory adjustment operations.",
         "example": {
           "status": "success",
           "data": {
-            "sku": "COF-4120",
-            "name": "Blue Tokai Cold Brew Coffee 500g",
+            "sku": "MON-6603",
+            "name": "Dell S2725QC 27-inch 4K Monitor",
             "warehouse": "WH-DEL-03",
-            "onHand": 329,
+            "onHand": 35,
             "reserved": 6,
-            "available": 323,
+            "available": 29,
             "reorderLevel": 25,
-            "updatedAt": "2026-10-27T14:20:23.168300Z",
+            "updatedAt": "2026-10-28T05:00:37.396866Z",
             "adjustment": {
-              "delta": 7,
-              "reason": "damaged-goods",
-              "adjustmentId": "ADJ-895031",
-              "at": "2026-10-27T16:20:23.168290Z"
+              "delta": 6,
+              "reason": "inbound-grn",
+              "adjustmentId": "ADJ-495023",
+              "at": "2026-10-28T14:00:37.396852Z"
             }
           },
-          "requestId": "req_pv9uz49gdesj"
+          "requestId": "req_glyb84rdmf92"
         }
-      },
-      "InventoryData": {
-        "type": "object",
-        "properties": {
-          "sku": {
-            "type": "string",
-            "description": "The stock keeping unit identifier.",
-            "example": "ABC-123"
-          },
-          "name": {
-            "type": "string",
-            "description": "The name of the product.",
-            "example": "Product Name"
-          },
-          "warehouse": {
-            "type": "string",
-            "description": "The name of the warehouse where the product is stored.",
-            "example": "Warehouse A"
-          },
-          "onHand": {
-            "type": "integer",
-            "description": "The current quantity of the product on hand.",
-            "format": "int32",
-            "example": 100
-          },
-          "reserved": {
-            "type": "integer",
-            "description": "The quantity of the product that is reserved.",
-            "format": "int32",
-            "example": 20
-          },
-          "available": {
-            "type": "integer",
-            "description": "The quantity of the product available for sale.",
-            "format": "int32",
-            "example": 80
-          },
-          "reorderLevel": {
-            "type": "integer",
-            "description": "The threshold quantity at which new stock should be ordered.",
-            "format": "int32",
-            "example": 30
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "The timestamp of when the inventory record was last updated.",
-            "example": "2023-10-01T12:00:00Z"
-          },
-          "adjustment": {
-            "description": "Details of the adjustment made to the inventory.",
-            "$ref": "#/components/schemas/AdjustmentDetails"
-          }
-        },
-        "description": "Details about the current inventory item."
       },
       "AdjustmentDetails": {
         "type": "object",
@@ -287,25 +299,25 @@
             "type": "integer",
             "description": "The amount of change to the inventory level.",
             "format": "int32",
-            "example": -10
+            "example": 5
           },
           "reason": {
             "type": "string",
-            "description": "The reason for the inventory adjustment.",
-            "example": "Stock correction"
+            "description": "The reason for the adjustment.",
+            "example": "Stock adjustment after audit"
           },
           "adjustmentId": {
             "type": "string",
-            "description": "The unique identifier for the adjustment record.",
-            "example": "adjust-001"
+            "description": "Unique identifier for the adjustment.",
+            "example": "ADJ123456"
           },
           "at": {
             "type": "string",
-            "description": "The timestamp when the adjustment was made.",
-            "example": "2023-10-01T10:00:00Z"
+            "description": "Timestamp of when the adjustment was made.",
+            "example": "2023-10-01T12:00:00Z"
           }
         },
-        "description": "Details of the inventory adjustment."
+        "description": "Details of the inventory adjustment made to the item."
       }
     },
     "parameters": {
@@ -413,9 +425,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "55FBE6DA-D0AB-4A36-ABEA-D00D518C03E7"
+          "example": "7A157B0A-1729-4568-8814-C9BC717D695C"
         },
-        "example": "55FBE6DA-D0AB-4A36-ABEA-D00D518C03E7"
+        "example": "7A157B0A-1729-4568-8814-C9BC717D695C"
       },
       "content-length": {
         "name": "content-length",
@@ -425,9 +437,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "65"
+          "example": "63"
         },
-        "example": "65"
+        "example": "63"
       },
       "x-forwarded-for": {
         "name": "x-forwarded-for",
@@ -461,9 +473,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "/api/v1/inventory/COF-4120/adjust"
+          "example": "/api/v1/inventory/MON-6603/adjust"
         },
-        "example": "/api/v1/inventory/COF-4120/adjust"
+        "example": "/api/v1/inventory/MON-6603/adjust"
       },
       "x-forwarded-port": {
         "name": "x-forwarded-port",
@@ -497,9 +509,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "80b9253a16a75948aa1f8274abdce948"
+          "example": "c1ee2b6dc309d714c36648582231d47d"
         },
-        "example": "80b9253a16a75948aa1f8274abdce948"
+        "example": "c1ee2b6dc309d714c36648582231d47d"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -541,15 +553,17 @@
     },
     "headers": {
       "Date": {
+        "description": "Contains the date and time at which the response was generated, formatted in ISO 8601.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Tue, 27 Oct 2026 16:20:23 GMT"
+          "example": "Wed, 28 Oct 2026 14:00:37 GMT"
         },
-        "example": "Tue, 27 Oct 2026 16:20:23 GMT"
+        "example": "Wed, 28 Oct 2026 14:00:37 GMT"
       },
       "Connection": {
+        "description": "Indicates whether the server will keep the connection open or close it after the current request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -559,6 +573,7 @@
         "example": "keep-alive"
       },
       "Keep-Alive": {
+        "description": "Specifies options for persistent connections, including timeout duration and maximum number of requests.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -568,6 +583,7 @@
         "example": "timeout=60"
       },
       "X-Api-Name": {
+        "description": "The name of the API that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -577,6 +593,7 @@
         "example": "adjustStock"
       },
       "X-Served-By": {
+        "description": "Identifies the server that processed the request, useful for debugging and tracking.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -586,6 +603,7 @@
         "example": "commerce-platform-api"
       },
       "Content-Type": {
+        "description": "The MIME type of the content being returned in the response.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -595,24 +613,22 @@
         "example": "application/json"
       },
       "X-Request-Id": {
-        "description": "A unique identifier for the request generated by the server, allowing for tracking and debugging of requests.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "bab22334-a011-41ba-b238-8947d6e87d2c"
+          "example": "69c9fccd-9dde-42ab-889a-7b7d2a2f00de"
         },
-        "example": "bab22334-a011-41ba-b238-8947d6e87d2c"
+        "example": "69c9fccd-9dde-42ab-889a-7b7d2a2f00de"
       },
       "Content-Length": {
-        "description": "The size of the response body in bytes, which indicates how much data has been sent.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "358"
+          "example": "353"
         },
-        "example": "358"
+        "example": "353"
       }
     }
   }

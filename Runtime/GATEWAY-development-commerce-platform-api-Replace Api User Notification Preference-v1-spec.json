@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "GATEWAY-development-commerce-platform-api-Replace Api User Notification Preference-v1-spec",
-    "description": "The User Notification Preference Management API allows users to update their notification settings within the commerce platform. This endpoint facilitates the modification of user preferences for receiving various types of notifications, ensuring a personalized communication experience. Typical consumers of this API include users of the platform who wish to manage their notification preferences efficiently. It is particularly useful for enhancing user engagement and satisfaction by aligning notifications with individual preferences.",
+    "description": "The User Notification Preference Management API allows businesses to customize how users receive notifications. This endpoint enables the updating of notification preferences for specific users identified by their user ID. Typical consumers include developers working on user engagement features, where tailoring notifications is essential for enhancing user experience. By providing a seamless way to manage preferences, this API supports businesses in improving customer satisfaction and retention.",
     "version": "1.0",
     "extensions": {
       "x-serviceName": "commerce-platform-api"
@@ -35,9 +35,11 @@
   "paths": {
     "/api/v1/users/{userId}/notification-preferences": {
       "put": {
-        "tags": [],
-        "summary": "Update Notification Preferences for a User",
-        "description": "This endpoint allows the client to update the notification preferences for a specific user identified by their unique ID. It enables modifications to preferences related to notifications such as email alerts, SMS updates, and other communication methods.",
+        "tags": [
+          "User Management"
+        ],
+        "summary": "Update Notification Preferences for User",
+        "description": "Allows the user to update their notification preferences. The request must include the desired preferences in the request body, and the changes will be applied for the specified user ID.",
         "operationId": "replaceApiUserNotificationPreference",
         "parameters": [
           {
@@ -99,7 +101,7 @@
           }
         ],
         "requestBody": {
-          "description": "Updates the notification preferences for the user with ID 1008. This request allows the user to specify their desired notification settings.",
+          "description": "Updates the notification preferences for user with ID 1006. The request body must include all relevant notification settings in JSON format to ensure proper configuration.",
           "content": {
             "application/json": {
               "schema": {
@@ -110,7 +112,7 @@
         },
         "responses": {
           "200": {
-            "description": "The user's notification preferences were successfully updated.",
+            "description": "The notification preferences were updated successfully.",
             "headers": {
               "Date": {
                 "$ref": "#/components/headers/Date"
@@ -157,31 +159,26 @@
   "components": {
     "schemas": {
       "ReplaceApiUserNotificationPreferenceRequest": {
-        "title": "Notification Preferences",
-        "required": [
-          "email",
-          "push",
-          "sms"
-        ],
+        "title": "Notification Preferences Update Request",
         "type": "object",
         "properties": {
           "email": {
             "type": "boolean",
-            "description": "Indicates whether the user wishes to receive notifications via email.",
+            "description": "Indicates whether the user wants to receive notifications via email.",
             "example": true
           },
           "sms": {
             "type": "boolean",
-            "description": "Indicates whether the user wishes to receive notifications via SMS.",
+            "description": "Indicates whether the user wants to receive notifications via SMS.",
             "example": false
           },
           "push": {
             "type": "boolean",
-            "description": "Indicates whether the user wishes to receive push notifications.",
+            "description": "Indicates whether the user wants to receive push notifications.",
             "example": true
           }
         },
-        "description": "Schema representing the user's notification preferences settings.",
+        "description": "Schema representing the notification preferences for a user that can be updated via a PUT request.",
         "example": {
           "email": true,
           "sms": false,
@@ -189,77 +186,96 @@
         }
       },
       "ReplaceApiUserNotificationPreferenceResponse_200": {
+        "title": "Notification Preferences Response",
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "description": "The status of the update operation.",
+            "description": "The status of the response.",
             "example": "success"
           },
           "data": {
+            "description": "Contains the user ID and notification preferences.",
             "$ref": "#/components/schemas/NotificationPreferencesData"
           },
           "requestId": {
             "type": "string",
-            "description": "Unique identifier for the request.",
-            "example": "req_8p6vj2qngbl2"
+            "description": "The unique identifier for the request.",
+            "example": "req_inhwg9bwkud2"
           }
         },
-        "description": "Response schema for updating notification preferences of a user.",
+        "description": "Response schema for the notification preferences update operation.",
         "example": {
           "status": "success",
           "data": {
-            "userId": 1008,
+            "userId": 1006,
             "preferences": {
               "email": true,
               "sms": false,
               "push": true
             },
-            "updatedAt": "2026-10-28T12:57:40.484327Z"
+            "updatedAt": "2026-10-28T14:00:38.837403Z"
           },
-          "requestId": "req_8p6vj2qngbl2"
+          "requestId": "req_inhwg9bwkud2"
         }
       },
       "NotificationPreferencesData": {
+        "title": "Notification Preferences Data",
         "type": "object",
         "properties": {
           "userId": {
             "type": "integer",
             "description": "The unique identifier of the user.",
             "format": "int32",
-            "example": 1
+            "example": 123
           },
           "preferences": {
+            "description": "The notification preferences for the user.",
             "$ref": "#/components/schemas/NotificationPreferences"
           },
           "updatedAt": {
             "type": "string",
-            "description": "The date and time when notification preferences were last updated.",
-            "example": "2023-10-23T10:00:00Z"
+            "description": "The timestamp when the preferences were last updated.",
+            "example": "2023-10-01T12:00:00Z"
           }
         },
-        "description": "Data containing user ID and notification preferences."
+        "description": "Contains the user ID and their notification preferences.",
+        "example": {
+          "userId": 123,
+          "preferences": {
+            "email": true,
+            "sms": false,
+            "push": true
+          },
+          "updatedAt": "2023-10-01T12:00:00Z"
+        }
       },
       "NotificationPreferences": {
+        "title": "Notification Preferences",
         "type": "object",
         "properties": {
           "email": {
             "type": "boolean",
-            "description": "Indicates whether email notifications are enabled.",
+            "description": "Indicates if email notifications are enabled.",
             "example": true
           },
           "sms": {
             "type": "boolean",
-            "description": "Indicates whether SMS notifications are enabled.",
+            "description": "Indicates if SMS notifications are enabled.",
             "example": false
           },
           "push": {
             "type": "boolean",
-            "description": "Indicates whether push notifications are enabled.",
+            "description": "Indicates if push notifications are enabled.",
             "example": true
           }
         },
-        "description": "User's notification preferences."
+        "description": "User's notification preferences settings.",
+        "example": {
+          "email": true,
+          "sms": false,
+          "push": true
+        }
       }
     },
     "parameters": {
@@ -367,9 +383,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "F4412092-8EBE-4E5D-8C0C-859BA3A4C502"
+          "example": "64D6B124-9343-46DC-A194-A619250AC4A5"
         },
-        "example": "F4412092-8EBE-4E5D-8C0C-859BA3A4C502"
+        "example": "64D6B124-9343-46DC-A194-A619250AC4A5"
       },
       "content-length": {
         "name": "content-length",
@@ -415,9 +431,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "/api/v1/users/1008/notification-preferences"
+          "example": "/api/v1/users/1006/notification-preferences"
         },
-        "example": "/api/v1/users/1008/notification-preferences"
+        "example": "/api/v1/users/1006/notification-preferences"
       },
       "x-forwarded-port": {
         "name": "x-forwarded-port",
@@ -451,9 +467,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "42823b67e955676c1ce0e4311b45a92f"
+          "example": "825fe13a25da2d3c5ed61e5676ae9e0d"
         },
-        "example": "42823b67e955676c1ce0e4311b45a92f"
+        "example": "825fe13a25da2d3c5ed61e5676ae9e0d"
       },
       "x-mock-response": {
         "name": "x-mock-response",
@@ -499,9 +515,9 @@
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "Wed, 28 Oct 2026 12:57:40 GMT"
+          "example": "Wed, 28 Oct 2026 14:00:38 GMT"
         },
-        "example": "Wed, 28 Oct 2026 12:57:40 GMT"
+        "example": "Wed, 28 Oct 2026 14:00:38 GMT"
       },
       "Connection": {
         "style": "simple",
@@ -522,7 +538,7 @@
         "example": "timeout=60"
       },
       "X-Api-Name": {
-        "description": "The name of the API that is handling the request.",
+        "description": "The identifier for the API that handled the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -532,7 +548,7 @@
         "example": "updatePreferences"
       },
       "X-Served-By": {
-        "description": "Identifies the server that processed the request and served the response.",
+        "description": "The name of the server that processed the request.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -542,7 +558,7 @@
         "example": "commerce-platform-api"
       },
       "Content-Type": {
-        "description": "The media type of the response content, indicating the format of the data returned.",
+        "description": "The media type of the response content.",
         "style": "simple",
         "explode": false,
         "schema": {
@@ -552,17 +568,17 @@
         "example": "application/json"
       },
       "X-Request-Id": {
-        "description": "A unique identifier for the request, which can be used for tracking and debugging purposes.",
+        "description": "A unique identifier for the request. Useful for tracing and debugging. This ID can be used to correlate logs across services.",
         "style": "simple",
         "explode": false,
         "schema": {
           "type": "string",
-          "example": "1ed1b4cb-5491-4966-b6ce-66dc76d3cc54"
+          "example": "3aab2273-1180-4e67-b56e-096895d3b1a1"
         },
-        "example": "1ed1b4cb-5491-4966-b6ce-66dc76d3cc54"
+        "example": "3aab2273-1180-4e67-b56e-096895d3b1a1"
       },
       "Content-Length": {
-        "description": "The size of the response body in bytes, indicating the total length of the content being returned.",
+        "description": "The size of the response body in bytes. This helps clients parse the response correctly.",
         "style": "simple",
         "explode": false,
         "schema": {
